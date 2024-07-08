@@ -1,0 +1,23 @@
+$schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
+version: "0.2"
+words:
+  - Dvir
+  - dvirtz
+  - mbid
+  - musicbrainz
+  - rels
+  - setlist
+  - userscripts
+  - Yitzchaki
+patterns:
+  - name: user_script_id
+    pattern: >-
+      /\/\/ @id.*/g
+overrides:
+  - filename: scripts/*.user.js
+    ignoreRegExpList:
+      - user_script_id
+  - filename: package.json
+    includeRegExpList:
+      - >-
+        /"description":.*/g
