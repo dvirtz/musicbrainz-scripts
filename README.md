@@ -1,5 +1,7 @@
 # MusicBrainz Scripts
 
+[![CI](https://github.com/dvirtz/musicbrainz-scripts/actions/workflows/ci.yml/badge.svg)](https://github.com/dvirtz/musicbrainz-scripts/actions/workflows/ci.yml)
+
 This repository contains a collection of user scripts for [MusicBrainz](https://musicbrainz.org). 
 
 ## Installation
