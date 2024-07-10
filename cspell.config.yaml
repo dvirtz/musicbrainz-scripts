@@ -3,21 +3,23 @@ version: "0.2"
 words:
   - Dvir
   - dvirtz
+  - greasemonkey
   - mbid
   - musicbrainz
   - rels
   - setlist
+  - tampermonkey
+  - userscript
   - userscripts
+  - violentmonkey
   - Yitzchaki
 patterns:
   - name: user_script_id
-    pattern: >-
-      /\/\/ @id.*/g
+    pattern: /\/\/ @id.*/g
 overrides:
   - filename: scripts/*.user.js
     ignoreRegExpList:
       - user_script_id
   - filename: package.json
     includeRegExpList:
-      - >-
-        /"description":.*/g
+      - /"description":.*/g

@@ -21,7 +21,7 @@ See https://musicbrainz.org/doc/Guides/Userscripts#Userscript_manager for more i
 
 This scripts allows you to import set lists from [setlist.fm](https://setlist.fm) as MusicBrainz events.
 
-![setlist.fm importer](assets/setlistfm_importer.png)
+![setlist.fm importer](https://github.com/dvirtz/musicbrainz-scripts/blob/main/assets/setlistfm_importer.png?raw=1)
 
 When viewing a set list on setlist.fm, a new "Add to MB" button will appear on the page.
 Clicking the button will open a MusicBrainz create event window with the event form pre-filled with the set list data.
