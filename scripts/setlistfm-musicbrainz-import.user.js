@@ -35,12 +35,12 @@ function submitEvent() {
   const tour = tourName();
   if (tour) {
     // use "Tour Name: City" style
-    searchParams.append('edit-event.name', `${tour}: ${window.sfmPageAttributes.venue.city}`);
+    searchParams.append('edit-event.name', `${tour}: ${unsafeWindow.sfmPageAttributes.venue.city}`);
   } else {
     // use "Artist at Venue" style
     searchParams.append(
       'edit-event.name',
-      `${window.sfmPageAttributes.artist.name} at ${window.sfmPageAttributes.venue.name}`
+      `${unsafeWindow.sfmPageAttributes.artist.name} at ${unsafeWindow.sfmPageAttributes.venue.name}`
     );
   }
 
@@ -48,7 +48,7 @@ function submitEvent() {
   searchParams.append('edit-event.type_id', 1); // Concert
 
   // setlist
-  const artistMBID = window.sfmPageAttributes.artist.mbid;
+  const artistMBID = unsafeWindow.sfmPageAttributes.artist.mbid;
   const setlist = Array.from(document.querySelectorAll('.setlistParts').values())
     .flatMap(part => [...setlistEntry(part)])
     .join('\n');
@@ -91,7 +91,7 @@ function submitEvent() {
   searchParams.append('rels.0.direction', 'backward');
 
   // navigate to the event creation page
-  window.open('https://musicbrainz.org/event/create?' + searchParams.toString());
+  unsafeWindow.open('https://musicbrainz.org/event/create?' + searchParams.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
