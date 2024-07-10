@@ -1,21 +1,21 @@
 // ==UserScript==
-// @id          setlistfm-musicbrainz-import
-// @name        setlist.fm event importer
-// @version     0.0.1
-// @author      Dvir Yitzchaki (dvirtz@gmail.com)
-// @namespace   github.com/dvirtz/musicbrainz-scripts
-// @downloadURL https://github.com/dvirtz/musicbrainz-scripts/raw/main/setlistfm-musicbrainz-import.user.js
-// @updateURL   https://github.com/dvirtz/musicbrainz-scripts/raw/main/setlistfm-musicbrainz-import.user.js
-// @homepageURL https://github.com/dvirtz/musicbrainz-scripts
-// @supportURL  https://github.com/dvirtz/musicbrainz-scripts/issues
-// @include     *://www.setlist.fm/setlist*
-// @icon        https://api.setlist.fm/favicon.ico
-// @license     MIT
-// @run-at      document-end
-//
-//
+// @name         setlist.fm event importer
+// @id           setlistfm-musicbrainz-import
+// @description  Add a button to import a setlist.fm event to MusicBrainz
+
+// @version      0.1.0
+// @author       Dvir Yitzchaki (dvirtz@gmail.com)
+// @namespace    https://github.com/dvirtz/musicbrainz-scripts
+// @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/raw/main/setlistfm-musicbrainz-import.user.js
+// @updateURL    https://github.com/dvirtz/musicbrainz-scripts/raw/main/setlistfm-musicbrainz-import.user.js
+// @supportURL   https://github.com/dvirtz/musicbrainz-scripts/issues
+// @match        *://www.setlist.fm/setlist*
+// @icon         https://api.setlist.fm/favicon.ico
+// @license      MIT
+// @run-at       document-end
 // ==/UserScript==
-//**************************************************************************//
+
+// We use the following object defined the setlist page to access show's metadata
 //     sfmPageAttributes: {
 //         artist: {
 //             name: string;
