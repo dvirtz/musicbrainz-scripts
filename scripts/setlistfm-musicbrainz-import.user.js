@@ -121,7 +121,7 @@ addBtnElem.appendChild(buttonSpan);
 div.appendChild(addBtnElem);
 
 const userFragment = document.querySelector('.user-fragment');
-userFragment.insertBefore(div, parent.firstChild);
+userFragment.insertBefore(div, userFragment.firstChild);
 
 function convertMonth(monthName) {
   const monthMap = {
