@@ -1,7 +1,9 @@
 {
   "name": "musicbrainz-scripts",
   "description": "Collection of userscripts for MusicBrainz",
-  "main": "index.js",
+  "workspaces": [
+    "scripts/*"
+  ],
   "scripts": {
     "prettier:format": "prettier mb*user.js",
     "lint": "yarn eslint && yarn cspell .",
