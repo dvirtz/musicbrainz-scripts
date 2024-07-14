@@ -31,6 +31,9 @@
 function submitEvent() {
   let searchParams = new URLSearchParams();
 
+  const artistMBID = unsafeWindow.sfmPageAttributes.artist.mbid;
+  const artistName = unsafeWindow.sfmPageAttributes.artist.name;
+
   // name (see https://musicbrainz.org/doc/Style/Event#Title)
   const tour = tourName();
   if (tour) {
@@ -38,19 +41,19 @@ function submitEvent() {
     searchParams.append('edit-event.name', `${tour}: ${unsafeWindow.sfmPageAttributes.venue.city}`);
   } else {
     // use "Artist at Venue" style
-    searchParams.append(
-      'edit-event.name',
-      `${unsafeWindow.sfmPageAttributes.artist.name} at ${unsafeWindow.sfmPageAttributes.venue.name}`
-    );
+    searchParams.append('edit-event.name', `${artistName} at ${unsafeWindow.sfmPageAttributes.venue.name}`);
   }
 
   // type
   searchParams.append('edit-event.type_id', 1); // Concert
 
   // setlist
-  const artistMBID = unsafeWindow.sfmPageAttributes.artist.mbid;
-  const setlist = Array.from(document.querySelectorAll('.setlistParts').values())
-    .flatMap(part => [...setlistEntry(part)])
+  const setlist = [artist(artistName, artistMBID)]
+    .concat(
+      Array.from(document.querySelectorAll('.setlistParts').values()).flatMap(part => [
+        ...setlistEntry(part, artistName),
+      ])
+    )
     .join('\n');
   searchParams.append('edit-event.setlist', setlist);
 
@@ -156,7 +159,6 @@ function entity(name, mbid = null) {
   return mbid ? `[${mbid}|${name}]` : name;
 }
 
-// eslint-disable-next-line no-unused-vars
 function artist(name, mbid = null) {
   return `@ ${entity(name, mbid)}`;
 }
@@ -169,7 +171,7 @@ function info(comment) {
   return `# ${comment}`;
 }
 
-function* setlistEntry(setlistPart) {
+function* setlistEntry(setlistPart, mainArtistName) {
   if (setlistPart.classList.contains('tape') || setlistPart.classList.contains('song')) {
     yield work(setlistPart.querySelector('.songPart').textContent.trim());
     if (setlistPart.classList.contains('tape')) {
@@ -180,9 +182,16 @@ function* setlistEntry(setlistPart) {
       yield* infoPart.textContent
         .split('\n')
         .filter(line => line.trim().length > 0)
-        .map(line => info(line));
+        .map(line => {
+          const match = line.match(/\(with (.*)\)/);
+          if (match) {
+            return artist(`${mainArtistName} with ${match[1]}`);
+          } else {
+            return info(line);
+          }
+        });
     }
-  } else if (setlistPart.classList.contains('encore')) {
-    yield info('Encore');
+  } else if (setlistPart.classList.contains('encore') || setlistPart.classList.contains('section')) {
+    yield `\n${info(setlistPart.textContent.trim())}`;
   }
 }
