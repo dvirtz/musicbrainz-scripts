@@ -3,7 +3,7 @@
 // @id           setlistfm-musicbrainz-import
 // @description  Add a button to import a setlist.fm event to MusicBrainz
 
-// @version      1.0.0
+// @version      1.1.0
 // @author       Dvir Yitzchaki (dvirtz@gmail.com)
 // @namespace    https://github.com/dvirtz/musicbrainz-scripts
 // @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/raw/main/setlistfm-musicbrainz-import.user.js
