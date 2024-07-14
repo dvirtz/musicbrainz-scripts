@@ -27,6 +27,7 @@
 //         }
 //     }
 // }
+main();
 
 function submitEvent() {
   let searchParams = new URLSearchParams();
@@ -100,31 +101,46 @@ function submitEvent() {
 //////////////////////////////////////////////////////////////////////////////
 
 // add the button to the page
-let div = document.createElement('div');
-div.classList.add('btn-group');
+async function main() {
+  let div = document.createElement('div');
+  div.classList.add('btn-group');
 
-const addBtnElem = document.createElement('button');
-addBtnElem.classList.add('btn');
-addBtnElem.addEventListener('click', () => {
-  submitEvent();
-});
+  const addBtnElem = document.createElement('button');
+  addBtnElem.classList.add('btn');
 
-const buttonIcon = document.createElement('img');
-buttonIcon.src = 'https://musicbrainz.org/static/images/favicons/favicon-32x32.png';
-buttonIcon.alt = 'MB';
-buttonIcon.style.width = '16px';
-buttonIcon.style.height = '16px';
-buttonIcon.style.margin = '2px';
-addBtnElem.appendChild(buttonIcon);
+  const buttonIcon = document.createElement('img');
+  buttonIcon.src = 'https://musicbrainz.org/static/images/favicons/favicon-32x32.png';
+  buttonIcon.alt = 'MB';
+  buttonIcon.style.width = '16px';
+  buttonIcon.style.height = '16px';
+  buttonIcon.style.margin = '2px';
+  addBtnElem.appendChild(buttonIcon);
 
-const buttonSpan = document.createElement('span');
-buttonSpan.textContent = 'Add to MB';
-addBtnElem.appendChild(buttonSpan);
+  const buttonSpan = document.createElement('span');
+  addBtnElem.appendChild(buttonSpan);
 
-div.appendChild(addBtnElem);
+  div.appendChild(addBtnElem);
 
-const userFragment = document.querySelector('.user-fragment');
-userFragment.insertBefore(div, userFragment.firstChild);
+  const userFragment = document.querySelector('.user-fragment');
+  userFragment.insertBefore(div, userFragment.firstChild);
+
+  const existingEvent = await fetch(
+    `https://musicbrainz.org/ws/2/url?resource=${document.location.href}&inc=event-rels&fmt=json`
+  );
+  if (existingEvent.ok) {
+    const body = await existingEvent.json();
+    const eventId = body['relations'][0]['event'].id;
+    buttonSpan.textContent = 'Open in MB';
+    addBtnElem.addEventListener('click', () => {
+      window.open(`https://musicbrainz.org/event/${eventId}`);
+    });
+  } else {
+    buttonSpan.textContent = 'Add to MB';
+    addBtnElem.addEventListener('click', () => {
+      submitEvent();
+    });
+  }
+}
 
 function convertMonth(monthName) {
   const monthMap = {
