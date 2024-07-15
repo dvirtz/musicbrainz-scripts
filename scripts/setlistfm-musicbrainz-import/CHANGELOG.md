@@ -1,3 +1,10 @@
+## [setlistfm-musicbrainz-import-v1.1.1](https://github.com/dvirtz/musicbrainz-scripts/compare/setlistfm-musicbrainz-import-v1.1.0...setlistfm-musicbrainz-import-v1.1.1) (2024-07-15)
+
+
+### Documentation
+
+* add more documentation ([37b462d](https://github.com/dvirtz/musicbrainz-scripts/commit/37b462d206655b53475b2fae458fd050f1952269))
+
 ## [setlistfm-musicbrainz-import-v1.1.0](https://github.com/dvirtz/musicbrainz-scripts/compare/setlistfm-musicbrainz-import-v1.0.0...setlistfm-musicbrainz-import-v1.1.0) (2024-07-14)
 
 
