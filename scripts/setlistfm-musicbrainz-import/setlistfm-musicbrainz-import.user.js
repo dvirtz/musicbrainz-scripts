@@ -6,8 +6,8 @@
 // @version      1.1.1
 // @author       Dvir Yitzchaki (dvirtz@gmail.com)
 // @namespace    https://github.com/dvirtz/musicbrainz-scripts
-// @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/raw/main/setlistfm-musicbrainz-import.user.js
-// @updateURL    https://github.com/dvirtz/musicbrainz-scripts/raw/main/setlistfm-musicbrainz-import.user.js
+// @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/raw/main/scripts/setlistfm-musicbrainz-import/setlistfm-musicbrainz-import.user.js
+// @updateURL    https://github.com/dvirtz/musicbrainz-scripts/raw/main/scripts/setlistfm-musicbrainz-import/setlistfm-musicbrainz-import.user.js
 // @supportURL   https://github.com/dvirtz/musicbrainz-scripts/issues
 // @match        *://www.setlist.fm/setlist*
 // @icon         https://api.setlist.fm/favicon.ico
