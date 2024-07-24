@@ -83,7 +83,7 @@ function submitEvent() {
 
   searchParams.append(
     'edit-event.edit_note',
-    `Imported from ${document.location.href} using ${GM.info.script.name} version ${GM.info.script.version} from ${GM.info.script.homepageURL}.`
+    `Imported from ${document.location.href} using ${GM.info.script.name} version ${GM.info.script.version} from ${GM.info.script.namespace}.`
   );
 
   searchParams.append('edit-event.url.0.text', document.location.href);
