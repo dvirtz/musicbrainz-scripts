@@ -1,3 +1,15 @@
+## [setlistfm-musicbrainz-import-v1.2.0](https://github.com/dvirtz/musicbrainz-scripts/compare/setlistfm-musicbrainz-import-v1.1.2...setlistfm-musicbrainz-import-v1.2.0) (2024-07-25)
+
+
+### Features
+
+* add venue support ([5736cdf](https://github.com/dvirtz/musicbrainz-scripts/commit/5736cdf230fb658bb4f589e8eb436548fa106e3e))
+
+
+### Bug Fixes
+
+* project home in edit commit ([8c4798d](https://github.com/dvirtz/musicbrainz-scripts/commit/8c4798dad55625e775fdb52fab50273dc68f8a66))
+
 ## [setlistfm-musicbrainz-import-v1.1.2](https://github.com/dvirtz/musicbrainz-scripts/compare/setlistfm-musicbrainz-import-v1.1.1...setlistfm-musicbrainz-import-v1.1.2) (2024-07-21)
 
 
