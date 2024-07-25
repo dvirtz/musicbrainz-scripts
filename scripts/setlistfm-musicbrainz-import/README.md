@@ -16,6 +16,12 @@ The script uses the set list syntax defined in the [MusicBrainz documentation](h
 
 If the set list is already linked to a MusicBrainz event, the button will open the event page instead.
 
+The script also searches for the venue in MusicBrainz and pre-fills the venue field if a match is found. Otherwise, a yellow warning sign will appear next to the venue field. Clicking the warning sign will open a search window to find the venue in MusicBrainz and link it to its setlist.fm page.
+
+![missing venue](missing_venue_warning.png)
+
+If the venue is not found in MusicBrainz, navigating to the venue page will show a "Add to MB" button that will open a MusicBrainz create place window with the place form pre-filled with the venue data.
+
 ## Release Notes
 
 See [CHANGELOG.md](CHANGELOG.md).
