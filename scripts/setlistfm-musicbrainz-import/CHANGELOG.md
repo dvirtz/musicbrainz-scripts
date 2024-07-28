@@ -1,3 +1,10 @@
+## [setlistfm-musicbrainz-import-v1.2.1](https://github.com/dvirtz/musicbrainz-scripts/compare/setlistfm-musicbrainz-import-v1.2.0...setlistfm-musicbrainz-import-v1.2.1) (2024-07-28)
+
+
+### Bug Fixes
+
+* var typo ([856a921](https://github.com/dvirtz/musicbrainz-scripts/commit/856a92165f7a769e28f11a50e2da2e3044cd15a8))
+
 ## [setlistfm-musicbrainz-import-v1.2.0](https://github.com/dvirtz/musicbrainz-scripts/compare/setlistfm-musicbrainz-import-v1.1.2...setlistfm-musicbrainz-import-v1.2.0) (2024-07-25)
 
 
