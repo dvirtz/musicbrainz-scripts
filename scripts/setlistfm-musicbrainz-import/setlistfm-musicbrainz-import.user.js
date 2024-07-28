@@ -153,7 +153,7 @@ function submitEvent(placeMBID) {
   searchParams.append('rels.0.target', artistMBID);
   searchParams.append('rels.0.direction', 'backward');
 
-  searchParams.append('rels.1.type', Constants.Event.heldAtGUID);
+  searchParams.append('rels.1.type', Constants.Event.HeldAtGUID);
   searchParams.append('rels.1.target', placeMBID);
 
   // navigate to the event creation page
