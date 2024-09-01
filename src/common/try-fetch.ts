@@ -1,7 +1,13 @@
+import fetchBuilder from 'fetch-retry';
+
+const fetchRetry = fetchBuilder(fetch);
+
 export async function tryFetch(url: string) {
   try {
-    const result = await fetch(url, {
+    const result = await fetchRetry(url, {
       headers: {Accept: 'application/json'},
+      retryOn: [503],
+      retryDelay: attempt => Math.pow(2, attempt) * 1000,
     });
     if (!result.ok) {
       throw new Error(`HTTP error: ${result.status}`);

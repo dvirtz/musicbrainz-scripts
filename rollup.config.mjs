@@ -6,6 +6,7 @@ import pkg from './package.json' with {type: 'json'};
 export default defineConfig(
   Object.entries({
     'setlistfm-musicbrainz-import': 'src/setlistfm-musicbrainz-import/index.ts',
+    'acum-work-import': 'src/acum-work-import/index.ts',
   }).map(([name, entry]) => ({
     input: entry,
     plugins: [

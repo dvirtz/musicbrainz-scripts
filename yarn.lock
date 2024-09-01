@@ -3959,6 +3959,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"acum-work-import@workspace:src/acum-work-import":
+  version: 0.0.0-use.local
+  resolution: "acum-work-import@workspace:src/acum-work-import"
+  languageName: unknown
+  linkType: soft
+
 "agent-base@npm:^7.0.2, agent-base@npm:^7.1.0, agent-base@npm:^7.1.1":
   version: 7.1.1
   resolution: "agent-base@npm:7.1.1"
@@ -4193,6 +4199,13 @@ __metadata:
   dependencies:
     possible-typed-array-names: "npm:^1.0.0"
   checksum: 10c0/d07226ef4f87daa01bd0fe80f8f310982e345f372926da2e5296aecc25c41cab440916bbaa4c5e1034b453af3392f67df5961124e4b586df1e99793a1374bdb2
+  languageName: node
+  linkType: hard
+
+"babel-plugin-dedent@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "babel-plugin-dedent@npm:2.1.0"
+  checksum: 10c0/90845d1164c6f7e9e4e4b40329acbc0000e6faf2688740e0c85734c62e557165b17ac95f453165e7ca5f65e8ceed40c1468404680011be3d079154334105a1fb
   languageName: node
   linkType: hard
 
@@ -5344,6 +5357,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dedent-js@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "dedent-js@npm:1.0.1"
+  checksum: 10c0/a8cff2e02d5a1ce64615c5c53c9789e7ef1abb9ae7bf2322dc991fcbaf08d901ace1a679c1e021de15a85db7787b8ccfb02011e1f394afef0f698fc857a47009
+  languageName: node
+  linkType: hard
+
 "deep-extend@npm:^0.6.0":
   version: 0.6.0
   resolution: "deep-extend@npm:0.6.0"
@@ -6160,6 +6180,13 @@ __metadata:
   dependencies:
     reusify: "npm:^1.0.4"
   checksum: 10c0/1095f16cea45fb3beff558bb3afa74ca7a9250f5a670b65db7ed585f92b4b48381445cd328b3d87323da81e43232b5d5978a8201bde84e0cd514310f1ea6da34
+  languageName: node
+  linkType: hard
+
+"fetch-retry@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "fetch-retry@npm:6.0.0"
+  checksum: 10c0/8e275b042ff98041236d30b71966f24c34ff19f957bb0f00e664754bd63d0dfb5122d091e7d5bca21f6370d88a1713d22421b33471305d7b86d6799427278802
   languageName: node
   linkType: hard
 
@@ -8534,18 +8561,22 @@ __metadata:
     "@violentmonkey/dom": "npm:^2.1.6"
     "@violentmonkey/types": "npm:^0.1.7"
     "@violentmonkey/ui": "npm:^0.7.9"
+    babel-plugin-dedent: "npm:^2.1.0"
     babel-preset-solid: "npm:^1.8.22"
     cross-env: "npm:^7.0.3"
     cspell: "npm:^8.14.2"
+    dedent-js: "npm:^1.0.1"
     del-cli: "npm:^5.1.0"
     eslint: "npm:^9.9.1"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-prettier: "npm:^5.2.1"
+    fetch-retry: "npm:^6.0.0"
     husky: "npm:^9.0.11"
     lint-staged: "npm:^15.2.2"
     prettier: "npm:^3.2.5"
     rollup: "npm:^4.21.2"
     rollup-plugin-userscript: "npm:^0.3.2"
+    rubico: "npm:^2.3.5"
     semantic-release: "npm:^24.1.0"
     semantic-release-mirror-version: "npm:^1.1.2"
     semantic-release-monorepo: "npm:^8.0.2"
@@ -10577,6 +10608,13 @@ __metadata:
   bin:
     rollup: dist/bin/rollup
   checksum: 10c0/c9d97f7a21cde110371b2e890a31a996fee09b81e639e79372b962a9638ae653d2d24186b94632fc5dfab8a0582e1d0639dfe34b8b75051facd86915a9585a5f
+  languageName: node
+  linkType: hard
+
+"rubico@npm:^2.3.5":
+  version: 2.3.5
+  resolution: "rubico@npm:2.3.5"
+  checksum: 10c0/5d6f0faea307c68f9cab7aba83ebfa9127d443f78aba3e7b01b1ea6597e8c8ad1b2516dc095da3ecb3742627f17039906d62d61db8286cd0cd0f918657a45813
   languageName: node
   linkType: hard
 

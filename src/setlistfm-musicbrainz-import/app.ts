@@ -1,3 +1,4 @@
+import {editNote} from '../common/edit-note';
 import {tryFetch} from '../common/try-fetch';
 import {createUI} from './ui';
 
@@ -19,10 +20,7 @@ function submitPlace() {
 
   searchParams.append('edit-place.name', unsafeWindow.sfmPageAttributes.venue.name);
 
-  searchParams.append(
-    'edit-place.edit_note',
-    `Imported from ${document.location.href} using ${GM.info.script.name} version ${GM.info.script.version} from ${GM.info.script.namespace}.`
-  );
+  searchParams.append('edit-place.edit_note', editNote(`Imported from ${document.location.href}`));
 
   searchParams.append('edit-place.area.name', unsafeWindow.sfmPageAttributes.venue.city);
 
