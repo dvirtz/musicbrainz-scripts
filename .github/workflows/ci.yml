@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Lint
-        run: yarn lint
+        run: yarn ci
 
   release:
     needs: lint
@@ -57,6 +57,8 @@ jobs:
           cache: yarn
       - name: Install dependencies
         run: yarn
+      - name: Build
+        run: yarn build
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
