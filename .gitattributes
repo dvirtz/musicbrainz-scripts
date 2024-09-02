@@ -1,0 +1,2 @@
+# babel always generates LF line endings
+*.user.js text eol=lf
