@@ -14,6 +14,7 @@
 // @require      https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2
 // @require      https://cdn.jsdelivr.net/npm/@violentmonkey/ui@0.7
 // @require      https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2/dist/solid.min.js
+// @require      https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js
 // @license      MIT
 // @run-at       document-end
 // ==/UserScript==

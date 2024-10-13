@@ -1,19 +1,10 @@
 import {releaseEditorTools} from '../common/release-editor-tools';
 
-export function createUI(onClick: () => void, onInput: (e: Event) => void) {
+export function createUI(onClickCreateWorks: () => void, onClickImportInfo: () => void, onInput: (e: Event) => void) {
   const toolbox = releaseEditorTools();
 
   const ui = (
     <div id="acum-work-import-container" class="buttons">
-      <button disabled={true} onclick={onClick}>
-        <img
-          src="https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg"
-          alt="ACUM logo"
-          style="width: 16px; height: 16px; margin: 2px"
-        ></img>
-        <span>Import works from ACUM</span>
-      </button>
-
       <input
         id="acum-album-id"
         type="text"
@@ -23,6 +14,24 @@ export function createUI(onClick: () => void, onInput: (e: Event) => void) {
         title="numbers only"
         oninput={onInput}
       ></input>
+
+      <button disabled={true} onclick={onClickCreateWorks}>
+        <img
+          src="https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg"
+          alt="ACUM logo"
+          style="width: 16px; height: 16px; margin: 2px"
+        ></img>
+        <span>Create works from ACUM</span>
+      </button>
+
+      <button disabled={true} onclick={onClickImportInfo}>
+        <img
+          src="https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg"
+          alt="ACUM logo"
+          style="width: 16px; height: 16px; margin: 2px"
+        ></img>
+        <span>Import work attributes from ACUM</span>
+      </button>
 
       <p>This will add a new work for each checked recording that has no work already</p>
 

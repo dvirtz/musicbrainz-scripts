@@ -15,6 +15,7 @@
       "ESNext"
     ],
     "strict": true,
+    "noImplicitAny": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js"
   },

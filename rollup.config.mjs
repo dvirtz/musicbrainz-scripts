@@ -17,7 +17,7 @@ export default defineConfig(
       }),
       userscript(meta => meta.replace('process.env.AUTHOR', `${pkg.author.name} (${pkg.author.email})`)),
     ],
-    external: defineExternal(['@violentmonkey/ui', '@violentmonkey/dom', 'solid-js', 'solid-js/web']),
+    external: defineExternal(['jquery']),
     output: {
       format: 'iife',
       file: `scripts/${name}/${name}.user.js`,
@@ -27,8 +27,9 @@ export default defineConfig(
         // - If you don't want to use it, just remove `solid-js` related packages from `external`, `globals` and the `meta.js` file.
         'solid-js': 'VM.solid',
         'solid-js/web': 'VM.solid.web',
-        '@violentmonkey/dom': 'VM',
+        'solid-js/store': 'VM.solid.store',
         '@violentmonkey/ui': 'VM',
+        'jquery': '$',
       },
       indent: false,
     },

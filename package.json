@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.24.1",
-    "@violentmonkey/dom": "^2.1.6",
     "@violentmonkey/ui": "^0.7.9",
+    "rxjs": "^7.8.1",
     "solid-js": "^1.8.22"
   },
   "devDependencies": {
@@ -51,6 +51,7 @@
     "@semantic-release/git": "^10.0.1",
     "@types/babel__core": "^7",
     "@types/eslint": "^9",
+    "@types/jquery": "^3.5.31",
     "@violentmonkey/types": "^0.1.7",
     "babel-plugin-dedent": "^2.1.0",
     "babel-preset-solid": "^1.8.22",
@@ -67,12 +68,12 @@
     "prettier": "^3.2.5",
     "rollup": "^4.21.2",
     "rollup-plugin-userscript": "^0.3.2",
-    "rubico": "^2.3.5",
     "semantic-release": "^24.1.0",
     "semantic-release-mirror-version": "^1.1.2",
     "semantic-release-monorepo": "^8.0.2",
     "typescript": "^5.5.4",
-    "typescript-eslint": "^8.3.0"
+    "typescript-eslint": "^8.3.0",
+    "weight-balanced-tree": "^0.6.1"
   },
   "lint-staged": {
     "src/**": [

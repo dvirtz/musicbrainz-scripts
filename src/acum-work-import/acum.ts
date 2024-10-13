@@ -20,7 +20,7 @@ type CreatorFull = CreatorBase<'org.acum.site.searchdb.dto.bean.CreatorFullBean'
 
 export type Creators = ReadonlyArray<CreatorFull>;
 
-type AlbumBean = Bean<'org.acum.site.searchdb.dto.bean.AlbumBean'> & {
+export type AlbumBean = Bean<'org.acum.site.searchdb.dto.bean.AlbumBean'> & {
   number: string;
   title: string;
   tracks: ReadonlyArray<WorkVersion>;
@@ -96,4 +96,17 @@ export async function getAlbumInfo(albumId: string): Promise<AlbumBean | undefin
 
     console.error('failed to fetch album %s: %s', albumId, response.errorDescription);
   }
+}
+
+export async function workISWCs(workID: string) {
+  const formatISWC = (iswc: string) => iswc.replace(/T(\d{3})(\d{3})(\d{3})(\d)/, 'T-$1.$2.$3-$4');
+
+  return (await getWorkVersions(workID))
+    ?.map(albumVersion => albumVersion.versionIswcNumber)
+    .filter(iswc => iswc.length > 0)
+    .map(formatISWC);
+}
+
+export function searchName(name: string) {
+  return /[א-ת]/.test(name) ? 'workHebName' : 'workEngName';
 }

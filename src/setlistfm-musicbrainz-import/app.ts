@@ -244,12 +244,30 @@ async function addWarningIcon(type: string, query: string, afterElement: Element
 }
 
 async function findVenue(url: string) {
-  const existingVenue = await tryFetch(`https://musicbrainz.org/ws/2/url?resource=${url}&inc=place-rels&fmt=json`);
+  type Venue = {
+    relations: ReadonlyArray<{
+      place: {
+        id: string;
+      };
+    }>;
+  };
+  const existingVenue = (await tryFetch(
+    `https://musicbrainz.org/ws/2/url?resource=${url}&inc=place-rels&fmt=json`
+  )) as Venue;
   return existingVenue && existingVenue['relations'][0]['place'].id;
 }
 
 async function findEvent(url: string) {
-  const existingEvent = await tryFetch(`https://musicbrainz.org/ws/2/url?resource=${url}&inc=event-rels&fmt=json`);
+  type Event = {
+    relations: ReadonlyArray<{
+      event: {
+        id: string;
+      };
+    }>;
+  };
+  const existingEvent = (await tryFetch(
+    `https://musicbrainz.org/ws/2/url?resource=${url}&inc=event-rels&fmt=json`
+  )) as Event;
   return existingEvent && existingEvent['relations'][0]['event'].id;
 }
 
