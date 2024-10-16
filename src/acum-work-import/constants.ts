@@ -1,0 +1,11 @@
+export const RECORDING_OF_LINK_TYPE_ID = 278;
+export const COMPOSER_LINK_TYPE_ID = 168;
+export const LYRICIST_LINK_TYPE_ID = 165;
+export const ARRANGER_LINK_TYPE_ID = 297;
+export const TRANSLATOR_LINK_TYPE_ID = 872;
+export const REL_STATUS_NOOP: RelationshipEditStatusT = 0;
+export const REL_STATUS_ADD: RelationshipEditStatusT = 1;
+export const REL_STATUS_EDIT: RelationshipEditStatusT = 2;
+export const REL_STATUS_REMOVE: RelationshipEditStatusT = 3;
+export const ACUM_TYPE_ID = 206;
+export const LANGUAGE_ZXX_ID = 486;
