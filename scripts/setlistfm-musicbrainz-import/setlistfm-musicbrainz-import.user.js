@@ -38,6 +38,43 @@ async function tryFetch(url) {
   }
 }
 
+// from https://github.com/kellnerd/es-utils/blob/main/dom/react.js
+function editNote(message) {
+  return `----
+${message} using ${GM.info.script.name} version ${GM.info.script.version} from ${GM.info.script.namespace}. `;
+}
+
+function convertMonth(monthName) {
+  const monthMap = {
+    Jan: 1,
+    January: 1,
+    Feb: 2,
+    February: 2,
+    Mar: 3,
+    March: 3,
+    Apr: 4,
+    April: 4,
+    May: 5,
+    Jun: 6,
+    June: 6,
+    Jul: 7,
+    July: 7,
+    Aug: 8,
+    August: 8,
+    Sep: 9,
+    September: 9,
+    Oct: 10,
+    October: 10,
+    Nov: 11,
+    November: 11,
+    Dec: 12,
+    December: 12
+  };
+
+  // convert 3-letter month name to number
+  return monthMap[monthName];
+}
+
 var _tmpl$ = /*#__PURE__*/web.template(`<div class=btn-group><button class=btn><img src=https://musicbrainz.org/static/images/favicons/favicon-32x32.png alt=MB style=width:16px;height:16px;margin:2px><span>`);
 function createUI(buttonText, onClick) {
   const div = (() => {
@@ -54,21 +91,30 @@ function createUI(buttonText, onClick) {
 }
 web.delegateEvents(["click"]);
 
-const Constants = {
-  Place: {
-    SetlistFmUrl: '817'
-  },
-  Event: {
-    SetlistFmUrl: '811',
-    MainPerformerGUID: '936c7c95-3156-3889-a062-8a0cd57f8946',
-    HeldAtGUID: 'e2c6f697-07dc-38b1-be0b-83d740165532'
+var TypeID$1 = /*#__PURE__*/function (TypeID) {
+  TypeID["SetlistFmUrl"] = "817";
+  return TypeID;
+}(TypeID$1 || {}); // MB.linkedEntities.link_type['751e8fb1-ed8d-4a94-b71b-a38065054f5d'].id
+async function handleVenuePage() {
+  const placeMBID = await findVenue(document.location.href);
+  if (placeMBID) {
+    createUI('Open in MB', () => {
+      window.open(`https://musicbrainz.org/place/${placeMBID}`);
+    });
+  } else {
+    createUI('Add to MB', () => {
+      submitPlace();
+    });
   }
-};
-main();
+}
+async function findVenue(url) {
+  const existingVenue = await tryFetch(`https://musicbrainz.org/ws/2/url?resource=${url}&inc=place-rels&fmt=json`);
+  return existingVenue && existingVenue['relations'][0]['place'].id;
+}
 function submitPlace() {
   const searchParams = new URLSearchParams();
   searchParams.append('edit-place.name', unsafeWindow.sfmPageAttributes.venue.name);
-  searchParams.append('edit-place.edit_note', `Imported from ${document.location.href} using ${GM.info.script.name} version ${GM.info.script.version} from ${GM.info.script.namespace}.`);
+  searchParams.append('edit-place.edit_note', editNote(`Imported from ${document.location.href}`));
   searchParams.append('edit-place.area.name', unsafeWindow.sfmPageAttributes.venue.city);
   const infoPart = document.querySelector('div.info');
   if (infoPart) {
@@ -103,107 +149,38 @@ function submitPlace() {
     }
   }
   searchParams.append('edit-place.url.0.text', document.location.href);
-  searchParams.append('edit-place.url.0.link_type_id', Constants.Place.SetlistFmUrl);
+  searchParams.append('edit-place.url.0.link_type_id', TypeID$1.SetlistFmUrl);
 
   // navigate to the place creation page
   unsafeWindow.open('https://musicbrainz.org/place/create?' + searchParams.toString());
 }
-function submitEvent(placeMBID) {
-  const searchParams = new URLSearchParams();
-  const artistMBID = unsafeWindow.sfmPageAttributes.artist.mbid;
-  const artistName = unsafeWindow.sfmPageAttributes.artist.name;
 
-  // name (see https://musicbrainz.org/doc/Style/Event#Title)
-  const tour = tourName();
-  if (tour) {
-    // use "Tour Name: City" style
-    searchParams.append('edit-event.name', `${tour}: ${unsafeWindow.sfmPageAttributes.venue.city}`);
+var GUID = /*#__PURE__*/function (GUID) {
+  GUID["MainPerformer"] = "936c7c95-3156-3889-a062-8a0cd57f8946";
+  GUID["HeldAt"] = "e2c6f697-07dc-38b1-be0b-83d740165532";
+  GUID["PerformanceTime"] = "ebd303c3-7f57-452a-aa3b-d780ebad868d";
+  return GUID;
+}(GUID || {});
+var TypeID = /*#__PURE__*/function (TypeID) {
+  TypeID["SetlistFmUrl"] = "811";
+  return TypeID;
+}(TypeID || {}); // MB.linkedEntities.link_type['027fce0c-c621-4fd1-b728-1678ae08f280'].id
+async function handleSetlistPage() {
+  const eventMBID = await findEvent(document.location.href);
+  if (eventMBID) {
+    createUI('Open in MB', () => {
+      window.open(`https://musicbrainz.org/event/${eventMBID}`);
+    });
   } else {
-    // use "Artist at Venue" style
-    searchParams.append('edit-event.name', `${artistName} at ${unsafeWindow.sfmPageAttributes.venue.name}`);
-  }
-
-  // type
-  searchParams.append('edit-event.type_id', '1'); // Concert
-
-  // setlist
-  const setlist = [artist(artistName, artistMBID)].concat(Array.from(document.querySelectorAll('.setlistParts')).flatMap(part => [...setlistEntry(part, artistName)])).join('\n');
-  searchParams.append('edit-event.setlist', setlist);
-
-  // date-time
-  const dateBlock = document.querySelector('.dateBlock');
-  const year = dateBlock.querySelector('.year').textContent;
-  const month = convertMonth(dateBlock.querySelector('.month').textContent);
-  const day = dateBlock.querySelector('.day').textContent;
-  for (const period of ['begin', 'end']) {
-    searchParams.append(`edit-event.period.${period}_date.year`, year);
-    searchParams.append(`edit-event.period.${period}_date.month`, month == null ? void 0 : month.toString());
-    searchParams.append(`edit-event.period.${period}_date.day`, day);
-  }
-  const mainTime = document.querySelector('.mainTime');
-  if (mainTime) {
-    const m = mainTime.textContent.match(/(\d+):(\d+)\s*(PM)?/);
-    if (m) {
-      let hours = parseInt(m[1]);
-      const minutes = m[2];
-      if (m[3]) {
-        hours += 12;
-      }
-      searchParams.append('edit-event.time', `${hours}:${minutes}`);
+    const venueElement = document.querySelector('a[href*="/venue/"]');
+    const placeMBID = await findVenue(venueElement.href);
+    if (!placeMBID) {
+      addWarningIcon('place', `place:${unsafeWindow.sfmPageAttributes.venue.name} AND area:${unsafeWindow.sfmPageAttributes.venue.city}`, venueElement);
     }
+    createUI('Add to MB', () => {
+      submitEvent(placeMBID);
+    });
   }
-  searchParams.append('edit-event.edit_note', `Imported from ${document.location.href} using ${GM.info.script.name} version ${GM.info.script.version} from ${GM.info.script.namespace}.`);
-  searchParams.append('edit-event.url.0.text', document.location.href);
-  searchParams.append('edit-event.url.0.link_type_id', Constants.Event.SetlistFmUrl);
-  searchParams.append('rels.0.type', Constants.Event.MainPerformerGUID);
-  searchParams.append('rels.0.target', artistMBID);
-  searchParams.append('rels.0.direction', 'backward');
-  searchParams.append('rels.1.type', Constants.Event.HeldAtGUID);
-  searchParams.append('rels.1.target', placeMBID);
-
-  // navigate to the event creation page
-  unsafeWindow.open('https://musicbrainz.org/event/create?' + searchParams.toString());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-// add the button to the page
-async function main() {
-  if (location.href.includes('/venue/')) {
-    await handleVenuePage();
-  } else {
-    await handleSetlistPage();
-  }
-}
-function convertMonth(monthName) {
-  const monthMap = {
-    Jan: 1,
-    January: 1,
-    Feb: 2,
-    February: 2,
-    Mar: 3,
-    March: 3,
-    Apr: 4,
-    April: 4,
-    May: 5,
-    Jun: 6,
-    June: 6,
-    Jul: 7,
-    July: 7,
-    Aug: 8,
-    August: 8,
-    Sep: 9,
-    September: 9,
-    Oct: 10,
-    October: 10,
-    Nov: 11,
-    November: 11,
-    Dec: 12,
-    December: 12
-  };
-
-  // convert 3-letter month name to number
-  return monthMap[monthName];
 }
 function tourName() {
   const anchors = document.querySelectorAll('a');
@@ -245,6 +222,77 @@ function* setlistEntry(setlistPart, mainArtistName) {
     yield `\n${info(setlistPart.textContent.trim())}`;
   }
 }
+function submitEvent(placeMBID) {
+  const searchParams = new URLSearchParams();
+  const artistMBID = unsafeWindow.sfmPageAttributes.artist.mbid;
+  const artistName = unsafeWindow.sfmPageAttributes.artist.name;
+
+  // name (see https://musicbrainz.org/doc/Style/Event#Title)
+  const tour = tourName();
+  if (tour) {
+    // use "Tour Name: City" style
+    searchParams.append('edit-event.name', `${tour}: ${unsafeWindow.sfmPageAttributes.venue.city}`);
+  } else {
+    // use "Artist at Venue" style
+    searchParams.append('edit-event.name', `${artistName} at ${unsafeWindow.sfmPageAttributes.venue.name}`);
+  }
+
+  // type
+  searchParams.append('edit-event.type_id', '1'); // Concert
+
+  // setlist
+  const setlist = [artist(artistName, artistMBID)].concat(Array.from(document.querySelectorAll('.setlistParts')).flatMap(part => [...setlistEntry(part, artistName)])).join('\n');
+  searchParams.append('edit-event.setlist', setlist);
+
+  // date-time
+  const dateBlock = document.querySelector('.dateBlock');
+  const year = dateBlock.querySelector('.year').textContent;
+  const month = convertMonth(dateBlock.querySelector('.month').textContent);
+  const day = dateBlock.querySelector('.day').textContent;
+  for (const period of ['begin', 'end']) {
+    searchParams.append(`edit-event.period.${period}_date.year`, year);
+    searchParams.append(`edit-event.period.${period}_date.month`, month == null ? void 0 : month.toString());
+    searchParams.append(`edit-event.period.${period}_date.day`, day);
+  }
+  const doorTime = parseTime('.door');
+  if (doorTime) {
+    searchParams.append('edit-event.time', doorTime);
+  }
+  searchParams.append('edit-event.edit_note', `Imported from ${document.location.href} using ${GM.info.script.name} version ${GM.info.script.version} from ${GM.info.script.namespace}.`);
+  searchParams.append('edit-event.url.0.text', document.location.href);
+  searchParams.append('edit-event.url.0.link_type_id', TypeID.SetlistFmUrl);
+  searchParams.append('rels.0.type', GUID.MainPerformer);
+  searchParams.append('rels.0.target', artistMBID);
+  searchParams.append('rels.0.direction', 'backward');
+  const startTime = parseTime('.start');
+  if (startTime) {
+    searchParams.append('rels.0.attributes.0.type', GUID.PerformanceTime);
+    searchParams.append('rels.0.attributes.0.text_value', startTime);
+  }
+  searchParams.append('rels.1.type', GUID.HeldAt);
+  searchParams.append('rels.1.target', placeMBID);
+
+  // navigate to the event creation page
+  unsafeWindow.open('https://musicbrainz.org/event/create?' + searchParams.toString());
+}
+function parseTime(query) {
+  const mainTime = document.querySelector(query);
+  if (mainTime) {
+    const m = mainTime.textContent.match(/(\d+):(\d+)\s*(PM)?/);
+    if (m) {
+      let hours = parseInt(m[1]);
+      const minutes = m[2];
+      if (m[3]) {
+        hours += 12;
+      }
+      return `${hours}:${minutes}`;
+    }
+  }
+}
+async function findEvent(url) {
+  const existingEvent = await tryFetch(`https://musicbrainz.org/ws/2/url?resource=${url}&inc=event-rels&fmt=json`);
+  return existingEvent && existingEvent['relations'][0]['event'].id;
+}
 async function addWarningIcon(type, query, afterElement) {
   const warningIcon = document.createElement('img');
   warningIcon.src = 'https://musicbrainz.org/static/images/icons/warning.png';
@@ -258,41 +306,17 @@ async function addWarningIcon(type, query, afterElement) {
   });
   afterElement.parentNode.insertBefore(warningIcon, afterElement.nextSibling);
 }
-async function findVenue(url) {
-  const existingVenue = await tryFetch(`https://musicbrainz.org/ws/2/url?resource=${url}&inc=place-rels&fmt=json`);
-  return existingVenue && existingVenue['relations'][0]['place'].id;
-}
-async function findEvent(url) {
-  const existingEvent = await tryFetch(`https://musicbrainz.org/ws/2/url?resource=${url}&inc=event-rels&fmt=json`);
-  return existingEvent && existingEvent['relations'][0]['event'].id;
-}
-async function handleSetlistPage() {
-  const eventMBID = await findEvent(document.location.href);
-  if (eventMBID) {
-    createUI('Open in MB', () => {
-      window.open(`https://musicbrainz.org/event/${eventMBID}`);
-    });
+
+main();
+
+//////////////////////////////////////////////////////////////////////////////
+
+// add the button to the page
+async function main() {
+  if (location.href.includes('/venue/')) {
+    await handleVenuePage();
   } else {
-    const venueElement = document.querySelector('a[href*="/venue/"]');
-    const placeMBID = await findVenue(venueElement.href);
-    if (!placeMBID) {
-      addWarningIcon('place', `place:${unsafeWindow.sfmPageAttributes.venue.name} AND area:${unsafeWindow.sfmPageAttributes.venue.city}`, venueElement);
-    }
-    createUI('Add to MB', () => {
-      submitEvent(placeMBID);
-    });
-  }
-}
-async function handleVenuePage() {
-  const placeMBID = await findVenue(document.location.href);
-  if (placeMBID) {
-    createUI('Open in MB', () => {
-      window.open(`https://musicbrainz.org/place/${placeMBID}`);
-    });
-  } else {
-    createUI('Add to MB', () => {
-      submitPlace();
-    });
+    await handleSetlistPage();
   }
 }
 

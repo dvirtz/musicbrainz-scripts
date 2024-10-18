@@ -10,4 +10,5 @@ module.exports = {
     '@babel/preset-typescript',
     'babel-preset-solid',
   ],
+  plugins: ['dedent'],
 };
