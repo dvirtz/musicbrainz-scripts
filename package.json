@@ -39,6 +39,10 @@
     "@babel/runtime": "^7.24.1",
     "@violentmonkey/dom": "^2.1.6",
     "@violentmonkey/ui": "^0.7.9",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "fetch-retry": "^6.0.0",
+    "rxjs": "^7.8.1",
     "solid-js": "^1.8.22"
   },
   "devDependencies": {
@@ -52,6 +56,7 @@
     "@types/babel__core": "^7",
     "@types/eslint": "^9",
     "@violentmonkey/types": "^0.1.7",
+    "babel-plugin-dedent": "^2.1.0",
     "babel-preset-solid": "^1.8.22",
     "cross-env": "^7.0.3",
     "cspell": "^8.14.2",
