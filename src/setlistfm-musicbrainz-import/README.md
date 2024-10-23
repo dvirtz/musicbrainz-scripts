@@ -20,6 +20,12 @@ The script also searches for the venue in MusicBrainz and pre-fills the venue fi
 
 If the venue is not found in MusicBrainz, navigating to the venue page will show a "Add to MB" button that will open a MusicBrainz create place window with the place form pre-filled with the venue data.
 
+## Settings
+
+To configure the settins select the `settings` menu option in your userscript manager.
+
+- Add cover comment: add comments to setlist with the covered artist (default: false)
+
 ## Release Notes
 
 See [CHANGELOG.md](CHANGELOG.md).

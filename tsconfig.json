@@ -17,7 +17,8 @@
     "strict": true,
     "noImplicitAny": true,
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+    "baseUrl": ".",
   },
   "include": [
     "src/**/*"

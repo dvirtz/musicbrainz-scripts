@@ -2,6 +2,7 @@ import {tryFetch} from '../common/try-fetch';
 import {findVenue} from './place';
 import {convertMonth} from './convert-month';
 import {createUI} from './ui';
+import {addCoverComment as addCoverCommentOption} from './settings';
 
 enum GUID {
   MainPerformer = '936c7c95-3156-3889-a062-8a0cd57f8946',
@@ -62,7 +63,7 @@ function info(comment: string) {
   return `# ${comment}`;
 }
 
-function* setlistEntry(setlistPart: Element, mainArtistName: string) {
+function* setlistEntry(setlistPart: Element, mainArtistName: string, addCoverComment: boolean) {
   if (setlistPart.classList.contains('tape') || setlistPart.classList.contains('song')) {
     yield work(setlistPart.querySelector('.songPart')!.textContent!.trim());
     if (setlistPart.classList.contains('tape')) {
@@ -73,12 +74,14 @@ function* setlistEntry(setlistPart: Element, mainArtistName: string) {
       yield* infoPart
         .textContent!.split('\n')
         .filter(line => line.trim().length > 0)
-        .map(line => {
+        .flatMap(line => {
           const match = line.match(/\(with (.*)\)/);
           if (match) {
-            return artist(`${mainArtistName} with ${match[1]}`);
+            return [artist(`${mainArtistName} with ${match[1]}`)];
+          } else if (!line.includes('cover') || addCoverComment) {
+            return [info(line)];
           } else {
-            return info(line);
+            return [];
           }
         });
     }
@@ -106,9 +109,15 @@ function submitEvent(placeMBID: string) {
   // type
   searchParams.append('edit-event.type_id', '1'); // Concert
 
+  const addCoverComment = addCoverCommentOption();
+
   // setlist
   const setlist = [artist(artistName, artistMBID)]
-    .concat(Array.from(document.querySelectorAll('.setlistParts')).flatMap(part => [...setlistEntry(part, artistName)]))
+    .concat(
+      Array.from(document.querySelectorAll('.setlistParts')).flatMap(part => [
+        ...setlistEntry(part, artistName, addCoverComment),
+      ])
+    )
     .join('\n');
   searchParams.append('edit-event.setlist', setlist);
 
