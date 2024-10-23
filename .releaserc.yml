@@ -51,7 +51,7 @@ plugins:
   - [
       "semantic-release-mirror-version",
       {
-        fileGlob: "*.user.js",
+        fileGlob: "*.meta.js",
         placeholderRegExp: "(?<=@version\\s+)\\d+.\\d+.\\d+",
       }
     ]
