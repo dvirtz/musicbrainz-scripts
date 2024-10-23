@@ -1,7 +1,11 @@
 import {defineExternal, definePlugins} from '@gera2ld/plaid-rollup';
+import alias from '@rollup/plugin-alias';
+import path from 'path';
 import {defineConfig} from 'rollup';
 import userscript from 'rollup-plugin-userscript';
 import pkg from './package.json' with {type: 'json'};
+
+const baseImportUrl = 'src';
 
 export default defineConfig(
   Object.entries({
@@ -13,8 +17,15 @@ export default defineConfig(
         esm: true,
         minimize: false,
         extensions: ['.ts', '.tsx', '.mjs', '.js', '.jsx'],
+        postcss: {
+          inject: false,
+          minimize: true,
+        },
       }),
       userscript(meta => meta.replace('process.env.AUTHOR', `${pkg.author.name} (${pkg.author.email})`)),
+      alias({
+        entries: [{find: 'src', replacement: path.resolve(baseImportUrl)}],
+      }),
     ],
     external: defineExternal(['@violentmonkey/ui', '@violentmonkey/dom', 'solid-js', 'solid-js/web']),
     output: {
