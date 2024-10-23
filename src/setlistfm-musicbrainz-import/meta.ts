@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name         setlist.fm event importer
-// @id           setlistfm-musicbrainz-import
 // @description  Add a button to import a setlist.fm event to MusicBrainz
 
 // @version      1.2.1
