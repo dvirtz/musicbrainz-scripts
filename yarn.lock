@@ -2205,6 +2205,62 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dvirtz/musicbrainz-scripts@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/musicbrainz-scripts@workspace:."
+  dependencies:
+    "@babel/core": "npm:^7.25.2"
+    "@babel/runtime": "npm:^7.24.1"
+    "@commitlint/cli": "npm:^19.4.1"
+    "@commitlint/config-conventional": "npm:^19.4.1"
+    "@gera2ld/plaid": "npm:~2.7.0"
+    "@gera2ld/plaid-rollup": "npm:~2.7.0"
+    "@kobalte/core": "npm:^0.13.7"
+    "@rollup/plugin-alias": "npm:^5.1.1"
+    "@semantic-release/changelog": "npm:^6.0.3"
+    "@semantic-release/git": "npm:^10.0.1"
+    "@types/babel__core": "npm:^7"
+    "@types/eslint": "npm:^9"
+    "@violentmonkey/dom": "npm:^2.1.6"
+    "@violentmonkey/types": "npm:^0.1.7"
+    "@violentmonkey/ui": "npm:^0.7.9"
+    autoprefixer: "npm:^10.4.20"
+    babel-plugin-dedent: "npm:^2.1.0"
+    babel-preset-solid: "npm:^1.8.22"
+    class-variance-authority: "npm:^0.7.0"
+    clsx: "npm:^2.1.1"
+    cross-env: "npm:^7.0.3"
+    cspell: "npm:^8.14.2"
+    del-cli: "npm:^5.1.0"
+    eslint: "npm:^9.9.1"
+    eslint-config-prettier: "npm:^9.1.0"
+    eslint-plugin-prettier: "npm:^5.2.1"
+    fetch-retry: "npm:^6.0.0"
+    husky: "npm:^9.0.11"
+    lint-staged: "npm:^15.2.2"
+    postcss: "npm:^8.4.49"
+    prettier: "npm:^3.2.5"
+    rollup: "npm:^4.21.2"
+    rollup-plugin-userscript: "npm:^0.3.2"
+    rxjs: "npm:^7.8.1"
+    semantic-release: "npm:^24.1.0"
+    semantic-release-mirror-version: "npm:^1.1.2"
+    semantic-release-monorepo: "npm:^8.0.2"
+    solid-js: "npm:^1.8.22"
+    tailwind-merge: "npm:^2.5.4"
+    tailwindcss: "npm:^3.4.14"
+    tailwindcss-animate: "npm:^1.0.7"
+    typescript: "npm:^5.5.4"
+    typescript-eslint: "npm:^8.3.0"
+  languageName: unknown
+  linkType: soft
+
+"@dvirtz/setlistfm-musicbrainz-import@workspace:src/setlistfm-musicbrainz-import":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/setlistfm-musicbrainz-import@workspace:src/setlistfm-musicbrainz-import"
+  languageName: unknown
+  linkType: soft
+
 "@eslint-community/eslint-utils@npm:^4.2.0, @eslint-community/eslint-utils@npm:^4.4.0":
   version: 4.4.0
   resolution: "@eslint-community/eslint-utils@npm:4.4.0"
@@ -8916,56 +8972,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"musicbrainz-scripts@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "musicbrainz-scripts@workspace:."
-  dependencies:
-    "@babel/core": "npm:^7.25.2"
-    "@babel/runtime": "npm:^7.24.1"
-    "@commitlint/cli": "npm:^19.4.1"
-    "@commitlint/config-conventional": "npm:^19.4.1"
-    "@gera2ld/plaid": "npm:~2.7.0"
-    "@gera2ld/plaid-rollup": "npm:~2.7.0"
-    "@kobalte/core": "npm:^0.13.7"
-    "@rollup/plugin-alias": "npm:^5.1.1"
-    "@semantic-release/changelog": "npm:^6.0.3"
-    "@semantic-release/git": "npm:^10.0.1"
-    "@types/babel__core": "npm:^7"
-    "@types/eslint": "npm:^9"
-    "@violentmonkey/dom": "npm:^2.1.6"
-    "@violentmonkey/types": "npm:^0.1.7"
-    "@violentmonkey/ui": "npm:^0.7.9"
-    autoprefixer: "npm:^10.4.20"
-    babel-plugin-dedent: "npm:^2.1.0"
-    babel-preset-solid: "npm:^1.8.22"
-    class-variance-authority: "npm:^0.7.0"
-    clsx: "npm:^2.1.1"
-    cross-env: "npm:^7.0.3"
-    cspell: "npm:^8.14.2"
-    del-cli: "npm:^5.1.0"
-    eslint: "npm:^9.9.1"
-    eslint-config-prettier: "npm:^9.1.0"
-    eslint-plugin-prettier: "npm:^5.2.1"
-    fetch-retry: "npm:^6.0.0"
-    husky: "npm:^9.0.11"
-    lint-staged: "npm:^15.2.2"
-    postcss: "npm:^8.4.49"
-    prettier: "npm:^3.2.5"
-    rollup: "npm:^4.21.2"
-    rollup-plugin-userscript: "npm:^0.3.2"
-    rxjs: "npm:^7.8.1"
-    semantic-release: "npm:^24.1.0"
-    semantic-release-mirror-version: "npm:^1.1.2"
-    semantic-release-monorepo: "npm:^8.0.2"
-    solid-js: "npm:^1.8.22"
-    tailwind-merge: "npm:^2.5.4"
-    tailwindcss: "npm:^3.4.14"
-    tailwindcss-animate: "npm:^1.0.7"
-    typescript: "npm:^5.5.4"
-    typescript-eslint: "npm:^8.3.0"
-  languageName: unknown
-  linkType: soft
-
 "mute-stream@npm:^1.0.0":
   version: 1.0.0
   resolution: "mute-stream@npm:1.0.0"
@@ -11334,12 +11340,6 @@ __metadata:
   checksum: 10c0/fce59f90696c450a8523e754abb305e2b8c73586452619c2bad5f7bf38c7b6b4651895c9db895679c5bef9554339cf3ef1c329b66ece3eda7255785fbe299316
   languageName: node
   linkType: hard
-
-"setlistfm-musicbrainz-import@workspace:src/setlistfm-musicbrainz-import":
-  version: 0.0.0-use.local
-  resolution: "setlistfm-musicbrainz-import@workspace:src/setlistfm-musicbrainz-import"
-  languageName: unknown
-  linkType: soft
 
 "shebang-command@npm:^1.2.0":
   version: 1.2.0

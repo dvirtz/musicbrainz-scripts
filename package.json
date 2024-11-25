@@ -1,5 +1,5 @@
 {
-  "name": "musicbrainz-scripts",
+  "name": "@dvirtz/musicbrainz-scripts",
   "version": "0.0.0",
   "description": "Collection of userscripts for MusicBrainz",
   "author": {
