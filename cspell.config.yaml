@@ -1,12 +1,19 @@
 $schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
 version: "0.2"
 words:
+  - acum
   - Dvir
   - dvirtz
   - greasemonkey
+  - isni
+  - isrc
+  - isrcs
+  - iswc
+  - iswcs
   - mbid
   - musicbrainz
   - rels
+  - rubico
   - setlist
   - setlistfm
   - tampermonkey

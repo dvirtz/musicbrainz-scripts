@@ -1,5 +1,4 @@
 import {defineExternal, definePlugins} from '@gera2ld/plaid-rollup';
-import alias from '@rollup/plugin-alias';
 import path from 'path';
 import {defineConfig} from 'rollup';
 import userscript from 'rollup-plugin-userscript';
@@ -10,7 +9,9 @@ const baseImportUrl = 'src';
 export default defineConfig(
   Object.entries({
     'setlistfm-musicbrainz-import': 'src/setlistfm-musicbrainz-import/index.ts',
+    'acum-work-import': 'src/acum-work-import/index.ts',
   }).map(([name, entry]) => ({
+    logLevel: 'debug',
     input: entry,
     plugins: [
       ...definePlugins({
@@ -18,26 +19,23 @@ export default defineConfig(
         minimize: false,
         extensions: ['.ts', '.tsx', '.mjs', '.js', '.jsx'],
         postcss: {
-          inject: false,
+          inject: name === 'acum-work-import',
           minimize: true,
+        },
+        aliases: {
+          entries: [{find: 'src', replacement: path.resolve(baseImportUrl)}],
         },
       }),
       userscript(meta => meta.replace('process.env.AUTHOR', `${pkg.author.name} (${pkg.author.email})`)),
-      alias({
-        entries: [{find: 'src', replacement: path.resolve(baseImportUrl)}],
-      }),
     ],
     external: defineExternal(['@violentmonkey/ui', '@violentmonkey/dom', 'solid-js', 'solid-js/web']),
     output: {
       format: 'iife',
       file: `scripts/${name}/${name}.user.js`,
       globals: {
-        // Note:
-        // - VM.solid is just a third-party UMD bundle for solid-js since there is no official one
-        // - If you don't want to use it, just remove `solid-js` related packages from `external`, `globals` and the `meta.js` file.
         'solid-js': 'VM.solid',
         'solid-js/web': 'VM.solid.web',
-        '@violentmonkey/dom': 'VM',
+        'solid-js/store': 'VM.solid.store',
         '@violentmonkey/ui': 'VM',
       },
       indent: false,
