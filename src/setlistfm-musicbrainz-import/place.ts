@@ -1,5 +1,5 @@
-import {editNote} from '../common/edit-note';
-import {tryFetch} from '../common/try-fetch';
+import {tryFetchJSON} from 'src/common/lib/fetch';
+import {editNote} from 'src/common/musicbrainz/edit-note';
 import {convertMonth} from './convert-month';
 import {createUI} from './ui';
 
@@ -28,9 +28,9 @@ export async function findVenue(url: string) {
       };
     }>;
   };
-  const existingVenue = (await tryFetch(
+  const existingVenue = await tryFetchJSON<Venue>(
     `https://musicbrainz.org/ws/2/url?resource=${url}&inc=place-rels&fmt=json`
-  )) as Venue;
+  );
   return existingVenue && existingVenue['relations'][0]['place'].id;
 }
 

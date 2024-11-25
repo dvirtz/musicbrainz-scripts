@@ -1,8 +1,8 @@
-import {tryFetch} from '../common/try-fetch';
-import {findVenue} from './place';
+import {tryFetchJSON} from 'src/common/lib/fetch';
 import {convertMonth} from './convert-month';
-import {createUI} from './ui';
+import {findVenue} from './place';
 import {addCoverComment as addCoverCommentOption} from './settings';
+import {createUI} from './ui';
 
 enum GUID {
   MainPerformer = '936c7c95-3156-3889-a062-8a0cd57f8946',
@@ -33,7 +33,7 @@ export async function handleSetlistPage() {
     }
 
     createUI('Add to MB', () => {
-      submitEvent(placeMBID);
+      submitEvent(placeMBID || '');
     });
   }
 }
@@ -184,9 +184,9 @@ async function findEvent(url: string) {
       };
     }>;
   };
-  const existingEvent = (await tryFetch(
+  const existingEvent = await tryFetchJSON<Event>(
     `https://musicbrainz.org/ws/2/url?resource=${url}&inc=event-rels&fmt=json`
-  )) as Event;
+  );
   return existingEvent && existingEvent['relations'][0]['event'].id;
 }
 
