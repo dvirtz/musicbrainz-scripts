@@ -26,10 +26,12 @@
     "clean": "del-cli scripts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "ci": "yarn lint && tsc",
+    "ci": "yarn lint && tsc && yarn knip",
     "build:js": "rollup -c",
-    "build": "cross-env NODE_ENV=production yarn ci && yarn clean && yarn build:js",
-    "semantic-release": "yarn workspaces foreach --recursive exec semantic-release"
+    "build": "yarn ci && yarn clean && yarn build:js",
+    "semantic-release": "yarn workspaces foreach --recursive exec semantic-release",
+    "knip": "knip --tags=-knipignore",
+    "spell": "cspell **/*.ts **/*.md"
   },
   "repository": {
     "type": "git",
@@ -43,31 +45,36 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "fetch-retry": "^6.0.0",
+    "p-lazy": "^5.0.0",
     "rxjs": "^7.8.1",
-    "solid-js": "^1.8.22"
+    "solid-js": "^1.8.22",
+    "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@commitlint/cli": "^19.4.1",
     "@commitlint/config-conventional": "^19.4.1",
+    "@eslint/js": "^9.14.0",
     "@gera2ld/plaid": "~2.7.0",
     "@gera2ld/plaid-rollup": "~2.7.0",
-    "@rollup/plugin-alias": "^5.1.1",
     "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/git": "^10.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.1",
     "@types/babel__core": "^7",
-    "@types/eslint": "^9",
+    "@types/node": "^22.9.0",
     "@violentmonkey/types": "^0.1.7",
     "autoprefixer": "^10.4.20",
     "babel-plugin-dedent": "^2.1.0",
     "babel-preset-solid": "^1.8.22",
-    "cross-env": "^7.0.3",
     "cspell": "^8.14.2",
     "del-cli": "^5.1.0",
     "eslint": "^9.9.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.12.0",
     "husky": "^9.0.11",
+    "knip": "^5.36.3",
     "lint-staged": "^15.2.2",
     "postcss": "^8.4.49",
     "prettier": "^3.2.5",
@@ -79,8 +86,9 @@
     "tailwind-merge": "^2.5.4",
     "tailwindcss": "^3.4.14",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "^5.5.4",
-    "typescript-eslint": "^8.3.0"
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.11.0",
+    "weight-balanced-tree": "^0.6.1"
   },
   "lint-staged": {
     "src/**": [
