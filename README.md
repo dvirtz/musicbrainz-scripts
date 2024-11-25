@@ -31,4 +31,4 @@ Pull requests are welcome.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
+This project is licensed under the Boost Software License - Version 1.0. See the [LICENSE](LICENSE) file for more information.
