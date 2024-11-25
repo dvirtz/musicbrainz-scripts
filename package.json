@@ -6,7 +6,7 @@
     "name": "Dvir Yitzchaki",
     "email": "dvirtz@gmail.com"
   },
-  "license": "MIT",
+  "license": "BSL-1.0",
   "private": true,
   "engines": {
     "node": ">=18"
