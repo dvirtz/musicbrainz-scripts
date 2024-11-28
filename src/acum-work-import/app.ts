@@ -1,4 +1,4 @@
-import {createUI} from './ui';
+import {createUI} from './ui/ui';
 
 main();
 
