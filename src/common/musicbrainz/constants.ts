@@ -37,3 +37,6 @@ export const EMPTY_PARTIAL_DATE: PartialDateT = Object.freeze({
 });
 
 export const SERIES_ORDERING_TYPE_MANUAL = 2;
+
+// https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting
+export const RATE_LIMIT_INTERVAL = 1000;

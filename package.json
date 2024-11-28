@@ -46,6 +46,7 @@
     "clsx": "^2.1.1",
     "fetch-retry": "^6.0.0",
     "p-lazy": "^5.0.0",
+    "p-queue": "^8.0.1",
     "rxjs": "^7.8.1",
     "solid-js": "^1.8.22",
     "tailwind-merge": "^2.5.4"
