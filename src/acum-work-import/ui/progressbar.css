@@ -1,0 +1,21 @@
+.progressbar {
+  .ui-progressbar {
+    position: relative;
+    height: 17px;
+    line-height: 17px;
+
+    .ui-progressbar-value {
+      width: var(--kb-progress-fill-width);
+      position: absolute;
+      z-index: 1;
+    }
+
+    .values {
+      display: flex;
+      justify-content: space-between;
+      position: absolute;
+      z-index: 2;
+      width: 100%;
+    }
+  }
+}

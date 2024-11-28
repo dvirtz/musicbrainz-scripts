@@ -1,6 +1,6 @@
 import {tryFetchJSON} from 'src/common/musicbrainz/fetch';
 import {CreatorFull, Creators, IPBaseNumber} from './acum';
-import {AddWarning} from './components/warnings';
+import {AddWarning} from './ui/warnings';
 
 function nameMatch(creator: CreatorFull, artist: ArtistSearchResultsT['artists'][number]): boolean {
   const removePunctuation = (name: string) => name.replace(/\p{P}/gu, '');

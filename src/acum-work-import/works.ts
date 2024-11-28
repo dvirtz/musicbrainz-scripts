@@ -4,10 +4,10 @@ import {compareTargetTypeWithGroup} from 'src/common/musicbrainz/compare';
 import {RECORDING_OF_LINK_TYPE_ID, REL_STATUS_ADD, REL_STATUS_REMOVE} from 'src/common/musicbrainz/constants';
 import {iterateRelationshipsInTargetTypeGroup} from 'src/common/musicbrainz/type-group';
 import {WorkVersion} from './acum';
-import {AddWarning} from './components/warnings';
-import {udpateEditData} from './components/work-edit-data';
-import {addWorkEditor} from './components/work-editor';
 import {createRelationshipState} from './relationships';
+import {AddWarning} from './ui/warnings';
+import {udpateEditData} from './ui/work-edit-data';
+import {addWorkEditor} from './ui/work-editor';
 import {WorkStateWithEditDataT} from './work-state';
 
 const workCache = new Map<string, WorkT>();

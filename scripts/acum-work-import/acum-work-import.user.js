@@ -298,6 +298,11 @@ function isAttributeVisible(element, childElement) {
 function noop$1() {
   return;
 }
+
+// src/number.ts
+function clamp$1(value, min = Number.NEGATIVE_INFINITY, max = Number.POSITIVE_INFINITY) {
+  return Math.min(Math.max(value, min), max);
+}
 function mergeDefaultProps(defaultProps, props) {
   return solidJs.mergeProps(defaultProps, props);
 }
@@ -487,6 +492,427 @@ function ButtonRoot(props) {
 // src/button/index.tsx
 var Button = ButtonRoot;
 
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */ let $488c6ddbf4ef74c2$var$formatterCache = new Map();
+let $488c6ddbf4ef74c2$var$supportsSignDisplay = false;
+try {
+    // @ts-ignore
+    $488c6ddbf4ef74c2$var$supportsSignDisplay = new Intl.NumberFormat('de-DE', {
+        signDisplay: 'exceptZero'
+    }).resolvedOptions().signDisplay === 'exceptZero';
+// eslint-disable-next-line no-empty
+} catch (e) {}
+let $488c6ddbf4ef74c2$var$supportsUnit = false;
+try {
+    // @ts-ignore
+    $488c6ddbf4ef74c2$var$supportsUnit = new Intl.NumberFormat('de-DE', {
+        style: 'unit',
+        unit: 'degree'
+    }).resolvedOptions().style === 'unit';
+// eslint-disable-next-line no-empty
+} catch (e) {}
+// Polyfill for units since Safari doesn't support them yet. See https://bugs.webkit.org/show_bug.cgi?id=215438.
+// Currently only polyfilling the unit degree in narrow format for ColorSlider in our supported locales.
+// Values were determined by switching to each locale manually in Chrome.
+const $488c6ddbf4ef74c2$var$UNITS = {
+    degree: {
+        narrow: {
+            default: "\xb0",
+            'ja-JP': " \u5EA6",
+            'zh-TW': "\u5EA6",
+            'sl-SI': " \xb0"
+        }
+    }
+};
+class $488c6ddbf4ef74c2$export$cc77c4ff7e8673c5 {
+    /** Formats a number value as a string, according to the locale and options provided to the constructor. */ format(value) {
+        let res = '';
+        if (!$488c6ddbf4ef74c2$var$supportsSignDisplay && this.options.signDisplay != null) res = $488c6ddbf4ef74c2$export$711b50b3c525e0f2(this.numberFormatter, this.options.signDisplay, value);
+        else res = this.numberFormatter.format(value);
+        if (this.options.style === 'unit' && !$488c6ddbf4ef74c2$var$supportsUnit) {
+            var _UNITS_unit;
+            let { unit: unit, unitDisplay: unitDisplay = 'short', locale: locale } = this.resolvedOptions();
+            if (!unit) return res;
+            let values = (_UNITS_unit = $488c6ddbf4ef74c2$var$UNITS[unit]) === null || _UNITS_unit === void 0 ? void 0 : _UNITS_unit[unitDisplay];
+            res += values[locale] || values.default;
+        }
+        return res;
+    }
+    /** Formats a number to an array of parts such as separators, digits, punctuation, and more. */ formatToParts(value) {
+        // TODO: implement signDisplay for formatToParts
+        // @ts-ignore
+        return this.numberFormatter.formatToParts(value);
+    }
+    /** Formats a number range as a string. */ formatRange(start, end) {
+        // @ts-ignore
+        if (typeof this.numberFormatter.formatRange === 'function') // @ts-ignore
+        return this.numberFormatter.formatRange(start, end);
+        if (end < start) throw new RangeError('End date must be >= start date');
+        // Very basic fallback for old browsers.
+        return `${this.format(start)} \u{2013} ${this.format(end)}`;
+    }
+    /** Formats a number range as an array of parts. */ formatRangeToParts(start, end) {
+        // @ts-ignore
+        if (typeof this.numberFormatter.formatRangeToParts === 'function') // @ts-ignore
+        return this.numberFormatter.formatRangeToParts(start, end);
+        if (end < start) throw new RangeError('End date must be >= start date');
+        let startParts = this.numberFormatter.formatToParts(start);
+        let endParts = this.numberFormatter.formatToParts(end);
+        return [
+            ...startParts.map((p)=>({
+                    ...p,
+                    source: 'startRange'
+                })),
+            {
+                type: 'literal',
+                value: " \u2013 ",
+                source: 'shared'
+            },
+            ...endParts.map((p)=>({
+                    ...p,
+                    source: 'endRange'
+                }))
+        ];
+    }
+    /** Returns the resolved formatting options based on the values passed to the constructor. */ resolvedOptions() {
+        let options = this.numberFormatter.resolvedOptions();
+        if (!$488c6ddbf4ef74c2$var$supportsSignDisplay && this.options.signDisplay != null) options = {
+            ...options,
+            signDisplay: this.options.signDisplay
+        };
+        if (!$488c6ddbf4ef74c2$var$supportsUnit && this.options.style === 'unit') options = {
+            ...options,
+            style: 'unit',
+            unit: this.options.unit,
+            unitDisplay: this.options.unitDisplay
+        };
+        return options;
+    }
+    constructor(locale, options = {}){
+        this.numberFormatter = $488c6ddbf4ef74c2$var$getCachedNumberFormatter(locale, options);
+        this.options = options;
+    }
+}
+function $488c6ddbf4ef74c2$var$getCachedNumberFormatter(locale, options = {}) {
+    let { numberingSystem: numberingSystem } = options;
+    if (numberingSystem && locale.includes('-nu-')) {
+        if (!locale.includes('-u-')) locale += '-u-';
+        locale += `-nu-${numberingSystem}`;
+    }
+    if (options.style === 'unit' && !$488c6ddbf4ef74c2$var$supportsUnit) {
+        var _UNITS_unit;
+        let { unit: unit, unitDisplay: unitDisplay = 'short' } = options;
+        if (!unit) throw new Error('unit option must be provided with style: "unit"');
+        if (!((_UNITS_unit = $488c6ddbf4ef74c2$var$UNITS[unit]) === null || _UNITS_unit === void 0 ? void 0 : _UNITS_unit[unitDisplay])) throw new Error(`Unsupported unit ${unit} with unitDisplay = ${unitDisplay}`);
+        options = {
+            ...options,
+            style: 'decimal'
+        };
+    }
+    let cacheKey = locale + (options ? Object.entries(options).sort((a, b)=>a[0] < b[0] ? -1 : 1).join() : '');
+    if ($488c6ddbf4ef74c2$var$formatterCache.has(cacheKey)) return $488c6ddbf4ef74c2$var$formatterCache.get(cacheKey);
+    let numberFormatter = new Intl.NumberFormat(locale, options);
+    $488c6ddbf4ef74c2$var$formatterCache.set(cacheKey, numberFormatter);
+    return numberFormatter;
+}
+function $488c6ddbf4ef74c2$export$711b50b3c525e0f2(numberFormat, signDisplay, num) {
+    if (signDisplay === 'auto') return numberFormat.format(num);
+    else if (signDisplay === 'never') return numberFormat.format(Math.abs(num));
+    else {
+        let needsPositiveSign = false;
+        if (signDisplay === 'always') needsPositiveSign = num > 0 || Object.is(num, 0);
+        else if (signDisplay === 'exceptZero') {
+            if (Object.is(num, -0) || Object.is(num, 0)) num = Math.abs(num);
+            else needsPositiveSign = num > 0;
+        }
+        if (needsPositiveSign) {
+            let negative = numberFormat.format(-num);
+            let noSign = numberFormat.format(num);
+            // ignore RTL/LTR marker character
+            let minus = negative.replace(noSign, '').replace(/\u200e|\u061C/, '');
+            if ([
+                ...minus
+            ].length !== 1) console.warn('@react-aria/i18n polyfill for NumberFormat signDisplay: Unsupported case');
+            let positive = negative.replace(noSign, '!!!').replace(minus, '+').replace('!!!', noSign);
+            return positive;
+        } else return numberFormat.format(num);
+    }
+}
+
+// src/i18n/create-collator.ts
+
+// src/i18n/utils.ts
+var RTL_SCRIPTS = /* @__PURE__ */ new Set([
+  "Avst",
+  "Arab",
+  "Armi",
+  "Syrc",
+  "Samr",
+  "Mand",
+  "Thaa",
+  "Mend",
+  "Nkoo",
+  "Adlm",
+  "Rohg",
+  "Hebr"
+]);
+var RTL_LANGS = /* @__PURE__ */ new Set([
+  "ae",
+  "ar",
+  "arc",
+  "bcc",
+  "bqi",
+  "ckb",
+  "dv",
+  "fa",
+  "glk",
+  "he",
+  "ku",
+  "mzn",
+  "nqo",
+  "pnb",
+  "ps",
+  "sd",
+  "ug",
+  "ur",
+  "yi"
+]);
+function isRTL$1(locale) {
+  if (Intl.Locale) {
+    const script = new Intl.Locale(locale).maximize().script ?? "";
+    return RTL_SCRIPTS.has(script);
+  }
+  const lang = locale.split("-")[0];
+  return RTL_LANGS.has(lang);
+}
+function getReadingDirection(locale) {
+  return isRTL$1(locale) ? "rtl" : "ltr";
+}
+
+// src/i18n/create-default-locale.ts
+function getDefaultLocale() {
+  let locale = typeof navigator !== "undefined" && // @ts-ignore
+  (navigator.language || navigator.userLanguage) || "en-US";
+  return {
+    locale,
+    direction: getReadingDirection(locale)
+  };
+}
+var currentLocale = getDefaultLocale();
+var listeners = /* @__PURE__ */ new Set();
+function updateLocale() {
+  currentLocale = getDefaultLocale();
+  for (const listener of listeners) {
+    listener(currentLocale);
+  }
+}
+function createDefaultLocale() {
+  const defaultSSRLocale = {
+    locale: "en-US",
+    direction: "ltr"
+  };
+  const [defaultClientLocale, setDefaultClientLocale] = solidJs.createSignal(currentLocale);
+  const defaultLocale = solidJs.createMemo(
+    () => web.isServer ? defaultSSRLocale : defaultClientLocale()
+  );
+  solidJs.onMount(() => {
+    if (listeners.size === 0) {
+      window.addEventListener("languagechange", updateLocale);
+    }
+    listeners.add(setDefaultClientLocale);
+    solidJs.onCleanup(() => {
+      listeners.delete(setDefaultClientLocale);
+      if (listeners.size === 0) {
+        window.removeEventListener("languagechange", updateLocale);
+      }
+    });
+  });
+  return {
+    locale: () => defaultLocale().locale,
+    direction: () => defaultLocale().direction
+  };
+}
+
+// src/i18n/i18n-provider.tsx
+var I18nContext = solidJs.createContext();
+function useLocale() {
+  const defaultLocale = createDefaultLocale();
+  const context = solidJs.useContext(I18nContext);
+  return context || defaultLocale;
+}
+function createNumberFormatter(options) {
+  const { locale } = useLocale();
+  return solidJs.createMemo(() => new $488c6ddbf4ef74c2$export$cc77c4ff7e8673c5(locale(), access$1(options)));
+}
+
+// src/primitives/create-register-id/create-register-id.ts
+function createRegisterId(setter) {
+  return (id) => {
+    setter(id);
+    return () => setter(void 0);
+  };
+}
+
+// src/progress/index.tsx
+var progress_exports = {};
+__export(progress_exports, {
+  Fill: () => ProgressFill,
+  Label: () => ProgressLabel,
+  Progress: () => Progress,
+  Root: () => ProgressRoot,
+  Track: () => ProgressTrack,
+  ValueLabel: () => ProgressValueLabel
+});
+var ProgressContext = solidJs.createContext();
+function useProgressContext() {
+  const context = solidJs.useContext(ProgressContext);
+  if (context === void 0) {
+    throw new Error("[kobalte]: `useProgressContext` must be used within a `Progress.Root` component");
+  }
+  return context;
+}
+
+// src/progress/progress-fill.tsx
+function ProgressFill(props) {
+  const context = useProgressContext();
+  const [local, others] = solidJs.splitProps(props, ["style"]);
+  return web.createComponent(Polymorphic, web.mergeProps({
+    as: "div",
+    get style() {
+      return combineStyle({
+        "--kb-progress-fill-width": context.progressFillWidth()
+      }, local.style);
+    }
+  }, () => context.dataset(), others));
+}
+function ProgressLabel(props) {
+  const context = useProgressContext();
+  const mergedProps = mergeDefaultProps({
+    id: context.generateId("label")
+  }, props);
+  const [local, others] = solidJs.splitProps(mergedProps, ["id"]);
+  solidJs.createEffect(() => solidJs.onCleanup(context.registerLabelId(local.id)));
+  return web.createComponent(Polymorphic, web.mergeProps({
+    as: "span",
+    get id() {
+      return local.id;
+    }
+  }, () => context.dataset(), others));
+}
+function ProgressRoot(props) {
+  const defaultId = `progress-${solidJs.createUniqueId()}`;
+  const mergedProps = mergeDefaultProps({
+    id: defaultId,
+    value: 0,
+    minValue: 0,
+    maxValue: 100
+  }, props);
+  const [local, others] = solidJs.splitProps(mergedProps, ["value", "minValue", "maxValue", "indeterminate", "getValueLabel"]);
+  const [labelId, setLabelId] = solidJs.createSignal();
+  const defaultFormatter = createNumberFormatter(() => ({
+    style: "percent"
+  }));
+  const value = () => {
+    return clamp$1(local.value, local.minValue, local.maxValue);
+  };
+  const valuePercent = () => {
+    return (value() - local.minValue) / (local.maxValue - local.minValue);
+  };
+  const valueLabel = () => {
+    if (local.indeterminate) {
+      return void 0;
+    }
+    if (local.getValueLabel) {
+      return local.getValueLabel({
+        value: value(),
+        min: local.minValue,
+        max: local.maxValue
+      });
+    }
+    return defaultFormatter().format(valuePercent());
+  };
+  const progressFillWidth = () => {
+    return local.indeterminate ? void 0 : `${Math.round(valuePercent() * 100)}%`;
+  };
+  const dataset = solidJs.createMemo(() => {
+    let dataProgress = void 0;
+    if (!local.indeterminate) {
+      dataProgress = valuePercent() === 1 ? "complete" : "loading";
+    }
+    return {
+      "data-progress": dataProgress,
+      "data-indeterminate": local.indeterminate ? "" : void 0
+    };
+  });
+  const context = {
+    dataset,
+    value,
+    valuePercent,
+    valueLabel,
+    labelId,
+    progressFillWidth,
+    generateId: createGenerateId(() => others.id),
+    registerLabelId: createRegisterId(setLabelId)
+  };
+  return web.createComponent(ProgressContext.Provider, {
+    value: context,
+    get children() {
+      return web.createComponent(Polymorphic, web.mergeProps({
+        as: "div",
+        role: "progressbar",
+        get ["aria-valuenow"]() {
+          return web.memo(() => !!local.indeterminate)() ? void 0 : value();
+        },
+        get ["aria-valuemin"]() {
+          return local.minValue;
+        },
+        get ["aria-valuemax"]() {
+          return local.maxValue;
+        },
+        get ["aria-valuetext"]() {
+          return valueLabel();
+        },
+        get ["aria-labelledby"]() {
+          return labelId();
+        }
+      }, dataset, others));
+    }
+  });
+}
+function ProgressTrack(props) {
+  const context = useProgressContext();
+  return web.createComponent(Polymorphic, web.mergeProps({
+    as: "div"
+  }, () => context.dataset(), props));
+}
+function ProgressValueLabel(props) {
+  const context = useProgressContext();
+  return web.createComponent(Polymorphic, web.mergeProps({
+    as: "div"
+  }, () => context.dataset(), props, {
+    get children() {
+      return context.valueLabel();
+    }
+  }));
+}
+
+// src/progress/index.tsx
+var Progress = Object.assign(ProgressRoot, {
+  Fill: ProgressFill,
+  Label: ProgressLabel,
+  Track: ProgressTrack,
+  ValueLabel: ProgressValueLabel
+});
+
 var _tmpl$$e = /*#__PURE__*/web.template(`<div id=dvirtz-release-editor-tools><h2>dvirtz MusicBrainz scripts`);
 function releaseEditorTools() {
   var _document$querySelect;
@@ -504,58 +930,6 @@ function releaseEditorTools() {
   })();
   (_document$querySelect = document.querySelector('div.tabs')) == null || _document$querySelect.insertAdjacentElement('afterend', toolbox);
   return toolbox;
-}
-
-var _tmpl$$d = /*#__PURE__*/web.template(`<p class=warning>`);
-const makeWarningContext = () => {
-  const [state, setState] = solidJs.createSignal(new Set(["Only use this option after you've tried searching for the work(s) you want to add, and are certain they do not already exist on MusicBrainz."]));
-  return {
-    state,
-    addWarning: message => setState(new Set([...state(), message])),
-    clearWarnings: (pattern = /.*/) => {
-      setState(new Set([...state()].filter(warning => !warning.match(pattern))));
-    }
-  };
-};
-const WarningsContext = solidJs.createContext();
-function WarningsProvider(props) {
-  const {
-    state,
-    addWarning,
-    clearWarnings
-  } = makeWarningContext();
-  return web.createComponent(WarningsContext.Provider, {
-    value: {
-      state,
-      addWarning,
-      clearWarnings
-    },
-    get children() {
-      return props.children;
-    }
-  });
-}
-function useWarnings() {
-  const context = solidJs.useContext(WarningsContext);
-  if (!context) {
-    throw new Error('useWarnings should be called inside WarningsProvider');
-  }
-  return context;
-}
-function Warnings() {
-  const {
-    state
-  } = useWarnings();
-  return web.createComponent(solidJs.For, {
-    get each() {
-      return [...state()];
-    },
-    children: message => (() => {
-      var _el$ = _tmpl$$d();
-      web.insert(_el$, message);
-      return _el$;
-    })()
-  });
 }
 
 /******************************************************************************
@@ -853,7 +1227,7 @@ var Subscription = (function () {
     })();
     return Subscription;
 }());
-Subscription.EMPTY;
+var EMPTY_SUBSCRIPTION = Subscription.EMPTY;
 function isSubscription(value) {
     return (value instanceof Subscription ||
         (value && 'closed' in value && isFunction(value.remove) && isFunction(value.add) && isFunction(value.unsubscribe)));
@@ -1072,6 +1446,13 @@ function identity(x) {
     return x;
 }
 
+function pipe() {
+    var fns = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        fns[_i] = arguments[_i];
+    }
+    return pipeFromArray(fns);
+}
 function pipeFromArray(fns) {
     if (fns.length === 0) {
         return identity;
@@ -1255,6 +1636,168 @@ var OperatorSubscriber = (function (_super) {
     return OperatorSubscriber;
 }(Subscriber));
 
+var ObjectUnsubscribedError = createErrorClass(function (_super) {
+    return function ObjectUnsubscribedErrorImpl() {
+        _super(this);
+        this.name = 'ObjectUnsubscribedError';
+        this.message = 'object unsubscribed';
+    };
+});
+
+var Subject = (function (_super) {
+    __extends(Subject, _super);
+    function Subject() {
+        var _this = _super.call(this) || this;
+        _this.closed = false;
+        _this.currentObservers = null;
+        _this.observers = [];
+        _this.isStopped = false;
+        _this.hasError = false;
+        _this.thrownError = null;
+        return _this;
+    }
+    Subject.prototype.lift = function (operator) {
+        var subject = new AnonymousSubject(this, this);
+        subject.operator = operator;
+        return subject;
+    };
+    Subject.prototype._throwIfClosed = function () {
+        if (this.closed) {
+            throw new ObjectUnsubscribedError();
+        }
+    };
+    Subject.prototype.next = function (value) {
+        var _this = this;
+        errorContext(function () {
+            var e_1, _a;
+            _this._throwIfClosed();
+            if (!_this.isStopped) {
+                if (!_this.currentObservers) {
+                    _this.currentObservers = Array.from(_this.observers);
+                }
+                try {
+                    for (var _b = __values(_this.currentObservers), _c = _b.next(); !_c.done; _c = _b.next()) {
+                        var observer = _c.value;
+                        observer.next(value);
+                    }
+                }
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+            }
+        });
+    };
+    Subject.prototype.error = function (err) {
+        var _this = this;
+        errorContext(function () {
+            _this._throwIfClosed();
+            if (!_this.isStopped) {
+                _this.hasError = _this.isStopped = true;
+                _this.thrownError = err;
+                var observers = _this.observers;
+                while (observers.length) {
+                    observers.shift().error(err);
+                }
+            }
+        });
+    };
+    Subject.prototype.complete = function () {
+        var _this = this;
+        errorContext(function () {
+            _this._throwIfClosed();
+            if (!_this.isStopped) {
+                _this.isStopped = true;
+                var observers = _this.observers;
+                while (observers.length) {
+                    observers.shift().complete();
+                }
+            }
+        });
+    };
+    Subject.prototype.unsubscribe = function () {
+        this.isStopped = this.closed = true;
+        this.observers = this.currentObservers = null;
+    };
+    Object.defineProperty(Subject.prototype, "observed", {
+        get: function () {
+            var _a;
+            return ((_a = this.observers) === null || _a === void 0 ? void 0 : _a.length) > 0;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Subject.prototype._trySubscribe = function (subscriber) {
+        this._throwIfClosed();
+        return _super.prototype._trySubscribe.call(this, subscriber);
+    };
+    Subject.prototype._subscribe = function (subscriber) {
+        this._throwIfClosed();
+        this._checkFinalizedStatuses(subscriber);
+        return this._innerSubscribe(subscriber);
+    };
+    Subject.prototype._innerSubscribe = function (subscriber) {
+        var _this = this;
+        var _a = this, hasError = _a.hasError, isStopped = _a.isStopped, observers = _a.observers;
+        if (hasError || isStopped) {
+            return EMPTY_SUBSCRIPTION;
+        }
+        this.currentObservers = null;
+        observers.push(subscriber);
+        return new Subscription(function () {
+            _this.currentObservers = null;
+            arrRemove(observers, subscriber);
+        });
+    };
+    Subject.prototype._checkFinalizedStatuses = function (subscriber) {
+        var _a = this, hasError = _a.hasError, thrownError = _a.thrownError, isStopped = _a.isStopped;
+        if (hasError) {
+            subscriber.error(thrownError);
+        }
+        else if (isStopped) {
+            subscriber.complete();
+        }
+    };
+    Subject.prototype.asObservable = function () {
+        var observable = new Observable();
+        observable.source = this;
+        return observable;
+    };
+    Subject.create = function (destination, source) {
+        return new AnonymousSubject(destination, source);
+    };
+    return Subject;
+}(Observable));
+var AnonymousSubject = (function (_super) {
+    __extends(AnonymousSubject, _super);
+    function AnonymousSubject(destination, source) {
+        var _this = _super.call(this) || this;
+        _this.destination = destination;
+        _this.source = source;
+        return _this;
+    }
+    AnonymousSubject.prototype.next = function (value) {
+        var _a, _b;
+        (_b = (_a = this.destination) === null || _a === void 0 ? void 0 : _a.next) === null || _b === void 0 ? void 0 : _b.call(_a, value);
+    };
+    AnonymousSubject.prototype.error = function (err) {
+        var _a, _b;
+        (_b = (_a = this.destination) === null || _a === void 0 ? void 0 : _a.error) === null || _b === void 0 ? void 0 : _b.call(_a, err);
+    };
+    AnonymousSubject.prototype.complete = function () {
+        var _a, _b;
+        (_b = (_a = this.destination) === null || _a === void 0 ? void 0 : _a.complete) === null || _b === void 0 ? void 0 : _b.call(_a);
+    };
+    AnonymousSubject.prototype._subscribe = function (subscriber) {
+        var _a, _b;
+        return (_b = (_a = this.source) === null || _a === void 0 ? void 0 : _a.subscribe(subscriber)) !== null && _b !== void 0 ? _b : EMPTY_SUBSCRIPTION;
+    };
+    return AnonymousSubject;
+}(Subject));
+
 var dateTimestampProvider = {
     now: function () {
         return (Date).now();
@@ -1437,6 +1980,9 @@ function popResultSelector(args) {
 }
 function popScheduler(args) {
     return isScheduler(last(args)) ? args.pop() : undefined;
+}
+function popNumber(args, defaultValue) {
+    return typeof last(args) === 'number' ? args.pop() : defaultValue;
 }
 
 var isArrayLike = (function (x) { return x && typeof x.length === 'number' && typeof x !== 'function'; });
@@ -1903,6 +2449,23 @@ function mergeMap(project, resultSelector, concurrent) {
     return operate(function (source, subscriber) { return mergeInternals(source, subscriber, project, concurrent); });
 }
 
+function mergeAll(concurrent) {
+    if (concurrent === void 0) { concurrent = Infinity; }
+    return mergeMap(identity, concurrent);
+}
+
+function concatAll() {
+    return mergeAll(1);
+}
+
+function concat() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+    }
+    return concatAll()(from(args, popScheduler(args)));
+}
+
 function timer(dueTime, intervalOrScheduler, scheduler) {
     if (dueTime === void 0) { dueTime = 0; }
     if (scheduler === void 0) { scheduler = async; }
@@ -1921,6 +2484,24 @@ function timer(dueTime, intervalOrScheduler, scheduler) {
             }
         }, due);
     });
+}
+
+function merge() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+    }
+    var scheduler = popScheduler(args);
+    var concurrent = popNumber(args, Infinity);
+    var sources = args;
+    return !sources.length
+        ?
+            EMPTY
+        : sources.length === 1
+            ?
+                innerFrom(sources[0])
+            :
+                mergeAll(concurrent)(from(sources, scheduler));
 }
 
 var isArray = Array.isArray;
@@ -1986,7 +2567,9 @@ function scanInternals(accumulator, seed, hasSeed, emitOnNext, emitBeforeComplet
                     accumulator(state, value, i)
                 :
                     ((hasState = true), value);
-        }, (function () {
+            emitOnNext && subscriber.next(state);
+        }, emitBeforeComplete &&
+            (function () {
                 hasState && subscriber.next(state);
                 subscriber.complete();
             })));
@@ -2004,8 +2587,31 @@ function toArray() {
     });
 }
 
+function fromSubscribable(subscribable) {
+    return new Observable(function (subscriber) { return subscribable.subscribe(subscriber); });
+}
+
+var DEFAULT_CONFIG = {
+    connector: function () { return new Subject(); },
+};
+function connect(selector, config) {
+    if (config === void 0) { config = DEFAULT_CONFIG; }
+    var connector = config.connector;
+    return operate(function (source, subscriber) {
+        var subject = connector();
+        innerFrom(selector(fromSubscribable(subject))).subscribe(subscriber);
+        subscriber.add(source.subscribe(subject));
+    });
+}
+
 function count(predicate) {
     return reduce(function (total, value, i) { return (!predicate || predicate(value, i) ? total + 1 : total); }, 0);
+}
+
+function ignoreElements() {
+    return operate(function (source, subscriber) {
+        source.subscribe(createOperatorSubscriber(subscriber, noop));
+    });
 }
 
 function distinct(keySelector, flushes) {
@@ -2019,6 +2625,26 @@ function distinct(keySelector, flushes) {
             }
         }));
         flushes && innerFrom(flushes).subscribe(createOperatorSubscriber(subscriber, function () { return distinctKeys.clear(); }, noop));
+    });
+}
+
+function endWith() {
+    var values = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        values[_i] = arguments[_i];
+    }
+    return function (source) { return concat(source, of.apply(void 0, __spreadArray([], __read(values)))); };
+}
+
+function isEmpty() {
+    return operate(function (source, subscriber) {
+        source.subscribe(createOperatorSubscriber(subscriber, function () {
+            subscriber.next(false);
+            subscriber.complete();
+        }, function () {
+            subscriber.next(true);
+            subscriber.complete();
+        }));
     });
 }
 
@@ -2059,6 +2685,10 @@ function repeat(countOrConfig) {
             };
             subscribeToSource();
         });
+}
+
+function scan(accumulator, seed) {
+    return operate(scanInternals(accumulator, seed, arguments.length >= 2, true));
 }
 
 function tap(observerOrNext, error, complete) {
@@ -3288,6 +3918,72 @@ async function findArtist(ipBaseNumber, creators, addWarning) {
   return artistMBID ? await tryFetchJSON(`/ws/js/entity/${artistMBID}`) : null;
 }
 
+function _extends() {
+  return _extends = Object.assign ? Object.assign.bind() : function (n) {
+    for (var e = 1; e < arguments.length; e++) {
+      var t = arguments[e];
+      for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
+    }
+    return n;
+  }, _extends.apply(null, arguments);
+}
+
+function createRelationshipState(attributes) {
+  return _extends({}, {
+    _lineage: [],
+    _original: null,
+    _status: 0,
+    attributes: null,
+    begin_date: null,
+    editsPending: false,
+    end_date: null,
+    ended: false,
+    entity0: null,
+    entity0_credit: '',
+    entity1: null,
+    entity1_credit: '',
+    id: -1,
+    linkOrder: 0,
+    linkTypeID: null
+  }, attributes);
+}
+function addWriterRelationship(work, artist, linkTypeID) {
+  MB.relationshipEditor.dispatch({
+    type: 'update-relationship-state',
+    sourceEntity: work,
+    batchSelectionCount: undefined,
+    creditsToChangeForSource: '',
+    creditsToChangeForTarget: '',
+    newRelationshipState: createRelationshipState({
+      _status: REL_STATUS_ADD,
+      backward: true,
+      entity0: artist,
+      entity1: work,
+      id: MB.relationshipEditor.getRelationshipStateId(),
+      linkTypeID: linkTypeID
+    }),
+    oldRelationshipState: null
+  });
+}
+function addArrangerRelationship(recording, artist) {
+  MB.relationshipEditor.dispatch({
+    type: 'update-relationship-state',
+    sourceEntity: recording,
+    batchSelectionCount: undefined,
+    creditsToChangeForSource: '',
+    creditsToChangeForTarget: '',
+    newRelationshipState: createRelationshipState({
+      _status: REL_STATUS_ADD,
+      backward: true,
+      entity0: artist,
+      entity1: recording,
+      id: MB.relationshipEditor.getRelationshipStateId(),
+      linkTypeID: ARRANGER_LINK_TYPE_ID
+    }),
+    oldRelationshipState: null
+  });
+}
+
 function mergeArrays(array1, array2) {
   return [...new Set([...array1, ...array2])];
 }
@@ -3404,72 +4100,6 @@ function WorkEditDataProvider(props) {
   });
 }
 
-function _extends() {
-  return _extends = Object.assign ? Object.assign.bind() : function (n) {
-    for (var e = 1; e < arguments.length; e++) {
-      var t = arguments[e];
-      for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
-    }
-    return n;
-  }, _extends.apply(null, arguments);
-}
-
-function createRelationshipState(attributes) {
-  return _extends({}, {
-    _lineage: [],
-    _original: null,
-    _status: 0,
-    attributes: null,
-    begin_date: null,
-    editsPending: false,
-    end_date: null,
-    ended: false,
-    entity0: null,
-    entity0_credit: '',
-    entity1: null,
-    entity1_credit: '',
-    id: -1,
-    linkOrder: 0,
-    linkTypeID: null
-  }, attributes);
-}
-function addWriterRelationship(work, artist, linkTypeID) {
-  MB.relationshipEditor.dispatch({
-    type: 'update-relationship-state',
-    sourceEntity: work,
-    batchSelectionCount: undefined,
-    creditsToChangeForSource: '',
-    creditsToChangeForTarget: '',
-    newRelationshipState: createRelationshipState({
-      _status: REL_STATUS_ADD,
-      backward: true,
-      entity0: artist,
-      entity1: work,
-      id: MB.relationshipEditor.getRelationshipStateId(),
-      linkTypeID: linkTypeID
-    }),
-    oldRelationshipState: null
-  });
-}
-function addArrangerRelationship(recording, artist) {
-  MB.relationshipEditor.dispatch({
-    type: 'update-relationship-state',
-    sourceEntity: recording,
-    batchSelectionCount: undefined,
-    creditsToChangeForSource: '',
-    creditsToChangeForTarget: '',
-    newRelationshipState: createRelationshipState({
-      _status: REL_STATUS_ADD,
-      backward: true,
-      entity0: artist,
-      entity1: recording,
-      id: MB.relationshipEditor.getRelationshipStateId(),
-      linkTypeID: ARRANGER_LINK_TYPE_ID
-    }),
-    oldRelationshipState: null
-  });
-}
-
 // addapted from https://github.com/metabrainz/musicbrainz-server/blob/dccbf69fd541cceebdb5908f58589483cf1b98e3/root/static/scripts/common/utility/compare.js
 
 function compareStrings(a, b) {
@@ -3503,108 +4133,6 @@ function* iterateRelationshipsInTargetTypeGroup(targetTypeGroup) {
       yield* MB.tree.iterate(linkPhraseGroup.relationships);
     }
   }
-}
-
-// src/i18n/create-collator.ts
-
-// src/i18n/utils.ts
-var RTL_SCRIPTS = /* @__PURE__ */ new Set([
-  "Avst",
-  "Arab",
-  "Armi",
-  "Syrc",
-  "Samr",
-  "Mand",
-  "Thaa",
-  "Mend",
-  "Nkoo",
-  "Adlm",
-  "Rohg",
-  "Hebr"
-]);
-var RTL_LANGS = /* @__PURE__ */ new Set([
-  "ae",
-  "ar",
-  "arc",
-  "bcc",
-  "bqi",
-  "ckb",
-  "dv",
-  "fa",
-  "glk",
-  "he",
-  "ku",
-  "mzn",
-  "nqo",
-  "pnb",
-  "ps",
-  "sd",
-  "ug",
-  "ur",
-  "yi"
-]);
-function isRTL$1(locale) {
-  if (Intl.Locale) {
-    const script = new Intl.Locale(locale).maximize().script ?? "";
-    return RTL_SCRIPTS.has(script);
-  }
-  const lang = locale.split("-")[0];
-  return RTL_LANGS.has(lang);
-}
-function getReadingDirection(locale) {
-  return isRTL$1(locale) ? "rtl" : "ltr";
-}
-
-// src/i18n/create-default-locale.ts
-function getDefaultLocale() {
-  let locale = typeof navigator !== "undefined" && // @ts-ignore
-  (navigator.language || navigator.userLanguage) || "en-US";
-  return {
-    locale,
-    direction: getReadingDirection(locale)
-  };
-}
-var currentLocale = getDefaultLocale();
-var listeners = /* @__PURE__ */ new Set();
-function updateLocale() {
-  currentLocale = getDefaultLocale();
-  for (const listener of listeners) {
-    listener(currentLocale);
-  }
-}
-function createDefaultLocale() {
-  const defaultSSRLocale = {
-    locale: "en-US",
-    direction: "ltr"
-  };
-  const [defaultClientLocale, setDefaultClientLocale] = solidJs.createSignal(currentLocale);
-  const defaultLocale = solidJs.createMemo(
-    () => web.isServer ? defaultSSRLocale : defaultClientLocale()
-  );
-  solidJs.onMount(() => {
-    if (listeners.size === 0) {
-      window.addEventListener("languagechange", updateLocale);
-    }
-    listeners.add(setDefaultClientLocale);
-    solidJs.onCleanup(() => {
-      listeners.delete(setDefaultClientLocale);
-      if (listeners.size === 0) {
-        window.removeEventListener("languagechange", updateLocale);
-      }
-    });
-  });
-  return {
-    locale: () => defaultLocale().locale,
-    direction: () => defaultLocale().direction
-  };
-}
-
-// src/i18n/i18n-provider.tsx
-var I18nContext = solidJs.createContext();
-function useLocale() {
-  const defaultLocale = createDefaultLocale();
-  const context = solidJs.useContext(I18nContext);
-  return context || defaultLocale;
 }
 
 /**
@@ -5331,7 +5859,7 @@ function usePopperContext() {
 }
 
 // src/popper/popper-arrow.tsx
-var _tmpl$$c = /* @__PURE__ */ web.template(`<svg display="block" viewBox="0 0 30 30" style="transform:scale(1.02)"><g><path fill="none" d="M23,27.8c1.1,1.2,3.4,2.2,5,2.2h2H0h2c1.7,0,3.9-1,5-2.2l6.6-7.2c0.7-0.8,2-0.8,2.7,0L23,27.8L23,27.8z"></path><path stroke="none" d="M23,27.8c1.1,1.2,3.4,2.2,5,2.2h2H0h2c1.7,0,3.9-1,5-2.2l6.6-7.2c0.7-0.8,2-0.8,2.7,0L23,27.8L23,27.8z">`);
+var _tmpl$$d = /* @__PURE__ */ web.template(`<svg display="block" viewBox="0 0 30 30" style="transform:scale(1.02)"><g><path fill="none" d="M23,27.8c1.1,1.2,3.4,2.2,5,2.2h2H0h2c1.7,0,3.9-1,5-2.2l6.6-7.2c0.7-0.8,2-0.8,2.7,0L23,27.8L23,27.8z"></path><path stroke="none" d="M23,27.8c1.1,1.2,3.4,2.2,5,2.2h2H0h2c1.7,0,3.9-1,5-2.2l6.6-7.2c0.7-0.8,2-0.8,2.7,0L23,27.8L23,27.8z">`);
 var DEFAULT_SIZE = 30;
 var HALF_DEFAULT_SIZE = DEFAULT_SIZE / 2;
 var ROTATION_DEG = {
@@ -5379,7 +5907,7 @@ function PopperArrow(props) {
     }
   }, others, {
     get children() {
-      const _el$ = _tmpl$$c(), _el$2 = _el$.firstChild;
+      const _el$ = _tmpl$$d(), _el$2 = _el$.firstChild;
       web.effect(() => web.setAttribute(_el$2, "transform", rotate()));
       return _el$;
     }
@@ -6344,14 +6872,6 @@ function createDisclosureState(props = {}) {
   };
 }
 
-// src/primitives/create-register-id/create-register-id.ts
-function createRegisterId(setter) {
-  return (id) => {
-    setter(id);
-    return () => setter(void 0);
-  };
-}
-
 // src/reactivity/lib.ts
 var access = (v) => typeof v === "function" ? v() : v;
 
@@ -7074,14 +7594,14 @@ function buildOptionListFromKeys(options, textAttr, valueAttr) {
   return getOptionsByParentId(null, 0);
 }
 
-var _tmpl$$b = /*#__PURE__*/web.template(`<div>`);
+var _tmpl$$c = /*#__PURE__*/web.template(`<div>`);
 function FormRow(props) {
   props = solidJs.mergeProps({
     hasNoLabel: false,
     hasNoMarge: false
   }, props);
   return (() => {
-    var _el$ = _tmpl$$b();
+    var _el$ = _tmpl$$c();
     var _ref$ = props.rowRef;
     typeof _ref$ === "function" ? web.use(_ref$, _el$) : props.rowRef = _el$;
     web.insert(_el$, () => props.children);
@@ -7090,7 +7610,7 @@ function FormRow(props) {
   })();
 }
 
-var _tmpl$$a = /*#__PURE__*/web.template(`<tr><td class=section></td><td>`),
+var _tmpl$$b = /*#__PURE__*/web.template(`<tr><td class=section></td><td>`),
   _tmpl$2$9 = /*#__PURE__*/web.template(`<select><option value=""> `),
   _tmpl$3$6 = /*#__PURE__*/web.template(`<option>`);
 function SelectBox(props) {
@@ -7103,7 +7623,7 @@ function SelectBox(props) {
       return web.createComponent(StrippedSelectBox, children);
     },
     get children() {
-      var _el$ = _tmpl$$a(),
+      var _el$ = _tmpl$$b(),
         _el$2 = _el$.firstChild,
         _el$3 = _el$2.nextSibling;
       web.insert(_el$2, () => local.label);
@@ -7185,7 +7705,7 @@ function removeAtIndex(array, index) {
   return [...array.slice(0, index), ...array.slice(index + 1)];
 }
 
-var _tmpl$$9 = /*#__PURE__*/web.template(`<tr><td></td><td></td><td><button class="nobutton icon remove-item"title="Remove attribute">`),
+var _tmpl$$a = /*#__PURE__*/web.template(`<tr><td></td><td></td><td><button class="nobutton icon remove-item"title="Remove attribute">`),
   _tmpl$2$8 = /*#__PURE__*/web.template(`<input type=text>`);
 function byId(list) {
   return Object.fromEntries(list.map(item => [item.id, item]));
@@ -7207,7 +7727,7 @@ function WorkAttributeRow(props) {
   });
   const [allowedValues] = solidJs.createResource(typeId, async typeId => (await lazyAllowedValuesByID).get(typeId));
   return (() => {
-    var _el$ = _tmpl$$9(),
+    var _el$ = _tmpl$$a(),
       _el$2 = _el$.firstChild,
       _el$3 = _el$2.nextSibling,
       _el$4 = _el$3.nextSibling,
@@ -7266,7 +7786,7 @@ function WorkAttributeRow(props) {
 }
 web.delegateEvents(["click"]);
 
-var _tmpl$$8 = /*#__PURE__*/web.template(`<fieldset><legend>Work attributes</legend><table id=work-attributes class=row-form data-bind="delegatedHandler: 'click'"><tbody><tr><td></td><td class=add-item colspan=2><button class="with-label add-item"type=button title="Add work attribute">Add work attribute`),
+var _tmpl$$9 = /*#__PURE__*/web.template(`<fieldset><legend>Work attributes</legend><table id=work-attributes class=row-form data-bind="delegatedHandler: 'click'"><tbody><tr><td></td><td class=add-item colspan=2><button class="with-label add-item"type=button title="Add work attribute">Add work attribute`),
   _tmpl$2$7 = /*#__PURE__*/web.template(`<tr><td>Loading...`);
 function WorkAttributes() {
   const {
@@ -7274,7 +7794,7 @@ function WorkAttributes() {
     setEditData
   } = useWorkEditData();
   return (() => {
-    var _el$ = _tmpl$$8(),
+    var _el$ = _tmpl$$9(),
       _el$2 = _el$.firstChild,
       _el$3 = _el$2.nextSibling,
       _el$4 = _el$3.firstChild,
@@ -7312,7 +7832,7 @@ function styleInject(css, ref) {
   if ( ref === void 0 ) ref = {};
   var insertAt = ref.insertAt;
 
-  if (typeof document === 'undefined') { return; }
+  if (!css || typeof document === 'undefined') { return; }
 
   var head = document.head || document.getElementsByTagName('head')[0];
   var style = document.createElement('style');
@@ -7335,10 +7855,10 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z = ".edit-work-button-container{.work-dialog{display:none;div.half-width{width:100%;fieldset{input,label.row,select{width:100%}div.row,div.select-list-row,div.text-list-row{display:flex}div.row{margin:6px}div.form-row-add{width:100%}div.form-row-select-list,div.form-row-text-list{flex:1;margin-left:0}}}table.row-form{>tbody>tr,>thead>tr{>td:first-child,>th:first-child{padding:0 6px}>td,>th{background-color:unset}}}}.work-dialog[data-expanded]{display:inherit}}";
-styleInject(css_248z);
+var css_248z$1 = ".edit-work-button-container{.work-dialog{display:none;div.half-width{width:100%;fieldset{input,label.row,select{width:100%}div.row,div.select-list-row,div.text-list-row{display:flex}div.row{margin:6px}div.form-row-add{width:100%}div.form-row-select-list,div.form-row-text-list{flex:1;margin-left:0}}}table.row-form{>tbody>tr,>thead>tr{>td:first-child,>th:first-child{padding:0 6px}>td,>th{background-color:unset}}}}.work-dialog[data-expanded]{display:inherit}}";
+styleInject(css_248z$1);
 
-var _tmpl$$7 = /*#__PURE__*/web.template(`<label>ISWCs:`),
+var _tmpl$$8 = /*#__PURE__*/web.template(`<label>ISWCs:`),
   _tmpl$2$6 = /*#__PURE__*/web.template(`<div class=form-row-text-list><div class=form-row-add><button class="add-item with-label"type=button title="Add ISWC">Add ISWC`),
   _tmpl$3$5 = /*#__PURE__*/web.template(`<div class=text-list-row><input class="value with-button"type=text><button class="nobutton icon remove-item"title="Remove ISWC">`);
 function WorkISWCsEditor() {
@@ -7348,7 +7868,7 @@ function WorkISWCsEditor() {
   } = useWorkEditData();
   return web.createComponent(FormRow, {
     get children() {
-      return [_tmpl$$7(), (() => {
+      return [_tmpl$$8(), (() => {
         var _el$2 = _tmpl$2$6(),
           _el$3 = _el$2.firstChild,
           _el$4 = _el$3.firstChild;
@@ -7440,14 +7960,14 @@ function getSelectValue(field, options, allowEmpty = false) {
   return String(value);
 }
 
-var _tmpl$$6 = /*#__PURE__*/web.template(`<option>`),
+var _tmpl$$7 = /*#__PURE__*/web.template(`<option>`),
   _tmpl$2$5 = /*#__PURE__*/web.template(`<optgroup>`),
   _tmpl$3$4 = /*#__PURE__*/web.template(`<select>`),
   _tmpl$4$3 = /*#__PURE__*/web.template(`<option value=""> `);
 const buildOption = (option, value) => {
   const values = Array.isArray(value) ? value : [value];
   return (() => {
-    var _el$ = _tmpl$$6();
+    var _el$ = _tmpl$$7();
     web.insert(_el$, (() => {
       var _c$ = web.memo(() => typeof option.label === 'function');
       return () => _c$() ? option.label() : option.label;
@@ -7540,13 +8060,13 @@ function subfieldErrors(formOrField, accum = []) {
   return result;
 }
 
-var _tmpl$$5 = /*#__PURE__*/web.template(`<ul class=errors>`),
+var _tmpl$$6 = /*#__PURE__*/web.template(`<ul class=errors>`),
   _tmpl$2$4 = /*#__PURE__*/web.template(`<li>`);
 function FieldErrorsList(props) {
   var _props$errors;
   if ((_props$errors = props.errors) != null && _props$errors.length) {
     return (() => {
-      var _el$ = _tmpl$$5();
+      var _el$ = _tmpl$$6();
       web.insert(_el$, web.createComponent(solidJs.For, {
         get each() {
           return props.errors;
@@ -7575,7 +8095,7 @@ function FieldErrors(props) {
   });
 }
 
-var _tmpl$$4 = /*#__PURE__*/web.template(`<label>`),
+var _tmpl$$5 = /*#__PURE__*/web.template(`<label>`),
   _tmpl$2$3 = /*#__PURE__*/web.template(`<div class=form-row-select-list>`),
   _tmpl$3$3 = /*#__PURE__*/web.template(`<div class=select-list-row> <button type=button>`),
   _tmpl$4$2 = /*#__PURE__*/web.template(`<div class=form-row-add><button class="with-label add-item"type=button>`);
@@ -7586,7 +8106,7 @@ function FormRowSelectList(props) {
   return web.createComponent(FormRow, {
     get children() {
       return [(() => {
-        var _el$ = _tmpl$$4();
+        var _el$ = _tmpl$$5();
         web.insert(_el$, () => props.label);
         return _el$;
       })(), (() => {
@@ -7645,7 +8165,7 @@ function FormRowSelectList(props) {
 }
 web.delegateEvents(["click"]);
 
-var _tmpl$$3 = /*#__PURE__*/web.template(`<div id=work-languages-editor>`);
+var _tmpl$$4 = /*#__PURE__*/web.template(`<div id=work-languages-editor>`);
 const FREQUENT_LANGUAGE = 2;
 const NON_FREQURENT_LANGUAGE = 1;
 // 0 means skip
@@ -7684,7 +8204,7 @@ function WorkLanguageEditor() {
     }
   });
   return (() => {
-    var _el$ = _tmpl$$3();
+    var _el$ = _tmpl$$4();
     web.insert(_el$, web.createComponent(FormRowSelectList, {
       addId: "add-language",
       addLabel: 'Add language',
@@ -7709,7 +8229,7 @@ function WorkLanguageEditor() {
   })();
 }
 
-var _tmpl$$2 = /*#__PURE__*/web.template(`<label class=required for=id-edit-work.name id=label-id-edit-work.name>Name:`),
+var _tmpl$$3 = /*#__PURE__*/web.template(`<label class=required for=id-edit-work.name id=label-id-edit-work.name>Name:`),
   _tmpl$2$2 = /*#__PURE__*/web.template(`<input id=id-edit-work.name name=edit-work.name type=text>`),
   _tmpl$3$2 = /*#__PURE__*/web.template(`<label for=id-edit-work.comment id=label-id-edit-work.comment>Disambiguation:`),
   _tmpl$4$1 = /*#__PURE__*/web.template(`<input id=id-edit-work.comment name=edit-work.comment type=text>`),
@@ -7762,7 +8282,7 @@ function WorkEditDialog(props) {
             web.addEventListener(_el$, "submit", props.onSubmit);
             web.insert(_el$4, web.createComponent(FormRow, {
               get children() {
-                return [_tmpl$$2(), (() => {
+                return [_tmpl$$3(), (() => {
                   var _el$7 = _tmpl$2$2();
                   _el$7.addEventListener("change", ev => setEditData('name', ev.target.value));
                   _el$7.required = true;
@@ -7834,7 +8354,7 @@ function WorkEditDialog(props) {
   });
 }
 
-var _tmpl$$1 = /*#__PURE__*/web.template(`<input type=checkbox class=work>`),
+var _tmpl$$2 = /*#__PURE__*/web.template(`<input type=checkbox class=work>`),
   _tmpl$2$1 = /*#__PURE__*/web.template(`<a class=wrap-anywhere>`),
   _tmpl$3$1 = /*#__PURE__*/web.template(`<h3 class=edit-work-button-container>`);
 function isNewWork(work) {
@@ -7879,7 +8399,7 @@ function WorkEditor(props) {
     },
     get children() {
       return [(() => {
-        var _el$ = _tmpl$$1();
+        var _el$ = _tmpl$$2();
         _el$.addEventListener("change", selectRecording);
         web.effect(() => _el$.checked = props.workState.isSelected);
         return _el$;
@@ -8008,42 +8528,50 @@ function createWork(attributes) {
   }, attributes));
 }
 
-async function importWorks(albumId, addWarning, clearWarnings) {
+async function importWorks(albumId, addWarning, clearWarnings, setProgress) {
   clearWarnings();
+  setProgress([0, 'Loading album info']);
   const albumBean = await albumInfo(albumId);
+
+  // map of promises so that we don't fetch the same artist multiple times
   const artistCache = new Map();
   const linkArtists = async (writers, creators, doLink) => {
-    from(writers || []).pipe(mergeMap(async author => await (artistCache.get(author.creatorIpBaseNumber) || artistCache.set(author.creatorIpBaseNumber, findArtist(author.creatorIpBaseNumber, creators, addWarning)).get(author.creatorIpBaseNumber))), filter(artist => artist !== null)).subscribe(doLink);
+    await lastValueFrom(from(writers || []).pipe(mergeMap(async author => await (artistCache.get(author.creatorIpBaseNumber) || artistCache.set(author.creatorIpBaseNumber, findArtist(author.creatorIpBaseNumber, creators, addWarning)).get(author.creatorIpBaseNumber))), filter(artist => artist !== null), tap(doLink), isEmpty()));
   };
   const linkWriters = async (work, writers, creators, linkTypeId) => {
-    linkArtists(writers, creators, artist => addWriterRelationship(work, artist, linkTypeId));
+    await linkArtists(writers, creators, artist => addWriterRelationship(work, artist, linkTypeId));
   };
   const linkArrangers = async (recording, arrangers, creators) => {
-    linkArtists(arrangers, creators, artist => addArrangerRelationship(recording, artist));
+    await linkArtists(arrangers, creators, artist => addArrangerRelationship(recording, artist));
   };
-  return await lastValueFrom(from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(mergeMap(([medium, recordingStateTree]) => {
+  const selectedRecordings = await lastValueFrom(from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(mergeMap(([medium, recordingStateTree]) => {
     return zip(from(albumBean.tracks), from(medium.tracks.map(track => trackRecordingState(track, recordingStateTree))));
   }), filter(trackAndRecordingState => {
     const [, recordingState] = trackAndRecordingState;
     return recordingState != null && recordingState.isSelected;
-  }), tap(([track, recordingState]) => {
-    const recording = recordingState.recording;
-    if (track[searchName(recording.name)] != recording.name) {
-      addWarning(`Work name of ${recording.name} is different than recording name, please verify`);
-    }
-  }), mergeMap(async ([track, recordingState]) => [track, recordingState.recording, await addWork(track, recordingState, addWarning)]), tap(([track, recording, workState]) => {
+  }), toArray()));
+  const linkCreators = async ([track, recording, workState]) => {
     const work = workState.work;
-    linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID);
-    linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID);
-    linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID);
-    linkArrangers(recording, track.arrangers, track.creators);
-  }), map(([,, workState]) => workState), count(workState => !workEditDataEqual(workState.editData, workState.originalEditData)), map(count => count > 0), tap(hasEdits => {
+    await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID);
+    await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID);
+    await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID);
+    await linkArrangers(recording, track.arrangers, track.creators);
+    return workState;
+  };
+  const maybeSetEditNote = pipe(count(workState => !workEditDataEqual(workState.editData, workState.originalEditData)), map(editedCount => editedCount > 0), tap(hasEdits => {
     if (hasEdits) {
       addEditNote(`Imported from ${albumUrl(albumId)}`);
     } else {
       addWarning('All works are up to date');
     }
-  })));
+  }));
+  const updateProgress = pipe(scan((accumaltor, workState) => [accumaltor[0] + 1, workState.editData.name], [0, ' ']), map(([count, name]) => [count / selectedRecordings.length, `Loaded ${name}`]), endWith([1, 'Done']), tap(setProgress));
+  return await lastValueFrom(from(selectedRecordings).pipe(tap(([track, recordingState]) => {
+    const recording = recordingState.recording;
+    if (track[searchName(recording.name)] != recording.name) {
+      addWarning(`Work name of ${recording.name} is different than recording name, please verify`);
+    }
+  }), mergeMap(async ([track, recordingState]) => [track, recordingState.recording, await addWork(track, recordingState, addWarning)]), mergeMap(linkCreators), connect(shared => merge(shared.pipe(maybeSetEditNote), shared.pipe(updateProgress, ignoreElements())))));
 }
 
 async function submitWork(form) {
@@ -8060,8 +8588,12 @@ async function submitWork(form) {
     }
   })));
 }
-async function submitWorks() {
-  const addWorkRelationships = await firstValueFrom(from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(mergeMap(([, mediumState]) => from(MB.tree.iterate(mediumState))), mergeMap(recordingState => zip(from(MB.tree.iterate(recordingState.relatedWorks)), of(recordingState).pipe(repeat()))), distinct(([relatedWork]) => relatedWork.work.id), map(([relatedWork, recordingState]) => [recordingState, document.getElementById(`submit-work-${relatedWork.work.id}`)]), filter(([, form]) => form !== null)).pipe(mergeMap(async ([recordingState, form]) => [recordingState, await submitWork(form)]), map(([recordingState, newWork]) => [MB.tree.find(recordingState.targetTypeGroups, 'work', compareTargetTypeWithGroup, null), newWork]), filter(pair => pair[0] !== null), mergeMap(([workTargetGroup, newWork]) => zip(from(iterateRelationshipsInTargetTypeGroup(workTargetGroup)), of(newWork).pipe(repeat()))), filter(([relationship]) => relationship._status === REL_STATUS_ADD), toArray()));
+async function submitWorks(setProgress) {
+  setProgress([0, 'Submitting works']);
+  const worksToSubmit = await firstValueFrom(from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(mergeMap(([, mediumState]) => from(MB.tree.iterate(mediumState))), mergeMap(recordingState => zip(from(MB.tree.iterate(recordingState.relatedWorks)), of(recordingState).pipe(repeat()))), distinct(([relatedWork]) => relatedWork.work.id), map(([relatedWork, recordingState]) => [recordingState, document.getElementById(`submit-work-${relatedWork.work.id}`)]), filter(([, form]) => form !== null), toArray()));
+  const updateProgress = pipe(scan((accumaltor, work) => [accumaltor[0] + 1, work.name], [0, ' ']), map(([count, name]) => [count / worksToSubmit.length, `Submitted ${name}`]), endWith([1, 'Done']), tap(setProgress));
+  const workReplationships = pipe(map(([recordingState, newWork]) => [MB.tree.find(recordingState.targetTypeGroups, 'work', compareTargetTypeWithGroup, null), newWork]), filter(pair => pair[0] !== null), mergeMap(([workTargetGroup, newWork]) => zip(from(iterateRelationshipsInTargetTypeGroup(workTargetGroup)), of(newWork).pipe(repeat()))), filter(([relationship]) => relationship._status === REL_STATUS_ADD), toArray());
+  const addWorkRelationships = await firstValueFrom(from(worksToSubmit).pipe(mergeMap(async ([recordingState, form]) => [recordingState, await submitWork(form)]), connect(shared => merge(shared.pipe(workReplationships), shared.pipe(map(([, newWork]) => newWork), updateProgress, ignoreElements())))));
   MB.relationshipEditor.dispatch({
     type: 'update-submitted-relationships',
     edits: addWorkRelationships.map(([relationship, newWork]) => [[relationship], {
@@ -8115,13 +8647,69 @@ function validateSelection(selectedRecordings) {
   return SelectionStatus.VALID;
 }
 
-var _tmpl$ = /*#__PURE__*/web.template(`<img src=https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg alt="ACUM logo"style=width:16px;height:16px;margin:2px>`),
+var css_248z = ".progressbar{.ui-progressbar{height:17px;line-height:17px;position:relative;.ui-progressbar-value{position:absolute;width:var(--kb-progress-fill-width);z-index:1}.values{display:flex;justify-content:space-between;position:absolute;width:100%;z-index:2}}}";
+styleInject(css_248z);
+
+var _tmpl$$1 = /*#__PURE__*/web.template(`<p class=warning>`);
+const makeWarningContext = () => {
+  const [state, setState] = solidJs.createSignal(new Set(["Only use this option after you've tried searching for the work(s) you want to add, and are certain they do not already exist on MusicBrainz."]));
+  return {
+    state,
+    addWarning: message => setState(new Set([...state(), message])),
+    clearWarnings: (pattern = /.*/) => {
+      setState(new Set([...state()].filter(warning => !warning.match(pattern))));
+    }
+  };
+};
+const WarningsContext = solidJs.createContext();
+function WarningsProvider(props) {
+  const {
+    state,
+    addWarning,
+    clearWarnings
+  } = makeWarningContext();
+  return web.createComponent(WarningsContext.Provider, {
+    value: {
+      state,
+      addWarning,
+      clearWarnings
+    },
+    get children() {
+      return props.children;
+    }
+  });
+}
+function useWarnings() {
+  const context = solidJs.useContext(WarningsContext);
+  if (!context) {
+    throw new Error('useWarnings should be called inside WarningsProvider');
+  }
+  return context;
+}
+function Warnings() {
+  const {
+    state
+  } = useWarnings();
+  return web.createComponent(solidJs.For, {
+    get each() {
+      return [...state()];
+    },
+    children: message => (() => {
+      var _el$ = _tmpl$$1();
+      web.insert(_el$, message);
+      return _el$;
+    })()
+  });
+}
+
+var _tmpl$ = /*#__PURE__*/web.template(`<img src=https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg alt="ACUM logo">`),
   _tmpl$2 = /*#__PURE__*/web.template(`<span>Import works from ACUM`),
   _tmpl$3 = /*#__PURE__*/web.template(`<span>Submit works`),
   _tmpl$4 = /*#__PURE__*/web.template(`<span>Cancel`),
   _tmpl$5 = /*#__PURE__*/web.template(`<div class=buttons><input type=text placeholder="Album ID">`),
   _tmpl$6 = /*#__PURE__*/web.template(`<div><p>This will add a new work for each checked recording that has no work already`),
-  _tmpl$7 = /*#__PURE__*/web.template(`<div id=acum-work-import-container>`);
+  _tmpl$7 = /*#__PURE__*/web.template(`<div class=values>`),
+  _tmpl$8 = /*#__PURE__*/web.template(`<div id=acum-work-import-container>`);
 function AcumImporter(props) {
   const [albumId, setAlbumId] = solidJs.createSignal('Album ID');
   const [selectedRecordings, setSelectedRecordings] = solidJs.createSignal(MB.relationshipEditor.state.selectedRecordings);
@@ -8136,6 +8724,8 @@ function AcumImporter(props) {
     clearWarnings
   } = useWarnings();
   const [worksPending, setWorksPending] = solidJs.createSignal(false);
+  const [progress, setProgress] = solidJs.createSignal([0, '']);
+
   // need dependencies explicit to avoid infinite recursion
   // otherwise, the warning actions will trigger the effect again
   solidJs.createEffect(solidJs.on([albumIdValid, selectionStatus], () => {
@@ -8161,7 +8751,7 @@ function AcumImporter(props) {
   });
   function submitWorks$1() {
     clearWarnings(/submission failed.*/);
-    submitWorks().then(() => {
+    submitWorks(setProgress).then(() => {
       setWorksPending(false);
       clearWarnings();
     }).catch(err => addWarning(`submission failed: ${err}`));
@@ -8173,16 +8763,24 @@ function AcumImporter(props) {
   return [(() => {
     var _el$ = _tmpl$5(),
       _el$4 = _el$.firstChild;
+    _el$.style.setProperty("display", "flex");
     web.insert(_el$, web.createComponent(Button, {
       get disabled() {
         return !inputValid();
       },
-      onclick: async () => setWorksPending(await importWorks(albumId(), addWarning, clearWarnings)),
+      onclick: async () => setWorksPending(await importWorks(albumId(), addWarning, clearWarnings, setProgress)),
       get children() {
-        return [_tmpl$(), _tmpl$2()];
+        return [(() => {
+          var _el$2 = _tmpl$();
+          _el$2.style.setProperty("width", "16px");
+          _el$2.style.setProperty("height", "16px");
+          _el$2.style.setProperty("margin", "2px");
+          return _el$2;
+        })(), _tmpl$2()];
       }
     }), _el$4);
     web.use(validateAlbumId, _el$4, () => [[albumId, setAlbumId], setAlbumIdValid]);
+    _el$4.style.setProperty("margin", "0 7px 0 0");
     web.insert(_el$, web.createComponent(Button, {
       id: "acum-work-submit",
       "class": "worksubmit",
@@ -8205,12 +8803,63 @@ function AcumImporter(props) {
         return _tmpl$4();
       }
     }), null);
+    web.insert(_el$, web.createComponent(ProgressBar, {
+      get value() {
+        return progress()[0];
+      },
+      get label() {
+        return progress()[1];
+      },
+      minValue: 0,
+      maxValue: 1,
+      style: {
+        'flex-grow': 1,
+        padding: '5px 10px 5px 7px'
+      }
+    }), null);
     return _el$;
   })(), _tmpl$6(), web.createComponent(Warnings, {})];
 }
+function ProgressBar(props) {
+  const [local, root] = solidJs.splitProps(props, ['label']);
+  return web.createComponent(Progress, web.mergeProps({
+    "class": "progressbar"
+  }, root, {
+    get children() {
+      return web.createComponent(Progress.Track, {
+        "class": "ui-progressbar ui-widget ui-widget-content ui-corner-all",
+        get children() {
+          return [web.createComponent(Progress.Fill, {
+            "class": "ui-progressbar-value ui-corner-left",
+            children: "\xA0"
+          }), (() => {
+            var _el$8 = _tmpl$7();
+            web.insert(_el$8, web.createComponent(Progress.Label, {
+              get children() {
+                return local.label;
+              }
+            }), null);
+            web.insert(_el$8, web.createComponent(solidJs.Show, {
+              get when() {
+                return local.label != '';
+              },
+              get fallback() {
+                return "\xA0";
+              },
+              get children() {
+                return web.createComponent(Progress.ValueLabel, {});
+              }
+            }), null);
+            return _el$8;
+          })()];
+        }
+      });
+    }
+  }));
+}
 function createUI(recordingCheckboxes) {
   const toolbox = releaseEditorTools();
-  const container = _tmpl$7();
+  const container = _tmpl$8();
   toolbox.append(container);
   web.render(() => web.createComponent(WarningsProvider, {
     get children() {
