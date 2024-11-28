@@ -1,7 +1,7 @@
 import {distinct, filter, firstValueFrom, from, map, mergeMap, of, repeat, tap, toArray, zip} from 'rxjs';
-import {fetchJSON, fetchResponse} from 'src/common/lib/fetch';
 import {compareTargetTypeWithGroup} from 'src/common/musicbrainz/compare';
 import {EDIT_WORK_CREATE, REL_STATUS_ADD, WS_EDIT_RESPONSE_OK} from 'src/common/musicbrainz/constants';
+import {fetchJSON, fetchResponse} from 'src/common/musicbrainz/fetch';
 import {iterateRelationshipsInTargetTypeGroup} from 'src/common/musicbrainz/type-group';
 
 async function submitWork(form: HTMLFormElement): Promise<WorkT> {

@@ -1,4 +1,4 @@
-import {tryFetchJSON} from 'src/common/lib/fetch';
+import {tryFetchJSON} from 'src/common/musicbrainz/fetch';
 import {CreatorFull, Creators, IPBaseNumber} from './acum';
 import {AddWarning} from './components/warnings';
 

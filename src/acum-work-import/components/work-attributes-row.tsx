@@ -1,10 +1,10 @@
 import PLazy from 'p-lazy';
 import {Accessor, createResource, createSignal, Show} from 'solid-js';
 import {SetStoreFunction} from 'solid-js/store';
-import {tryFetchJSON} from 'src/common/lib/fetch';
 import parseIntegerOrNull from 'src/common/lib/parse-integer-or-null';
 import {removeAtIndex} from 'src/common/lib/remove-at-index';
 import {buildOptionList, buildOptionListFromKeys} from 'src/common/musicbrainz/build-options-list';
+import {tryFetchJSON} from 'src/common/musicbrainz/fetch';
 import {SelectBox} from './select-box';
 import {WorkEditData} from './work-edit-data';
 
