@@ -38,6 +38,9 @@ export async function importWorks(
   clearWarnings();
   setProgress([0, 'Loading album info']);
 
+  const addTrackWarning = (track: WorkVersion) => (warning: string) =>
+    addWarning(`Track ${track.albumTrackNumber}: ${warning}`);
+
   const albumBean = await albumInfo(albumId);
 
   // map of promises so that we don't fetch the same artist multiple times
@@ -46,7 +49,8 @@ export async function importWorks(
   const linkArtists = async (
     writers: ReadonlyArray<Creator> | undefined,
     creators: Creators,
-    doLink: (artist: ArtistT) => void
+    doLink: (artist: ArtistT) => void,
+    addWarning: AddWarning
   ) => {
     await lastValueFrom(
       from(writers || []).pipe(
@@ -68,17 +72,24 @@ export async function importWorks(
     work: WorkT,
     writers: ReadonlyArray<Creator> | undefined,
     creators: Creators,
-    linkTypeId: number
+    linkTypeId: number,
+    addWarning: AddWarning
   ) => {
-    await linkArtists(writers, creators, (artist: ArtistT) => addWriterRelationship(work, artist, linkTypeId));
+    await linkArtists(
+      writers,
+      creators,
+      (artist: ArtistT) => addWriterRelationship(work, artist, linkTypeId),
+      addWarning
+    );
   };
 
   const linkArrangers = async (
     recording: RecordingT,
     arrangers: ReadonlyArray<Creator> | undefined,
-    creators: Creators
+    creators: Creators,
+    addWarning: AddWarning
   ) => {
-    await linkArtists(arrangers, creators, (artist: ArtistT) => addArrangerRelationship(recording, artist));
+    await linkArtists(arrangers, creators, (artist: ArtistT) => addArrangerRelationship(recording, artist), addWarning);
   };
 
   const selectedRecordings = await lastValueFrom(
@@ -97,16 +108,17 @@ export async function importWorks(
     )
   );
 
-  const linkCreators = async ([track, recording, workState]: readonly [
+  const linkCreators = async ([track, recording, workState, addWarning]: readonly [
     WorkVersion,
     RecordingT,
     WorkStateWithEditDataT,
+    AddWarning,
   ]): Promise<WorkStateWithEditDataT> => {
     const work = workState.work;
-    await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID);
-    await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID);
-    await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID);
-    await linkArrangers(recording, track.arrangers, track.creators);
+    await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID, addWarning);
+    await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID, addWarning);
+    await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID, addWarning);
+    await linkArrangers(recording, track.arrangers, track.creators, addWarning);
     return workState;
   };
 
@@ -131,15 +143,16 @@ export async function importWorks(
 
   return await lastValueFrom(
     from(selectedRecordings).pipe(
-      tap(([track, recordingState]) => {
+      map(([track, recordingState]) => [track, recordingState, addTrackWarning(track)] as const),
+      tap(([track, recordingState, addWarning]) => {
         const recording = recordingState.recording;
         if (track[searchName(recording.name)] != recording.name) {
           addWarning(`Work name of ${recording.name} is different than recording name, please verify`);
         }
       }),
       mergeMap(
-        async ([track, recordingState]) =>
-          [track, recordingState.recording, await addWork(track, recordingState, addWarning)] as const
+        async ([track, recordingState, addWarning]) =>
+          [track, recordingState.recording, await addWork(track, recordingState, addWarning), addWarning] as const
       ),
       mergeMap(linkCreators),
       connect(shared => merge(shared.pipe(maybeSetEditNote), shared.pipe(updateProgress, ignoreElements())))
