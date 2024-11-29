@@ -8531,18 +8531,19 @@ function createWork(attributes) {
 async function importWorks(albumId, addWarning, clearWarnings, setProgress) {
   clearWarnings();
   setProgress([0, 'Loading album info']);
+  const addTrackWarning = track => warning => addWarning(`Track ${track.albumTrackNumber}: ${warning}`);
   const albumBean = await albumInfo(albumId);
 
   // map of promises so that we don't fetch the same artist multiple times
   const artistCache = new Map();
-  const linkArtists = async (writers, creators, doLink) => {
+  const linkArtists = async (writers, creators, doLink, addWarning) => {
     await lastValueFrom(from(writers || []).pipe(mergeMap(async author => await (artistCache.get(author.creatorIpBaseNumber) || artistCache.set(author.creatorIpBaseNumber, findArtist(author.creatorIpBaseNumber, creators, addWarning)).get(author.creatorIpBaseNumber))), filter(artist => artist !== null), tap(doLink), isEmpty()));
   };
-  const linkWriters = async (work, writers, creators, linkTypeId) => {
-    await linkArtists(writers, creators, artist => addWriterRelationship(work, artist, linkTypeId));
+  const linkWriters = async (work, writers, creators, linkTypeId, addWarning) => {
+    await linkArtists(writers, creators, artist => addWriterRelationship(work, artist, linkTypeId), addWarning);
   };
-  const linkArrangers = async (recording, arrangers, creators) => {
-    await linkArtists(arrangers, creators, artist => addArrangerRelationship(recording, artist));
+  const linkArrangers = async (recording, arrangers, creators, addWarning) => {
+    await linkArtists(arrangers, creators, artist => addArrangerRelationship(recording, artist), addWarning);
   };
   const selectedRecordings = await lastValueFrom(from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(mergeMap(([medium, recordingStateTree]) => {
     return zip(from(albumBean.tracks), from(medium.tracks.map(track => trackRecordingState(track, recordingStateTree))));
@@ -8550,12 +8551,12 @@ async function importWorks(albumId, addWarning, clearWarnings, setProgress) {
     const [, recordingState] = trackAndRecordingState;
     return recordingState != null && recordingState.isSelected;
   }), toArray()));
-  const linkCreators = async ([track, recording, workState]) => {
+  const linkCreators = async ([track, recording, workState, addWarning]) => {
     const work = workState.work;
-    await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID);
-    await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID);
-    await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID);
-    await linkArrangers(recording, track.arrangers, track.creators);
+    await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID, addWarning);
+    await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID, addWarning);
+    await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID, addWarning);
+    await linkArrangers(recording, track.arrangers, track.creators, addWarning);
     return workState;
   };
   const maybeSetEditNote = pipe(count(workState => !workEditDataEqual(workState.editData, workState.originalEditData)), map(editedCount => editedCount > 0), tap(hasEdits => {
@@ -8565,13 +8566,13 @@ async function importWorks(albumId, addWarning, clearWarnings, setProgress) {
       addWarning('All works are up to date');
     }
   }));
-  const updateProgress = pipe(scan((accumaltor, workState) => [accumaltor[0] + 1, workState.editData.name], [0, ' ']), map(([count, name]) => [count / selectedRecordings.length, `Loaded ${name}`]), endWith([1, 'Done']), tap(setProgress));
-  return await lastValueFrom(from(selectedRecordings).pipe(tap(([track, recordingState]) => {
+  const updateProgress = pipe(scan(accumaltor => accumaltor + 1, 0), map(count => [count / selectedRecordings.length, `Loaded ${count}/${selectedRecordings.length} works`]), endWith([1, 'Done']), tap(setProgress));
+  return await lastValueFrom(from(selectedRecordings).pipe(map(([track, recordingState]) => [track, recordingState, addTrackWarning(track)]), tap(([track, recordingState, addWarning]) => {
     const recording = recordingState.recording;
     if (track[searchName(recording.name)] != recording.name) {
       addWarning(`Work name of ${recording.name} is different than recording name, please verify`);
     }
-  }), mergeMap(async ([track, recordingState]) => [track, recordingState.recording, await addWork(track, recordingState, addWarning)]), mergeMap(linkCreators), connect(shared => merge(shared.pipe(maybeSetEditNote), shared.pipe(updateProgress, ignoreElements())))));
+  }), mergeMap(async ([track, recordingState, addWarning]) => [track, recordingState.recording, await addWork(track, recordingState, addWarning), addWarning]), mergeMap(linkCreators), connect(shared => merge(shared.pipe(maybeSetEditNote), shared.pipe(updateProgress, ignoreElements())))));
 }
 
 async function submitWork(form) {

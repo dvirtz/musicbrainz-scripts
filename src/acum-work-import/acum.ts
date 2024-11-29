@@ -50,6 +50,7 @@ export type WorkVersion = WorkBean & {
   translators: ReadonlyArray<Creator> | undefined;
   versionIswcNumber: string;
   versionEssenceType: string;
+  albumTrackNumber: string;
 };
 
 type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
