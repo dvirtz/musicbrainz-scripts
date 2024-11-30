@@ -93,7 +93,7 @@ export async function importWorks(
   };
 
   const selectedRecordings = await lastValueFrom(
-    from(MB.tree.iterate(MB.relationshipEditor.state.mediums!)).pipe(
+    from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(
       mergeMap(([medium, recordingStateTree]) => {
         return zip(
           from(albumBean.tracks),

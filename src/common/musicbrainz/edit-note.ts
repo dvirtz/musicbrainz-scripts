@@ -1,6 +1,6 @@
 // from https://github.com/kellnerd/es-utils/blob/main/dom/react.js
 function setReactTextareaValue(input: HTMLTextAreaElement, value: string) {
-  const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set;
+  const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set?.bind(Object);
   setter?.call(input, value);
   input.dispatchEvent(new Event('input', {bubbles: true}));
 }

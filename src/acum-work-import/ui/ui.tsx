@@ -3,7 +3,7 @@ import {Progress} from '@kobalte/core/progress';
 import {ComponentProps, createEffect, createMemo, createSignal, on, Show, splitProps} from 'solid-js';
 import {render} from 'solid-js/web';
 import {releaseEditorTools} from 'src/common/musicbrainz/release-editor-tools';
-import {importWorks} from '../import-works';
+import {importWorks as tryImportWorks} from '../import-works';
 import {submitWorks as trySubmitWorks} from '../submit';
 import {SelectionStatus, validateAlbumId, validateSelection} from '../validate';
 import './progressbar.css';
@@ -50,6 +50,13 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
     return submitButton.title;
   });
 
+  function importWorks() {
+    clearWarnings();
+    tryImportWorks(albumId(), addWarning, clearWarnings, setProgress)
+      .then(() => setWorksPending(true))
+      .catch(err => addWarning(`Import failed: ${err}`));
+  }
+
   function submitWorks() {
     clearWarnings(/submission failed.*/);
     trySubmitWorks(setProgress)
@@ -57,7 +64,7 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
         setWorksPending(false);
         clearWarnings();
       })
-      .catch(err => addWarning(`submission failed: ${err}`));
+      .catch(err => addWarning(`Submission failed: ${err}`));
   }
 
   function cancel() {
@@ -68,10 +75,7 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
   return (
     <>
       <div class="buttons" style={{display: 'flex'}}>
-        <Button
-          disabled={!inputValid()}
-          onclick={async () => setWorksPending(await importWorks(albumId(), addWarning, clearWarnings, setProgress))}
-        >
+        <Button disabled={!inputValid()} onclick={importWorks}>
           <img
             src="https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg"
             alt="ACUM logo"

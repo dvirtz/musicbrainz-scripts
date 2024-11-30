@@ -11,7 +11,7 @@ const FREQUENT_LANGUAGE = 2;
 const NON_FREQURENT_LANGUAGE = 1;
 // 0 means skip
 
-const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(async () => {
+const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(() => {
   const languagesByFrequency = Map.groupBy(Object.values(MB.linkedEntities.language), language =>
     language.id == LANGUAGE_ZXX_ID ? FREQUENT_LANGUAGE : language.frequency
   );

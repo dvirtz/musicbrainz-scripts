@@ -10,11 +10,11 @@ export function urlFromMbid(entityType: RelatableEntityTypeT, mbid: MBID) {
  * we first load the /edit page and parse the JSON data
  * in the sourceData (before 2023) or source_entity block
  */
-export async function fetchEditParams(url: string) {
+export async function fetchEditParams<T>(url: string) {
   const editPage = await tryFetchText(url);
   const result = editPage?.match(/source_entity":(.*)},"user":/);
   if (result) {
-    return JSON.parse(result[1]);
+    return JSON.parse(result[1]) as T;
   }
   throw Error(`failed to find source_entity in ${url}`);
 }
