@@ -19,7 +19,7 @@ See https://musicbrainz.org/doc/Guides/Userscripts#Userscript_manager for more i
 
 This scripts allows you to import set lists from [setlist.fm](https://setlist.fm) as MusicBrainz events.
 
-![setlist.fm importer](src/setlistfm-musicbrainz-import/assesetlistfm_importer.png?raw=1)
+![setlist.fm importer](src/setlistfm-musicbrainz-import/assets/setlistfm_importer.png?raw=1)
 
 See [here](src/setlistfm-musicbrainz-import/README.md) for more information.
 
