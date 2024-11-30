@@ -5,7 +5,7 @@
 
 This scripts allows you to import set lists from [setlist.fm](https://setlist.fm) as MusicBrainz events.
 
-![setlist.fm importer](setlistfm_importer.png?raw=1)
+![setlist.fm importer](assets/setlistfm_importer.png?raw=1)
 
 When viewing a set list on setlist.fm, a new "Add to MB" button will appear on the page.
 Clicking the button will open a MusicBrainz create event window with the event form pre-filled with the set list data.
@@ -16,7 +16,7 @@ If the set list is already linked to a MusicBrainz event, the button will open t
 
 The script also searches for the venue in MusicBrainz and pre-fills the venue field if a match is found. Otherwise, a yellow warning sign will appear next to the venue field. Clicking the warning sign will open a search window to find the venue in MusicBrainz and link it to its setlist.fm page.
 
-![missing venue](missing_venue_warning.png)
+![missing venue](assets/missing_venue_warning.png)
 
 If the venue is not found in MusicBrainz, navigating to the venue page will show a "Add to MB" button that will open a MusicBrainz create place window with the place form pre-filled with the venue data.
 
