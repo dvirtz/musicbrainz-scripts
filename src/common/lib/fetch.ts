@@ -1,6 +1,6 @@
 import fetchBuilder from 'fetch-retry';
 
-const fetchRetryBuilder = fetchBuilder(unsafeWindow.fetch);
+const fetchRetryBuilder = fetchBuilder(unsafeWindow.fetch.bind(unsafeWindow));
 
 export type FetchRetryOptions = Parameters<typeof fetchRetryBuilder>[1];
 
@@ -9,7 +9,7 @@ function tryFetch<T>(fetcher: (url: string, options?: FetchRetryOptions) => Prom
     try {
       return await fetcher(url, options);
     } catch (e) {
-      console.error(`Failed to fetch ${url}: ${e}`);
+      console.error(`Failed to fetch ${url}: ${(e as Error).message}`);
       return null;
     }
   };

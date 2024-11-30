@@ -1,7 +1,7 @@
 import * as tree from 'weight-balanced-tree';
 
 declare global {
-  declare const MB: {
+  const MB: {
     relationshipEditor: {
       dispatch: (action: RelationshipEditorActionT) => void;
       getRelationshipStateId: () => number;
@@ -38,9 +38,9 @@ declare global {
     entity: <T>(data: Partial<T>, type?: string) => T;
   };
 
-  declare type StrOrNum = string | number;
+  type StrOrNum = string | number;
 
-  declare type MediumT = EntityRoleT<'medium'> &
+  type MediumT = EntityRoleT<'medium'> &
     LastUpdateRoleT &
     Readonly<{
       cdtoc_track_lengths?: ReadonlyArray<number | null>;
@@ -59,52 +59,65 @@ declare global {
       tracks_pager?: PagerT;
     }>;
 
-  declare type MediumWithRecordingsT = MediumT &
+  type PagerT = {
+    current_page: number;
+    entries_per_page: number;
+    first_page: 1;
+    last_page: number;
+    next_page: number | null;
+    previous_page: number | null;
+    total_entries: number;
+  };
+
+  type MediumFormatT = OptionTreeT<'medium_format'> & {
+    has_discids: boolean;
+    year?: number;
+  };
+
+  type MediumWithRecordingsT = MediumT &
     Readonly<{
       tracks?: ReadonlyArray<TrackWithRecordingT>;
     }>;
 
-  declare type TrackWithRecordingT = TrackT &
+  type TrackWithRecordingT = TrackT &
     Readonly<{
       recording: RecordingT;
     }>;
 
-  declare type TrackT = Readonly<{
+  type TrackT = Readonly<{
     position: number;
     recording: RecordingT;
   }>;
 
-  declare type CreditChangeOptionT = '' | 'all' | 'same-entity-types' | 'same-relationship-type';
+  type CreditChangeOptionT = '' | 'all' | 'same-entity-types' | 'same-relationship-type';
 
-  declare type EntityRoleT<T> = {
+  type EntityRoleT<T> = {
     entityType: T;
     id: number;
   };
 
-  declare type LastUpdateRoleT = {
+  type LastUpdateRoleT = {
     last_updated: string | null;
   };
 
-  declare type PendingEditsRoleT = {
+  type PendingEditsRoleT = {
     editsPending: boolean;
   };
 
-  declare type RelatableEntityRoleT<T> = EntityRoleT<T> &
-    LastUpdateRoleT &
-    PendingEditsRoleT & {
-      gid: string;
-      name: string;
-      paged_relationship_groups?: {
-        [targetType: RelatableEntityTypeT]: PagedTargetTypeGroupT | void;
-      };
-      relationships?: ReadonlyArray<RelationshipT>;
+  interface RelatableEntityRoleT<T> extends EntityRoleT<T>, LastUpdateRoleT, PendingEditsRoleT {
+    gid: string;
+    name: string;
+    paged_relationship_groups?: {
+      [targetType in RelatableEntityTypeT]: PagedTargetTypeGroupT | void;
     };
+    relationships?: ReadonlyArray<RelationshipT>;
+  }
 
-  declare type PagedTargetTypeGroupT = {
+  type PagedTargetTypeGroupT = {
     [linkTypeIdAndSourceColumn: string]: PagedLinkTypeGroupT;
   };
 
-  declare type PagedLinkTypeGroupT = {
+  type PagedLinkTypeGroupT = {
     backward: boolean;
     is_loaded: boolean;
     limit: number;
@@ -114,8 +127,8 @@ declare global {
     total_relationships: number;
   };
 
-  declare type UrlT = Readonly<
-    RelatableEntityRoleT<T> & {
+  type UrlT = Readonly<
+    RelatableEntityRoleT<'url'> & {
       decoded: string;
       href_url: string;
       pretty_name: string;
@@ -125,13 +138,13 @@ declare global {
     }
   >;
 
-  declare type AnnotatedEntityT =
+  type AnnotatedEntityT =
     | AreaT
     | ArtistT
     | EventT
     // | GenreT
     // | InstrumentT
-    // | LabelT
+    | LabelT
     | PlaceT
     | RecordingT
     | ReleaseGroupT
@@ -139,7 +152,7 @@ declare global {
     // | SeriesT
     | WorkT;
 
-  declare type AnnotationT = {
+  type AnnotationT = {
     changelog: string;
     creation_date: string;
     editor: EditorT | null;
@@ -149,104 +162,104 @@ declare global {
     text: string | null;
   };
 
-  declare type EditorT = EntityRoleT<'editor'> & {
+  type EditorT = EntityRoleT<'editor'> & {
     avatar: string;
     deleted: boolean;
     name: string;
     privileges: number;
   };
 
-  declare type AnnotationRoleT = {
+  type AnnotationRoleT = {
     latest_annotation?: AnnotationT;
   };
 
-  declare type CommentRoleT = {
+  type CommentRoleT = {
     comment: string;
   };
 
-  declare type DatePeriodRoleT = {
+  type DatePeriodRoleT = {
     begin_date: PartialDateT | null;
     end_date: PartialDateT | null;
     ended: boolean;
   };
 
-  declare type IpiCodesRoleT = {
+  type IpiCodesRoleT = {
     ipi_codes: ReadonlyArray<IpiCodeT>;
   };
 
-  declare type IpiCodeT = PendingEditsRoleT & {
+  type IpiCodeT = PendingEditsRoleT & {
     ipi: string;
   };
 
-  declare type IsniCodesRoleT = {
+  type IsniCodesRoleT = {
     isni_codes: ReadonlyArray<IsniCodeT>;
   };
 
-  declare type IsniCodeT = PendingEditsRoleT & {
+  type IsniCodeT = PendingEditsRoleT & {
     isni: string;
   };
 
-  declare type RatableRoleT = {
+  type RatableRoleT = {
     rating?: number;
     rating_count?: number;
     user_rating?: number;
   };
 
-  declare type ReviewableRoleT = {
+  type ReviewableRoleT = {
     review_count?: number;
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  declare type TypeRoleT<T> = {
+  type TypeRoleT<T> = {
     typeID: number | null;
     typeName?: string;
   };
 
-  declare type ArtistT = Readonly<
-    AnnotationRoleT &
-      CommentRoleT &
-      RelatableEntityRoleT<'artist'> &
-      DatePeriodRoleT &
-      IpiCodesRoleT &
-      IsniCodesRoleT &
-      RatableRoleT &
-      ReviewableRoleT &
-      TypeRoleT<ArtistTypeT> & {
-        area: AreaT | null;
-        begin_area: AreaT | null;
-        begin_area_id: number | null;
-        end_area: AreaT | null;
-        end_area_id: number | null;
-        gender: GenderT | null;
-        gender_id: number | null;
-        primaryAlias?: string | null;
-        sort_name: string;
-      }
-  >;
+  // need to use interface to break circular dependency
+  interface ArtistT
+    extends Readonly<AnnotationRoleT>,
+      Readonly<CommentRoleT>,
+      Readonly<RelatableEntityRoleT<'artist'>>,
+      Readonly<DatePeriodRoleT>,
+      Readonly<IpiCodesRoleT>,
+      Readonly<IsniCodesRoleT>,
+      Readonly<RatableRoleT>,
+      Readonly<ReviewableRoleT>,
+      Readonly<TypeRoleT<ArtistTypeT>> {
+    readonly area: AreaT | null;
+    readonly begin_area: AreaT | null;
+    readonly begin_area_id: number | null;
+    readonly end_area: AreaT | null;
+    readonly end_area_id: number | null;
+    readonly gender: GenderT | null;
+    readonly gender_id: number | null;
+    readonly primaryAlias?: string | null;
+    readonly sort_name: string;
+  }
 
-  declare type ArtistTypeT = OptionTreeT<'artist_type'>;
+  type ArtistTypeT = OptionTreeT<'artist_type'>;
 
-  declare type AreaT = Readonly<
-    AnnotationRoleT &
-      CommentRoleT &
-      RelatableEntityRoleT<'area'> &
-      DatePeriodRoleT &
-      TypeRoleT<AreaTypeT> & {
-        containment: ReadonlyArray<AreaT> | null;
-        country_code: string;
-        iso_3166_1_codes: ReadonlyArray<string>;
-        iso_3166_2_codes: ReadonlyArray<string>;
-        iso_3166_3_codes: ReadonlyArray<string>;
-        primary_code: string;
-        primaryAlias?: string | null;
-      }
-  >;
+  // need to use interface to break circular dependency
+  interface AreaT
+    extends Readonly<AnnotationRoleT>,
+      Readonly<CommentRoleT>,
+      Readonly<RelatableEntityRoleT<'area'>>,
+      Readonly<DatePeriodRoleT>,
+      Readonly<TypeRoleT<AreaTypeT>> {
+    readonly containment: ReadonlyArray<AreaT> | null;
+    readonly country_code: string;
+    readonly iso_3166_1_codes: ReadonlyArray<string>;
+    readonly iso_3166_2_codes: ReadonlyArray<string>;
+    readonly iso_3166_3_codes: ReadonlyArray<string>;
+    readonly primary_code: string;
+    readonly primaryAlias?: string | null;
+  }
 
-  declare type AreaTypeT = OptionTreeT<'area_type'>;
+  type AreaTypeT = OptionTreeT<'area_type'>;
 
-  declare type GenderT = OptionTreeT<'gender'>;
+  type GenderT = OptionTreeT<'gender'>;
 
-  declare type OptionTreeT<T> = EntityRoleT<T> & {
+  type OptionTreeT<T> = EntityRoleT<T> & {
     child_order: number;
     description: string;
     gid: string;
@@ -254,63 +267,63 @@ declare global {
     parent_id: number | null;
   };
 
-  declare type AppearancesT<T> = {
+  type AppearancesT<T> = {
     hits: number;
     results: ReadonlyArray<T>;
   };
 
-  declare type ArtistCreditNameT = {
+  type ArtistCreditNameT = {
     artist: ArtistT;
     joinPhrase: string;
     name: string;
   };
 
-  declare type ArtistCreditT = {
+  type ArtistCreditT = {
     editsPending?: boolean;
     entityType?: 'artist_credit';
     id?: number;
     names: ReadonlyArray<ArtistCreditNameT>;
   };
 
-  declare type PartialDateT = {
-    day?: ?number;
-    month?: ?number;
-    year?: ?number;
+  type PartialDateT = {
+    day?: number | null;
+    month?: number | null;
+    year?: number | null;
   };
 
-  declare type PartialDateStringsT = {
+  type PartialDateStringsT = {
     day?: string;
     month?: string;
     year?: string;
   };
 
-  declare type IsrcT = EntityRoleT<'isrc'> &
+  type IsrcT = EntityRoleT<'isrc'> &
     PendingEditsRoleT & {
       isrc: string;
       recording_id: number;
     };
 
-  declare type RecordingT = Readonly<
-    AnnotationRoleT &
-      CommentRoleT &
-      RelatableEntityRoleT<'recording'> &
-      RatableRoleT &
-      ReviewableRoleT & {
-        appearsOn?: AppearancesT<{gid: string; name: string}>;
-        artist?: string;
-        artistCredit?: ArtistCreditT;
-        first_release_date?: PartialDateT;
-        isrcs: ReadonlyArray<IsrcT>;
-        length: number;
-        primaryAlias?: string | null;
-        related_works: ReadonlyArray<number>;
-        video: boolean;
-      }
-  >;
+  // need to use interface to break circular dependency
+  interface RecordingT
+    extends Readonly<AnnotationRoleT>,
+      Readonly<CommentRoleT>,
+      Readonly<RelatableEntityRoleT<'recording'>>,
+      Readonly<RatableRoleT>,
+      Readonly<ReviewableRoleT> {
+    readonly appearsOn?: AppearancesT<{gid: string; name: string}>;
+    readonly artist?: string;
+    readonly artistCredit?: ArtistCreditT;
+    readonly first_release_date?: PartialDateT;
+    readonly isrcs: ReadonlyArray<IsrcT>;
+    readonly length: number;
+    readonly primaryAlias?: string | null;
+    readonly related_works: ReadonlyArray<number>;
+    readonly video: boolean;
+  }
 
-  declare type WorkTypeT = OptionTreeT<'work_type'>;
+  type WorkTypeT = OptionTreeT<'work_type'>;
 
-  declare type WorkAttributeT = {
+  type WorkAttributeT = {
     id: number | null;
     typeID: number;
     typeName: string;
@@ -318,13 +331,13 @@ declare global {
     value_id: number | null;
   };
 
-  declare type IswcT = EntityRoleT<'iswc'> &
+  type IswcT = EntityRoleT<'iswc'> &
     PendingEditsRoleT & {
       iswc: string;
       work_id: number;
     };
 
-  declare type LanguageT = EntityRoleT<'language'> & {
+  type LanguageT = EntityRoleT<'language'> & {
     frequency: 0 | 1 | 2;
     iso_code_1: string | null;
     iso_code_2b: string | null;
@@ -333,42 +346,42 @@ declare global {
     name: string;
   };
 
-  declare type WorkLanguageT = {
+  type WorkLanguageT = {
     language: LanguageT;
   };
 
-  declare type WorkT = Readonly<
-    AnnotationRoleT &
-      CommentRoleT &
-      RelatableEntityRoleT<'work'> &
-      RatableRoleT &
-      ReviewableRoleT &
-      TypeRoleT<WorkTypeT> & {
-        _fromBatchCreateWorksDialog?: boolean;
-        artists: ReadonlyArray<ArtistCreditT>;
-        attributes: ReadonlyArray<WorkAttributeT>;
-        iswcs: ReadonlyArray<IswcT>;
-        languages: ReadonlyArray<WorkLanguageT>;
-        primaryAlias?: string | null;
-        related_artists?: {
-          artists: AppearancesT<string>;
-          writers: AppearancesT<string>;
-        };
-        writers: ReadonlyArray<{
-          credit: string;
-          entity: ArtistT;
-          roles: ReadonlyArray<string>;
-        }>;
-      }
-  >;
+  // need to use interface to break circular dependency
+  interface WorkT
+    extends Readonly<AnnotationRoleT>,
+      Readonly<CommentRoleT>,
+      Readonly<RelatableEntityRoleT<'work'>>,
+      Readonly<RatableRoleT>,
+      Readonly<ReviewableRoleT>,
+      Readonly<TypeRoleT<WorkTypeT>> {
+    readonly _fromBatchCreateWorksDialog?: boolean;
+    readonly artists: ReadonlyArray<ArtistCreditT>;
+    readonly attributes: ReadonlyArray<WorkAttributeT>;
+    readonly iswcs: ReadonlyArray<IswcT>;
+    readonly languages: ReadonlyArray<WorkLanguageT>;
+    readonly primaryAlias?: string | null;
+    readonly related_artists?: {
+      artists: AppearancesT<string>;
+      writers: AppearancesT<string>;
+    };
+    readonly writers: ReadonlyArray<{
+      credit: string;
+      entity: ArtistT;
+      roles: ReadonlyArray<string>;
+    }>;
+  }
 
-  declare type NonUrlRelatableEntityT =
+  type NonUrlRelatableEntityT =
     | AreaT
     | ArtistT
     | EventT
     // | GenreT
     // | InstrumentT
-    // | LabelT
+    | LabelT
     | PlaceT
     | RecordingT
     | ReleaseGroupT
@@ -376,36 +389,37 @@ declare global {
     // | SeriesT
     | WorkT;
 
-  declare type RelatableEntityT = NonUrlRelatableEntityT | UrlT;
+  type RelatableEntityT = NonUrlRelatableEntityT | UrlT;
 
-  declare type RelationshipEditStatusT = number;
+  type RelationshipEditStatusT = number;
 
-  declare type RelationshipStateForTypesT<T0 extends RelatableEntityT, T1 extends RelatableEntityT> = Readonly<{
+  // need to use interface to break circular dependency
+  interface RelationshipStateForTypesT<T0 extends RelatableEntityT, T1 extends RelatableEntityT> {
     /*
      * _lineage is purely to help debug how a piece of relationship
      * state was created.  It should be appended to whenever
      * `cloneRelationshipState` is used.
      */
-    _lineage: ReadonlyArray<string>;
-    _original: RelationshipStateT | null;
-    _status: RelationshipEditStatusT;
-    attributes: tree.ImmutableTree<LinkAttrT> | null;
-    begin_date: PartialDateT | null;
-    editsPending: boolean;
-    end_date: PartialDateT | null;
-    ended: boolean;
-    entity0: T0;
-    entity0_credit: string;
-    entity1: T1;
-    entity1_credit: string;
-    id: number;
-    linkOrder: number;
-    linkTypeID: number | null;
-  }>;
+    readonly _lineage: ReadonlyArray<string>;
+    readonly _original: RelationshipStateT | null;
+    readonly _status: RelationshipEditStatusT;
+    readonly attributes: tree.ImmutableTree<LinkAttrT> | null;
+    readonly begin_date: PartialDateT | null;
+    readonly editsPending: boolean;
+    readonly end_date: PartialDateT | null;
+    readonly ended: boolean;
+    readonly entity0: T0;
+    readonly entity0_credit: string;
+    readonly entity1: T1;
+    readonly entity1_credit: string;
+    readonly id: number;
+    readonly linkOrder: number;
+    readonly linkTypeID: number | null;
+  }
 
-  declare type RelationshipStateT = RelationshipStateForTypesT<RelatableEntityT, RelatableEntityT>;
+  type RelationshipStateT = RelationshipStateForTypesT<RelatableEntityT, RelatableEntityT>;
 
-  declare type UpdateRelationshipActionT = {
+  type UpdateRelationshipActionT = {
     batchSelectionCount: number | void;
     creditsToChangeForSource: CreditChangeOptionT;
     creditsToChangeForTarget: CreditChangeOptionT;
@@ -415,7 +429,7 @@ declare global {
     type: 'update-relationship-state';
   };
 
-  declare type AcceptEditWorkDialogActionT = {
+  type AcceptEditWorkDialogActionT = {
     languages: ReadonlyArray<LanguageT>;
     name: string;
     type: 'accept-edit-work-dialog';
@@ -423,16 +437,9 @@ declare global {
     workType: number | null;
   };
 
-  declare type UpdateEntityActionT = {
-    changes: {[property: string]: mixed};
-    entityType: RelatableEntityTypeT;
-    type: 'update-entity';
-  };
-
-  declare type RelationshipEditorActionT =
+  type RelationshipEditorActionT =
     | UpdateRelationshipActionT
     | AcceptEditWorkDialogActionT
-    | UpdateEntityActionT
     | {
         isSelected: boolean;
         type: 'toggle-select-work';
@@ -451,50 +458,50 @@ declare global {
         type: 'update-submitted-relationships';
       };
 
-  declare type MediumStateTreeT = tree.ImmutableTree<[MediumWithRecordingsT, MediumRecordingStateTreeT]> | null;
+  type MediumStateTreeT = tree.ImmutableTree<[MediumWithRecordingsT, MediumRecordingStateTreeT]> | null;
 
-  declare type MediumRecordingStateTreeT = tree.ImmutableTree<MediumRecordingStateT> | null;
+  type MediumRecordingStateTreeT = tree.ImmutableTree<MediumRecordingStateT> | null;
 
-  declare type MediumRecordingStateT = {
+  type MediumRecordingStateT = {
     isSelected: boolean;
     recording: RecordingT;
     relatedWorks: MediumWorkStateTreeT;
     targetTypeGroups: RelationshipTargetTypeGroupsT;
   };
 
-  declare type MediumWorkStateTreeT = tree.ImmutableTree<MediumWorkStateT> | null;
+  type MediumWorkStateTreeT = tree.ImmutableTree<MediumWorkStateT> | null;
 
-  declare type MediumWorkStateT = {
+  type MediumWorkStateT = {
     isSelected: boolean;
     targetTypeGroups: RelationshipTargetTypeGroupsT;
     work: WorkT;
   };
 
-  declare type RelationshipTargetTypeGroupsT = tree.ImmutableTree<RelationshipTargetTypeGroupT> | null;
+  type RelationshipTargetTypeGroupsT = tree.ImmutableTree<RelationshipTargetTypeGroupT> | null;
 
-  declare type RelationshipTargetTypeGroupT = [RelatableEntityTypeT, RelationshipLinkTypeGroupsT];
+  type RelationshipTargetTypeGroupT = [RelatableEntityTypeT, RelationshipLinkTypeGroupsT];
 
-  declare type RelationshipLinkTypeGroupsT = tree.ImmutableTree<RelationshipLinkTypeGroupT> | null;
+  type RelationshipLinkTypeGroupsT = tree.ImmutableTree<RelationshipLinkTypeGroupT> | null;
 
-  declare type RelationshipLinkTypeGroupT = {
+  type RelationshipLinkTypeGroupT = {
     backward: boolean;
     phraseGroups: tree.ImmutableTree<RelationshipPhraseGroupT> | null;
     // Null types are represented by 0;
     typeId: number;
   };
 
-  declare type RelationshipPhraseGroupT = {
+  type RelationshipPhraseGroupT = {
     relationships: tree.ImmutableTree<RelationshipStateT> | null;
     textPhrase: string;
   };
 
-  declare type RelatableEntityTypeT = NonUrlRelatableEntityTypeT | 'url';
+  type RelatableEntityTypeT = NonUrlRelatableEntityTypeT | 'url';
 
-  declare type NonUrlRelatableEntityTypeT = NonUrlRelatableEntityT['entityType'];
+  type NonUrlRelatableEntityTypeT = NonUrlRelatableEntityT['entityType'];
 
-  declare type MBID = string;
+  type MBID = string;
 
-  declare type ArtistSearchResultsT = {
+  type ArtistSearchResultsT = {
     artists: ReadonlyArray<{
       id: MBID;
       name: string;
@@ -502,7 +509,7 @@ declare global {
     count: number;
   };
 
-  declare type LinkAttrT = {
+  type LinkAttrT = {
     credited_as?: string;
     text_value?: string;
     type: {gid: string} | LinkAttrTypeT;
@@ -510,7 +517,7 @@ declare global {
     typeName: string;
   };
 
-  declare type LinkAttrTypeT = OptionTreeT<'link_attribute_type'> & {
+  type LinkAttrTypeT = OptionTreeT<'link_attribute_type'> & {
     children?: ReadonlyArray<LinkAttrTypeT>;
     creditable: boolean;
     free_text: boolean;
@@ -525,13 +532,13 @@ declare global {
     root_id: number;
   };
 
-  declare type LinkTypeAttrTypeT = TypeRoleT<LinkAttrTypeT> &
+  type LinkTypeAttrTypeT = TypeRoleT<LinkAttrTypeT> &
     Readonly<{
       max: number | null;
       min: number | null;
     }>;
 
-  declare type LinkTypeT = OptionTreeT<'link_type'> & {
+  type LinkTypeT = OptionTreeT<'link_type'> & {
     attributes: {[typeId: StrOrNum]: LinkTypeAttrTypeT};
     cardinality0: number;
     cardinality1: number;
@@ -561,15 +568,15 @@ declare global {
     type1: RelatableEntityTypeT;
   };
 
-  declare type RelationshipT = DatePeriodRoleT &
+  type RelationshipT = DatePeriodRoleT &
     PendingEditsRoleT &
     Readonly<{
       attributes: ReadonlyArray<LinkAttrT>;
       backward: boolean;
-      entity0?: ?RelatableEntityT;
+      entity0?: RelatableEntityT;
       entity0_credit: string;
       entity0_id: number;
-      entity1?: ?RelatableEntityT;
+      entity1?: RelatableEntityT;
       entity1_credit: string;
       entity1_id: number;
       id: number;
@@ -582,47 +589,47 @@ declare global {
       verbosePhrase: string;
     }>;
 
-  declare type OptionListT = ReadonlyArray<{
+  type OptionListT = ReadonlyArray<{
     text: string;
     value: number;
   }>;
 
-  declare type WorkAttributeTypeT = CommentRoleT &
+  type WorkAttributeTypeT = CommentRoleT &
     OptionTreeT<'work_attribute_type'> & {
       free_text: boolean;
     };
 
-  declare type WorkAttributeTypeTreeT = WorkAttributeTypeT & {
+  type WorkAttributeTypeTreeT = WorkAttributeTypeT & {
     children?: ReadonlyArray<WorkAttributeTypeTreeT>;
   };
 
-  declare type WorkAttributeTypeTreeRootT = {children: ReadonlyArray<WorkAttributeTypeTreeT>};
+  type WorkAttributeTypeTreeRootT = {children: ReadonlyArray<WorkAttributeTypeTreeT>};
 
-  declare type WorkAttributeTypeAllowedValueT = OptionTreeT<'work_attribute_type_allowed_value'> & {
+  type WorkAttributeTypeAllowedValueT = OptionTreeT<'work_attribute_type_allowed_value'> & {
     value: string;
     workAttributeTypeID: number;
   };
 
-  declare type WorkAttributeTypeAllowedValueTreeT = WorkAttributeTypeAllowedValueT & {
+  type WorkAttributeTypeAllowedValueTreeT = WorkAttributeTypeAllowedValueT & {
     children?: ReadonlyArray<WorkAttributeTypeAllowedValueTreeT>;
   };
 
-  declare type WorkAttributeTypeAllowedValueTreeRootT = {children: ReadonlyArray<WorkAttributeTypeAllowedValueTreeT>};
+  type WorkAttributeTypeAllowedValueTreeRootT = {children: ReadonlyArray<WorkAttributeTypeAllowedValueTreeT>};
 
-  declare type WsJsEditRelationshipT =
+  type WsJsEditRelationshipT =
     | WsJsEditRelationshipCreateT
     | WsJsEditRelationshipEditT
     | WsJsEditRelationshipDeleteT
     | WsJsEditRelationshipsReorderT;
 
-  declare type WsJsRelationshipAttributeT = {
+  type WsJsRelationshipAttributeT = {
     credited_as?: string;
     removed?: boolean;
     text_value?: string;
     type: {gid: string};
   };
 
-  declare type WsJsRelationshipEntityT =
+  type WsJsRelationshipEntityT =
     | {
         entityType: NonUrlRelatableEntityTypeT;
         gid: string;
@@ -635,7 +642,7 @@ declare global {
         name: string;
       };
 
-  declare type WsJsRelationshipCommonT = {
+  type WsJsRelationshipCommonT = {
     attributes: ReadonlyArray<WsJsRelationshipAttributeT>;
     begin_date?: PartialDateT;
     end_date?: PartialDateT;
@@ -645,32 +652,32 @@ declare global {
     entity1_credit: string;
   };
 
-  declare type EDIT_RELATIONSHIP_CREATE_T = 90;
-  declare type EDIT_RELATIONSHIP_EDIT_T = 91;
-  declare type EDIT_RELATIONSHIP_DELETE_T = 92;
-  declare type EDIT_RELATIONSHIPS_REORDER_T = 99;
+  type EDIT_RELATIONSHIP_CREATE_T = 90;
+  type EDIT_RELATIONSHIP_EDIT_T = 91;
+  type EDIT_RELATIONSHIP_DELETE_T = 92;
+  type EDIT_RELATIONSHIPS_REORDER_T = 99;
 
-  declare type WsJsEditRelationshipCreateT = WsJsRelationshipCommonT &
+  type WsJsEditRelationshipCreateT = WsJsRelationshipCommonT &
     Readonly<{
       edit_type: EDIT_RELATIONSHIP_CREATE_T;
       linkOrder?: number;
       linkTypeID: number;
     }>;
 
-  declare type WsJsEditRelationshipEditT = Partial<WsJsRelationshipCommonT> &
+  type WsJsEditRelationshipEditT = Partial<WsJsRelationshipCommonT> &
     Readonly<{
       edit_type: EDIT_RELATIONSHIP_EDIT_T;
       id: number;
       linkTypeID: number;
     }>;
 
-  declare type WsJsEditRelationshipDeleteT = Readonly<{
+  type WsJsEditRelationshipDeleteT = Readonly<{
     edit_type: EDIT_RELATIONSHIP_DELETE_T;
     id: number;
     linkTypeID: number;
   }>;
 
-  declare type WsJsEditRelationshipsReorderT = {
+  type WsJsEditRelationshipsReorderT = {
     edit_type: EDIT_RELATIONSHIPS_REORDER_T;
     linkTypeID: number;
     relationship_order: ReadonlyArray<{
@@ -679,10 +686,10 @@ declare global {
     }>;
   };
 
-  declare type EDIT_WORK_CREATE_T = 41;
-  declare type EDIT_WORK_EDIT_T = 42;
+  type EDIT_WORK_CREATE_T = 41;
+  type EDIT_WORK_EDIT_T = 42;
 
-  declare type WsJsEditWorkCreateT = {
+  type WsJsEditWorkCreateT = {
     comment: string;
     edit_type: EDIT_WORK_CREATE_T;
     languages: ReadonlyArray<number>;
@@ -690,10 +697,10 @@ declare global {
     type_id: number | null;
   };
 
-  declare type WS_EDIT_RESPONSE_OK_T = 1;
-  declare type WS_EDIT_RESPONSE_NO_CHANGES_T = 2;
+  type WS_EDIT_RESPONSE_OK_T = 1;
+  type WS_EDIT_RESPONSE_NO_CHANGES_T = 2;
 
-  declare type WsJsEditResponseT = {
+  type WsJsEditResponseT = {
     edits: ReadonlyArray<
       | {
           edit_type: EDIT_RELATIONSHIP_CREATE_T;
@@ -748,7 +755,7 @@ declare global {
     >;
   };
 
-  declare type FieldT<V> = {
+  type FieldT<V> = {
     errors: ReadonlyArray<string>;
     has_errors: boolean;
     html_name: string;
@@ -758,7 +765,7 @@ declare global {
     value: V;
   };
 
-  declare type RepeatableFieldT<F> = {
+  type RepeatableFieldT<F> = {
     errors: ReadonlyArray<string>;
     field: Array<F>;
     has_errors: boolean;
@@ -769,7 +776,7 @@ declare global {
     type: 'repeatable_field';
   };
 
-  declare type FormT<F, N extends string = ''> = {
+  type FormT<F, N extends string = ''> = {
     field: F;
     has_errors: boolean;
     name: N;
@@ -781,81 +788,117 @@ declare global {
       releaseGroup: ReleaseGroupT;
     }>;
 
-  declare type ReleaseWithMediumsT = ReleaseT &
+  type ReleaseWithMediumsT = ReleaseT &
     Readonly<{
       mediums: ReadonlyArray<MediumWithRecordingsT>;
     }>;
 
-  declare type ReleaseT = AnnotationRoleT &
-    ArtistCreditRoleT &
-    CommentRoleT &
-    RelatableEntityRoleT<'release'> &
-    Readonly<{
-      barcode: string | null;
-      combined_format_name?: string;
-      combined_track_count?: string;
-      cover_art_presence: 'absent' | 'present' | 'darkened' | null;
-      events?: ReadonlyArray<ReleaseEventT>;
-      has_no_tracks: boolean;
-      labels?: ReadonlyArray<ReleaseLabelT>;
-      language: LanguageT | null;
-      languageID: number | null;
-      length?: number;
-      may_have_cover_art?: boolean;
-      may_have_discids?: boolean;
-      mediums?: ReadonlyArray<MediumT>;
-      packagingID: number | null;
-      primaryAlias?: string | null;
-      quality: QualityT;
-      releaseGroup?: ReleaseGroupT;
-      script: ScriptT | null;
-      scriptID: number | null;
-      status: ReleaseStatusT | null;
-      statusID: number | null;
-    }>;
+  // need to use interface to break circular dependency
+  interface ReleaseT
+    extends Readonly<AnnotationRoleT>,
+      Readonly<ArtistCreditRoleT>,
+      Readonly<CommentRoleT>,
+      Readonly<RelatableEntityRoleT<'release'>> {
+    readonly barcode: string | null;
+    readonly combined_format_name?: string;
+    readonly combined_track_count?: string;
+    readonly cover_art_presence: 'absent' | 'present' | 'darkened' | null;
+    readonly events?: ReadonlyArray<ReleaseEventT>;
+    readonly has_no_tracks: boolean;
+    readonly labels?: ReadonlyArray<ReleaseLabelT>;
+    readonly language: LanguageT | null;
+    readonly languageID: number | null;
+    readonly length?: number;
+    readonly may_have_cover_art?: boolean;
+    readonly may_have_discids?: boolean;
+    readonly mediums?: ReadonlyArray<MediumT>;
+    readonly packagingID: number | null;
+    readonly primaryAlias?: string | null;
+    readonly quality: QualityT;
+    readonly releaseGroup?: ReleaseGroupT;
+    readonly script: ScriptT | null;
+    readonly scriptID: number | null;
+    readonly status: ReleaseStatusT | null;
+    readonly statusID: number | null;
+  }
 
-  declare type ArtistCreditRoleT = {
+  type ReleaseLabelT = {
+    catalogNumber: string | null;
+    label: LabelT | null;
+    label_id: number | null;
+  };
+
+  // need to use interface to break circular dependency
+  interface LabelT
+    extends Readonly<AnnotationRoleT>,
+      Readonly<CommentRoleT>,
+      Readonly<RelatableEntityRoleT<'label'>>,
+      Readonly<DatePeriodRoleT>,
+      Readonly<IpiCodesRoleT>,
+      Readonly<IsniCodesRoleT>,
+      Readonly<RatableRoleT>,
+      Readonly<ReviewableRoleT>,
+      Readonly<TypeRoleT<LabelTypeT>> {
+    readonly area: AreaT | null;
+    readonly label_code: number;
+    readonly primaryAlias?: string | null;
+  }
+
+  type LabelTypeT = OptionTreeT<'label_type'>;
+
+  type ScriptT = {
+    entityType: 'script';
+    frequency: 1 | 2 | 3 | 4;
+    id: number;
+    iso_code: string;
+    iso_number: string | null;
+    name: string;
+  };
+
+  type ReleaseStatusT = OptionTreeT<'release_status'>;
+
+  type ArtistCreditRoleT = {
     artist: string;
     artistCredit: ArtistCreditT;
   };
 
-  declare type ReleaseEventT = {
+  type ReleaseEventT = {
     country: AreaT | null;
     date: PartialDateT | null;
   };
 
-  declare type QualityT = -1 | 0 | 1 | 2;
+  type QualityT = -1 | 0 | 1 | 2;
 
-  declare type ReleaseGroupT = AnnotationRoleT &
-    ArtistCreditRoleT &
-    CommentRoleT &
-    RelatableEntityRoleT<'release_group'> &
-    RatableRoleT &
-    ReviewableRoleT &
-    TypeRoleT<ReleaseGroupTypeT> &
-    Readonly<{
-      cover_art?: ReleaseArtT;
-      firstReleaseDate: string | null;
-      hasCoverArt: boolean;
-      l_type_name: string | null;
-      primaryAlias?: string | null;
-      release_count: number;
-      release_group?: ReleaseGroupT;
-      secondaryTypeIDs: ReadonlyArray<number>;
-      typeID: number | null;
-      typeName: string | null;
-    }>;
+  // need to use interface to break circular dependency
+  interface ReleaseGroupT
+    extends Readonly<AnnotationRoleT>,
+      Readonly<ArtistCreditRoleT>,
+      Readonly<CommentRoleT>,
+      Readonly<RelatableEntityRoleT<'release_group'>>,
+      Readonly<RatableRoleT>,
+      Readonly<ReviewableRoleT>,
+      Readonly<TypeRoleT<ReleaseGroupTypeT>> {
+    readonly cover_art?: ReleaseArtT;
+    readonly firstReleaseDate: string | null;
+    readonly hasCoverArt: boolean;
+    readonly l_type_name: string | null;
+    readonly primaryAlias?: string | null;
+    readonly release_count: number;
+    readonly release_group?: ReleaseGroupT;
+    readonly secondaryTypeIDs: ReadonlyArray<number>;
+    readonly typeID: number | null;
+  }
 
-  declare type ReleaseGroupTypeT = OptionTreeT<'release_group_type'> & {
+  type ReleaseGroupTypeT = OptionTreeT<'release_group_type'> & {
     historic: false;
   };
 
-  declare type ReleaseArtT = ArtworkRoleT &
+  type ReleaseArtT = ArtworkRoleT &
     Readonly<{
       release?: ReleaseT;
     }>;
 
-  declare type ArtworkRoleT = PendingEditsRoleT &
+  type ArtworkRoleT = PendingEditsRoleT &
     Readonly<{
       comment: string;
       event?: EventT;
@@ -873,42 +916,43 @@ declare global {
       types: ReadonlyArray<string>;
     }>;
 
-  declare type EventT = AnnotationRoleT &
-    CommentRoleT &
-    RelatableEntityRoleT<'event'> &
-    DatePeriodRoleT &
-    RatableRoleT &
-    ReviewableRoleT &
-    TypeRoleT<EventTypeT> &
-    Readonly<{
-      areas: ReadonlyArray<{
-        credit: string;
-        entity: AreaT;
-      }>;
-      cancelled: boolean;
-      event_art_presence: 'absent' | 'present' | 'darkened' | null;
-      may_have_event_art?: boolean;
-      performers: ReadonlyArray<{
-        credit: string;
-        entity: ArtistT;
-        roles: ReadonlyArray<string>;
-      }>;
-      places: ReadonlyArray<{
-        credit: string;
-        entity: PlaceT;
-      }>;
-      primaryAlias?: string | null;
-      related_entities?: {
-        areas: AppearancesT<string>;
-        performers: AppearancesT<string>;
-        places: AppearancesT<string>;
-      };
-      related_series: ReadonlyArray<number>;
-      setlist?: string;
-      time: string;
+  // need to use interface to break circular dependency
+  interface EventT
+    extends Readonly<AnnotationRoleT>,
+      Readonly<CommentRoleT>,
+      Readonly<RelatableEntityRoleT<'event'>>,
+      Readonly<DatePeriodRoleT>,
+      Readonly<RatableRoleT>,
+      Readonly<ReviewableRoleT>,
+      Readonly<TypeRoleT<EventTypeT>> {
+    readonly areas: ReadonlyArray<{
+      credit: string;
+      entity: AreaT;
     }>;
+    readonly cancelled: boolean;
+    readonly event_art_presence: 'absent' | 'present' | 'darkened' | null;
+    readonly may_have_event_art?: boolean;
+    readonly performers: ReadonlyArray<{
+      credit: string;
+      entity: ArtistT;
+      roles: ReadonlyArray<string>;
+    }>;
+    readonly places: ReadonlyArray<{
+      credit: string;
+      entity: PlaceT;
+    }>;
+    readonly primaryAlias?: string | null;
+    readonly related_entities?: {
+      areas: AppearancesT<string>;
+      performers: AppearancesT<string>;
+      places: AppearancesT<string>;
+    };
+    readonly related_series: ReadonlyArray<number>;
+    readonly setlist?: string;
+    readonly time: string;
+  }
 
-  declare type EventTypeT = OptionTreeT<'event_type'>;
+  type EventTypeT = OptionTreeT<'event_type'>;
 
   export type NonReleaseRelatableEntityT =
     // | AreaT
@@ -916,7 +960,7 @@ declare global {
     | EventT
     // | GenreT
     // | InstrumentT
-    // | LabelT
+    | LabelT
     | PlaceT
     | RecordingT
     | ReleaseGroupT
@@ -924,54 +968,53 @@ declare global {
     | UrlT
     | WorkT;
 
-  declare type PlaceT = AnnotationRoleT &
-    CommentRoleT &
-    RelatableEntityRoleT<'place'> &
-    DatePeriodRoleT &
-    RatableRoleT &
-    ReviewableRoleT &
-    TypeRoleT<PlaceTypeT> &
-    Readonly<{
-      address: string;
-      area: AreaT | null;
-      coordinates: CoordinatesT | null;
-      primaryAlias?: string | null;
-    }>;
+  // need to use interface to break circular dependency
+  interface PlaceT
+    extends Readonly<AnnotationRoleT>,
+      Readonly<CommentRoleT>,
+      Readonly<RelatableEntityRoleT<'place'>>,
+      Readonly<DatePeriodRoleT>,
+      Readonly<RatableRoleT>,
+      Readonly<ReviewableRoleT>,
+      Readonly<TypeRoleT<PlaceTypeT>> {
+    readonly address: string;
+    readonly area: AreaT | null;
+    readonly coordinates: CoordinatesT | null;
+    readonly primaryAlias?: string | null;
+  }
 
-  declare type PlaceTypeT = OptionTreeT<'place_type'>;
+  type PlaceTypeT = OptionTreeT<'place_type'>;
 
-  declare type CoordinatesT = {
+  type CoordinatesT = {
     latitude: number;
     longitude: number;
   };
 
-  declare type RelationshipSourceGroupsT = tree.ImmutableTree<RelationshipSourceGroupT> | null;
+  type RelationshipSourceGroupsT = tree.ImmutableTree<RelationshipSourceGroupT> | null;
 
-  declare type RelationshipSourceGroupT = [RelatableEntityT, RelationshipTargetTypeGroupsT];
+  type RelationshipSourceGroupT = [RelatableEntityT, RelationshipTargetTypeGroupsT];
 
-  declare type MaybeGroupedOptionsT =
-    | {grouped: true; options: GroupedOptionsT}
-    | {grouped: false; options: SelectOptionsT};
+  type MaybeGroupedOptionsT = {grouped: true; options: GroupedOptionsT} | {grouped: false; options: SelectOptionsT};
 
-  declare type GroupedOptionsT = ReadonlyArray<{
+  type GroupedOptionsT = ReadonlyArray<{
     optgroup: string;
     options: SelectOptionsT;
   }>;
 
-  declare type SelectOptionsT = ReadonlyArray<SelectOptionT>;
+  type SelectOptionsT = ReadonlyArray<SelectOptionT>;
 
-  declare type SelectOptionT = {
+  type SelectOptionT = {
     label: string | (() => string);
     value: number | string;
   };
 
-  declare type FormOrAnyFieldT = FormT<SubfieldsT> | AnyFieldT;
+  type FormOrAnyFieldT = FormT<SubfieldsT> | AnyFieldT;
 
-  declare type SubfieldsT = {
+  type SubfieldsT = {
     [fieldName: string]: AnyFieldT;
   };
 
-  declare type AnyFieldT =
+  type AnyFieldT =
     | {
         errors: ReadonlyArray<string>;
         field: SubfieldsT;

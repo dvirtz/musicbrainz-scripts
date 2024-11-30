@@ -190,7 +190,7 @@ async function findEvent(url: string) {
   return existingEvent && existingEvent['relations'][0]['event'].id;
 }
 
-async function addWarningIcon(type: string, query: string, afterElement: Element) {
+function addWarningIcon(type: string, query: string, afterElement: Element) {
   const warningIcon = document.createElement('img');
   warningIcon.src = 'https://musicbrainz.org/static/images/icons/warning.png';
   warningIcon.alt = 'warning';

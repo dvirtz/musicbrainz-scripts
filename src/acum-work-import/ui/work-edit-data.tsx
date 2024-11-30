@@ -2,10 +2,10 @@
 
 import {createContext, ParentProps, useContext} from 'solid-js';
 import {createStore, unwrap} from 'solid-js/store';
-import {essenceType, EssenceType, workISWCs, workLanguage, WorkLanguage, WorkVersion} from '../acum';
 import {mergeArrays} from 'src/common/lib/merge-arrays';
 import {ACUM_TYPE_ID, LANGUAGE_ZXX_ID} from 'src/common/musicbrainz/constants';
 import {fetchEditParams, urlFromMbid} from 'src/common/musicbrainz/edits';
+import {essenceType, EssenceType, workISWCs, workLanguage, WorkLanguage, WorkVersion} from '../acum';
 import {WorkStateWithEditDataT} from '../work-state';
 import {AddWarning} from './warnings';
 
@@ -34,7 +34,7 @@ function getWorkEditParams(work: WorkT): WorkEditData {
 
 async function fetchWorkEditParams(mbid: MBID): Promise<WorkEditData> {
   const url = urlFromMbid('work', mbid);
-  const work = (await fetchEditParams(url)) as WorkT;
+  const work = await fetchEditParams<WorkT>(url);
   return getWorkEditParams(work);
 }
 

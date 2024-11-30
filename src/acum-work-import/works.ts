@@ -67,7 +67,6 @@ async function createNewWork(track: WorkVersion, recordingState: MediumRecording
     creditsToChangeForTarget: '',
     newRelationshipState: createRelationshipState({
       _status: REL_STATUS_ADD,
-      backward: false,
       entity0: recordingState.recording,
       entity1: newWork,
       id: MB.relationshipEditor.getRelationshipStateId(),

@@ -18,7 +18,7 @@ export async function findArtist(
     const creator = creators.find(creator => creator.creatorIpBaseNumber === ipBaseNumber)!;
     const byIpi = await tryFetchJSON<ArtistSearchResultsT>(`/ws/2/artist?query=ipi:${creator.number}&limit=1&fmt=json`);
     if (byIpi && byIpi.artists.length > 0) {
-      return byIpi.artists[0].id as MBID;
+      return byIpi.artists[0].id;
     }
 
     const byName = await tryFetchJSON<ArtistSearchResultsT>(
@@ -26,7 +26,7 @@ export async function findArtist(
     );
     if (byName && byName.artists.length > 0 && nameMatch(creator, byName.artists[0])) {
       addWarning(`artist ${byName.artists[0].name} found by name search, please verify (IPI = ${creator.number})`);
-      return byName.artists[0].id as MBID;
+      return byName.artists[0].id;
     }
 
     addWarning(`failed to find ${creator.creatorHebName || creator.creatorEngName}, IPI ${creator.number}`);

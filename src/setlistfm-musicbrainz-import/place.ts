@@ -72,7 +72,7 @@ function submitPlace() {
           break;
         }
         case 'Web':
-          (form.querySelectorAll('span:not(.label) a') as NodeListOf<HTMLAnchorElement>).forEach((link, index) => {
+          form.querySelectorAll<HTMLAnchorElement>('span:not(.label) a').forEach((link, index) => {
             searchParams.append(`edit-place.url.${index + 1}.text`, link.href);
           });
           break;
