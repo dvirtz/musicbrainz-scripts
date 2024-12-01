@@ -38,12 +38,24 @@ branches:
   - name: beta
     prerelease: true
 plugins:
-  - [
-      '@semantic-release/commit-analyzer',
-      {preset: conventionalCommits, presetConfig: {types: *types}, releaseRules: *rules},
-    ]
-  - ['@semantic-release/release-notes-generator', {preset: conventionalCommits, presetConfig: {types: *types}}]
-  - ['semantic-release-mirror-version', {fileGlob: 'meta.ts', placeholderRegExp: "(?<=@version\\s+)\\d+.\\d+.\\d+"}]
+  - - '@semantic-release/commit-analyzer'
+    - preset: conventionalCommits
+      presetConfig:
+        types: *types
+      releaseRules: *rules
+  - - '@semantic-release/release-notes-generator'
+    - preset: conventionalCommits
+      presetConfig:
+        types: *types
+  - - 'semantic-release-mirror-version'
+    - fileGlob: '**/+(meta.ts|*.user.js)'
+      placeholderRegExp: "(?<=@version\\s+)\\d+.\\d+.\\d+"
   - '@semantic-release/changelog'
-  - ['@semantic-release/git', {assets: ['CHANGELOG.md']}]
-  - ['@semantic-release/github', {assets: ['CHANGELOG.md', 'dist/*.user.js']}]
+  - - '@semantic-release/git'
+    - assets:
+        - 'CHANGELOG.md'
+        - 'meta.ts'
+  - - '@semantic-release/github'
+    - assets:
+        - 'CHANGELOG.md'
+        - 'dist/*.user.js'
