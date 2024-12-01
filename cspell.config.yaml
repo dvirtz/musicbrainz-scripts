@@ -1,5 +1,5 @@
 $schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
-version: "0.2"
+version: '0.2'
 words:
   - acum
   - Dvir
@@ -25,7 +25,7 @@ patterns:
   - name: user_script_id
     pattern: /\/\/ @id.*/g
 overrides:
-  - filename: scripts/*.user.js
+  - filename: dist/*.user.js
     ignoreRegExpList:
       - user_script_id
   - filename: package.json

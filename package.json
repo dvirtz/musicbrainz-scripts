@@ -29,7 +29,7 @@
     "ci": "yarn lint && tsc && yarn knip",
     "build:js": "rollup -c",
     "build": "yarn ci && yarn clean && yarn build:js",
-    "semantic-release": "yarn workspaces foreach --recursive --from 'src/setlistfm-musicbrainz-import' exec semantic-release",
+    "semantic-release": "yarn workspaces foreach --recursive --from 'src/*' exec semantic-release",
     "knip": "knip --tags=-knipignore",
     "spell": "cspell **/*.ts **/*.md"
   },
