@@ -2,7 +2,7 @@
 // @name         ACUM work importer
 // @description  imports MusicBrainz works from acum.org.il database
 
-// @version      1.0.1-beta.2
+// @version      1.0.1
 // @author       process.env.AUTHOR
 // @namespace    https://github.com/dvirtz/musicbrainz-scripts
 // @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/raw/main/scripts/acum-work-import/acum-work-import.user.js
