@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.0.1-beta.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.1-beta.1...@dvirtz/acum-work-import-v1.0.1-beta.2) (2024-12-01)
+
+
+### General maintenance
+
+* update userscript version and push to git ([76f53cd](https://github.com/dvirtz/musicbrainz-scripts/commit/76f53cdad16d8adf3869cae17685979114bf4bf6))
+
 ## [@dvirtz/acum-work-import-v1.0.1-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.0...@dvirtz/acum-work-import-v1.0.1-beta.1) (2024-12-01)
 
 
