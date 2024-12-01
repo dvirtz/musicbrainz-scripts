@@ -48,7 +48,7 @@ plugins:
       presetConfig:
         types: *types
   - - 'semantic-release-mirror-version'
-    - fileGlob: '**/+(meta.ts|*.user.js)'
+    - fileGlob: '**/+(meta.ts|*.user.js|README.md)'
       placeholderRegExp: "(?<=@version\\s+)\\d+\\.\\d+\\.\\d+(-beta\\.\\d+)?"
   - '@semantic-release/changelog'
   - - '@semantic-release/git'
@@ -59,3 +59,6 @@ plugins:
     - assets:
         - 'CHANGELOG.md'
         - 'dist/*.user.js'
+  - - '@qiwi/semantic-release-gh-pages-plugin'
+    - src: '**/{README.md,*.user.js}'
+      msg: 'chore(release): update gh-pages [skip ci]'

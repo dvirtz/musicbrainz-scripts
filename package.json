@@ -58,6 +58,7 @@
     "@eslint/js": "^9.14.0",
     "@gera2ld/plaid": "~2.7.0",
     "@gera2ld/plaid-rollup": "~2.7.0",
+    "@qiwi/semantic-release-gh-pages-plugin": "^5.2.12",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/babel__core": "^7",
