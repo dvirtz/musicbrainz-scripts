@@ -172,13 +172,13 @@ function ArgumentError(message) {
 
 var fetchBuilder = /*@__PURE__*/getDefaultExportFromCjs(fetchRetry);
 
-const fetchRetryBuilder = fetchBuilder(unsafeWindow.fetch);
+const fetchRetryBuilder = fetchBuilder(unsafeWindow.fetch.bind(unsafeWindow));
 function tryFetch(fetcher) {
   return async (url, options) => {
     try {
       return await fetcher(url, options);
     } catch (e) {
-      console.error(`Failed to fetch ${url}: ${e}`);
+      console.error(`Failed to fetch ${url}: ${e.message}`);
       return null;
     }
   };
@@ -5495,7 +5495,7 @@ async function findEvent(url) {
   const existingEvent = await tryFetchJSON(`https://musicbrainz.org/ws/2/url?resource=${url}&inc=event-rels&fmt=json`);
   return existingEvent && existingEvent['relations'][0]['event'].id;
 }
-async function addWarningIcon(type, query, afterElement) {
+function addWarningIcon(type, query, afterElement) {
   const warningIcon = document.createElement('img');
   warningIcon.src = 'https://musicbrainz.org/static/images/icons/warning.png';
   warningIcon.alt = 'warning';
@@ -5509,7 +5509,7 @@ async function addWarningIcon(type, query, afterElement) {
   afterElement.parentNode.insertBefore(warningIcon, afterElement.nextSibling);
 }
 
-main();
+main().catch(console.error);
 async function main() {
   if (location.href.includes('/venue/')) {
     await handleVenuePage();
