@@ -35,6 +35,8 @@ _rules: &rules
 extends: 'semantic-release-monorepo'
 branches:
   - main
+  - name: beta
+    prerelease: true
 plugins:
   - [
       '@semantic-release/commit-analyzer',
