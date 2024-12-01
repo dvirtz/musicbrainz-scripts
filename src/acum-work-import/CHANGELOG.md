@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.0.1-beta.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.1-beta.2...@dvirtz/acum-work-import-v1.0.1-beta.3) (2024-12-01)
+
+
+### General maintenance
+
+* fix version regex ([59569be](https://github.com/dvirtz/musicbrainz-scripts/commit/59569be2eef5f74f81f9395784f3bb38a9ff45f0))
+
 ## [@dvirtz/acum-work-import-v1.0.1-beta.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.1-beta.1...@dvirtz/acum-work-import-v1.0.1-beta.2) (2024-12-01)
 
 
