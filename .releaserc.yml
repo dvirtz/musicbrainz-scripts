@@ -1,26 +1,26 @@
 _types: &types
   - type: feat
-    section: "Features"
+    section: 'Features'
   - type: fix
-    section: "Bug Fixes"
+    section: 'Bug Fixes'
   - type: docs
-    section: "Documentation"
+    section: 'Documentation'
   - type: perf
-    section: "Performance improvements"
+    section: 'Performance improvements'
   - type: revert
-    section: "Bug Fixes"
+    section: 'Bug Fixes'
   - type: test
-    section: "Tests"
+    section: 'Tests'
   - type: ci
-    section: "Build and continuous integration"
+    section: 'Build and continuous integration'
   - type: build
-    section: "Build and continuous integration"
+    section: 'Build and continuous integration'
   - type: chore
-    section: "General maintenance"
+    section: 'General maintenance'
   - type: style
-    section: "Style improvements"
+    section: 'Style improvements'
   - type: refactor
-    section: "Refactoring"
+    section: 'Refactoring'
 
 _rules: &rules
   - type: chore
@@ -32,33 +32,16 @@ _rules: &rules
   - type: test
     release: patch
 
-extends: "semantic-release-monorepo"
+extends: 'semantic-release-monorepo'
 branches:
   - main
 plugins:
   - [
-      "@semantic-release/commit-analyzer",
-      {
-        preset: conventionalCommits,
-        presetConfig: { types: *types },
-        releaseRules: *rules
-      },
+      '@semantic-release/commit-analyzer',
+      {preset: conventionalCommits, presetConfig: {types: *types}, releaseRules: *rules},
     ]
-  - [
-      "@semantic-release/release-notes-generator",
-      { preset: conventionalCommits, presetConfig: { types: *types } },
-    ]
-  - [
-      "semantic-release-mirror-version",
-      {
-        fileGlob: "*.meta.js",
-        placeholderRegExp: "(?<=@version\\s+)\\d+.\\d+.\\d+",
-      }
-    ]
-  - "@semantic-release/changelog"
-  - [
-    "@semantic-release/git",
-    {
-      assets: ["CHANGELOG.md", "*.user.js"],
-    }
-  ]
+  - ['@semantic-release/release-notes-generator', {preset: conventionalCommits, presetConfig: {types: *types}}]
+  - ['semantic-release-mirror-version', {fileGlob: '*.meta.ts', placeholderRegExp: "(?<=@version\\s+)\\d+.\\d+.\\d+"}]
+  - '@semantic-release/changelog'
+  - ['@semantic-release/git', {assets: ['CHANGELOG.md']}]
+  - ['@semantic-release/github', {assets: ['CHANGELOG.md', 'scripts/*/*.user.js']}]
