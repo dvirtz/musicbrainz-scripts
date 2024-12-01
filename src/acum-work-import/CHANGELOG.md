@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.0.1-beta.4](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.1-beta.3...@dvirtz/acum-work-import-v1.0.1-beta.4) (2024-12-01)
+
+
+### General maintenance
+
+* publish scripts to gh-pages ([ff7d9a3](https://github.com/dvirtz/musicbrainz-scripts/commit/ff7d9a31b4b5a3ccc400a37825eb2d7b03e75022))
+
 ## [@dvirtz/acum-work-import-v1.0.1-beta.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.1-beta.2...@dvirtz/acum-work-import-v1.0.1-beta.3) (2024-12-01)
 
 
