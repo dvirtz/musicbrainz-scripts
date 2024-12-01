@@ -49,7 +49,7 @@ plugins:
         types: *types
   - - 'semantic-release-mirror-version'
     - fileGlob: '**/+(meta.ts|*.user.js)'
-      placeholderRegExp: "(?<=@version\\s+)\\d+.\\d+.\\d+"
+      placeholderRegExp: "(?<=@version\\s+)\\d+\\.\\d+\\.\\d+(-beta\\.\\d+)?"
   - '@semantic-release/changelog'
   - - '@semantic-release/git'
     - assets:
