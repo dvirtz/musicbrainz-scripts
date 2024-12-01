@@ -9,7 +9,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {
-    ignores: ['scripts/**'],
+    ignores: ['**/dist/**'],
   },
   {
     languageOptions: {
