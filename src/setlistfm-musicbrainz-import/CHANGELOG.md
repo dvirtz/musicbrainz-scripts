@@ -1,3 +1,37 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.3.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.2.1...@dvirtz/setlistfm-musicbrainz-import-v1.3.0) (2024-12-01)
+
+
+### Features
+
+* add option to disable cover comments and settings dialog ([1ce5405](https://github.com/dvirtz/musicbrainz-scripts/commit/1ce54054a132647391c56870de57aefda285a847))
+* add performance time ([7ff5752](https://github.com/dvirtz/musicbrainz-scripts/commit/7ff5752d52dc603fa26610f4a6c30c7216196562))
+* retry fetches ([c1ceb75](https://github.com/dvirtz/musicbrainz-scripts/commit/c1ceb75b66622aa62372812f6bb3929b94de38e4))
+
+
+### Bug Fixes
+
+* typescript & eslint errors ([c4d8e2c](https://github.com/dvirtz/musicbrainz-scripts/commit/c4d8e2c4d0eed5546da686ffde3dfc241091abe7))
+
+
+### Documentation
+
+* fix readme images ([58c6f28](https://github.com/dvirtz/musicbrainz-scripts/commit/58c6f28e83b60be100998f95996d242f76107931))
+
+
+### Build and continuous integration
+
+* publish scripts to github releases ([b057010](https://github.com/dvirtz/musicbrainz-scripts/commit/b057010da9e8e588c5c3c468df2deb9bbcae69bf))
+
+
+### General maintenance
+
+* namespace package ([7178c54](https://github.com/dvirtz/musicbrainz-scripts/commit/7178c54dde124d84cf75ce3a7f18c44a5329a73b))
+
+
+### Refactoring
+
+* generate scripts from typescript ([be4b4a0](https://github.com/dvirtz/musicbrainz-scripts/commit/be4b4a045592202b39ef74771690cf07ca3c37b2))
+
 ## [setlistfm-musicbrainz-import-v1.2.1](https://github.com/dvirtz/musicbrainz-scripts/compare/setlistfm-musicbrainz-import-v1.2.0...setlistfm-musicbrainz-import-v1.2.1) (2024-07-28)
 
 ### Bug Fixes
