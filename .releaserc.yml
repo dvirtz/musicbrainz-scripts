@@ -59,6 +59,7 @@ plugins:
     - assets:
         - 'CHANGELOG.md'
         - 'dist/*.user.js'
-  - - '@qiwi/semantic-release-gh-pages-plugin'
-    - src: '**/{README.md,*.user.js}'
+  - - '@dvirtz/semantic-release-gh-pages-plugin'
+    - src: '.'
       msg: 'chore(release): update gh-pages [skip ci]'
+      pattern: '**/{README.md,*.user.js}'
