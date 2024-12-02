@@ -1,3 +1,15 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.3.1-beta.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.3.1-beta.1...@dvirtz/setlistfm-musicbrainz-import-v1.3.1-beta.2) (2024-12-02)
+
+
+### Bug Fixes
+
+* Revert "chore: publish scripts to gh-pages" ([a4f2213](https://github.com/dvirtz/musicbrainz-scripts/commit/a4f22133032842edd6bff89e59d3f7c174d8af98))
+
+
+### General maintenance
+
+* create github release only from root ([6a2ff97](https://github.com/dvirtz/musicbrainz-scripts/commit/6a2ff975c2468c6e84d49e8f6c46454dcd9e1d5a))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.3.1-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.3.0...@dvirtz/setlistfm-musicbrainz-import-v1.3.1-beta.1) (2024-12-01)
 
 
