@@ -2220,12 +2220,12 @@ __metadata:
     "@commitlint/cli": "npm:^19.4.1"
     "@commitlint/config-conventional": "npm:^19.4.1"
     "@dvirtz/acum-work-import": "workspace:^"
-    "@dvirtz/semantic-release-gh-pages-plugin": "npm:^5.2.12"
     "@dvirtz/setlistfm-musicbrainz-import": "workspace:^"
     "@eslint/js": "npm:^9.14.0"
     "@gera2ld/plaid": "npm:~2.7.0"
     "@gera2ld/plaid-rollup": "npm:~2.7.0"
     "@kobalte/core": "npm:^0.13.7"
+    "@qiwi/semantic-release-gh-pages-plugin": "npm:^5.2.12"
     "@semantic-release/changelog": "npm:^6.0.3"
     "@semantic-release/commit-analyzer": "npm:^11.0.0"
     "@semantic-release/git": "npm:^10.0.1"
@@ -2270,25 +2270,6 @@ __metadata:
     weight-balanced-tree: "npm:^0.6.1"
   languageName: unknown
   linkType: soft
-
-"@dvirtz/semantic-release-gh-pages-plugin@npm:^5.2.12":
-  version: 5.2.12
-  resolution: "@dvirtz/semantic-release-gh-pages-plugin@npm:5.2.12"
-  dependencies:
-    "@qiwi/substrate-types": "npm:^2.1.0"
-    aggregate-error: "npm:^3.1.0"
-    debug: "npm:^4.3.4"
-    execa: "npm:^5.1.1"
-    gh-pages: "npm:^6.1.1"
-    git-url-parse: "npm:^14.0.0"
-    lodash: "npm:^4.17.21"
-    queuefy: "npm:^1.2.1"
-    read-pkg: "npm:^5.2.0"
-    then-request: "npm:^6.0.2"
-    tslib: "npm:^2.6.2"
-  checksum: 10c0/ebbdcf5e6cab6a51e874570a0eb1ed6326c5f4f43d2248b552e6121b0dd9c4a35747c48d5fc99c3d01f6f51f01e7ac7faa51831d9d0c948d012ecaab2b4f8c51
-  languageName: node
-  linkType: hard
 
 "@dvirtz/setlistfm-musicbrainz-import@workspace:^, @dvirtz/setlistfm-musicbrainz-import@workspace:src/setlistfm-musicbrainz-import":
   version: 0.0.0-use.local
@@ -3064,10 +3045,65 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@qiwi/substrate-types@npm:^2.1.0":
+"@qiwi/semantic-release-gh-pages-plugin@npm:^5.2.12":
+  version: 5.2.12
+  resolution: "@qiwi/semantic-release-gh-pages-plugin@npm:5.2.12"
+  dependencies:
+    "@qiwi/substrate": "npm:^2.0.4"
+    "@types/debug": "npm:^4.1.10"
+    "@types/gh-pages": "npm:^6.0.0"
+    "@types/git-url-parse": "npm:^9.0.2"
+    "@types/lodash": "npm:^4.14.200"
+    "@types/semantic-release": "npm:^20.0.4"
+    aggregate-error: "npm:^3.1.0"
+    debug: "npm:^4.3.4"
+    execa: "npm:^5.1.1"
+    gh-pages: "npm:^6.0.0"
+    git-url-parse: "npm:^14.0.0"
+    lodash: "npm:^4.17.21"
+    queuefy: "npm:^1.2.1"
+    read-pkg: "npm:^5.2.0"
+    then-request: "npm:^6.0.2"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/bb05acfa4da97a092feb487419ee27e54c9be86efede5fdf2a9aa8fe03519b3f8c2525c994fb9439e6401cbe8703c25f0f5825a51118c618a0b8cafa395908ec
+  languageName: node
+  linkType: hard
+
+"@qiwi/substrate-abstract@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@qiwi/substrate-abstract@npm:2.1.0"
+  dependencies:
+    "@qiwi/substrate-types": "npm:2.1.0"
+  checksum: 10c0/9c3425b6b48c8c087551d91afdff13f967d2905ea3b3a6509e48630b438b088bde2be1f7880d8cdf9c4b47d7cbba70f9da1a55e449d28b9e4b248d837c7eed42
+  languageName: node
+  linkType: hard
+
+"@qiwi/substrate-std@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@qiwi/substrate-std@npm:2.1.0"
+  dependencies:
+    "@qiwi/substrate-types": "npm:2.1.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/5e0d7535129af1df91d5ac527e51704f647f399628bc6d1e0c32ad6fa2c94663c9bde66a35e9659baa2143cd2df1c3bfeeb987ed7981d4dcefb097c6ef6fc990
+  languageName: node
+  linkType: hard
+
+"@qiwi/substrate-types@npm:2.1.0":
   version: 2.1.0
   resolution: "@qiwi/substrate-types@npm:2.1.0"
   checksum: 10c0/37f191619546014e8c29efb831e21e358bdb30314e4c979754a9121ea3ed8187971f208b300856c68a5d8fc3fb67bff113e91bd8bb4190e9afa5a5994d6fb07d
+  languageName: node
+  linkType: hard
+
+"@qiwi/substrate@npm:^2.0.4":
+  version: 2.1.0
+  resolution: "@qiwi/substrate@npm:2.1.0"
+  dependencies:
+    "@qiwi/substrate-abstract": "npm:2.1.0"
+    "@qiwi/substrate-std": "npm:2.1.0"
+    "@qiwi/substrate-types": "npm:2.1.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/be6c9345e264cc73e19deb8699cf84ba5c9915363534c45e94f8fa14b27d280b82c88ab1bc84b353d18fe0af122aa5ea129a7aae16178673e8ff4d60e5a69a00
   languageName: node
   linkType: hard
 
@@ -3745,6 +3781,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/debug@npm:^4.1.10":
+  version: 4.1.12
+  resolution: "@types/debug@npm:4.1.12"
+  dependencies:
+    "@types/ms": "npm:*"
+  checksum: 10c0/5dcd465edbb5a7f226e9a5efd1f399c6172407ef5840686b73e3608ce135eeca54ae8037dcd9f16bdb2768ac74925b820a8b9ecc588a58ca09eca6acabe33e2f
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:*, @types/estree@npm:^1.0.0":
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
@@ -3768,6 +3813,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/gh-pages@npm:^6.0.0":
+  version: 6.1.0
+  resolution: "@types/gh-pages@npm:6.1.0"
+  checksum: 10c0/d8bf644822df211accac9cff24fcc0a5155fd715d05bc1698175623f5cde1aff81c302e7e38f7105e0fa0fe7ab24d7009d8dbb875897af669f48e06c3c20484c
+  languageName: node
+  linkType: hard
+
+"@types/git-url-parse@npm:^9.0.2":
+  version: 9.0.3
+  resolution: "@types/git-url-parse@npm:9.0.3"
+  checksum: 10c0/7335a185ed33921c025428fba62d86208573001f3ec686519bda272a9dfefbf32aba2dbc5c782ca705282f3338e04a45df6548863d26b9616531d45078160b93
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:^7.0.12":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
@@ -3775,10 +3834,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4.14.200":
+  version: 4.17.13
+  resolution: "@types/lodash@npm:4.17.13"
+  checksum: 10c0/c3d0b7efe7933ac0369b99f2f7bff9240d960680fdb74b41ed4bd1b3ca60cca1e31fe4046d9abbde778f941a41bc2a75eb629abf8659fa6c27b66efbbb0802a9
+  languageName: node
+  linkType: hard
+
 "@types/minimist@npm:^1.2.2":
   version: 1.2.5
   resolution: "@types/minimist@npm:1.2.5"
   checksum: 10c0/3f791258d8e99a1d7d0ca2bda1ca6ea5a94e5e7b8fc6cde84dd79b0552da6fb68ade750f0e17718f6587783c24254bbca0357648dd59dc3812c150305cabdc46
+  languageName: node
+  linkType: hard
+
+"@types/ms@npm:*":
+  version: 0.7.34
+  resolution: "@types/ms@npm:0.7.34"
+  checksum: 10c0/ac80bd90012116ceb2d188fde62d96830ca847823e8ca71255616bc73991aa7d9f057b8bfab79e8ee44ffefb031ddd1bcce63ea82f9e66f7c31ec02d2d823ccc
   languageName: node
   linkType: hard
 
@@ -3832,6 +3905,15 @@ __metadata:
   version: 1.20.2
   resolution: "@types/resolve@npm:1.20.2"
   checksum: 10c0/c5b7e1770feb5ccfb6802f6ad82a7b0d50874c99331e0c9b259e415e55a38d7a86ad0901c57665d93f75938be2a6a0bc9aa06c9749192cadb2e4512800bbc6e6
+  languageName: node
+  linkType: hard
+
+"@types/semantic-release@npm:^20.0.4":
+  version: 20.0.6
+  resolution: "@types/semantic-release@npm:20.0.6"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/ab8525a3dff2eb3f48ccfebcfc7988cf65efcb8fe9574007bca0574ee340e409d7ecef2556cdba5278278d5e51233a372709046b28fe82518f8d94f3e79d87fb
   languageName: node
   linkType: hard
 
@@ -7210,7 +7292,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gh-pages@npm:^6.1.1":
+"gh-pages@npm:^6.0.0":
   version: 6.2.0
   resolution: "gh-pages@npm:6.2.0"
   dependencies:
