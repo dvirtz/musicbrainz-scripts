@@ -34,8 +34,8 @@ export default {
         preset: 'conventionalCommits',
         presetConfig: {
           types,
-          releaseRules,
         },
+        releaseRules,
       },
     ],
     [
