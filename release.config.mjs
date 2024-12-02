@@ -4,17 +4,10 @@ export default {
   ...shared,
   plugins: [
     ...shared.plugins,
-    '@semantic-release/changelog',
-    [
-      '@semantic-release/git',
-      {
-        assets: ['**/CHANGELOG.md'],
-      },
-    ],
     [
       '@semantic-release/github',
       {
-        assets: ['CHANGELOG.md', '**/dist/**'],
+        assets: ['src/*/CHANGELOG.md', 'src/*/dist/**'],
       },
     ],
   ],
