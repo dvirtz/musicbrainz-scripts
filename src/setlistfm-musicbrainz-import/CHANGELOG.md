@@ -9,6 +9,19 @@
 ### General maintenance
 
 * create github release only from root ([a96197b](https://github.com/dvirtz/musicbrainz-scripts/commit/a96197bbaecda4988eed4d366f17960d915d13cf))
+* **release:** 1.3.1-beta.1 [skip ci] ([7b7f1d3](https://github.com/dvirtz/musicbrainz-scripts/commit/7b7f1d37dc19b8b0a51f62feb13ae11b9360bc9b))
+
+## [@dvirtz/setlistfm-musicbrainz-import-v1.3.1-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.3.0...@dvirtz/setlistfm-musicbrainz-import-v1.3.1-beta.1) (2024-12-02)
+
+
+### Build and continuous integration
+
+* fix version location ([4b028dc](https://github.com/dvirtz/musicbrainz-scripts/commit/4b028dcc19eca106d67a1c6eb15643e03ea9ecc5))
+
+
+### General maintenance
+
+* create github release only from root ([a96197b](https://github.com/dvirtz/musicbrainz-scripts/commit/a96197bbaecda4988eed4d366f17960d915d13cf))
 
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.3.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.2.1...@dvirtz/setlistfm-musicbrainz-import-v1.3.0) (2024-12-01)
 
