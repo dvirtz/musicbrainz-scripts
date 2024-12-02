@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignore": ["*.cjs", "dist/**", ".releaserc.yml"],
+  "ignore": ["*.cjs", "dist/**"],
   "project": ["**/*.{ts,tsx}"],
   "exclude": ["dependencies"]
 }

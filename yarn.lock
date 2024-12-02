@@ -2205,7 +2205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dvirtz/acum-work-import@workspace:src/acum-work-import":
+"@dvirtz/acum-work-import@workspace:^, @dvirtz/acum-work-import@workspace:src/acum-work-import":
   version: 0.0.0-use.local
   resolution: "@dvirtz/acum-work-import@workspace:src/acum-work-import"
   languageName: unknown
@@ -2219,13 +2219,18 @@ __metadata:
     "@babel/runtime": "npm:^7.24.1"
     "@commitlint/cli": "npm:^19.4.1"
     "@commitlint/config-conventional": "npm:^19.4.1"
+    "@dvirtz/acum-work-import": "workspace:^"
     "@dvirtz/semantic-release-gh-pages-plugin": "npm:^5.2.12"
+    "@dvirtz/setlistfm-musicbrainz-import": "workspace:^"
     "@eslint/js": "npm:^9.14.0"
     "@gera2ld/plaid": "npm:~2.7.0"
     "@gera2ld/plaid-rollup": "npm:~2.7.0"
     "@kobalte/core": "npm:^0.13.7"
     "@semantic-release/changelog": "npm:^6.0.3"
+    "@semantic-release/commit-analyzer": "npm:^11.0.0"
     "@semantic-release/git": "npm:^10.0.1"
+    "@semantic-release/github": "npm:^9.0.0"
+    "@semantic-release/release-notes-generator": "npm:^12.0.0"
     "@types/babel__core": "npm:^7"
     "@types/node": "npm:^22.9.0"
     "@violentmonkey/dom": "npm:^2.1.6"
@@ -2285,7 +2290,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dvirtz/setlistfm-musicbrainz-import@workspace:src/setlistfm-musicbrainz-import":
+"@dvirtz/setlistfm-musicbrainz-import@workspace:^, @dvirtz/setlistfm-musicbrainz-import@workspace:src/setlistfm-musicbrainz-import":
   version: 0.0.0-use.local
   resolution: "@dvirtz/setlistfm-musicbrainz-import@workspace:src/setlistfm-musicbrainz-import"
   languageName: unknown
