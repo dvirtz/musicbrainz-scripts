@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.0.2-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.1...@dvirtz/acum-work-import-v1.0.2-beta.1) (2024-12-02)
+
+
+### General maintenance
+
+* create github release only from root ([a96197b](https://github.com/dvirtz/musicbrainz-scripts/commit/a96197bbaecda4988eed4d366f17960d915d13cf))
+
 ## [@dvirtz/acum-work-import-v1.0.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.0...@dvirtz/acum-work-import-v1.0.1) (2024-12-01)
 
 
