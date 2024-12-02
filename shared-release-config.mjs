@@ -13,9 +13,8 @@ const types = [
 ];
 
 const releaseRules = [
-  {type: 'chore', release: 'patch'},
+  {type: 'ci', release: 'patch'},
   {type: 'docs', release: 'patch'},
-  {type: 'revert', release: 'patch'},
   {type: 'test', release: 'patch'},
 ];
 
