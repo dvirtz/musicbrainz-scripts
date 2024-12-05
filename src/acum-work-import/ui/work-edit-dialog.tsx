@@ -51,7 +51,7 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
           id={`submit-work-${workId()}`}
           action={submitUrl()}
           method="post"
-          classList={{'edit-work': true, 'modified': isModified()}}
+          classList={{'modified': isModified()}}
           onSubmit={props.onSubmit}
         >
           <h1>{'Edit work'}</h1>
