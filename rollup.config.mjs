@@ -31,7 +31,7 @@ export default defineConfig(
     external: defineExternal(['@violentmonkey/ui', '@violentmonkey/dom', 'solid-js', 'solid-js/web']),
     output: {
       format: 'iife',
-      file: `src/${name}/dist/${name}.user.js`,
+      file: `dist/${name}/${name}.user.js`,
       globals: {
         'solid-js': 'VM.solid',
         'solid-js/web': 'VM.solid.web',
