@@ -5,8 +5,7 @@
 // @version      1.3.0
 // @author       process.env.AUTHOR
 // @namespace    https://github.com/dvirtz/musicbrainz-scripts
-// @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/raw/main/scripts/setlistfm-musicbrainz-import/setlistfm-musicbrainz-import.user.js
-// @updateURL    https://github.com/dvirtz/musicbrainz-scripts/raw/main/scripts/setlistfm-musicbrainz-import/setlistfm-musicbrainz-import.user.js
+// @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/setlistfm-musicbrainz-import.user.js
 // @supportURL   https://github.com/dvirtz/musicbrainz-scripts/issues
 // @match        *://www.setlist.fm/setlist/*
 // @match        *://www.setlist.fm/venue/*
