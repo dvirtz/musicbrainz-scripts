@@ -456,6 +456,10 @@ declare global {
           | Array<[Array<RelationshipStateT>, WsJsEditWorkCreateT]>;
         responseData: WsJsEditResponseT;
         type: 'update-submitted-relationships';
+      }
+    | {
+        editNote: string;
+        type: 'update-edit-note';
       };
 
   type MediumStateTreeT = tree.ImmutableTree<[MediumWithRecordingsT, MediumRecordingStateTreeT]> | null;
