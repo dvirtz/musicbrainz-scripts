@@ -1,3 +1,12 @@
+## [@dvirtz/acum-work-import-v1.0.2-beta.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.2-beta.1...@dvirtz/acum-work-import-v1.0.2-beta.2) (2024-12-05)
+
+
+### Bug Fixes
+
+* disable submission buttons while submitting ([491299a](https://github.com/dvirtz/musicbrainz-scripts/commit/491299a7dd5eac50699f42a05da30c4a704d48a5))
+* download url ([11669a8](https://github.com/dvirtz/musicbrainz-scripts/commit/11669a850ce4728b7f1984243bfebcfbfc0479d7))
+* remove unneeded class ([8248292](https://github.com/dvirtz/musicbrainz-scripts/commit/82482927457f3c73353395d27157255b77458f90))
+
 ## [@dvirtz/acum-work-import-v1.0.2-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.1...@dvirtz/acum-work-import-v1.0.2-beta.1) (2024-12-02)
 
 
