@@ -22,7 +22,9 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
   const inputValid = createMemo(() => albumIdValid() && selectionStatus() == SelectionStatus.VALID);
   const {addWarning, clearWarnings} = useWarnings();
   const [worksPending, setWorksPending] = createSignal(false);
+  const [submitting, setSubmitting] = createSignal(false);
   const [progress, setProgress] = createSignal<readonly [number, string]>([0, '']);
+  const submissionDisabled = createMemo(() => !worksPending() || submitting());
 
   // need dependencies explicit to avoid infinite recursion
   // otherwise, the warning actions will trigger the effect again
@@ -54,17 +56,22 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
     clearWarnings();
     tryImportWorks(albumId(), addWarning, clearWarnings, setProgress)
       .then(() => setWorksPending(true))
-      .catch(err => addWarning(`Import failed: ${err}`));
+      .catch(err => {
+        console.error(err);
+        addWarning(`Import failed: ${err}`);
+      });
   }
 
   function submitWorks() {
+    setSubmitting(true);
     clearWarnings(/submission failed.*/);
     trySubmitWorks(setProgress)
       .then(() => {
         setWorksPending(false);
         clearWarnings();
       })
-      .catch(err => addWarning(`Submission failed: ${err}`));
+      .catch(err => addWarning(`Submission failed: ${err}`))
+      .finally(() => setSubmitting(false));
   }
 
   function cancel() {
@@ -89,10 +96,10 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
           use:validateAlbumId={[[albumId, setAlbumId], setAlbumIdValid]}
           style={{'margin': '0 7px 0 0'}}
         ></input>
-        <Button id="acum-work-submit" class="worksubmit" disabled={!worksPending()} onclick={submitWorks}>
+        <Button id="acum-work-submit" class="worksubmit" disabled={submissionDisabled()} onclick={submitWorks}>
           <span>Submit works</span>
         </Button>
-        <Button id="acum-work-cancel" class="worksubmit" disabled={!worksPending()} onclick={cancel}>
+        <Button id="acum-work-cancel" class="worksubmit" disabled={submissionDisabled()} onclick={cancel}>
           <span>Cancel</span>
         </Button>
         <ProgressBar
