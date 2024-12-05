@@ -5,8 +5,7 @@
 // @version      1.0.1
 // @author       process.env.AUTHOR
 // @namespace    https://github.com/dvirtz/musicbrainz-scripts
-// @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/raw/main/scripts/acum-work-import/acum-work-import.user.js
-// @updateURL    https://github.com/dvirtz/musicbrainz-scripts/raw/main/scripts/acum-work-import/acum-work-import.user.js
+// @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/acum-work-import.user.js
 // @supportURL   https://github.com/dvirtz/musicbrainz-scripts/issues
 // @match        http*://*musicbrainz.org/release/*/edit-relationships
 // @icon         https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg
