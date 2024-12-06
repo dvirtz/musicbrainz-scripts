@@ -1,3 +1,10 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.3.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.3.1...@dvirtz/setlistfm-musicbrainz-import-v1.3.2) (2024-12-06)
+
+
+### Bug Fixes
+
+* download url ([8e234ac](https://github.com/dvirtz/musicbrainz-scripts/commit/8e234ac0cc29bf1abbd2e30f231c3d7c691ad06c))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.3.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.3.0...@dvirtz/setlistfm-musicbrainz-import-v1.3.1) (2024-12-03)
 
 
