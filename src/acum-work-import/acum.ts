@@ -118,8 +118,10 @@ export function searchName(name: string) {
 }
 
 export enum EssenceType {
-  NoLyrics = '15',
-  Song = '30',
+  LightMusicNoWords = '15', // Light music (without words)
+  Song = '30', // Popular song
+  Jazz = '40', // Original jazz work
+  ChoirSong = '53', // Original song for 4 part choir
   /** @knipignore */
   Unknown = '-1',
 }

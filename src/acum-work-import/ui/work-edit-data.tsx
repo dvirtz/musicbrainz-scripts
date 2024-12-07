@@ -61,17 +61,18 @@ export async function udpateEditData(workState: WorkStateWithEditDataT, track: W
   workState.editData = {
     name: track.workHebName,
     comment: workState.originalEditData.comment,
-    type_id:
-      essenceType(track) == EssenceType.Song
-        ? (Object.values(MB.linkedEntities.work_type).find(workType => workType.name === 'Song')?.id ?? null)
-        : workState.originalEditData.type_id,
+    type_id: [EssenceType.Song, EssenceType.ChoirSong].includes(essenceType(track))
+      ? (Object.values(MB.linkedEntities.work_type).find(workType => workType.name === 'Song')?.id ?? null)
+      : workState.originalEditData.type_id,
     languages: mergeArrays(
       workState.originalEditData.languages,
       (() => {
         switch (essenceType(track)) {
-          case EssenceType.NoLyrics:
+          case EssenceType.LightMusicNoWords:
+          case EssenceType.Jazz:
             return [LANGUAGE_ZXX_ID];
           case EssenceType.Song:
+          case EssenceType.ChoirSong:
             return (() => {
               switch (workLanguage(track)) {
                 case WorkLanguage.Hebrew:
