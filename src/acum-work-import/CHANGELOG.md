@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.1.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.2...@dvirtz/acum-work-import-v1.1.0) (2024-12-07)
+
+
+### Features
+
+* support more work essences ([cc59bc0](https://github.com/dvirtz/musicbrainz-scripts/commit/cc59bc0e9dad4bc7c2a04619fcdc289528323700))
+
 ## [@dvirtz/acum-work-import-v1.0.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.0.1...@dvirtz/acum-work-import-v1.0.2) (2024-12-06)
 
 
