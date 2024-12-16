@@ -1,5 +1,6 @@
+import {filter, from, lastValueFrom, mergeMap, tap} from 'rxjs';
 import {tryFetchJSON} from 'src/common/musicbrainz/fetch';
-import {CreatorFull, Creators, IPBaseNumber} from './acum';
+import {Creator, CreatorFull, Creators, IPBaseNumber} from './acum';
 import {AddWarning} from './ui/warnings';
 
 function nameMatch(creator: CreatorFull, artist: ArtistSearchResultsT['artists'][number]): boolean {
@@ -9,7 +10,7 @@ function nameMatch(creator: CreatorFull, artist: ArtistSearchResultsT['artists']
   );
 }
 
-export async function findArtist(
+async function findArtist(
   ipBaseNumber: IPBaseNumber,
   creators: Creators,
   addWarning: AddWarning
@@ -34,4 +35,29 @@ export async function findArtist(
   })();
 
   return artistMBID ? await tryFetchJSON<ArtistT>(`/ws/js/entity/${artistMBID}`) : null;
+}
+
+export async function linkArtists(
+  artistCache: Map<string, Promise<ArtistT | null>>,
+  writers: readonly Creator[] | undefined,
+  creators: Creators,
+  doLink: (artist: ArtistT) => void,
+  addWarning: (message: string) => Set<string>
+) {
+  await lastValueFrom(
+    from(writers || []).pipe(
+      mergeMap(
+        async author =>
+          await (artistCache.get(author.creatorIpBaseNumber) ||
+            artistCache
+              .set(author.creatorIpBaseNumber, findArtist(author.creatorIpBaseNumber, creators, addWarning))
+              .get(author.creatorIpBaseNumber))
+      ),
+      filter((artist): artist is ArtistT => artist !== null),
+      tap(doLink)
+    ),
+    {
+      defaultValue: null,
+    }
+  );
 }

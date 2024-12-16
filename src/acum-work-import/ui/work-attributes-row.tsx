@@ -4,38 +4,15 @@ import {SetStoreFunction} from 'solid-js/store';
 import parseIntegerOrNull from 'src/common/lib/parse-integer-or-null';
 import {removeAtIndex} from 'src/common/lib/remove-at-index';
 import {buildOptionList, buildOptionListFromKeys} from 'src/common/musicbrainz/build-options-list';
-import {tryFetchJSON} from 'src/common/musicbrainz/fetch';
+import {workAttributeAllowedValues, workAttributeTypes} from 'src/common/musicbrainz/type-info';
 import {SelectBox} from './select-box';
 import {WorkEditData} from './work-edit-data';
 
-function byId<T extends {id: number}>(list: ReadonlyArray<T>) {
-  return Object.fromEntries(list.map(item => [item.id, item])) as Record<number, T>;
-}
-
-const lazyAttributeTypes = PLazy.from(async () => {
-  const workAttributeTypes =
-    Object.keys(MB.linkedEntities.work_attribute_type).length > 0
-      ? MB.linkedEntities.work_attribute_type
-      : byId(
-          (
-            await tryFetchJSON<{
-              work_attribute_type_list: [WorkAttributeTypeT];
-            }>('/ws/js/type-info/work_attribute_type')
-          )?.work_attribute_type_list ?? []
-        );
-  return buildOptionList(Object.values(workAttributeTypes));
-});
+const lazyAttributeTypes = PLazy.from(async () => buildOptionList(Object.values(await workAttributeTypes)));
 
 const lazyAllowedValuesByID = PLazy.from(async () => {
-  const workAttributeAllowedValues = byId(
-    (
-      await tryFetchJSON<{
-        work_attribute_type_allowed_value_list: [WorkAttributeTypeAllowedValueT];
-      }>('/ws/js/type-info/work_attribute_type_allowed_value')
-    )?.work_attribute_type_allowed_value_list || []
-  );
   return new Map(
-    Map.groupBy(Object.values(workAttributeAllowedValues), x => x.workAttributeTypeID)
+    Map.groupBy(Object.values(await workAttributeAllowedValues), x => x.workAttributeTypeID)
       .entries()
       .map(([typeId, children]) => [typeId, buildOptionListFromKeys(children, 'value', 'id')])
   );

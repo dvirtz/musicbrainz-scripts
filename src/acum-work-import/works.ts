@@ -6,7 +6,7 @@ import {iterateRelationshipsInTargetTypeGroup} from 'src/common/musicbrainz/type
 import {WorkVersion} from './acum';
 import {createRelationshipState} from './relationships';
 import {AddWarning} from './ui/warnings';
-import {udpateEditData} from './ui/work-edit-data';
+import {workEditData} from './ui/work-edit-data';
 import {addWorkEditor} from './ui/work-editor';
 import {WorkStateWithEditDataT} from './work-state';
 
@@ -40,7 +40,7 @@ export async function addWork(
   }
 
   const workState = head(MB.tree.iterate(recordingState.relatedWorks)) as WorkStateWithEditDataT;
-  await udpateEditData(workState, track, addWarning);
+  Object.assign(workState, await workEditData(workState.work, track, addWarning));
   addWorkEditor(workState, recordingState);
   return workState;
 }
@@ -75,14 +75,14 @@ async function createNewWork(track: WorkVersion, recordingState: MediumRecording
     oldRelationshipState: null,
   });
   // wait for the work to be added
-  const observer = await new Promise<MutationObserver>(resolve => {
+  await new Promise<void>(resolve => {
     VM.observe(document.querySelector('.release-relationship-editor')!, (mutations, observer) => {
       if (document.querySelector(`.works a[href="#new-work-${newWork.id}"]`)) {
-        resolve(observer);
+        observer.disconnect();
+        resolve();
       }
     });
   });
-  observer.disconnect();
   // refresh recording state
   const mediumRecordingStates = MB.tree.find(
     MB.relationshipEditor.state.mediums,
@@ -100,7 +100,7 @@ async function createNewWork(track: WorkVersion, recordingState: MediumRecording
   )!;
 }
 
-function createWork(attributes: Partial<WorkT>): WorkT {
+export function createWork(attributes: Partial<WorkT>): WorkT {
   return MB.entity({
     ...{
       artists: [],

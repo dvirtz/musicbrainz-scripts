@@ -5,7 +5,6 @@ import {
   filter,
   from,
   ignoreElements,
-  isEmpty,
   lastValueFrom,
   map,
   merge,
@@ -22,14 +21,14 @@ import {addEditNote} from 'src/common/musicbrainz/edit-note';
 import {trackRecordingState} from 'src/common/musicbrainz/track-recording-state';
 import {albumUrl, Creator, Creators, IPBaseNumber, searchName, WorkVersion} from './acum';
 import {albumInfo} from './albums';
-import {findArtist} from './artists';
+import {linkArtists} from './artists';
 import {addArrangerRelationship, addWriterRelationship} from './relationships';
 import {AddWarning, ClearWarnings} from './ui/warnings';
 import {workEditDataEqual} from './ui/work-edit-data';
 import {WorkStateWithEditDataT} from './work-state';
 import {addWork} from './works';
 
-export async function importWorks(
+export async function importAlbum(
   albumId: string,
   addWarning: AddWarning,
   clearWarnings: ClearWarnings,
@@ -46,36 +45,14 @@ export async function importWorks(
   // map of promises so that we don't fetch the same artist multiple times
   const artistCache = new Map<IPBaseNumber, Promise<ArtistT | null>>();
 
-  const linkArtists = async (
-    writers: ReadonlyArray<Creator> | undefined,
-    creators: Creators,
-    doLink: (artist: ArtistT) => void,
-    addWarning: AddWarning
-  ) => {
-    await lastValueFrom(
-      from(writers || []).pipe(
-        mergeMap(
-          async author =>
-            await (artistCache.get(author.creatorIpBaseNumber) ||
-              artistCache
-                .set(author.creatorIpBaseNumber, findArtist(author.creatorIpBaseNumber, creators, addWarning))
-                .get(author.creatorIpBaseNumber))
-        ),
-        filter((artist): artist is ArtistT => artist !== null),
-        tap(doLink),
-        isEmpty()
-      )
-    );
-  };
-
   const linkWriters = async (
     work: WorkT,
     writers: ReadonlyArray<Creator> | undefined,
     creators: Creators,
-    linkTypeId: number,
-    addWarning: AddWarning
+    linkTypeId: number
   ) => {
     await linkArtists(
+      artistCache,
       writers,
       creators,
       (artist: ArtistT) => addWriterRelationship(work, artist, linkTypeId),
@@ -86,10 +63,15 @@ export async function importWorks(
   const linkArrangers = async (
     recording: RecordingT,
     arrangers: ReadonlyArray<Creator> | undefined,
-    creators: Creators,
-    addWarning: AddWarning
+    creators: Creators
   ) => {
-    await linkArtists(arrangers, creators, (artist: ArtistT) => addArrangerRelationship(recording, artist), addWarning);
+    await linkArtists(
+      artistCache,
+      arrangers,
+      creators,
+      (artist: ArtistT) => addArrangerRelationship(recording, artist),
+      addWarning
+    );
   };
 
   const selectedRecordings = await lastValueFrom(
@@ -108,17 +90,16 @@ export async function importWorks(
     )
   );
 
-  const linkCreators = async ([track, recording, workState, addWarning]: readonly [
+  const linkCreators = async ([track, recording, workState]: readonly [
     WorkVersion,
     RecordingT,
     WorkStateWithEditDataT,
-    AddWarning,
   ]): Promise<WorkStateWithEditDataT> => {
     const work = workState.work;
-    await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID, addWarning);
-    await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID, addWarning);
-    await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID, addWarning);
-    await linkArrangers(recording, track.arrangers, track.creators, addWarning);
+    await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID);
+    await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID);
+    await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID);
+    await linkArrangers(recording, track.arrangers, track.creators);
     return workState;
   };
 
@@ -152,7 +133,7 @@ export async function importWorks(
       }),
       mergeMap(
         async ([track, recordingState, addWarning]) =>
-          [track, recordingState.recording, await addWork(track, recordingState, addWarning), addWarning] as const
+          [track, recordingState.recording, await addWork(track, recordingState, addWarning)] as const
       ),
       mergeMap(linkCreators),
       connect(shared => merge(shared.pipe(maybeSetEditNote), shared.pipe(updateProgress, ignoreElements())))

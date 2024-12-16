@@ -72,7 +72,7 @@ type WorkInfoResponse = Response<{
   workAlbums: ReadonlyArray<AlbumBean>;
 }>;
 
-async function getWorkVersions(workId: string): Promise<ReadonlyArray<WorkVersion> | undefined> {
+export async function workVersions(workId: string): Promise<ReadonlyArray<WorkVersion> | undefined> {
   const result = await tryFetchJSON<WorkInfoResponse>(
     `https://nocs.acum.org.il/acumsitesearchdb/getworkinfo?workId=${workId}`
   );
@@ -93,6 +93,10 @@ function albumApiUrl(albumId: string) {
   return `https://nocs.acum.org.il/acumsitesearchdb/getalbuminfo?albumId=${albumId}`;
 }
 
+export function workUrl(workId: string) {
+  return `https://nocs.acum.org.il/acumsitesearchdb/work?workId=${workId}`;
+}
+
 export async function getAlbumInfo(albumId: string): Promise<AlbumBean | undefined> {
   const result = await tryFetchJSON<AlbumInfoResponse>(albumApiUrl(albumId));
   if (result) {
@@ -107,7 +111,7 @@ export async function getAlbumInfo(albumId: string): Promise<AlbumBean | undefin
 export async function workISWCs(workID: string) {
   const formatISWC = (iswc: string) => iswc.replace(/T(\d{3})(\d{3})(\d{3})(\d)/, 'T-$1.$2.$3-$4');
 
-  return (await getWorkVersions(workID))
+  return (await workVersions(workID))
     ?.map(albumVersion => albumVersion.versionIswcNumber)
     .filter(iswc => iswc.length > 0)
     .map(formatISWC);

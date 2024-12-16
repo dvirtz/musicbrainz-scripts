@@ -18,7 +18,6 @@ export const REL_STATUS_NOOP: RelationshipEditStatusT = 0;
 export const REL_STATUS_ADD: RelationshipEditStatusT = 1;
 export const REL_STATUS_EDIT: RelationshipEditStatusT = 2;
 export const REL_STATUS_REMOVE: RelationshipEditStatusT = 3;
-export const ACUM_TYPE_ID = window.location.host.startsWith('test.') ? 141 : 206;
 export const LANGUAGE_MUL_ID = 284;
 export const LANGUAGE_ZXX_ID = 486;
 

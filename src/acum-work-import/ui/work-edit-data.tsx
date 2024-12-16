@@ -1,13 +1,19 @@
 // adapted from https://github.dev/loujine/musicbrainz-scripts/blob/master/mbz-loujine-common.js
 
+import PLazy from 'p-lazy';
 import {createContext, ParentProps, useContext} from 'solid-js';
 import {createStore, unwrap} from 'solid-js/store';
 import {mergeArrays} from 'src/common/lib/merge-arrays';
-import {ACUM_TYPE_ID, LANGUAGE_ZXX_ID} from 'src/common/musicbrainz/constants';
+import {LANGUAGE_ZXX_ID} from 'src/common/musicbrainz/constants';
 import {fetchEditParams, urlFromMbid} from 'src/common/musicbrainz/edits';
+import {workAttributeTypes, workLanguages, workTypes} from 'src/common/musicbrainz/type-info';
 import {essenceType, EssenceType, workISWCs, workLanguage, WorkLanguage, WorkVersion} from '../acum';
 import {WorkStateWithEditDataT} from '../work-state';
 import {AddWarning} from './warnings';
+
+const ACUM_TYPE_ID = PLazy.from(async () => {
+  return Object.values(await workAttributeTypes).find(type => type.name === 'ACUM ID')!.id;
+});
 
 export type WorkEditData = {
   name: string;
@@ -54,54 +60,63 @@ export function workEditDataEqual(lhs: WorkEditData, rhs: WorkEditData) {
   );
 }
 
-export async function udpateEditData(workState: WorkStateWithEditDataT, track: WorkVersion, addWarning: AddWarning) {
-  workState.originalEditData = workState.work.gid
-    ? await fetchWorkEditParams(workState.work.gid)
-    : getWorkEditParams(workState.work);
-  workState.editData = {
-    name: track.workHebName,
-    comment: workState.originalEditData.comment,
-    type_id: [EssenceType.Song, EssenceType.ChoirSong].includes(essenceType(track))
-      ? (Object.values(MB.linkedEntities.work_type).find(workType => workType.name === 'Song')?.id ?? null)
-      : workState.originalEditData.type_id,
-    languages: mergeArrays(
-      workState.originalEditData.languages,
-      (() => {
-        switch (essenceType(track)) {
-          case EssenceType.LightMusicNoWords:
-          case EssenceType.Jazz:
-            return [LANGUAGE_ZXX_ID];
-          case EssenceType.Song:
-          case EssenceType.ChoirSong:
-            return (() => {
-              switch (workLanguage(track)) {
-                case WorkLanguage.Hebrew:
-                  return Object.values(MB.linkedEntities.language)
-                    .filter(language => language.name === 'Hebrew')
-                    .map(language => language.id);
-                default:
-                  addWarning(`Unknown language ${track.workLanguage}`);
-                  return [];
-              }
-            })();
-          default:
-            addWarning(`Unknown work type ${track.versionEssenceType}`);
-            return workState.originalEditData.languages;
-        }
-      })()
-    ),
-    iswcs: mergeArrays(workState.originalEditData.iswcs, (await workISWCs(track.workId)) ?? []),
-    attributes: workState.originalEditData.attributes.find(
-      element => element.type_id === ACUM_TYPE_ID && element.value === track.fullWorkId
-    )
-      ? workState.originalEditData.attributes
-      : [
-          ...workState.originalEditData.attributes,
-          {
-            type_id: ACUM_TYPE_ID,
-            value: track.fullWorkId,
-          },
-        ],
+export async function workEditData(
+  work: WorkT,
+  track: WorkVersion,
+  addWarning: AddWarning
+): Promise<{originalEditData: WorkEditData; editData: WorkEditData}> {
+  const originalEditData =
+    work.gid && unsafeWindow.location.pathname.startsWith('/release')
+      ? await fetchWorkEditParams(work.gid)
+      : getWorkEditParams(work);
+  const acumTypeId = await ACUM_TYPE_ID;
+  return {
+    originalEditData,
+    editData: {
+      name: track.workHebName,
+      comment: originalEditData.comment,
+      type_id: [EssenceType.Song, EssenceType.ChoirSong].includes(essenceType(track))
+        ? (Object.values(await workTypes).find(workType => workType.name === 'Song')?.id ?? null)
+        : originalEditData.type_id,
+      languages: mergeArrays(
+        originalEditData.languages,
+        await (async () => {
+          switch (essenceType(track)) {
+            case EssenceType.LightMusicNoWords:
+            case EssenceType.Jazz:
+              return [LANGUAGE_ZXX_ID];
+            case EssenceType.Song:
+            case EssenceType.ChoirSong:
+              return await (async () => {
+                switch (workLanguage(track)) {
+                  case WorkLanguage.Hebrew:
+                    return Object.values(await workLanguages)
+                      .filter(language => language.name === 'Hebrew')
+                      .map(language => language.id);
+                  default:
+                    addWarning(`Unknown language ${track.workLanguage}`);
+                    return [];
+                }
+              })();
+            default:
+              addWarning(`Unknown work type ${track.versionEssenceType}`);
+              return originalEditData.languages;
+          }
+        })()
+      ),
+      iswcs: mergeArrays(originalEditData.iswcs, (await workISWCs(track.workId)) ?? []),
+      attributes: originalEditData.attributes.find(
+        element => element.type_id === acumTypeId && element.value === track.fullWorkId
+      )
+        ? originalEditData.attributes
+        : [
+            ...originalEditData.attributes,
+            {
+              type_id: acumTypeId,
+              value: track.fullWorkId,
+            },
+          ],
+    },
   };
 }
 
