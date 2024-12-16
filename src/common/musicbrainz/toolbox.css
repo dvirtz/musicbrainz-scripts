@@ -1,0 +1,20 @@
+#dvirtz-toolbox {
+  padding: 8px;
+  border: 5px dotted rgb(171, 171, 109);
+  margin: 0px -6px 6px;
+
+  .warning {
+    border: 2px red dotted;
+    background: #FBE3E4;
+    padding: 0.5em;
+    font-weight: bold;
+  }
+}
+
+#dvirtz-toolbox.half-page {
+  margin: 0px -6px 6px 550px;
+}
+
+#dvirtz-toolbox.iframe {
+  margin: 0px -6px 6px 0px;
+}

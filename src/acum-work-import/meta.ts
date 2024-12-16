@@ -7,7 +7,9 @@
 // @namespace    https://github.com/dvirtz/musicbrainz-scripts
 // @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/acum-work-import.user.js
 // @supportURL   https://github.com/dvirtz/musicbrainz-scripts/issues
-// @match        http*://*musicbrainz.org/release/*/edit-relationships
+// @match        http*://*.musicbrainz.org/release/*/edit-relationships
+// @match        http*://*.musicbrainz.org/work/*
+// @match        http*://*.musicbrainz.org/dialog?path=%2Fwork%2F*
 // @icon         https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg
 // @require      https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2
 // @require      https://cdn.jsdelivr.net/npm/@violentmonkey/ui@0.7

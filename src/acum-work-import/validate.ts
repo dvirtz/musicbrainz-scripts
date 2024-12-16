@@ -12,21 +12,21 @@ declare module 'solid-js' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface Directives {
-      validateAlbumId: [Signal<string>, Setter<boolean>]; // Corresponds to `use:validateAlbumId`
+      validateNumericId: [Signal<string>, Setter<boolean>]; // Corresponds to `use:validateAlbumId`
     }
   }
 }
 
-export function validateAlbumId(input: HTMLInputElement, accessor: Accessor<[Signal<string>, Setter<boolean>]>) {
-  const [[albumId, setAlbumId], setAlbumIdValid] = accessor();
+export function validateNumericId(input: HTMLInputElement, accessor: Accessor<[Signal<string>, Setter<boolean>]>) {
+  const [[id, setId], setIdValid] = accessor();
   input.oninput = () => {
-    setAlbumId(input.value);
-    if (/^\d+$/.test(albumId())) {
-      setAlbumIdValid(true);
+    setId(input.value);
+    if (/^\d+$/.test(id())) {
+      setIdValid(true);
       input.setCustomValidity('');
     } else {
-      setAlbumIdValid(false);
-      input.setCustomValidity('Album ID must be a number');
+      setIdValid(false);
+      input.setCustomValidity('ID must be a number');
     }
     input.reportValidity();
   };

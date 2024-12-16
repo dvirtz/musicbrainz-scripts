@@ -19,7 +19,7 @@ export default defineConfig(
         minimize: false,
         extensions: ['.ts', '.tsx', '.mjs', '.js', '.jsx'],
         postcss: {
-          inject: name === 'acum-work-import',
+          inject: false,
           minimize: true,
         },
         aliases: {
@@ -38,7 +38,6 @@ export default defineConfig(
         'solid-js/store': 'VM.solid.store',
         '@violentmonkey/ui': 'VM',
       },
-      indent: false,
     },
   }))
 );

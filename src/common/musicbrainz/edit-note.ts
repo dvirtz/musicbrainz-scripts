@@ -1,8 +1,14 @@
-export function addEditNote(message: string) {
-  const textArea = document.querySelector('#edit-note-text') as HTMLTextAreaElement;
+export function addEditNote(message: string, document: Document = window.document) {
+  const textArea = document.querySelector<HTMLTextAreaElement>('textarea.edit-note');
   const note = editNote(message);
-  if (!textArea.value.includes(message)) {
-    MB.relationshipEditor.dispatch({type: 'update-edit-note', editNote: `${textArea.value}\n${note}`});
+  if (textArea && !textArea?.value.includes(message)) {
+    const newNote = `${textArea?.value}\n${note}`;
+    if (MB.relationshipEditor.state.editNoteField) {
+      MB.relationshipEditor.dispatch({type: 'update-edit-note', editNote: newNote});
+    } else {
+      textArea.value = newNote;
+      textArea.dispatchEvent(new Event('change', {bubbles: true}));
+    }
   }
 }
 
