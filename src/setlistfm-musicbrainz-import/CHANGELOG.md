@@ -1,3 +1,10 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.3.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.3.2...@dvirtz/setlistfm-musicbrainz-import-v1.3.3) (2024-12-16)
+
+
+### Bug Fixes
+
+* disabling covers should also disable X song ([7867409](https://github.com/dvirtz/musicbrainz-scripts/commit/78674097a5ff8d4420998ec3d6f34a3ddc16d43a))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.3.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.3.1...@dvirtz/setlistfm-musicbrainz-import-v1.3.2) (2024-12-06)
 
 
