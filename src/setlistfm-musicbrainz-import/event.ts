@@ -78,7 +78,7 @@ function* setlistEntry(setlistPart: Element, mainArtistName: string, addCoverCom
           const match = line.match(/\(with (.*)\)/);
           if (match) {
             return [artist(`${mainArtistName} with ${match[1]}`)];
-          } else if (!line.includes('cover') || addCoverComment) {
+          } else if (!line.match(/\b(cover|song)\)/) || addCoverComment) {
             return [info(line)];
           } else {
             return [];
