@@ -7,7 +7,7 @@ export default {
     [
       'semantic-release-mirror-version',
       {
-        fileGlob: '{meta.ts,dist/*.user.js}',
+        fileGlob: '{meta.ts,dist/*/*.user.js}',
         placeholderRegExp: '(?<=@version\\s+)\\d+\\.\\d+\\.\\d+(-beta\\.\\d+)?',
       },
     ],
