@@ -1,6 +1,6 @@
 import {filter, from, lastValueFrom, mergeMap, tap} from 'rxjs';
 import {tryFetchJSON} from 'src/common/musicbrainz/fetch';
-import {Creator, CreatorFull, Creators, IPBaseNumber} from './acum';
+import {Creator, CreatorFull, Creators, IPBaseNumber, RoleCode} from './acum';
 import {AddWarning} from './ui/warnings';
 
 function nameMatch(creator: CreatorFull, artist: ArtistSearchResultsT['artists'][number]): boolean {
@@ -17,6 +17,20 @@ async function findArtist(
 ): Promise<ArtistT | null> {
   const artistMBID = await (async () => {
     const creator = creators.find(creator => creator.creatorIpBaseNumber === ipBaseNumber)!;
+    const role = (() => {
+      switch (creator.roleCode) {
+        case RoleCode.Composer:
+          return 'composer';
+        case RoleCode.Author:
+          return 'lyricist';
+        case RoleCode.Arranger:
+          return 'arranger';
+        case RoleCode.Translator:
+          return 'translator';
+        case RoleCode.ComposerAndAuthor:
+          return 'composer and lyricist';
+      }
+    })();
     const byIpi = await tryFetchJSON<ArtistSearchResultsT>(`/ws/2/artist?query=ipi:${creator.number}&limit=1&fmt=json`);
     if (byIpi && byIpi.artists.length > 0) {
       return byIpi.artists[0].id;
@@ -26,11 +40,11 @@ async function findArtist(
       `/ws/2/artist?query=name:(${creator.creatorHebName} OR ${creator.creatorEngName})&limit=1&fmt=json`
     );
     if (byName && byName.artists.length > 0 && nameMatch(creator, byName.artists[0])) {
-      addWarning(`artist ${byName.artists[0].name} found by name search, please verify (IPI = ${creator.number})`);
+      addWarning(`${role} ${byName.artists[0].name} found by name search, please verify (IPI = ${creator.number})`);
       return byName.artists[0].id;
     }
 
-    addWarning(`failed to find ${creator.creatorHebName || creator.creatorEngName}, IPI ${creator.number}`);
+    addWarning(`failed to find ${role} ${creator.creatorHebName || creator.creatorEngName}, IPI ${creator.number}`);
     return null;
   })();
 
