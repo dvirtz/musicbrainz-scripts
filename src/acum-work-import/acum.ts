@@ -14,8 +14,17 @@ type CreatorBase<Type extends string> = Bean<Type> & {
 
 export type Creator = CreatorBase<'org.acum.site.searchdb.dto.bean.CreatorBean'>;
 
+export enum RoleCode {
+  Composer = 'C',
+  Author = 'A',
+  Arranger = 'AR',
+  Translator = 'AT',
+  ComposerAndAuthor = 'CA',
+}
+
 export type CreatorFull = CreatorBase<'org.acum.site.searchdb.dto.bean.CreatorFullBean'> & {
   number: string;
+  roleCode: RoleCode;
 };
 
 export type Creators = ReadonlyArray<CreatorFull>;
@@ -44,10 +53,11 @@ type AlbumInfoResponse = Response<{
 export type WorkVersion = WorkBean & {
   versionNumber: string;
   creators: Creators;
-  authors: ReadonlyArray<Creator>;
-  composers: ReadonlyArray<Creator>;
-  arrangers: ReadonlyArray<Creator> | undefined;
-  translators: ReadonlyArray<Creator> | undefined;
+  authors?: ReadonlyArray<Creator>;
+  composers?: ReadonlyArray<Creator>;
+  arrangers?: ReadonlyArray<Creator>;
+  translators?: ReadonlyArray<Creator>;
+  composersAndAuthors?: ReadonlyArray<Creator>;
   versionIswcNumber: string;
   versionEssenceType: string;
   albumTrackNumber: string;

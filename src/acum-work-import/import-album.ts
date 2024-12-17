@@ -49,7 +49,8 @@ export async function importAlbum(
     work: WorkT,
     writers: ReadonlyArray<Creator> | undefined,
     creators: Creators,
-    linkTypeId: number
+    linkTypeId: number,
+    addWarning: AddWarning
   ) => {
     await linkArtists(
       artistCache,
@@ -63,7 +64,8 @@ export async function importAlbum(
   const linkArrangers = async (
     recording: RecordingT,
     arrangers: ReadonlyArray<Creator> | undefined,
-    creators: Creators
+    creators: Creators,
+    addWarning: AddWarning
   ) => {
     await linkArtists(
       artistCache,
@@ -96,10 +98,11 @@ export async function importAlbum(
     WorkStateWithEditDataT,
   ]): Promise<WorkStateWithEditDataT> => {
     const work = workState.work;
-    await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID);
-    await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID);
-    await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID);
-    await linkArrangers(recording, track.arrangers, track.creators);
+    const addWarning = addTrackWarning(track);
+    await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID, addWarning);
+    await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID, addWarning);
+    await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID, addWarning);
+    await linkArrangers(recording, track.arrangers, track.creators, addWarning);
     return workState;
   };
 
@@ -128,7 +131,7 @@ export async function importAlbum(
       tap(([track, recordingState, addWarning]) => {
         const recording = recordingState.recording;
         if (track[searchName(recording.name)] != recording.name) {
-          addWarning(`Work name of ${recording.name} is different than recording name, please verify`);
+          addWarning(`Work name of ${recording.name} is different from recording name, please verify`);
         }
       }),
       mergeMap(
