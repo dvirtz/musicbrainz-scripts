@@ -13,6 +13,9 @@ export default defineConfig(
   }).map(([name, entry]) => ({
     logLevel: 'debug',
     input: entry,
+    watch: {
+      include: 'src/**/*.ts',
+    },
     plugins: [
       ...definePlugins({
         esm: true,
