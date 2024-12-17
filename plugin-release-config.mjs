@@ -15,7 +15,7 @@ export default {
     [
       '@semantic-release/git',
       {
-        assets: ['CHANGELOG.md'],
+        assets: ['CHANGELOG.md', 'meta.ts'],
       },
     ],
   ],
