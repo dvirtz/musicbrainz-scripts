@@ -7,7 +7,7 @@ export default {
     [
       '@semantic-release/github',
       {
-        assets: ['dist/*/*.user.js'],
+        assets: ['src/*/dist/*.user.js'],
       },
     ],
   ],
