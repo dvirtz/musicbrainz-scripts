@@ -1,3 +1,15 @@
+## [@dvirtz/acum-work-import-v1.2.2-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.2.1...@dvirtz/acum-work-import-v1.2.2-beta.1) (2024-12-17)
+
+
+### Bug Fixes
+
+* commit version change ([cd7e803](https://github.com/dvirtz/musicbrainz-scripts/commit/cd7e803390389e808a3687c1d86bc380df45de1e))
+
+
+### General maintenance
+
+* **release:** 1.2.1-beta.1 [skip ci] ([189f7a8](https://github.com/dvirtz/musicbrainz-scripts/commit/189f7a81db4aad810ceeb3185d4411e92cb361c2))
+
 ## [@dvirtz/acum-work-import-v1.2.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.2.0...@dvirtz/acum-work-import-v1.2.1) (2024-12-17)
 
 
