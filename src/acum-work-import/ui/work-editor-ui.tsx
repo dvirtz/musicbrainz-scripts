@@ -1,57 +1,23 @@
-import {Button} from '@kobalte/core/button';
-import {createEffect, createSignal} from 'solid-js';
 import {render} from 'solid-js/web';
 import {Toolbox} from 'src/common/musicbrainz/toolbox';
 import {importWork as tryImportWork} from '../import-work';
-import {validateNumericId} from '../validate';
+import {ImportForm} from './import-form';
 import {useWarnings, WarningsProvider} from './warnings';
 
-void validateNumericId;
-
 function AcumImporter(props: {form: HTMLFormElement}) {
-  const [workId, setWorkId] = createSignal('');
-  const [workIdValid, setWorkIdValid] = createSignal(false);
   const {addWarning, clearWarnings} = useWarnings();
-  const [importing, setImporting] = createSignal(false);
 
-  function importWork() {
-    setImporting(true);
+  async function importWork(workId: string) {
     clearWarnings();
-    tryImportWork(workId(), props.form, addWarning)
-      .catch(err => {
-        console.error(err);
-        addWarning(`Import failed: ${err}`);
-      })
-      .finally(() => setImporting(false));
+    try {
+      return await tryImportWork(workId, props.form, addWarning);
+    } catch (err) {
+      console.error(err);
+      addWarning(`Import failed: ${String(err)}`);
+    }
   }
 
-  createEffect((prevTitle?: string) => {
-    const submitButton = document.querySelector('button.submit') as HTMLButtonElement;
-    submitButton.disabled = importing();
-    submitButton.title = importing() ? 'Importing...' : (prevTitle ?? submitButton.title);
-    return submitButton.title;
-  });
-
-  return (
-    <>
-      <div class="buttons" style={{display: 'flex'}}>
-        <Button disabled={!workIdValid() || importing()} type="button" onClick={importWork}>
-          <img
-            src="https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg"
-            alt="ACUM logo"
-            style={{width: '16px', height: '16px', margin: '2px'}}
-          ></img>
-          <span>Import works from ACUM</span>
-        </Button>
-        <input
-          type="text"
-          placeholder={'Work ID'}
-          use:validateNumericId={[[workId, setWorkId], setWorkIdValid]}
-          style={{'margin': '0 7px 0 0'}}
-        ></input>
-      </div>
-    </>
-  );
+  return <ImportForm field="work" onSubmit={importWork} />;
 }
 
 const releaseEditorContainerId = 'acum-work-import-container';

@@ -160,3 +160,17 @@ export enum WorkLanguage {
 export function workLanguage(track: WorkVersion): WorkLanguage {
   return stringToEnum(track.workLanguage, WorkLanguage);
 }
+
+export function replaceUrlWith(field: string): (input: string) => string {
+  return (input: string) => {
+    try {
+      const url = new URL(input);
+      if (url.hostname === 'nocs.acum.org.il' && url.searchParams.has(field)) {
+        return url.searchParams.get(field)!;
+      }
+    } catch (e) {
+      console.debug('failed to parse URL', input, e);
+    }
+    return input;
+  };
+}
