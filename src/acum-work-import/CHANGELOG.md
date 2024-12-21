@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.4.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.3.0...@dvirtz/acum-work-import-v1.4.0) (2024-12-21)
+
+
+### Features
+
+* support URL pasting ([810f657](https://github.com/dvirtz/musicbrainz-scripts/commit/810f657e3b809f2122a39a64097fb2a22ee4d5da)), closes [#33](https://github.com/dvirtz/musicbrainz-scripts/issues/33)
+
 ## [@dvirtz/acum-work-import-v1.3.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.2.1...@dvirtz/acum-work-import-v1.3.0) (2024-12-17)
 
 
