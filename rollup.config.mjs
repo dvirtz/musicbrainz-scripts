@@ -14,7 +14,7 @@ export default defineConfig(
     logLevel: 'debug',
     input: entry,
     watch: {
-      include: 'src/**/*.ts',
+      include: 'src/**/*.{ts,tsx}',
     },
     plugins: [
       ...definePlugins({
