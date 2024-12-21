@@ -11,7 +11,7 @@ To import a whole medium:
 
 1. Open the release relationship editor.
 2. Find the album ID, this will be in the end of the album URL in ACUM, e.g. https://nocs.acum.org.il/acumsitesearchdb/album?albumid=011820.
-3. Insert the ACUM album ID in the input box.
+3. Insert the ACUM url or album ID in the input box.
 4. Select the recordings whose works you want to import.
 5. Click the import button.
 6. New works (green background links) will be created and exitsting works (yellow background) will be updated with links to the selected recordings and any writer and arranger as well as ISWCs and ACUM ID work attribute.
@@ -27,7 +27,7 @@ To import a single work:
 
 1. Open a work editor.
 2. Find the work ID, this will be in the end of the work URL in ACUM, e.g. https://nocs.acum.org.il/acumsitesearchdb/work?workid=1005566.
-3. Insert the ACUM work ID in the input box.
+3. Insert the ACUM url or work ID in the input box.
 4. Click the import button.
 5. The work will be updated with links writers, ISWCs and ACUM ID work attribute.
 6. Review the changes.

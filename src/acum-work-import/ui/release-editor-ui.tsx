@@ -1,49 +1,26 @@
 import {Button} from '@kobalte/core/button';
-import {createEffect, createMemo, createSignal, on} from 'solid-js';
+import {createEffect, createMemo, createSignal} from 'solid-js';
 import {render} from 'solid-js/web';
 import {Toolbox} from 'src/common/musicbrainz/toolbox';
 import {importAlbum as tryImportWorks} from '../import-album';
 import {submitWorks as trySubmitWorks} from '../submit';
-import {SelectionStatus, validateNumericId, validateSelection} from '../validate';
+import {SelectionStatus, validateSelection} from '../validate';
+import {ImportForm} from './import-form';
 import {ProgressBar} from './progressbar';
 import {useWarnings, WarningsProvider} from './warnings';
 
-void validateNumericId;
-
 function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}) {
-  const [albumId, setAlbumId] = createSignal('Album ID');
   const [selectedRecordings, setSelectedRecordings] = createSignal(MB.relationshipEditor.state.selectedRecordings);
   props.recordingCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', () => setSelectedRecordings(MB.relationshipEditor.state.selectedRecordings));
   });
   const selectionStatus = createMemo(() => validateSelection(selectedRecordings()));
-  const [albumIdValid, setAlbumIdValid] = createSignal(false);
-  const inputValid = createMemo(() => albumIdValid() && selectionStatus() == SelectionStatus.VALID);
   const {addWarning, clearWarnings} = useWarnings();
   const [worksPending, setWorksPending] = createSignal(false);
   const [submitting, setSubmitting] = createSignal(false);
   const [progress, setProgress] = createSignal<readonly [number, string]>([0, '']);
   const submissionDisabled = createMemo(() => !worksPending() || submitting());
 
-  // need dependencies explicit to avoid infinite recursion
-  // otherwise, the warning actions will trigger the effect again
-  createEffect(
-    on([albumIdValid, selectionStatus], () => {
-      if (albumIdValid()) {
-        switch (selectionStatus()) {
-          case SelectionStatus.VALID:
-            clearWarnings(/select .*/);
-            break;
-          case SelectionStatus.NO_RECORDINGS:
-            addWarning('select at least one recording');
-            break;
-          case SelectionStatus.MULTIPLE_MEDIA:
-            addWarning('select recordings only from a single medium');
-            break;
-        }
-      }
-    })
-  );
   createEffect((prevTitle?: string) => {
     const submitButton = document.querySelector('button.submit') as HTMLButtonElement;
     submitButton.disabled = worksPending();
@@ -51,14 +28,25 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
     return submitButton.title;
   });
 
-  function importWorks() {
+  async function importWorks(albumId: string) {
     clearWarnings();
-    tryImportWorks(albumId(), addWarning, clearWarnings, setProgress)
-      .then(() => setWorksPending(true))
-      .catch(err => {
-        console.error(err);
-        addWarning(`Import failed: ${err}`);
-      });
+    switch (selectionStatus()) {
+      case SelectionStatus.VALID:
+        break;
+      case SelectionStatus.NO_RECORDINGS:
+        addWarning('select at least one recording');
+        return;
+      case SelectionStatus.MULTIPLE_MEDIA:
+        addWarning('select recordings only from a single medium');
+        return;
+    }
+    try {
+      await tryImportWorks(albumId, addWarning, clearWarnings, setProgress);
+      setWorksPending(true);
+    } catch (err) {
+      console.error(err);
+      addWarning(`Import failed: ${String(err)}`);
+    }
   }
 
   function submitWorks() {
@@ -85,21 +73,7 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
 
   return (
     <>
-      <div class="buttons" style={{display: 'flex'}}>
-        <Button disabled={!inputValid()} onclick={importWorks}>
-          <img
-            src="https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg"
-            alt="ACUM logo"
-            style={{width: '16px', height: '16px', margin: '2px'}}
-          ></img>
-          <span>Import works from ACUM</span>
-        </Button>
-        <input
-          type="text"
-          placeholder={'Album ID'}
-          use:validateNumericId={[[albumId, setAlbumId], setAlbumIdValid]}
-          style={{'margin': '0 7px 0 0'}}
-        ></input>
+      <ImportForm field="album" onSubmit={importWorks}>
         <Button id="acum-work-submit" class="worksubmit" disabled={submissionDisabled()} onclick={submitWorks}>
           <span>Submit works</span>
         </Button>
@@ -113,7 +87,7 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
           maxValue={1}
           style={{'flex-grow': 1, padding: '5px 10px 5px 7px'}}
         />
-      </div>
+      </ImportForm>
 
       <div>
         <p>This will add a new work for each checked recording that has no work already</p>
