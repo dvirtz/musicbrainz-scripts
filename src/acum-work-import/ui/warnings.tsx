@@ -32,7 +32,6 @@ export function useWarnings() {
 }
 
 export type AddWarning = ReturnType<typeof useWarnings>['addWarning'];
-export type ClearWarnings = ReturnType<typeof useWarnings>['clearWarnings'];
 
 function Warnings() {
   const {state} = useWarnings();

@@ -23,7 +23,7 @@ import {albumUrl, Creator, Creators, IPBaseNumber, searchName, WorkVersion} from
 import {albumInfo} from './albums';
 import {linkArtists} from './artists';
 import {addArrangerRelationship, addWriterRelationship} from './relationships';
-import {AddWarning, ClearWarnings} from './ui/warnings';
+import {AddWarning} from './ui/warnings';
 import {workEditDataEqual} from './ui/work-edit-data';
 import {WorkStateWithEditDataT} from './work-state';
 import {addWork} from './works';
@@ -31,10 +31,8 @@ import {addWork} from './works';
 export async function importAlbum(
   albumId: string,
   addWarning: AddWarning,
-  clearWarnings: ClearWarnings,
   setProgress: Setter<readonly [number, string]>
 ): Promise<boolean> {
-  clearWarnings();
   setProgress([0, 'Loading album info']);
 
   const addTrackWarning = (track: WorkVersion) => (warning: string) =>

@@ -41,7 +41,7 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
         return;
     }
     try {
-      await tryImportWorks(albumId, addWarning, clearWarnings, setProgress);
+      await tryImportWorks(albumId, addWarning, setProgress);
       setWorksPending(true);
     } catch (err) {
       console.error(err);
