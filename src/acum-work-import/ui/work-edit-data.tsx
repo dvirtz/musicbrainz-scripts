@@ -7,7 +7,7 @@ import {mergeArrays} from 'src/common/lib/merge-arrays';
 import {LANGUAGE_ZXX_ID} from 'src/common/musicbrainz/constants';
 import {fetchEditParams, urlFromMbid} from 'src/common/musicbrainz/edits';
 import {workAttributeTypes, workLanguages, workTypes} from 'src/common/musicbrainz/type-info';
-import {essenceType, EssenceType, workISWCs, workLanguage, WorkLanguage, WorkVersion} from '../acum';
+import {essenceType, EssenceType, trackName, workISWCs, workLanguage, WorkLanguage, WorkVersion} from '../acum';
 import {WorkStateWithEditDataT} from '../work-state';
 import {AddWarning} from './warnings';
 
@@ -73,7 +73,7 @@ export async function workEditData(
   return {
     originalEditData,
     editData: {
-      name: track.workHebName,
+      name: trackName(track),
       comment: originalEditData.comment,
       type_id: [EssenceType.Song, EssenceType.ChoirSong].includes(essenceType(track))
         ? (Object.values(await workTypes).find(workType => workType.name === 'Song')?.id ?? null)
@@ -93,6 +93,8 @@ export async function workEditData(
                     return Object.values(await workLanguages)
                       .filter(language => language.name === 'Hebrew')
                       .map(language => language.id);
+                  case WorkLanguage.Foreign:
+                    return [];
                   default:
                     addWarning(`Unknown language ${track.workLanguage}`);
                     return [];
