@@ -1,13 +1,11 @@
 import {from, lastValueFrom, switchMap, take, tap} from 'rxjs';
 import {asyncTap} from 'src/common/lib/asyncTap';
-import {COMPOSER_LINK_TYPE_ID, LYRICIST_LINK_TYPE_ID, TRANSLATOR_LINK_TYPE_ID} from 'src/common/musicbrainz/constants';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
-import {Creator, Creators, IPBaseNumber, workUrl, workVersions} from './acum';
-import {linkArtists} from './artists';
+import {IPBaseNumber, workUrl, workVersions} from './acum';
 import {addWriterRelationship} from './relationships';
 import {AddWarning} from './ui/warnings';
 import {workEditData} from './ui/work-edit-data';
-import {createWork} from './works';
+import {createWork, linkWriters} from './works';
 
 export async function importWork(workId: string, form: HTMLFormElement, addWarning: AddWarning) {
   // map of promises so that we don't fetch the same artist multiple times
@@ -18,21 +16,6 @@ export async function importWork(workId: string, form: HTMLFormElement, addWarni
       : createWork({
           name: form.querySelector('[name="edit-work.name"]')?.getAttribute('value') || '',
         });
-
-  const linkWriters = async (
-    work: WorkT,
-    writers: ReadonlyArray<Creator> | undefined,
-    creators: Creators,
-    linkTypeId: number
-  ) => {
-    await linkArtists(
-      artistCache,
-      writers,
-      creators,
-      (artist: ArtistT) => addWriterRelationship(work, artist, linkTypeId),
-      addWarning
-    );
-  };
 
   const versions = await workVersions(workId);
   if (!versions) {
@@ -89,11 +72,13 @@ export async function importWork(workId: string, form: HTMLFormElement, addWarni
             setInput(form, `attributes.${index}.value`, attr.value, addWarning);
           });
         }),
-        switchMap(async ([track]) => {
-          await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID);
-          await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID);
-          await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID);
-          return track;
+        asyncTap(async ([track]) => {
+          await linkWriters(
+            artistCache,
+            track,
+            (artist: ArtistT, linkTypeId: number) => addWriterRelationship(work, artist, linkTypeId),
+            addWarning
+          );
         }),
         tap(() => addEditNote(`Imported from ${workUrl(workId)}`, form.ownerDocument))
       )

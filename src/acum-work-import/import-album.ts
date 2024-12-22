@@ -16,7 +16,6 @@ import {
   zip,
 } from 'rxjs';
 import {Setter} from 'solid-js';
-import {COMPOSER_LINK_TYPE_ID, LYRICIST_LINK_TYPE_ID, TRANSLATOR_LINK_TYPE_ID} from 'src/common/musicbrainz/constants';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
 import {trackRecordingState} from 'src/common/musicbrainz/track-recording-state';
 import {albumUrl, Creator, Creators, IPBaseNumber, trackName, WorkVersion} from './acum';
@@ -26,7 +25,7 @@ import {addArrangerRelationship, addWriterRelationship} from './relationships';
 import {AddWarning} from './ui/warnings';
 import {workEditDataEqual} from './ui/work-edit-data';
 import {WorkStateWithEditDataT} from './work-state';
-import {addWork} from './works';
+import {addWork, linkWriters} from './works';
 
 export async function importAlbum(
   albumId: string,
@@ -42,22 +41,6 @@ export async function importAlbum(
 
   // map of promises so that we don't fetch the same artist multiple times
   const artistCache = new Map<IPBaseNumber, Promise<ArtistT | null>>();
-
-  const linkWriters = async (
-    work: WorkT,
-    writers: ReadonlyArray<Creator> | undefined,
-    creators: Creators,
-    linkTypeId: number,
-    addWarning: AddWarning
-  ) => {
-    await linkArtists(
-      artistCache,
-      writers,
-      creators,
-      (artist: ArtistT) => addWriterRelationship(work, artist, linkTypeId),
-      addWarning
-    );
-  };
 
   const linkArrangers = async (
     recording: RecordingT,
@@ -97,9 +80,12 @@ export async function importAlbum(
   ]): Promise<WorkStateWithEditDataT> => {
     const work = workState.work;
     const addWarning = addTrackWarning(track);
-    await linkWriters(work, track.authors, track.creators, LYRICIST_LINK_TYPE_ID, addWarning);
-    await linkWriters(work, track.composers, track.creators, COMPOSER_LINK_TYPE_ID, addWarning);
-    await linkWriters(work, track.translators, track.creators, TRANSLATOR_LINK_TYPE_ID, addWarning);
+    await linkWriters(
+      artistCache,
+      track,
+      (artist: ArtistT, linkTypeId: number) => addWriterRelationship(work, artist, linkTypeId),
+      addWarning
+    );
     await linkArrangers(recording, track.arrangers, track.creators, addWarning);
     return workState;
   };
