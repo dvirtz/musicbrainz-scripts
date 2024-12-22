@@ -1,9 +1,17 @@
 import {compareNumbers} from 'src/common/lib/compare';
 import {head} from 'src/common/lib/head';
 import {compareTargetTypeWithGroup} from 'src/common/musicbrainz/compare';
-import {RECORDING_OF_LINK_TYPE_ID, REL_STATUS_ADD, REL_STATUS_REMOVE} from 'src/common/musicbrainz/constants';
+import {
+  COMPOSER_LINK_TYPE_ID,
+  LYRICIST_LINK_TYPE_ID,
+  RECORDING_OF_LINK_TYPE_ID,
+  REL_STATUS_ADD,
+  REL_STATUS_REMOVE,
+  TRANSLATOR_LINK_TYPE_ID,
+} from 'src/common/musicbrainz/constants';
 import {iterateRelationshipsInTargetTypeGroup} from 'src/common/musicbrainz/type-group';
-import {WorkVersion} from './acum';
+import {trackName, WorkVersion} from './acum';
+import {linkArtists} from './artists';
 import {createRelationshipState} from './relationships';
 import {AddWarning} from './ui/warnings';
 import {workEditData} from './ui/work-edit-data';
@@ -53,7 +61,7 @@ async function createNewWork(track: WorkVersion, recordingState: MediumRecording
     const newWork = createWork({
       _fromBatchCreateWorksDialog: true,
       id: MB.relationshipEditor.getRelationshipStateId(),
-      name: track.workHebName,
+      name: trackName(track),
     });
     workCache.set(track.fullWorkId, newWork);
     return newWork;
@@ -119,4 +127,33 @@ export function createWork(attributes: Partial<WorkT>): WorkT {
     },
     ...attributes,
   });
+}
+
+export async function linkWriters(
+  artistCache: Map<string, Promise<ArtistT | null>>,
+  track: WorkVersion,
+  doLink: (artist: ArtistT, linkTypeID: number) => void,
+  addWarning: (message: string) => Set<string>
+) {
+  await linkArtists(
+    artistCache,
+    [...(track.authors ?? []), ...(track.composersAndAuthors ?? [])],
+    track.creators,
+    artist => doLink(artist, LYRICIST_LINK_TYPE_ID),
+    addWarning
+  );
+  await linkArtists(
+    artistCache,
+    [...(track.composers ?? []), ...(track.composersAndAuthors ?? [])],
+    track.creators,
+    artist => doLink(artist, COMPOSER_LINK_TYPE_ID),
+    addWarning
+  );
+  await linkArtists(
+    artistCache,
+    track.translators,
+    track.creators,
+    artist => doLink(artist, TRANSLATOR_LINK_TYPE_ID),
+    addWarning
+  );
 }
