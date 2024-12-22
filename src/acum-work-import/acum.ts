@@ -127,8 +127,8 @@ export async function workISWCs(workID: string) {
     .map(formatISWC);
 }
 
-export function searchName(name: string) {
-  return /[א-ת]/.test(name) ? 'workHebName' : 'workEngName';
+export function trackName(track: WorkVersion) {
+  return workLanguage(track) == WorkLanguage.Hebrew ? track.workHebName : track.workEngName;
 }
 
 export enum EssenceType {
@@ -153,6 +153,7 @@ export function essenceType(track: WorkVersion): EssenceType {
 
 export enum WorkLanguage {
   Hebrew = '1',
+  Foreign = '2',
   /** @knipignore */
   Unknown = '-1',
 }

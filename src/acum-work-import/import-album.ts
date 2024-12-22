@@ -19,7 +19,7 @@ import {Setter} from 'solid-js';
 import {COMPOSER_LINK_TYPE_ID, LYRICIST_LINK_TYPE_ID, TRANSLATOR_LINK_TYPE_ID} from 'src/common/musicbrainz/constants';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
 import {trackRecordingState} from 'src/common/musicbrainz/track-recording-state';
-import {albumUrl, Creator, Creators, IPBaseNumber, searchName, WorkVersion} from './acum';
+import {albumUrl, Creator, Creators, IPBaseNumber, trackName, WorkVersion} from './acum';
 import {albumInfo} from './albums';
 import {linkArtists} from './artists';
 import {addArrangerRelationship, addWriterRelationship} from './relationships';
@@ -128,8 +128,12 @@ export async function importAlbum(
       map(([track, recordingState]) => [track, recordingState, addTrackWarning(track)] as const),
       tap(([track, recordingState, addWarning]) => {
         const recording = recordingState.recording;
-        if (track[searchName(recording.name)] != recording.name) {
-          addWarning(`Work name of ${recording.name} is different from recording name, please verify`);
+        if (trackName(track) != recording.name) {
+          if (trackName(track).toLowerCase() == recording.name.toLowerCase()) {
+            track.workEngName = recording.name;
+          } else {
+            addWarning(`Work name of ${recording.name} is different from recording name, please verify`);
+          }
         }
       }),
       mergeMap(
