@@ -1,3 +1,20 @@
+## [@dvirtz/acum-work-import-v1.5.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.4.0...@dvirtz/acum-work-import-v1.5.0) (2024-12-22)
+
+
+### Features
+
+* support foreign language ([350609d](https://github.com/dvirtz/musicbrainz-scripts/commit/350609dd1621e585cf16f8e3f175e8bd7679e1dd))
+
+
+### Bug Fixes
+
+* link composers and authors ([5ff98db](https://github.com/dvirtz/musicbrainz-scripts/commit/5ff98db194710702d9e12e1f7da19c357ebfb087))
+
+
+### General maintenance
+
+* remove redundant warning clear ([6b19588](https://github.com/dvirtz/musicbrainz-scripts/commit/6b19588f3c15cbcfc435c67b6b0fc58877bf7d72))
+
 ## [@dvirtz/acum-work-import-v1.4.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.3.0...@dvirtz/acum-work-import-v1.4.0) (2024-12-21)
 
 
