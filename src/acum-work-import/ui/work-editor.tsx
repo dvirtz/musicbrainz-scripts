@@ -31,6 +31,7 @@ function WorkEditor(props: {
   };
 
   const removeWork: JSX.EventHandler<HTMLButtonElement, MouseEvent> = () => {
+    setIsPending(false);
     MB.relationshipEditor.dispatch({
       recording: props.recordingState.recording,
       type: 'remove-work',
