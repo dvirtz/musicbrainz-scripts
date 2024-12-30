@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "outDir": "scripts",
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
