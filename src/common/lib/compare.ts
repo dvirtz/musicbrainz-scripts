@@ -15,3 +15,7 @@ export function compareStrings(a: string, b: string): number {
 export function compareNumbers(a: number, b: number): number {
   return a - b;
 }
+
+export function compareInsensitive(a: string, b: string, locales?: Intl.LocalesArgument): number {
+  return a.localeCompare(b, locales, {sensitivity: 'base', ignorePunctuation: true});
+}
