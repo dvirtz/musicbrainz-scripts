@@ -1,5 +1,6 @@
 import {from, lastValueFrom, switchMap, take, tap} from 'rxjs';
 import {asyncTap} from 'src/common/lib/asyncTap';
+import {compareInsensitive} from 'src/common/lib/compare';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
 import {IPBaseNumber, workUrl, workVersions} from './acum';
 import {addWriterRelationship} from './relationships';
@@ -88,8 +89,8 @@ export async function importWork(workId: string, form: HTMLFormElement, addWarni
 function setInput(form: HTMLFormElement, name: string, value: string, addWarning: AddWarning) {
   const input = form.querySelector<HTMLInputElement | HTMLSelectElement>(`[name="edit-work.${name}"]`);
   if (input) {
-    if (input.value.trim() && input.value.trim() !== value.trim()) {
-      if (value.trim()) {
+    if (input.value.trim()) {
+      if (value.trim() && compareInsensitive(input.value.trim(), value.trim()) !== 0) {
         addWarning(`Suggeting different ${name.replace(/\W/g, ' ')}: ${value}`);
       }
     } else {

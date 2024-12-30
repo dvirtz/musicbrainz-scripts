@@ -1,12 +1,13 @@
 import {filter, from, lastValueFrom, mergeMap, tap} from 'rxjs';
+import {compareInsensitive} from 'src/common/lib/compare';
 import {tryFetchJSON} from 'src/common/musicbrainz/fetch';
 import {Creator, CreatorFull, Creators, IPBaseNumber, RoleCode} from './acum';
 import {AddWarning} from './ui/warnings';
 
 function nameMatch(creator: CreatorFull, artist: ArtistSearchResultsT['artists'][number]): boolean {
-  const removePunctuation = (name: string) => name.replace(/\p{P}/gu, '');
-  return [removePunctuation(creator.creatorHebName), removePunctuation(creator.creatorEngName)].includes(
-    removePunctuation(artist.name)
+  return (
+    compareInsensitive(creator.creatorHebName, artist.name, 'he') === 0 ||
+    compareInsensitive(creator.creatorEngName, artist.name, 'en') === 0
   );
 }
 

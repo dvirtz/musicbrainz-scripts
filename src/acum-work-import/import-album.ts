@@ -16,6 +16,7 @@ import {
   zip,
 } from 'rxjs';
 import {Setter} from 'solid-js';
+import {compareInsensitive} from 'src/common/lib/compare';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
 import {trackRecordingState} from 'src/common/musicbrainz/track-recording-state';
 import {albumUrl, Creator, Creators, IPBaseNumber, trackName, WorkVersion} from './acum';
@@ -115,7 +116,7 @@ export async function importAlbum(
       tap(([track, recordingState, addWarning]) => {
         const recording = recordingState.recording;
         if (trackName(track) != recording.name) {
-          if (trackName(track).toLowerCase() == recording.name.toLowerCase()) {
+          if (compareInsensitive(trackName(track), recording.name) === 0) {
             track.workEngName = recording.name;
           } else {
             addWarning(`Work name of ${recording.name} is different from recording name, please verify`);
