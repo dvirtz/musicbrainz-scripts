@@ -1,3 +1,17 @@
+## [@dvirtz/acum-work-import-v1.5.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.5.0...@dvirtz/acum-work-import-v1.5.1) (2024-12-30)
+
+
+### Bug Fixes
+
+* attributes are rendered in different order ([2d4d074](https://github.com/dvirtz/musicbrainz-scripts/commit/2d4d074e28aa8d4e91a093874cce019269153022))
+* infinitely waiting mutation observer ([abef589](https://github.com/dvirtz/musicbrainz-scripts/commit/abef589ee88f1e185eb46ceb18c33d4b4b647869)), closes [#37](https://github.com/dvirtz/musicbrainz-scripts/issues/37)
+* removing work from release editor ([2bed1db](https://github.com/dvirtz/musicbrainz-scripts/commit/2bed1db80946290b99b9cc1a172225da6a3a9626))
+
+
+### General maintenance
+
+* use localeCompare to compare names ([6d6fb50](https://github.com/dvirtz/musicbrainz-scripts/commit/6d6fb5036cacf5fa19343409e79a942895246d4f))
+
 ## [@dvirtz/acum-work-import-v1.5.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.4.0...@dvirtz/acum-work-import-v1.5.0) (2024-12-22)
 
 
