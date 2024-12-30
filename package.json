@@ -24,9 +24,7 @@
     "prepare": "husky",
     "dev": "rollup -wc",
     "clean": "del-cli scripts",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
-    "ci": "yarn lint && tsc && yarn knip",
+    "ci": "tsc && yarn knip",
     "build:js": "rollup -c",
     "build": "yarn ci && yarn clean && yarn build:js",
     "semantic-release": "yarn workspaces foreach --all --topological-dev exec semantic-release",
@@ -60,6 +58,7 @@
     "@eslint/js": "^9.14.0",
     "@gera2ld/plaid": "~2.7.0",
     "@gera2ld/plaid-rollup": "~2.7.0",
+    "@rollup/plugin-eslint": "^9.0.5",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^11.0.0",
     "@semantic-release/git": "^10.0.1",
@@ -127,6 +126,9 @@
         "always"
       ]
     }
+  },
+  "resolutions": {
+    "@rollup/plugin-eslint/eslint": "^9.9.1"
   },
   "packageManager": "yarn@4.3.1"
 }

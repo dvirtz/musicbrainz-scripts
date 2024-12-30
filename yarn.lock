@@ -2225,6 +2225,7 @@ __metadata:
     "@gera2ld/plaid": "npm:~2.7.0"
     "@gera2ld/plaid-rollup": "npm:~2.7.0"
     "@kobalte/core": "npm:^0.13.7"
+    "@rollup/plugin-eslint": "npm:^9.0.5"
     "@semantic-release/changelog": "npm:^6.0.3"
     "@semantic-release/commit-analyzer": "npm:^11.0.0"
     "@semantic-release/git": "npm:^10.0.1"
@@ -3091,6 +3092,21 @@ __metadata:
     rollup:
       optional: true
   checksum: 10c0/00d6fe41c33476dcb4b4ac3068f869b8537153646ea18f1fb9d0dfd5592792148567dd735d58ac15e2fdd4ed6c98453d20fe5343105f8cfa93d291198c9a90f5
+  languageName: node
+  linkType: hard
+
+"@rollup/plugin-eslint@npm:^9.0.5":
+  version: 9.0.5
+  resolution: "@rollup/plugin-eslint@npm:9.0.5"
+  dependencies:
+    "@rollup/pluginutils": "npm:^5.0.1"
+    eslint: "npm:^8.24.0"
+  peerDependencies:
+    rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: 10c0/c758c718d37c9a6249e5049a49cc21487f4c5c58c6ef02eea6d808ea5bf35419fdce03cc415c4d054e06d2f73d33d192f0fe5846c462e686a7f01636651cd71d
   languageName: node
   linkType: hard
 
