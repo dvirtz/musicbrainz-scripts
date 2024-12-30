@@ -1,4 +1,5 @@
 import {defineExternal, definePlugins} from '@gera2ld/plaid-rollup';
+import eslint from '@rollup/plugin-eslint';
 import path from 'path';
 import {defineConfig} from 'rollup';
 import userscript from 'rollup-plugin-userscript';
@@ -30,6 +31,9 @@ export default defineConfig(
         },
       }),
       userscript(meta => meta.replace('process.env.AUTHOR', `${pkg.author.name} (${pkg.author.email})`)),
+      eslint({
+        throwOnError: true,
+      }),
     ],
     external: defineExternal(['@violentmonkey/ui', '@violentmonkey/dom', 'solid-js', 'solid-js/web']),
     output: {
