@@ -1,4 +1,4 @@
-import {from, lastValueFrom, switchMap, take, tap} from 'rxjs';
+import {from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
 import {asyncTap} from 'src/common/lib/asyncTap';
 import {compareInsensitive} from 'src/common/lib/compare';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
@@ -29,7 +29,28 @@ export async function importWork(workId: string, form: HTMLFormElement, addWarni
       .pipe(
         take(1),
         switchMap(async track => {
-          const {editData} = await workEditData(work, track, addWarning);
+          const {editData} = await workEditData(
+            Object.assign(work, {
+              // the attributes are rendered in a different order
+              attributes: await lastValueFrom(
+                zip(
+                  from(form.querySelectorAll<HTMLInputElement>('[name^="edit-work.attributes."][name$=type_id]')),
+                  from(form.querySelectorAll<HTMLInputElement>('[name^="edit-work.attributes."][name$=value]'))
+                ).pipe(
+                  map(
+                    ([type, value]) =>
+                      ({
+                        typeID: Number(type.value),
+                        value: value.value,
+                      }) as WorkAttributeT
+                  ),
+                  toArray()
+                )
+              ),
+            }),
+            track,
+            addWarning
+          );
           return [track, editData] as const;
         }),
         tap(([, editData]) => setInput(form, 'name', editData.name, addWarning)),
@@ -63,8 +84,8 @@ export async function importWork(workId: string, form: HTMLFormElement, addWarni
           async ([, editData]) =>
             await ensureRowCount(
               form.querySelector('#work-attributes')!,
-              '[name^="edit-work.attributes."]',
-              2 * editData.attributes.length
+              '[name^="edit-work.attributes."][name$=type_id]',
+              editData.attributes.length
             )
         ),
         tap(([, editData]) => {
