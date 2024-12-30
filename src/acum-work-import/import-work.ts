@@ -127,10 +127,7 @@ async function ensureRowCount(parent: HTMLElement, rowSelector: string, count: n
     return;
   }
   const newRowBtn = parent.querySelector<HTMLButtonElement>('button.add-item');
-  for (let i = rows.length; i < count; i++) {
-    newRowBtn?.click();
-  }
-  await new Promise<void>(resolve => {
+  const observer = new Promise<void>(resolve => {
     VM.observe(parent, (mutations, observer) => {
       const rows = parent.querySelectorAll(rowSelector);
       if (rows.length >= count) {
@@ -139,4 +136,8 @@ async function ensureRowCount(parent: HTMLElement, rowSelector: string, count: n
       }
     });
   });
+  for (let i = rows.length; i < count; i++) {
+    newRowBtn?.click();
+  }
+  await observer;
 }
