@@ -24,12 +24,12 @@
     "prepare": "husky",
     "dev": "rollup -wc",
     "clean": "del-cli scripts",
-    "ci": "yarn knip",
+    "ci": "yarn knip && yarn spell",
     "build:js": "rollup -c",
     "build": "yarn ci && yarn clean && yarn build:js",
     "semantic-release": "yarn workspaces foreach --all --topological-dev exec semantic-release",
     "knip": "knip --tags=-knipignore",
-    "spell": "cspell **/*.ts **/*.md"
+    "spell": "cspell"
   },
   "repository": {
     "type": "git",

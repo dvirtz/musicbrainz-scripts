@@ -22,7 +22,7 @@ If the venue is not found in MusicBrainz, navigating to the venue page will show
 
 ## Settings
 
-To configure the settins select the `settings` menu option in your userscript manager.
+To configure the settings select the `settings` menu option in your userscript manager.
 
 - Add cover comment: add comments to setlist with the covered artist (default: false)
 

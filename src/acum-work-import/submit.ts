@@ -69,7 +69,7 @@ export async function submitWorks(setProgress: Setter<readonly [number, string]>
   );
 
   const updateProgress = pipe(
-    scan((accumaltor: readonly [number, string], work: WorkT) => [accumaltor[0] + 1, work.name] as const, [
+    scan((accumulator: readonly [number, string], work: WorkT) => [accumulator[0] + 1, work.name] as const, [
       0,
       ' ',
     ] as const),
@@ -78,7 +78,7 @@ export async function submitWorks(setProgress: Setter<readonly [number, string]>
     tap(setProgress)
   );
 
-  const workReplationships = pipe(
+  const workRelationships = pipe(
     map(
       ([recordingState, newWork]: readonly [MediumRecordingStateT, WorkT]) =>
         [MB.tree.find(recordingState.targetTypeGroups, 'work', compareTargetTypeWithGroup, null), newWork] as const
@@ -96,7 +96,7 @@ export async function submitWorks(setProgress: Setter<readonly [number, string]>
       mergeMap(async ([recordingState, form]) => [recordingState, await submitWork(form as HTMLFormElement)] as const),
       connect(shared =>
         merge(
-          shared.pipe(workReplationships),
+          shared.pipe(workRelationships),
           shared.pipe(
             map(([, newWork]) => newWork),
             updateProgress,

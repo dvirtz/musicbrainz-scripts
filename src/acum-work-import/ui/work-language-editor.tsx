@@ -8,7 +8,7 @@ import {FormRowSelectList} from './form-row-select-list';
 import {useWorkEditData} from './work-edit-data';
 
 const FREQUENT_LANGUAGE = 2;
-const NON_FREQURENT_LANGUAGE = 1;
+const NON_FREQUENT_LANGUAGE = 1;
 // 0 means skip
 
 const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(() => {
@@ -37,7 +37,7 @@ const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(() => {
         optgroup: 'Other',
         options:
           languagesByFrequency
-            .get(NON_FREQURENT_LANGUAGE)
+            .get(NON_FREQUENT_LANGUAGE)
             ?.sort(compareLanguages)
             ?.map(lang => ({
               label: lang.name,

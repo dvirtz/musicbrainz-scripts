@@ -14,7 +14,7 @@ To import a whole medium:
 3. Insert the ACUM url or album ID in the input box.
 4. Select the recordings whose works you want to import.
 5. Click the import button.
-6. New works (green background links) will be created and exitsting works (yellow background) will be updated with links to the selected recordings and any writer and arranger as well as ISWCs and ACUM ID work attribute.
+6. New works (green background links) will be created and existing works (yellow background) will be updated with links to the selected recordings and any writer and arranger as well as ISWCs and ACUM ID work attribute.
    ![updated works](assets/updated-works.png)
 7. Review the changes by opening the edit dialogs before submitting the changes.
    ![work edit](assets/work-edit.png)
