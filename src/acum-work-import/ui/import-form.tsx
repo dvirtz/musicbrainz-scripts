@@ -3,7 +3,9 @@ import {TextField} from '@kobalte/core/text-field';
 import {createEffect, createSignal, ParentProps} from 'solid-js';
 import {replaceUrlWith} from '../acum';
 
-export function ImportForm(props: ParentProps & {field: string; onSubmit: (id: string) => Promise<void>}) {
+export function ImportForm(
+  props: ParentProps & {field: string; onSubmit: (id: string) => Promise<void>; idPattern: string}
+) {
   const [id, setId] = createSignal('');
   const [importing, setImporting] = createSignal(false);
 
@@ -43,7 +45,7 @@ export function ImportForm(props: ParentProps & {field: string; onSubmit: (id: s
           style={{'margin': '0 7px 0 0'}}
         >
           <TextField.Input
-            pattern="\d{1,14}"
+            pattern={props.idPattern}
             placeholder={`${props.field.charAt(0).toUpperCase()}${props.field.slice(1)} ID`}
           />
         </TextField>

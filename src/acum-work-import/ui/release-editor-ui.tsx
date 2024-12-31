@@ -73,7 +73,7 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
 
   return (
     <>
-      <ImportForm field="album" onSubmit={importWorks}>
+      <ImportForm field="album" onSubmit={importWorks} idPattern="\d+">
         <Button id="acum-work-submit" class="worksubmit" disabled={submissionDisabled()} onclick={submitWorks}>
           <span>Submit works</span>
         </Button>
