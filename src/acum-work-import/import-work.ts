@@ -112,7 +112,7 @@ function setInput(form: HTMLFormElement, name: string, value: string, addWarning
   if (input) {
     if (input.value.trim()) {
       if (value.trim() && compareInsensitive(input.value.trim(), value.trim()) !== 0) {
-        addWarning(`Suggeting different ${name.replace(/\W/g, ' ')}: ${value}`);
+        addWarning(`Suggesting different ${name.replace(/\W/g, ' ')}: ${value}`);
       }
     } else {
       input.value = value;

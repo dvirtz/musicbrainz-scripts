@@ -104,7 +104,7 @@ export async function importAlbum(
   );
 
   const updateProgress = pipe(
-    scan(accumaltor => accumaltor + 1, 0),
+    scan(accumulator => accumulator + 1, 0),
     map(count => [count / selectedRecordings.length, `Loaded ${count}/${selectedRecordings.length} works`] as const),
     endWith([1, 'Done'] as const),
     tap(setProgress)

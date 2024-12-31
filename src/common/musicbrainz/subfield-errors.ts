@@ -33,9 +33,9 @@ function* iterSubfields(formOrField: FormOrAnyFieldT): Generator<AnyFieldT, void
 
 export default function subfieldErrors(
   formOrField: FormOrAnyFieldT,
-  accum: ReadonlyArray<string> = []
+  accumulator: ReadonlyArray<string> = []
 ): ReadonlyArray<string> {
-  let result = accum;
+  let result = accumulator;
   for (const subfield of iterSubfields(formOrField)) {
     if (subfield.errors?.length) {
       result = result.concat(subfield.errors);

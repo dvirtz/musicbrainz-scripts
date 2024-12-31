@@ -1,8 +1,15 @@
 $schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
-version: '0.2'
+version: "0.2"
+files:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.md"
+  - "**/*.{c,m}js"
+ignorePaths:
+  - "**/*.d.ts"
 words:
   - acum
-  - Dvir
+  - dvir
   - dvirtz
   - greasemonkey
   - isni
@@ -10,17 +17,18 @@ words:
   - isrcs
   - iswc
   - iswcs
+  - knipignore
   - mbid
+  - metabrainz
   - musicbrainz
   - rels
-  - rubico
   - setlist
   - setlistfm
   - tampermonkey
   - userscript
   - userscripts
   - violentmonkey
-  - Yitzchaki
+  - yitzchaki
 patterns:
   - name: user_script_id
     pattern: /\/\/ @id.*/g
@@ -31,3 +39,13 @@ overrides:
   - filename: package.json
     includeRegExpList:
       - /"description":.*/g
+  - filename: meta.ts
+    ignoreRegExpList:
+      - /@match .*/g
+languageSettings:
+  - enabled: true
+    languageId: typescriptreact
+    ignoreRegExpList:
+      - /^import .*/mg
+      - /class=\{[^}]+\}/g
+      - /class="[^"]+"/g
