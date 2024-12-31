@@ -17,7 +17,7 @@ function AcumImporter(props: {form: HTMLFormElement}) {
     }
   }
 
-  return <ImportForm field="work" onSubmit={importWork} />;
+  return <ImportForm field="work" onSubmit={importWork} idPattern="[12][0-9A-Z]+" />;
 }
 
 const releaseEditorContainerId = 'acum-work-import-container';
