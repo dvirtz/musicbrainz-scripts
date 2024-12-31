@@ -1,3 +1,16 @@
+## [@dvirtz/acum-work-import-v1.5.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.5.1...@dvirtz/acum-work-import-v1.5.2) (2024-12-31)
+
+
+### Bug Fixes
+
+* discard empty attribute fields ([a9f99e6](https://github.com/dvirtz/musicbrainz-scripts/commit/a9f99e6b46b085f1bd5942bd244372ec76a1884b))
+* relax ID patterns ([ead68dc](https://github.com/dvirtz/musicbrainz-scripts/commit/ead68dc940eceda0d275b3dce2ead6c2200844c6)), closes [#39](https://github.com/dvirtz/musicbrainz-scripts/issues/39)
+
+
+### General maintenance
+
+* fix spelling ([00389da](https://github.com/dvirtz/musicbrainz-scripts/commit/00389da1d549f164d814cb67896da8172a6c8a39))
+
 ## [@dvirtz/acum-work-import-v1.5.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.5.0...@dvirtz/acum-work-import-v1.5.1) (2024-12-30)
 
 
