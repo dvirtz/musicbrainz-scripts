@@ -1,4 +1,4 @@
-import {from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
+import {filter, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
 import {asyncTap} from 'src/common/lib/asyncTap';
 import {compareInsensitive} from 'src/common/lib/compare';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
@@ -37,6 +37,7 @@ export async function importWork(workId: string, form: HTMLFormElement, addWarni
                   from(form.querySelectorAll<HTMLInputElement>('[name^="edit-work.attributes."][name$=type_id]')),
                   from(form.querySelectorAll<HTMLInputElement>('[name^="edit-work.attributes."][name$=value]'))
                 ).pipe(
+                  filter(([type, value]) => type.value.length > 0 && value.value.length > 0),
                   map(
                     ([type, value]) =>
                       ({
