@@ -4,10 +4,10 @@ import {tryFetchJSON} from 'src/common/musicbrainz/fetch';
 import {Creator, CreatorFull, Creators, IPBaseNumber, RoleCode} from './acum';
 import {AddWarning} from './ui/warnings';
 
-function nameMatch(creator: CreatorFull, artist: ArtistSearchResultsT['artists'][number]): boolean {
+function nameMatch(creator: CreatorFull, artistName: string): boolean {
   return (
-    compareInsensitive(creator.creatorHebName, artist.name, 'he') === 0 ||
-    compareInsensitive(creator.creatorEngName, artist.name, 'en') === 0
+    compareInsensitive(creator.creatorHebName, artistName, 'he') === 0 ||
+    compareInsensitive(creator.creatorEngName, artistName, 'en') === 0
   );
 }
 
@@ -40,9 +40,21 @@ async function findArtist(
     const byName = await tryFetchJSON<ArtistSearchResultsT>(
       `/ws/2/artist?query=name:(${creator.creatorHebName} OR ${creator.creatorEngName})&limit=1&fmt=json`
     );
-    if (byName && byName.artists.length > 0 && nameMatch(creator, byName.artists[0])) {
+    if (byName && byName.artists.length > 0 && nameMatch(creator, byName.artists[0].name)) {
       addWarning(`${role} ${byName.artists[0].name} found by name search, please verify (IPI = ${creator.number})`);
       return byName.artists[0].id;
+    }
+
+    const byAlias = await tryFetchJSON<ArtistSearchResultsT>(
+      `/ws/2/artist?query=alias:(${creator.creatorHebName} OR ${creator.creatorEngName})&limit=1&fmt=json`
+    );
+    if (
+      byAlias &&
+      byAlias.artists.length > 0 &&
+      byAlias.artists[0].aliases.some(alias => nameMatch(creator, alias.name))
+    ) {
+      addWarning(`${role} ${byAlias.artists[0].name} found by alias search, please verify (IPI = ${creator.number})`);
+      return byAlias.artists[0].id;
     }
 
     addWarning(`failed to find ${role} ${creator.creatorHebName || creator.creatorEngName}, IPI ${creator.number}`);
