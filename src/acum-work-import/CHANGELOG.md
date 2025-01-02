@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.6.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.5.2...@dvirtz/acum-work-import-v1.6.0) (2025-01-02)
+
+
+### Features
+
+* match artist by alias ([4947e08](https://github.com/dvirtz/musicbrainz-scripts/commit/4947e0854ecc7bb8377744b5981c50cb5568de43)), closes [#41](https://github.com/dvirtz/musicbrainz-scripts/issues/41)
+
 ## [@dvirtz/acum-work-import-v1.5.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.5.1...@dvirtz/acum-work-import-v1.5.2) (2024-12-31)
 
 
