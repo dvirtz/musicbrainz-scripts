@@ -509,6 +509,7 @@ declare global {
     artists: ReadonlyArray<{
       id: MBID;
       name: string;
+      aliases: ReadonlyArray<{name: string}>;
     }>;
     count: number;
   };
