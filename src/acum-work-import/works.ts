@@ -10,7 +10,7 @@ import {
   TRANSLATOR_LINK_TYPE_ID,
 } from 'src/common/musicbrainz/constants';
 import {iterateRelationshipsInTargetTypeGroup} from 'src/common/musicbrainz/type-group';
-import {trackName, WorkVersion} from './acum';
+import {trackName, WorkBean, WorkVersion} from './acum';
 import {linkArtists} from './artists';
 import {createRelationshipState} from './relationships';
 import {AddWarning} from './ui/warnings';
@@ -131,7 +131,7 @@ export function createWork(attributes: Partial<WorkT>): WorkT {
 
 export async function linkWriters(
   artistCache: Map<string, Promise<ArtistT | null>>,
-  track: WorkVersion,
+  track: WorkBean,
   doLink: (artist: ArtistT, linkTypeID: number) => void,
   addWarning: (message: string) => Set<string>
 ) {

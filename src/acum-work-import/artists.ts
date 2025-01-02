@@ -13,11 +13,15 @@ function nameMatch(creator: CreatorFull, artistName: string): boolean {
 
 async function findArtist(
   ipBaseNumber: IPBaseNumber,
-  creators: Creators,
+  creators: Creators | undefined,
   addWarning: AddWarning
 ): Promise<ArtistT | null> {
   const artistMBID = await (async () => {
-    const creator = creators.find(creator => creator.creatorIpBaseNumber === ipBaseNumber)!;
+    const creator = creators?.find(creator => creator.creatorIpBaseNumber === ipBaseNumber);
+    if (!creator) {
+      addWarning(`failed to find creator with IPI ${ipBaseNumber}`);
+      return null;
+    }
     const role = (() => {
       switch (creator.roleCode) {
         case RoleCode.Composer:
@@ -67,7 +71,7 @@ async function findArtist(
 export async function linkArtists(
   artistCache: Map<string, Promise<ArtistT | null>>,
   writers: readonly Creator[] | undefined,
-  creators: Creators,
+  creators: Creators | undefined,
   doLink: (artist: ArtistT) => void,
   addWarning: (message: string) => Set<string>
 ) {
