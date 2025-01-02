@@ -51,19 +51,10 @@ type AlbumInfoResponse = Response<{
 }>;
 
 export type WorkVersion = WorkBean & {
-  versionNumber: string;
-  creators: Creators;
-  authors?: ReadonlyArray<Creator>;
-  composers?: ReadonlyArray<Creator>;
-  arrangers?: ReadonlyArray<Creator>;
-  translators?: ReadonlyArray<Creator>;
-  composersAndAuthors?: ReadonlyArray<Creator>;
-  versionIswcNumber: string;
-  versionEssenceType: string;
   albumTrackNumber: string;
 };
 
-type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
+export type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   work_id: string;
   fullWorkId: string;
   workNumber: string;
@@ -71,6 +62,15 @@ type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   workHebName: string;
   workEngName: string;
   workId: string;
+  versionNumber: string;
+  creators?: Creators;
+  authors?: ReadonlyArray<Creator>;
+  composers?: ReadonlyArray<Creator>;
+  arrangers?: ReadonlyArray<Creator>;
+  translators?: ReadonlyArray<Creator>;
+  composersAndAuthors?: ReadonlyArray<Creator>;
+  versionIswcNumber: string;
+  versionEssenceType: string;
 };
 
 type WorkInfoResponse = Response<{
@@ -82,13 +82,13 @@ type WorkInfoResponse = Response<{
   workAlbums: ReadonlyArray<AlbumBean>;
 }>;
 
-export async function workVersions(workId: string): Promise<ReadonlyArray<WorkVersion> | undefined> {
+export async function fetchWork(workId: string): Promise<ReadonlyArray<WorkBean> | undefined> {
   const result = await tryFetchJSON<WorkInfoResponse>(
     `https://nocs.acum.org.il/acumsitesearchdb/getworkinfo?workId=${workId}`
   );
   if (result) {
     if (result.errorCode == 0) {
-      return result.data.workVersions;
+      return result.data.workVersions ? result.data.workVersions : [result.data.work];
     }
 
     console.error('failed to fetch work %s: %s', workId, result.errorDescription);
@@ -121,13 +121,13 @@ export async function getAlbumInfo(albumId: string): Promise<AlbumBean | undefin
 export async function workISWCs(workID: string) {
   const formatISWC = (iswc: string) => iswc.replace(/T(\d{3})(\d{3})(\d{3})(\d)/, 'T-$1.$2.$3-$4');
 
-  return (await workVersions(workID))
+  return (await fetchWork(workID))
     ?.map(albumVersion => albumVersion.versionIswcNumber)
     .filter(iswc => iswc.length > 0)
     .map(formatISWC);
 }
 
-export function trackName(track: WorkVersion) {
+export function trackName(track: WorkBean): string {
   return workLanguage(track) == WorkLanguage.Hebrew ? track.workHebName : track.workEngName;
 }
 
@@ -147,7 +147,7 @@ function stringToEnum<T>(value: string, enumType: {[s: string]: T}): T {
   return enumType.Unknown;
 }
 
-export function essenceType(track: WorkVersion): EssenceType {
+export function essenceType(track: WorkBean): EssenceType {
   return stringToEnum(track.versionEssenceType, EssenceType);
 }
 
@@ -158,7 +158,7 @@ export enum WorkLanguage {
   Unknown = '-1',
 }
 
-export function workLanguage(track: WorkVersion): WorkLanguage {
+export function workLanguage(track: WorkBean): WorkLanguage {
   return stringToEnum(track.workLanguage, WorkLanguage);
 }
 

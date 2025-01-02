@@ -46,7 +46,7 @@ export async function importAlbum(
   const linkArrangers = async (
     recording: RecordingT,
     arrangers: ReadonlyArray<Creator> | undefined,
-    creators: Creators,
+    creators: Creators | undefined,
     addWarning: AddWarning
   ) => {
     await linkArtists(
