@@ -2,7 +2,7 @@ import {filter, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} fr
 import {asyncTap} from 'src/common/lib/asyncTap';
 import {compareInsensitive} from 'src/common/lib/compare';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
-import {IPBaseNumber, workUrl, workVersions} from './acum';
+import {fetchWork, IPBaseNumber, workUrl} from './acum';
 import {addWriterRelationship} from './relationships';
 import {AddWarning} from './ui/warnings';
 import {workEditData} from './ui/work-edit-data';
@@ -18,7 +18,7 @@ export async function importWork(workId: string, form: HTMLFormElement, addWarni
           name: form.querySelector('[name="edit-work.name"]')?.getAttribute('value') || '',
         });
 
-  const versions = await workVersions(workId);
+  const versions = await fetchWork(workId);
   if (!versions) {
     alert(`failed to find work ID ${workId}`);
     throw new Error(`failed to find work ID ${workId}`);
