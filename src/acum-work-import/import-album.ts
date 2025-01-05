@@ -117,7 +117,7 @@ export async function importAlbum(
         const recording = recordingState.recording;
         if (trackName(track) != recording.name) {
           if (compareInsensitive(trackName(track), recording.name) === 0) {
-            track.workEngName = recording.name;
+            track.workEngName = track.workHebName = recording.name;
           } else {
             addWarning(`Work name of ${recording.name} is different from recording name, please verify`);
           }
