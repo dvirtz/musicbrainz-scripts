@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.6.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.6.0...@dvirtz/acum-work-import-v1.6.1) (2025-01-05)
+
+
+### Bug Fixes
+
+* keep different case recording name ([8617ea2](https://github.com/dvirtz/musicbrainz-scripts/commit/8617ea209a708536d31a4f7524a48494cd69acb9))
+
 ## [@dvirtz/acum-work-import-v1.6.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.5.2...@dvirtz/acum-work-import-v1.6.0) (2025-01-02)
 
 
