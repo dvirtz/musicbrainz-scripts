@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.7.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.6.2...@dvirtz/acum-work-import-v1.7.0) (2025-01-07)
+
+
+### Features
+
+* process all recordings if none are selected and only one medium exists ([da90d30](https://github.com/dvirtz/musicbrainz-scripts/commit/da90d308a45053a709a6e51bb48a425958c8c9f6))
+
 ## [@dvirtz/acum-work-import-v1.6.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.6.1...@dvirtz/acum-work-import-v1.6.2) (2025-01-06)
 
 
