@@ -6,11 +6,8 @@ main();
 function main() {
   VM.observe(document.body, () => {
     if (location.pathname.startsWith('/release/')) {
-      const recordingCheckboxes = document.querySelectorAll<HTMLInputElement>(
-        'input[type=checkbox].recording, input[type=checkbox].medium-recordings, input[type=checkbox].all-recordings'
-      );
-      if (recordingCheckboxes.length > 0 && !document.getElementById(releaseEditorContainerId)) {
-        createReleaseEditorUI(recordingCheckboxes);
+      if (!document.getElementById(releaseEditorContainerId)) {
+        createReleaseEditorUI();
         return true;
       }
     } else {

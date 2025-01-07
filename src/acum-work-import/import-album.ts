@@ -9,6 +9,7 @@ import {
   map,
   merge,
   mergeMap,
+  of,
   pipe,
   scan,
   tap,
@@ -17,6 +18,7 @@ import {
 } from 'rxjs';
 import {Setter} from 'solid-js';
 import {compareInsensitive} from 'src/common/lib/compare';
+import {head} from 'src/common/lib/head';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
 import {trackRecordingState} from 'src/common/musicbrainz/track-recording-state';
 import {albumUrl, Creator, Creators, IPBaseNumber, trackName, WorkVersion} from './acum';
@@ -58,8 +60,35 @@ export async function importAlbum(
     );
   };
 
+  const noSelection = MB.relationshipEditor.state.selectedRecordings?.size === 0;
+
+  const selectedMediums = new Set(
+    noSelection
+      ? MB.tree.iterate(MB.relationshipEditor.state.mediums)
+      : MB.tree
+          .iterate(MB.relationshipEditor.state.mediums)
+          .filter(([, recordingStateTree]) =>
+            MB.tree.iterate(recordingStateTree).some(recording => recording.isSelected)
+          )
+  );
+
+  switch (selectedMediums.size) {
+    case 0:
+      addWarning('select at least one recording');
+      return false;
+    case 1:
+      break;
+    default:
+      addWarning('select recordings only from a single medium');
+      return false;
+  }
+
   const selectedRecordings = await lastValueFrom(
-    from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(
+    of(head(selectedMediums.values())).pipe(
+      filter(
+        (mediumAndRecordings): mediumAndRecordings is [MediumWithRecordingsT, MediumRecordingStateTreeT] =>
+          mediumAndRecordings != null
+      ),
       mergeMap(([medium, recordingStateTree]) => {
         return zip(
           from(albumBean.tracks),
@@ -68,7 +97,7 @@ export async function importAlbum(
       }),
       filter((trackAndRecordingState): trackAndRecordingState is [WorkVersion, MediumRecordingStateT] => {
         const [, recordingState] = trackAndRecordingState;
-        return recordingState != null && recordingState.isSelected;
+        return recordingState != null && (noSelection || recordingState.isSelected);
       }),
       toArray()
     )
