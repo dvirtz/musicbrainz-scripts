@@ -4,17 +4,11 @@ import {render} from 'solid-js/web';
 import {Toolbox} from 'src/common/musicbrainz/toolbox';
 import {importAlbum as tryImportWorks} from '../import-album';
 import {submitWorks as trySubmitWorks} from '../submit';
-import {SelectionStatus, validateSelection} from '../validate';
 import {ImportForm} from './import-form';
 import {ProgressBar} from './progressbar';
 import {useWarnings, WarningsProvider} from './warnings';
 
-function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}) {
-  const [selectedRecordings, setSelectedRecordings] = createSignal(MB.relationshipEditor.state.selectedRecordings);
-  props.recordingCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', () => setSelectedRecordings(MB.relationshipEditor.state.selectedRecordings));
-  });
-  const selectionStatus = createMemo(() => validateSelection(selectedRecordings()));
+function AcumImporter() {
   const {addWarning, clearWarnings} = useWarnings();
   const [worksPending, setWorksPending] = createSignal(false);
   const [submitting, setSubmitting] = createSignal(false);
@@ -30,16 +24,6 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
 
   async function importWorks(albumId: string) {
     clearWarnings();
-    switch (selectionStatus()) {
-      case SelectionStatus.VALID:
-        break;
-      case SelectionStatus.NO_RECORDINGS:
-        addWarning('select at least one recording');
-        return;
-      case SelectionStatus.MULTIPLE_MEDIA:
-        addWarning('select recordings only from a single medium');
-        return;
-    }
     try {
       await tryImportWorks(albumId, addWarning, setProgress);
       setWorksPending(true);
@@ -98,7 +82,7 @@ function AcumImporter(props: {recordingCheckboxes: NodeListOf<HTMLInputElement>}
 
 export const releaseEditorContainerId = 'acum-release-editor-container';
 
-export function createReleaseEditorUI(recordingCheckboxes: NodeListOf<HTMLInputElement>) {
+export function createReleaseEditorUI() {
   const container = (<div id={releaseEditorContainerId}></div>) as HTMLDivElement;
   const theToolbox = Toolbox(document, 'full-page');
   theToolbox.append(container);
@@ -107,7 +91,7 @@ export function createReleaseEditorUI(recordingCheckboxes: NodeListOf<HTMLInputE
   render(
     () => (
       <WarningsProvider>
-        <AcumImporter recordingCheckboxes={recordingCheckboxes} />
+        <AcumImporter />
       </WarningsProvider>
     ),
     container
