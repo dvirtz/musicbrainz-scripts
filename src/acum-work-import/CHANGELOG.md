@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.8.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.7.0...@dvirtz/acum-work-import-v1.8.0) (2025-01-09)
+
+
+### Features
+
+* allow importing a single work from releaes editor ([94be6c9](https://github.com/dvirtz/musicbrainz-scripts/commit/94be6c9b9838beca8d9858f36729f2dff97a9947)), closes [#48](https://github.com/dvirtz/musicbrainz-scripts/issues/48)
+
 ## [@dvirtz/acum-work-import-v1.7.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.6.2...@dvirtz/acum-work-import-v1.7.0) (2025-01-07)
 
 
