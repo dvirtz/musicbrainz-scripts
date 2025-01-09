@@ -2,6 +2,7 @@ import {Button} from '@kobalte/core/button';
 import {createEffect, createMemo, createSignal} from 'solid-js';
 import {render} from 'solid-js/web';
 import {Toolbox} from 'src/common/musicbrainz/toolbox';
+import {Entity} from '../acum';
 import {importAlbum as tryImportWorks} from '../import-album';
 import {submitWorks as trySubmitWorks} from '../submit';
 import {ImportForm} from './import-form';
@@ -22,10 +23,10 @@ function AcumImporter() {
     return submitButton.title;
   });
 
-  async function importWorks(albumId: string) {
+  async function importWorks(entityId: string, entity: Entity) {
     clearWarnings();
     try {
-      await tryImportWorks(albumId, addWarning, setProgress);
+      await tryImportWorks(entityId, entity, addWarning, setProgress);
       setWorksPending(true);
     } catch (err) {
       console.error(err);
@@ -57,7 +58,7 @@ function AcumImporter() {
 
   return (
     <>
-      <ImportForm field="album" onSubmit={importWorks} idPattern="\d+">
+      <ImportForm entities={[Entity.Album, Entity.Work]} onSubmit={importWorks} idPattern="\d+">
         <Button id="acum-work-submit" class="worksubmit" disabled={submissionDisabled()} onclick={submitWorks}>
           <span>Submit works</span>
         </Button>

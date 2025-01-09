@@ -1,5 +1,10 @@
 import {tryFetchJSON} from 'src/common/lib/fetch';
 
+export const enum Entity {
+  Album = 'album',
+  Work = 'work',
+}
+
 export type IPBaseNumber = string;
 
 type Bean<Type extends string> = {
@@ -162,16 +167,20 @@ export function workLanguage(track: WorkBean): WorkLanguage {
   return stringToEnum(track.workLanguage, WorkLanguage);
 }
 
-export function replaceUrlWith(field: string): (input: string) => string {
+export function replaceUrlWith(entities: Entity[]): (input: string) => [string, Entity | undefined] {
   return (input: string) => {
     try {
       const url = new URL(input);
-      if (url.hostname === 'nocs.acum.org.il' && url.searchParams.has(field)) {
-        return url.searchParams.get(field)!;
+      if (url.hostname === 'nocs.acum.org.il') {
+        return (
+          entities
+            .map(entity => [url.searchParams.get(`${entity}id`), entity] as const)
+            .find((pair): pair is [string, Entity] => !!pair[0]) ?? [input, undefined]
+        );
       }
     } catch (e) {
       console.debug('failed to parse URL', input, e);
     }
-    return input;
+    return [input, undefined] as const;
   };
 }

@@ -1,5 +1,6 @@
 import {render} from 'solid-js/web';
 import {Toolbox} from 'src/common/musicbrainz/toolbox';
+import {Entity} from '../acum';
 import {importWork as tryImportWork} from '../import-work';
 import {ImportForm} from './import-form';
 import {useWarnings, WarningsProvider} from './warnings';
@@ -17,7 +18,7 @@ function AcumImporter(props: {form: HTMLFormElement}) {
     }
   }
 
-  return <ImportForm field="work" onSubmit={importWork} idPattern="[12][0-9A-Z]+" />;
+  return <ImportForm entities={[Entity.Work]} onSubmit={importWork} idPattern="[12][0-9A-Z]+" />;
 }
 
 const releaseEditorContainerId = 'acum-work-import-container';

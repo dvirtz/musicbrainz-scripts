@@ -10,7 +10,7 @@ import {
   TRANSLATOR_LINK_TYPE_ID,
 } from 'src/common/musicbrainz/constants';
 import {iterateRelationshipsInTargetTypeGroup} from 'src/common/musicbrainz/type-group';
-import {trackName, WorkBean, WorkVersion} from './acum';
+import {trackName, WorkBean} from './acum';
 import {linkArtists} from './artists';
 import {createRelationshipState} from './relationships';
 import {AddWarning} from './ui/warnings';
@@ -39,7 +39,7 @@ function shouldAddNewWork(relatedWorks: MediumWorkStateTreeT) {
 }
 
 export async function addWork(
-  track: WorkVersion,
+  track: WorkBean,
   recordingState: MediumRecordingStateT,
   addWarning: AddWarning
 ): Promise<WorkStateWithEditDataT> {
@@ -53,7 +53,7 @@ export async function addWork(
   return workState;
 }
 
-async function createNewWork(track: WorkVersion, recordingState: MediumRecordingStateT) {
+async function createNewWork(track: WorkBean, recordingState: MediumRecordingStateT) {
   const newWork = (() => {
     if (workCache.has(track.fullWorkId)) {
       return workCache.get(track.fullWorkId)!;

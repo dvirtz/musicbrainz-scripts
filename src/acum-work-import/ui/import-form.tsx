@@ -1,12 +1,18 @@
 import {Button} from '@kobalte/core/button';
 import {TextField} from '@kobalte/core/text-field';
 import {createEffect, createSignal, ParentProps} from 'solid-js';
-import {replaceUrlWith} from '../acum';
+import {Entity, replaceUrlWith} from '../acum';
 
 export function ImportForm(
-  props: ParentProps & {field: string; onSubmit: (id: string) => Promise<void>; idPattern: string}
+  props: ParentProps & {
+    entities: Entity[];
+    onSubmit: (id: string, entity: Entity) => Promise<void>;
+    idPattern: string;
+  }
 ) {
   const [id, setId] = createSignal('');
+  const [entity, setEntity] = createSignal(props.entities[0]);
+
   const [importing, setImporting] = createSignal(false);
 
   let submitButton: HTMLButtonElement;
@@ -22,9 +28,17 @@ export function ImportForm(
     ev.preventDefault();
     setImporting(true);
     props
-      .onSubmit(id())
+      .onSubmit(id(), entity())
       .catch(console.error)
       .finally(() => setImporting(false));
+  };
+
+  const onInput = (value: string) => {
+    const [id, entity] = replaceUrlWith(props.entities)(value);
+    setId(id);
+    if (entity) {
+      setEntity(entity);
+    }
   };
 
   return (
@@ -38,15 +52,10 @@ export function ImportForm(
           ></img>
           <span>Import works from ACUM</span>
         </Button>
-        <TextField
-          required={true}
-          value={id()}
-          onChange={value => setId(replaceUrlWith(`${props.field}id`)(value))}
-          style={{'margin': '0 7px 0 0'}}
-        >
+        <TextField required={true} value={id()} onChange={onInput} style={{'margin': '0 7px 0 0'}}>
           <TextField.Input
             pattern={props.idPattern}
-            placeholder={`${props.field.charAt(0).toUpperCase()}${props.field.slice(1)} ID`}
+            placeholder={`${props.entities.map(entity => `${entity.charAt(0).toUpperCase()}${entity.slice(1)}`).join('/')} ID`}
           />
         </TextField>
         {props.children}
