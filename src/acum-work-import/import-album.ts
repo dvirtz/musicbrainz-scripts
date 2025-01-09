@@ -21,7 +21,7 @@ import {compareInsensitive} from 'src/common/lib/compare';
 import {head} from 'src/common/lib/head';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
 import {trackRecordingState} from 'src/common/musicbrainz/track-recording-state';
-import {albumUrl, Creator, Creators, IPBaseNumber, trackName, WorkVersion} from './acum';
+import {albumUrl, Creator, Creators, Entity, fetchWork, IPBaseNumber, trackName, WorkBean} from './acum';
 import {albumInfo} from './albums';
 import {linkArtists} from './artists';
 import {addArrangerRelationship, addWriterRelationship} from './relationships';
@@ -31,16 +31,14 @@ import {WorkStateWithEditDataT} from './work-state';
 import {addWork, linkWriters} from './works';
 
 export async function importAlbum(
-  albumId: string,
+  entityId: string,
+  entity: Entity,
   addWarning: AddWarning,
   setProgress: Setter<readonly [number, string]>
 ): Promise<boolean> {
   setProgress([0, 'Loading album info']);
 
-  const addTrackWarning = (track: WorkVersion) => (warning: string) =>
-    addWarning(`Track ${track.albumTrackNumber}: ${warning}`);
-
-  const albumBean = await albumInfo(albumId);
+  const addTrackWarning = (position: number) => (warning: string) => addWarning(`Track ${position}: ${warning}`);
 
   // map of promises so that we don't fetch the same artist multiple times
   const artistCache = new Map<IPBaseNumber, Promise<ArtistT | null>>();
@@ -60,7 +58,7 @@ export async function importAlbum(
     );
   };
 
-  const noSelection = MB.relationshipEditor.state.selectedRecordings?.size === 0;
+  const noSelection = (MB.relationshipEditor.state.selectedRecordings?.size ?? 0) === 0;
 
   const selectedMediums = new Set(
     noSelection
@@ -77,11 +75,22 @@ export async function importAlbum(
       addWarning('select at least one recording');
       return false;
     case 1:
+      if (
+        entity == Entity.Work &&
+        MB.relationshipEditor.state.selectedRecordings?.size !== 1 &&
+        selectedMediums.size !== 1
+      ) {
+        addWarning('select exactly one recording');
+        return false;
+      }
       break;
     default:
       addWarning('select recordings only from a single medium');
       return false;
   }
+
+  const tracks: ReadonlyArray<WorkBean> =
+    entity == Entity.Work ? ((await fetchWork(entityId)) ?? []) : (await albumInfo(entityId)).tracks;
 
   const selectedRecordings = await lastValueFrom(
     of(head(selectedMediums.values())).pipe(
@@ -91,25 +100,26 @@ export async function importAlbum(
       ),
       mergeMap(([medium, recordingStateTree]) => {
         return zip(
-          from(albumBean.tracks),
+          from(medium.tracks?.map(track => track.position) ?? []),
+          from(tracks),
           from(medium.tracks!.map(track => trackRecordingState(track, recordingStateTree)))
         );
       }),
-      filter((trackAndRecordingState): trackAndRecordingState is [WorkVersion, MediumRecordingStateT] => {
-        const [, recordingState] = trackAndRecordingState;
+      filter((trackAndRecordingState): trackAndRecordingState is [number, WorkBean, MediumRecordingStateT] => {
+        const [, , recordingState] = trackAndRecordingState;
         return recordingState != null && (noSelection || recordingState.isSelected);
       }),
       toArray()
     )
   );
 
-  const linkCreators = async ([track, recording, workState]: readonly [
-    WorkVersion,
-    RecordingT,
-    WorkStateWithEditDataT,
-  ]): Promise<WorkStateWithEditDataT> => {
+  const linkCreators = async (
+    track: WorkBean,
+    recording: RecordingT,
+    workState: WorkStateWithEditDataT,
+    addWarning: AddWarning
+  ): Promise<WorkStateWithEditDataT> => {
     const work = workState.work;
-    const addWarning = addTrackWarning(track);
     await linkWriters(
       artistCache,
       track,
@@ -125,7 +135,7 @@ export async function importAlbum(
     map(editedCount => editedCount > 0),
     tap(hasEdits => {
       if (hasEdits) {
-        addEditNote(`Imported from ${albumUrl(albumId)}`);
+        addEditNote(`Imported from ${albumUrl(entityId)}`);
       } else {
         addWarning('All works are up to date');
       }
@@ -141,7 +151,7 @@ export async function importAlbum(
 
   return await lastValueFrom(
     from(selectedRecordings).pipe(
-      map(([track, recordingState]) => [track, recordingState, addTrackWarning(track)] as const),
+      map(([position, track, recordingState]) => [track, recordingState, addTrackWarning(position)] as const),
       tap(([track, recordingState, addWarning]) => {
         const recording = recordingState.recording;
         if (trackName(track) != recording.name) {
@@ -154,9 +164,9 @@ export async function importAlbum(
       }),
       mergeMap(
         async ([track, recordingState, addWarning]) =>
-          [track, recordingState.recording, await addWork(track, recordingState, addWarning)] as const
+          [track, recordingState.recording, await addWork(track, recordingState, addWarning), addWarning] as const
       ),
-      mergeMap(linkCreators),
+      mergeMap(args => linkCreators(...args)),
       connect(shared => merge(shared.pipe(maybeSetEditNote), shared.pipe(updateProgress, ignoreElements())))
     )
   );
