@@ -15,6 +15,7 @@ import {
   tap,
   toArray,
   zip,
+  zipWith,
 } from 'rxjs';
 import {Setter} from 'solid-js';
 import {compareInsensitive} from 'src/common/lib/compare';
@@ -89,7 +90,7 @@ export async function importAlbum(
       return false;
   }
 
-  const tracks: ReadonlyArray<WorkBean> =
+  const workBeans: ReadonlyArray<WorkBean> =
     entity == Entity.Work ? ((await fetchWork(entityId)) ?? []) : (await albumInfo(entityId)).tracks;
 
   const selectedRecordings = await lastValueFrom(
@@ -101,14 +102,15 @@ export async function importAlbum(
       mergeMap(([medium, recordingStateTree]) => {
         return zip(
           from(medium.tracks?.map(track => track.position) ?? []),
-          from(tracks),
           from(medium.tracks!.map(track => trackRecordingState(track, recordingStateTree)))
         );
       }),
-      filter((trackAndRecordingState): trackAndRecordingState is [number, WorkBean, MediumRecordingStateT] => {
-        const [, , recordingState] = trackAndRecordingState;
+      filter((trackAndRecordingState): trackAndRecordingState is [number, MediumRecordingStateT] => {
+        const [, recordingState] = trackAndRecordingState;
         return recordingState != null && (noSelection || recordingState.isSelected);
       }),
+      zipWith(from(workBeans)),
+      map(([[position, recordingState], track]) => [position, track, recordingState] as const),
       toArray()
     )
   );
