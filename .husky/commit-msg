@@ -1,1 +1,2 @@
+cat "$1" | yarn cspell lint --language-id git stdin
 yarn commitlint --edit $1
