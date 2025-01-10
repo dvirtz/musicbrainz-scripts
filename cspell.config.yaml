@@ -43,9 +43,13 @@ overrides:
     ignoreRegExpList:
       - /@match .*/g
 languageSettings:
-  - enabled: true
-    languageId: typescriptreact
+  - languageId: typescriptreact
     ignoreRegExpList:
       - /^import .*/mg
       - /class=\{[^}]+\}/g
       - /class="[^"]+"/g
+  - languageId: git
+    ignoreRegExpList:
+      - /#\\s.*/ # comments
+      - /`.*?`/ # inline code
+      - /(```+)\\s?[\\s\\S]+?\\1/g # code block
