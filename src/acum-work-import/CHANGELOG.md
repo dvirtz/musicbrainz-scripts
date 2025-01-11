@@ -1,3 +1,20 @@
+## [@dvirtz/acum-work-import-v1.8.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.8.0...@dvirtz/acum-work-import-v1.8.1) (2025-01-11)
+
+
+### Bug Fixes
+
+* importing a single work from an album ([50e8f16](https://github.com/dvirtz/musicbrainz-scripts/commit/50e8f16c228d463c8c5835acd0ef2e2de5e0f05a)), closes [#50](https://github.com/dvirtz/musicbrainz-scripts/issues/50)
+
+
+### General maintenance
+
+* spell check commit message ([3422b71](https://github.com/dvirtz/musicbrainz-scripts/commit/3422b7179159121fdbec9a8803a0b1e93036db0e))
+
+
+### Refactoring
+
+* split long function ([9f271d0](https://github.com/dvirtz/musicbrainz-scripts/commit/9f271d044b67128478a970d3ef7ab44da55d7920))
+
 ## [@dvirtz/acum-work-import-v1.8.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.7.0...@dvirtz/acum-work-import-v1.8.0) (2025-01-09)
 
 
