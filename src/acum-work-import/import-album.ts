@@ -197,7 +197,7 @@ function selectedMediums(entity: Entity, noSelection: boolean, addWarning: AddWa
       addWarning('select at least one recording');
       return;
     case 1:
-      if (entity == Entity.Work && MB.relationshipEditor.state.selectedRecordings?.size !== 1 && selected.size !== 1) {
+      if (entity == Entity.Work && MB.relationshipEditor.state.selectedRecordings?.size !== 1) {
         addWarning('select exactly one recording');
         return;
       }
