@@ -5,12 +5,14 @@ import {
   filter,
   from,
   ignoreElements,
+  iif,
   lastValueFrom,
   map,
   merge,
   mergeMap,
   of,
   pipe,
+  repeat,
   scan,
   tap,
   toArray,
@@ -168,12 +170,12 @@ async function selectedRecordings(
           from(medium.tracks!.map(track => trackRecordingState(track, recordingStateTree)))
         );
       }),
-      filter((trackAndRecordingState): trackAndRecordingState is [number, MediumRecordingStateT] => {
-        const [, recordingState] = trackAndRecordingState;
+      zipWith(iif(() => entity == Entity.Work, from(workBeans).pipe(repeat()), from(workBeans))),
+      map(([[position, recordingState], workBean]) => [position, workBean, recordingState] as const),
+      filter((state): state is [number, WorkBean, MediumRecordingStateT] => {
+        const [, , recordingState] = state;
         return recordingState != null && (noSelection || recordingState.isSelected);
       }),
-      zipWith(from(workBeans)),
-      map(([[position, recordingState], workBean]) => [position, workBean, recordingState] as const),
       toArray()
     )
   );
