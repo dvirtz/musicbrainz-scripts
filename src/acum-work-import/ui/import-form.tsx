@@ -6,7 +6,7 @@ import {Entity, replaceUrlWith} from '../acum';
 export function ImportForm(
   props: ParentProps & {
     entities: Entity[];
-    onSubmit: (id: string, entity: Entity) => Promise<void>;
+    onSubmit: (entity: Entity, id: string) => Promise<void>;
     idPattern: string;
   }
 ) {
@@ -28,7 +28,7 @@ export function ImportForm(
     ev.preventDefault();
     setImporting(true);
     props
-      .onSubmit(id(), entity())
+      .onSubmit(entity(), id())
       .catch(console.error)
       .finally(() => setImporting(false));
   };

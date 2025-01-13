@@ -25,7 +25,7 @@ Since ACUM database treats every medium as a separate album all selected recordi
 
 To import a single work:
 
-1. Open a work editor.
+1. Open a work editor or select a single work in a release editor.
 2. Find the work ID, this will be in the end of the work URL in ACUM, e.g. https://nocs.acum.org.il/acumsitesearchdb/work?workid=1005566.
 3. Insert the ACUM url or work ID in the input box.
 4. Click the import button.

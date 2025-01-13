@@ -3,6 +3,7 @@ import {tryFetchJSON} from 'src/common/lib/fetch';
 export const enum Entity {
   Album = 'album',
   Work = 'work',
+  Version = 'version',
 }
 
 export type IPBaseNumber = string;
@@ -34,7 +35,7 @@ export type CreatorFull = CreatorBase<'org.acum.site.searchdb.dto.bean.CreatorFu
 
 export type Creators = ReadonlyArray<CreatorFull>;
 
-export type AlbumBean = Bean<'org.acum.site.searchdb.dto.bean.AlbumBean'> & {
+type AlbumBean = Bean<'org.acum.site.searchdb.dto.bean.AlbumBean'> & {
   number: string;
   title: string;
   tracks: ReadonlyArray<WorkVersion>;
@@ -55,7 +56,7 @@ type AlbumInfoResponse = Response<{
   albumBean: AlbumBean;
 }>;
 
-export type WorkVersion = WorkBean & {
+type WorkVersion = WorkBean & {
   albumTrackNumber: string;
 };
 
@@ -87,7 +88,7 @@ type WorkInfoResponse = Response<{
   workAlbums: ReadonlyArray<AlbumBean>;
 }>;
 
-export async function fetchWork(workId: string): Promise<ReadonlyArray<WorkBean> | undefined> {
+async function fetchWork(workId: string): Promise<ReadonlyArray<WorkBean>> {
   const result = await tryFetchJSON<WorkInfoResponse>(
     `https://nocs.acum.org.il/acumsitesearchdb/getworkinfo?workId=${workId}`
   );
@@ -98,22 +99,18 @@ export async function fetchWork(workId: string): Promise<ReadonlyArray<WorkBean>
 
     console.error('failed to fetch work %s: %s', workId, result.errorDescription);
   }
+
+  throw new Error(`failed to fetch work ${workId}`);
 }
 
-export function albumUrl(albumId: string) {
-  return `https://nocs.acum.org.il/acumsitesearchdb/album?albumid=${albumId}`;
+function versionWorkId(versionId: string) {
+  return versionId.substring(0, versionId.length - 3);
 }
 
-function albumApiUrl(albumId: string) {
-  return `https://nocs.acum.org.il/acumsitesearchdb/getalbuminfo?albumId=${albumId}`;
-}
-
-export function workUrl(workId: string) {
-  return `https://nocs.acum.org.il/acumsitesearchdb/work?workId=${workId}`;
-}
-
-export async function getAlbumInfo(albumId: string): Promise<AlbumBean | undefined> {
-  const result = await tryFetchJSON<AlbumInfoResponse>(albumApiUrl(albumId));
+async function fetchAlbum(albumId: string): Promise<AlbumBean> {
+  const result = await tryFetchJSON<AlbumInfoResponse>(
+    `https://nocs.acum.org.il/acumsitesearchdb/getalbuminfo?albumId=${albumId}`
+  );
   if (result) {
     if (result.errorCode == 0) {
       return result.data.albumBean;
@@ -121,6 +118,8 @@ export async function getAlbumInfo(albumId: string): Promise<AlbumBean | undefin
 
     console.error('failed to fetch album %s: %s', albumId, result.errorDescription);
   }
+
+  throw new Error(`failed to fetch album ${albumId}`);
 }
 
 export async function workISWCs(workID: string) {
@@ -183,4 +182,36 @@ export function replaceUrlWith(entities: Entity[]): (input: string) => [string, 
     }
     return [input, undefined] as const;
   };
+}
+
+const entityCache = new Map<string, ReadonlyArray<WorkBean>>();
+
+export async function fetchWorks(entity: Entity, id: string): Promise<ReadonlyArray<WorkBean>> {
+  const key = `${entity}:${id}`;
+  if (!entityCache.has(key)) {
+    entityCache.set(key, await fetchWorksUncached(entity, id));
+  }
+  return entityCache.get(key)!;
+}
+
+async function fetchWorksUncached(entity: Entity, id: string): Promise<ReadonlyArray<WorkBean>> {
+  switch (entity) {
+    case Entity.Work:
+      return await fetchWork(id);
+    case Entity.Album:
+      return (await fetchAlbum(id))?.tracks;
+    case Entity.Version:
+      return (await fetchWork(versionWorkId(id))).filter(track => track.fullWorkId === id);
+  }
+}
+
+export function entityUrl(entity: Entity, id: string) {
+  switch (entity) {
+    case Entity.Work:
+      return `https://nocs.acum.org.il/acumsitesearchdb/work?workId=${id}`;
+    case Entity.Album:
+      return `https://nocs.acum.org.il/acumsitesearchdb/album?albumid=${id}`;
+    case Entity.Version:
+      return `https://nocs.acum.org.il/acumsitesearchdb/version?workid=${versionWorkId(id)}&versionid=${id}`;
+  }
 }

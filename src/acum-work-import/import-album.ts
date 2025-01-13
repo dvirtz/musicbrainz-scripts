@@ -24,8 +24,7 @@ import {compareInsensitive} from 'src/common/lib/compare';
 import {head} from 'src/common/lib/head';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
 import {trackRecordingState} from 'src/common/musicbrainz/track-recording-state';
-import {albumUrl, Creator, Creators, Entity, fetchWork, IPBaseNumber, trackName, WorkBean} from './acum';
-import {albumInfo} from './albums';
+import {Creator, Creators, Entity, entityUrl, fetchWorks, IPBaseNumber, trackName, WorkBean} from './acum';
 import {linkArtists} from './artists';
 import {addArrangerRelationship, addWriterRelationship} from './relationships';
 import {AddWarning} from './ui/warnings';
@@ -40,8 +39,8 @@ type ArtistCache = Map<IPBaseNumber, Promise<ArtistT | null>>;
 type SetProgress = Setter<readonly [number, string]>;
 
 export async function importAlbum(
-  entityId: string,
   entity: Entity,
+  entityId: string,
   addWarning: AddWarning,
   setProgress: SetProgress
 ): Promise<boolean> {
@@ -51,10 +50,11 @@ export async function importAlbum(
   const mediums = selectedMediums(entity, noSelection, addWarning);
   const recordings = await selectedRecordings(entity, entityId, noSelection, mediums);
 
-  return await importSelectedWorks(entityId, recordings, addWarning, setProgress);
+  return await importSelectedWorks(entity, entityId, recordings, addWarning, setProgress);
 }
 
 async function importSelectedWorks(
+  entity: Entity,
   entityId: string,
   selectedRecordings: SelectedRecordings,
   addWarning: AddWarning,
@@ -84,7 +84,7 @@ async function importSelectedWorks(
       mergeMap(args => linkCreators(artistCache, ...args)),
       connect(shared =>
         merge(
-          shared.pipe(maybeSetEditNote(entityId, addWarning)),
+          shared.pipe(maybeSetEditNote(entity, entityId, addWarning)),
           shared.pipe(updateProgress(selectedRecordings, setProgress), ignoreElements())
         )
       )
@@ -101,13 +101,13 @@ function updateProgress(selectedRecordings: SelectedRecordings, setProgress: Set
   );
 }
 
-function maybeSetEditNote(entityId: string, addWarning: AddWarning) {
+function maybeSetEditNote(entity: Entity, entityId: string, addWarning: AddWarning) {
   return pipe(
     count((workState: WorkStateWithEditDataT) => !workEditDataEqual(workState.editData, workState.originalEditData)),
     map(editedCount => editedCount > 0),
     tap(hasEdits => {
       if (hasEdits) {
-        addEditNote(`Imported from ${albumUrl(entityId)}`);
+        addEditNote(`Imported from ${entityUrl(entity, entityId)}`);
       } else {
         addWarning('All works are up to date');
       }
@@ -155,8 +155,7 @@ async function selectedRecordings(
   noSelection: boolean,
   selectedMediums: SelectedMediums = new Set()
 ): Promise<SelectedRecordings> {
-  const workBeans: ReadonlyArray<WorkBean> =
-    entity == Entity.Work ? ((await fetchWork(entityId)) ?? []) : (await albumInfo(entityId)).tracks;
+  const workBeans = await fetchWorks(entity, entityId);
 
   return await lastValueFrom(
     of(head(selectedMediums.values())).pipe(
@@ -170,7 +169,7 @@ async function selectedRecordings(
           from(medium.tracks!.map(track => trackRecordingState(track, recordingStateTree)))
         );
       }),
-      zipWith(iif(() => entity == Entity.Work, from(workBeans).pipe(repeat()), from(workBeans))),
+      zipWith(iif(() => entity != Entity.Album, from(workBeans).pipe(repeat()), from(workBeans))),
       map(([[position, recordingState], workBean]) => [position, workBean, recordingState] as const),
       filter((state): state is [number, WorkBean, MediumRecordingStateT] => {
         const [, , recordingState] = state;
@@ -196,12 +195,18 @@ function selectedMediums(entity: Entity, noSelection: boolean, addWarning: AddWa
     case 0:
       addWarning('select at least one recording');
       return;
-    case 1:
-      if (entity == Entity.Work && MB.relationshipEditor.state.selectedRecordings?.size !== 1) {
+    case 1: {
+      const [medium] = head(selected.values())!;
+      if (
+        entity != Entity.Album &&
+        medium.track_count !== 1 &&
+        MB.relationshipEditor.state.selectedRecordings?.size !== 1
+      ) {
         addWarning('select exactly one recording');
         return;
       }
       break;
+    }
     default:
       addWarning('select recordings only from a single medium');
       return;
