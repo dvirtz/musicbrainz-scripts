@@ -23,10 +23,10 @@ function AcumImporter() {
     return submitButton.title;
   });
 
-  async function importWorks(entityId: string, entity: Entity) {
+  async function importWorks(entity: Entity, entityId: string) {
     clearWarnings();
     try {
-      await tryImportWorks(entityId, entity, addWarning, setProgress);
+      await tryImportWorks(entity, entityId, addWarning, setProgress);
       setWorksPending(true);
     } catch (err) {
       console.error(err);
@@ -58,7 +58,7 @@ function AcumImporter() {
 
   return (
     <>
-      <ImportForm entities={[Entity.Album, Entity.Work]} onSubmit={importWorks} idPattern="\d+">
+      <ImportForm entities={[Entity.Album, Entity.Version, Entity.Work]} onSubmit={importWorks} idPattern="\d+">
         <Button id="acum-work-submit" class="worksubmit" disabled={submissionDisabled()} onclick={submitWorks}>
           <span>Submit works</span>
         </Button>
@@ -81,9 +81,13 @@ function AcumImporter() {
   );
 }
 
-export const releaseEditorContainerId = 'acum-release-editor-container';
+const releaseEditorContainerId = 'acum-release-editor-container';
 
 export function createReleaseEditorUI() {
+  if (document.querySelector(`#${releaseEditorContainerId}`)) {
+    return;
+  }
+
   const container = (<div id={releaseEditorContainerId}></div>) as HTMLDivElement;
   const theToolbox = Toolbox(document, 'full-page');
   theToolbox.append(container);

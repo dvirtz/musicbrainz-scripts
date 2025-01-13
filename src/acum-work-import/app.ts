@@ -1,4 +1,4 @@
-import {createReleaseEditorUI, releaseEditorContainerId} from './ui/release-editor-ui';
+import {createReleaseEditorUI} from './ui/release-editor-ui';
 import {createWorkEditorUI} from './ui/work-editor-ui';
 
 main();
@@ -6,7 +6,7 @@ main();
 function main() {
   VM.observe(document.body, () => {
     if (location.pathname.startsWith('/release/')) {
-      if (!document.getElementById(releaseEditorContainerId)) {
+      if (document.querySelector('button.submit')) {
         createReleaseEditorUI();
         return true;
       }
