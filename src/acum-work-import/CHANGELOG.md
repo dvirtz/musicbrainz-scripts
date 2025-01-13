@@ -1,3 +1,16 @@
+## [@dvirtz/acum-work-import-v1.9.0-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.8.1...@dvirtz/acum-work-import-v1.9.0-beta.1) (2025-01-13)
+
+
+### Features
+
+* import specific version ([6372fdc](https://github.com/dvirtz/musicbrainz-scripts/commit/6372fdc58e94f2a3d4ad45a5d812994fb7557be9))
+
+
+### Bug Fixes
+
+* correct recording check state ([46938f9](https://github.com/dvirtz/musicbrainz-scripts/commit/46938f93a7235d9019c250f51de7914af008887a))
+* improve track filtering logic in album import ([4c704f5](https://github.com/dvirtz/musicbrainz-scripts/commit/4c704f59f2dfc253454b3489ca4613cc0639c70a)), closes [#52](https://github.com/dvirtz/musicbrainz-scripts/issues/52)
+
 ## [@dvirtz/acum-work-import-v1.8.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.8.0...@dvirtz/acum-work-import-v1.8.1) (2025-01-11)
 
 
