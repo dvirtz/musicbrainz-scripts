@@ -1,18 +1,20 @@
 import {Button} from '@kobalte/core/button';
 import {TextField} from '@kobalte/core/text-field';
 import {createEffect, createSignal, ParentProps} from 'solid-js';
-import {Entity, replaceUrlWith} from '../acum';
+import {Entity, EntityT, replaceUrlWith} from '../acum';
 
-export function ImportForm(
+export function ImportForm<T extends EntityT>(
   props: ParentProps & {
-    entities: Entity[];
-    onSubmit: (entity: Entity, id: string) => Promise<void>;
+    entityTypes: T[];
+    onSubmit: (entity: Entity<T>) => Promise<void>;
     idPattern: string;
   }
 ) {
-  const [id, setId] = createSignal('');
-  const [entity, setEntity] = createSignal(props.entities[0]);
+  const uniqueTypes = Array.from(new Set(props.entityTypes));
 
+  const [entity, setEntity] = createSignal(new Entity<T>(''), {
+    equals: (a, b) => a?.toString() === b?.toString(),
+  });
   const [importing, setImporting] = createSignal(false);
 
   let submitButton: HTMLButtonElement;
@@ -28,17 +30,14 @@ export function ImportForm(
     ev.preventDefault();
     setImporting(true);
     props
-      .onSubmit(entity(), id())
+      .onSubmit(entity())
       .catch(console.error)
       .finally(() => setImporting(false));
   };
 
   const onInput = (value: string) => {
-    const [id, entity] = replaceUrlWith(props.entities)(value);
-    setId(id);
-    if (entity) {
-      setEntity(entity);
-    }
+    const newEntity = replaceUrlWith(uniqueTypes)(value);
+    setEntity(newEntity);
   };
 
   return (
@@ -52,11 +51,8 @@ export function ImportForm(
           ></img>
           <span>Import works from ACUM</span>
         </Button>
-        <TextField required={true} value={id()} onChange={onInput} style={{'margin': '0 7px 0 0'}}>
-          <TextField.Input
-            pattern={props.idPattern}
-            placeholder={`${props.entities.map(entity => `${entity.charAt(0).toUpperCase()}${entity.slice(1)}`).join('/')} ID`}
-          />
+        <TextField required={true} value={entity().toString()} onChange={onInput} style={{'margin': '0 7px 0 0'}}>
+          <TextField.Input pattern={props.idPattern} placeholder={`${uniqueTypes.join('/')} ID`} />
         </TextField>
         {props.children}
       </div>

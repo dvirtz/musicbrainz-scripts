@@ -8,17 +8,17 @@ import {useWarnings, WarningsProvider} from './warnings';
 function AcumImporter(props: {form: HTMLFormElement}) {
   const {addWarning, clearWarnings} = useWarnings();
 
-  async function importWork(workId: string) {
+  async function importWork(entity: Entity<'Work'>) {
     clearWarnings();
     try {
-      return await tryImportWork(workId, props.form, addWarning);
+      return await tryImportWork(entity, props.form, addWarning);
     } catch (err) {
       console.error(err);
       addWarning(`Import failed: ${String(err)}`);
     }
   }
 
-  return <ImportForm entities={[Entity.Work]} onSubmit={importWork} idPattern="[12][0-9A-Z]+" />;
+  return <ImportForm entityTypes={['Work']} onSubmit={importWork} idPattern="[12][0-9A-Z]+" />;
 }
 
 const releaseEditorContainerId = 'acum-work-import-container';

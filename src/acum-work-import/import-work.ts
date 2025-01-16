@@ -8,7 +8,7 @@ import {AddWarning} from './ui/warnings';
 import {workEditData} from './ui/work-edit-data';
 import {createWork, linkWriters} from './works';
 
-export async function importWork(workId: string, form: HTMLFormElement, addWarning: AddWarning) {
+export async function importWork(entity: Entity<'Work'>, form: HTMLFormElement, addWarning: AddWarning) {
   // map of promises so that we don't fetch the same artist multiple times
   const artistCache = new Map<IPBaseNumber, Promise<ArtistT | null>>();
   const work =
@@ -18,10 +18,10 @@ export async function importWork(workId: string, form: HTMLFormElement, addWarni
           name: form.querySelector('[name="edit-work.name"]')?.getAttribute('value') || '',
         });
 
-  const versions = await fetchWorks(Entity.Work, workId);
+  const versions = await fetchWorks(entity);
   if (!versions) {
-    alert(`failed to find work ID ${workId}`);
-    throw new Error(`failed to find work ID ${workId}`);
+    alert(`failed to find work ID ${entity.id}`);
+    throw new Error(`failed to find work ID ${entity.id}`);
   }
 
   await lastValueFrom(
@@ -103,7 +103,7 @@ export async function importWork(workId: string, form: HTMLFormElement, addWarni
             addWarning
           );
         }),
-        tap(() => addEditNote(`Imported from ${entityUrl(Entity.Work, workId)}`, form.ownerDocument))
+        tap(() => addEditNote(`Imported from ${entityUrl(entity)}`, form.ownerDocument))
       )
   );
 }

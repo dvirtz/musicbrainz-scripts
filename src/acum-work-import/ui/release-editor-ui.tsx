@@ -23,10 +23,10 @@ function AcumImporter() {
     return submitButton.title;
   });
 
-  async function importWorks(entity: Entity, entityId: string) {
+  async function importWorks(entity: Entity) {
     clearWarnings();
     try {
-      await tryImportWorks(entity, entityId, addWarning, setProgress);
+      await tryImportWorks(entity, addWarning, setProgress);
       setWorksPending(true);
     } catch (err) {
       console.error(err);
@@ -58,7 +58,7 @@ function AcumImporter() {
 
   return (
     <>
-      <ImportForm entities={[Entity.Album, Entity.Version, Entity.Work]} onSubmit={importWorks} idPattern="\d+">
+      <ImportForm entityTypes={['Album', 'Work', 'Version']} onSubmit={importWorks} idPattern="\d+">
         <Button id="acum-work-submit" class="worksubmit" disabled={submissionDisabled()} onclick={submitWorks}>
           <span>Submit works</span>
         </Button>

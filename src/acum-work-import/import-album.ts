@@ -38,24 +38,18 @@ type SelectedRecordings = ReadonlyArray<readonly [number, WorkBean, MediumRecord
 type ArtistCache = Map<IPBaseNumber, Promise<ArtistT | null>>;
 type SetProgress = Setter<readonly [number, string]>;
 
-export async function importAlbum(
-  entity: Entity,
-  entityId: string,
-  addWarning: AddWarning,
-  setProgress: SetProgress
-): Promise<boolean> {
+export async function importAlbum(entity: Entity, addWarning: AddWarning, setProgress: SetProgress): Promise<boolean> {
   setProgress([0, 'Loading album info']);
 
   const noSelection = (MB.relationshipEditor.state.selectedRecordings?.size ?? 0) === 0;
   const mediums = selectedMediums(entity, noSelection, addWarning);
-  const recordings = await selectedRecordings(entity, entityId, noSelection, mediums);
+  const recordings = await selectedRecordings(entity, noSelection, mediums);
 
-  return await importSelectedWorks(entity, entityId, recordings, addWarning, setProgress);
+  return await importSelectedWorks(entity, recordings, addWarning, setProgress);
 }
 
 async function importSelectedWorks(
   entity: Entity,
-  entityId: string,
   selectedRecordings: SelectedRecordings,
   addWarning: AddWarning,
   setProgress: SetProgress
@@ -84,7 +78,7 @@ async function importSelectedWorks(
       mergeMap(args => linkCreators(artistCache, ...args)),
       connect(shared =>
         merge(
-          shared.pipe(maybeSetEditNote(entity, entityId, addWarning)),
+          shared.pipe(maybeSetEditNote(entity, addWarning)),
           shared.pipe(updateProgress(selectedRecordings, setProgress), ignoreElements())
         )
       )
@@ -101,13 +95,13 @@ function updateProgress(selectedRecordings: SelectedRecordings, setProgress: Set
   );
 }
 
-function maybeSetEditNote(entity: Entity, entityId: string, addWarning: AddWarning) {
+function maybeSetEditNote(entity: Entity, addWarning: AddWarning) {
   return pipe(
     count((workState: WorkStateWithEditDataT) => !workEditDataEqual(workState.editData, workState.originalEditData)),
     map(editedCount => editedCount > 0),
     tap(hasEdits => {
       if (hasEdits) {
-        addEditNote(`Imported from ${entityUrl(entity, entityId)}`);
+        addEditNote(`Imported from ${entityUrl(entity)}`);
       } else {
         addWarning('All works are up to date');
       }
@@ -151,11 +145,10 @@ async function linkArrangers(
 
 async function selectedRecordings(
   entity: Entity,
-  entityId: string,
   noSelection: boolean,
   selectedMediums: SelectedMediums = new Set()
 ): Promise<SelectedRecordings> {
-  const workBeans = await fetchWorks(entity, entityId);
+  const workBeans = await fetchWorks(entity);
 
   return await lastValueFrom(
     of(head(selectedMediums.values())).pipe(
@@ -169,7 +162,7 @@ async function selectedRecordings(
           from(medium.tracks!.map(track => trackRecordingState(track, recordingStateTree)))
         );
       }),
-      zipWith(iif(() => entity != Entity.Album, from(workBeans).pipe(repeat()), from(workBeans))),
+      zipWith(iif(() => entity.entityType != 'Album', from(workBeans).pipe(repeat()), from(workBeans))),
       map(([[position, recordingState], workBean]) => [position, workBean, recordingState] as const),
       filter((state): state is [number, WorkBean, MediumRecordingStateT] => {
         const [, , recordingState] = state;
@@ -198,7 +191,7 @@ function selectedMediums(entity: Entity, noSelection: boolean, addWarning: AddWa
     case 1: {
       const [medium] = head(selected.values())!;
       if (
-        entity != Entity.Album &&
+        entity.entityType != 'Album' &&
         medium.track_count !== 1 &&
         MB.relationshipEditor.state.selectedRecordings?.size !== 1
       ) {
