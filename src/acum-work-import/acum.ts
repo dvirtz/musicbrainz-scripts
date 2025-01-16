@@ -1,11 +1,5 @@
 import {tryFetchJSON} from 'src/common/lib/fetch';
 
-export const enum Entity {
-  Album = 'album',
-  Work = 'work',
-  Version = 'version',
-}
-
 export type IPBaseNumber = string;
 
 type Bean<Type extends string> = {
@@ -166,52 +160,74 @@ export function workLanguage(track: WorkBean): WorkLanguage {
   return stringToEnum(track.workLanguage, WorkLanguage);
 }
 
-export function replaceUrlWith(entities: Entity[]): (input: string) => [string, Entity | undefined] {
+export type EntityT = 'Work' | 'Album' | 'Version';
+
+export class Entity<T extends EntityT = EntityT> {
+  entityType: T | undefined;
+  id: string;
+
+  constructor(id: string, entityType?: T) {
+    this.entityType = entityType;
+    this.id = id;
+  }
+
+  toString(): string {
+    return this.id;
+  }
+}
+
+export function replaceUrlWith<T extends EntityT>(entityTypes: T[]): (input: string) => Entity<T> {
   return (input: string) => {
+    const defaultEntity = new Entity<T>(input);
     try {
       const url = new URL(input);
       if (url.hostname === 'nocs.acum.org.il') {
         return (
-          entities
-            .map(entity => [url.searchParams.get(`${entity}id`), entity] as const)
-            .find((pair): pair is [string, Entity] => !!pair[0]) ?? [input, undefined]
+          entityTypes
+            .map(entityType => [entityType, url.searchParams.get(`${entityType.toLowerCase()}id`)] as const)
+            .filter((pair): pair is [T, string] => !!pair[1])
+            .map(([entityType, id]) => new Entity<T>(id, entityType))
+            .at(0) ?? defaultEntity
         );
       }
     } catch (e) {
       console.debug('failed to parse URL', input, e);
     }
-    return [input, undefined] as const;
+    return defaultEntity;
   };
 }
 
-const entityCache = new Map<string, ReadonlyArray<WorkBean>>();
+const entityCache = new Map<Entity, ReadonlyArray<WorkBean>>();
 
-export async function fetchWorks(entity: Entity, id: string): Promise<ReadonlyArray<WorkBean>> {
-  const key = `${entity}:${id}`;
-  if (!entityCache.has(key)) {
-    entityCache.set(key, await fetchWorksUncached(entity, id));
+export async function fetchWorks(entity: Entity): Promise<ReadonlyArray<WorkBean>> {
+  if (!entityCache.has(entity)) {
+    entityCache.set(entity, await fetchWorksUncached(entity));
   }
-  return entityCache.get(key)!;
+  return entityCache.get(entity)!;
 }
 
-async function fetchWorksUncached(entity: Entity, id: string): Promise<ReadonlyArray<WorkBean>> {
-  switch (entity) {
-    case Entity.Work:
-      return await fetchWork(id);
-    case Entity.Album:
-      return (await fetchAlbum(id))?.tracks;
-    case Entity.Version:
-      return (await fetchWork(versionWorkId(id))).filter(track => track.fullWorkId === id);
+async function fetchWorksUncached(entity: Entity): Promise<ReadonlyArray<WorkBean>> {
+  switch (entity.entityType) {
+    case 'Work':
+      return await fetchWork(entity.id);
+    case 'Album':
+      return (await fetchAlbum(entity.id))?.tracks;
+    case 'Version':
+      return (await fetchWork(versionWorkId(entity.id))).filter(track => track.fullWorkId === entity.id);
+    default:
+      throw new Error(`unknown entity type ${entity.entityType}`);
   }
 }
 
-export function entityUrl(entity: Entity, id: string) {
-  switch (entity) {
-    case Entity.Work:
-      return `https://nocs.acum.org.il/acumsitesearchdb/work?workId=${id}`;
-    case Entity.Album:
-      return `https://nocs.acum.org.il/acumsitesearchdb/album?albumid=${id}`;
-    case Entity.Version:
-      return `https://nocs.acum.org.il/acumsitesearchdb/version?workid=${versionWorkId(id)}&versionid=${id}`;
+export function entityUrl(entity: Entity) {
+  switch (entity.entityType) {
+    case 'Work':
+      return `https://nocs.acum.org.il/acumsitesearchdb/work?workId=${entity.id}`;
+    case 'Album':
+      return `https://nocs.acum.org.il/acumsitesearchdb/album?albumid=${entity.id}`;
+    case 'Version':
+      return `https://nocs.acum.org.il/acumsitesearchdb/version?workid=${versionWorkId(entity.id)}&versionid=${entity.id}`;
+    default:
+      throw new Error(`unknown entity type ${entity.entityType}`);
   }
 }
