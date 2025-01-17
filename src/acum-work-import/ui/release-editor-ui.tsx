@@ -26,8 +26,7 @@ function AcumImporter() {
   async function importWorks(entity: Entity) {
     clearWarnings();
     try {
-      await tryImportWorks(entity, addWarning, setProgress);
-      setWorksPending(true);
+      setWorksPending(await tryImportWorks(entity, addWarning, setProgress));
     } catch (err) {
       console.error(err);
       addWarning(`Import failed: ${String(err)}`);
