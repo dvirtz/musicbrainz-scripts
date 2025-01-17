@@ -59,29 +59,38 @@ async function importSelectedWorks(
   const artistCache: ArtistCache = new Map();
 
   return await lastValueFrom(
-    from(selectedRecordings).pipe(
-      map(([position, workBean, recordingState]) => [workBean, recordingState, addTrackWarning(position)] as const),
-      tap(([workBean, recordingState, addWarning]) => {
-        const recording = recordingState.recording;
-        if (trackName(workBean) != recording.name) {
-          if (compareInsensitive(trackName(workBean), recording.name) === 0) {
-            workBean.workEngName = workBean.workHebName = recording.name;
-          } else {
-            addWarning(`Work name of ${recording.name} is different from recording name, please verify`);
+    iif(
+      () => selectedRecordings.length > 0,
+      from(selectedRecordings).pipe(
+        map(([position, workBean, recordingState]) => [workBean, recordingState, addTrackWarning(position)] as const),
+        tap(([workBean, recordingState, addWarning]) => {
+          const recording = recordingState.recording;
+          if (trackName(workBean) != recording.name) {
+            if (compareInsensitive(trackName(workBean), recording.name) === 0) {
+              workBean.workEngName = workBean.workHebName = recording.name;
+            } else {
+              addWarning(`Work name of ${recording.name} is different from recording name, please verify`);
+            }
           }
-        }
-      }),
-      mergeMap(
-        async ([workBean, recordingState, addWarning]) =>
-          [workBean, recordingState.recording, await addWork(workBean, recordingState, addWarning), addWarning] as const
-      ),
-      mergeMap(args => linkCreators(artistCache, ...args)),
-      connect(shared =>
-        merge(
-          shared.pipe(maybeSetEditNote(entity, addWarning)),
-          shared.pipe(updateProgress(selectedRecordings, setProgress), ignoreElements())
+        }),
+        mergeMap(
+          async ([workBean, recordingState, addWarning]) =>
+            [
+              workBean,
+              recordingState.recording,
+              await addWork(workBean, recordingState, addWarning),
+              addWarning,
+            ] as const
+        ),
+        mergeMap(args => linkCreators(artistCache, ...args)),
+        connect(shared =>
+          merge(
+            shared.pipe(maybeSetEditNote(entity, addWarning)),
+            shared.pipe(updateProgress(selectedRecordings, setProgress), ignoreElements())
+          )
         )
-      )
+      ),
+      from(selectedRecordings).pipe(updateProgress(selectedRecordings, setProgress), ignoreElements(), endWith(false))
     )
   );
 }
