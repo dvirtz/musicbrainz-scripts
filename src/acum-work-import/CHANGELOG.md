@@ -1,3 +1,16 @@
+## [@dvirtz/acum-work-import-v1.9.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.9.0...@dvirtz/acum-work-import-v1.9.1) (2025-01-17)
+
+
+### Bug Fixes
+
+* allow more ID patterns ([9217f42](https://github.com/dvirtz/musicbrainz-scripts/commit/9217f4202d5fe87ac7d2008f634d41fe7f980c8f)), closes [#56](https://github.com/dvirtz/musicbrainz-scripts/issues/56)
+* clearer error reporting ([3bd3d1b](https://github.com/dvirtz/musicbrainz-scripts/commit/3bd3d1bc00e39c7dc324aff1f2647904ff18440f))
+
+
+### Refactoring
+
+* type safer imports ([81b7f8e](https://github.com/dvirtz/musicbrainz-scripts/commit/81b7f8e454e3b728ea9ed7939dbcad622a75ca73))
+
 ## [@dvirtz/acum-work-import-v1.9.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.8.1...@dvirtz/acum-work-import-v1.9.0) (2025-01-14)
 
 
