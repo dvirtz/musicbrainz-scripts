@@ -57,7 +57,7 @@ function AcumImporter() {
 
   return (
     <>
-      <ImportForm entityTypes={['Album', 'Work', 'Version']} onSubmit={importWorks} idPattern="\d+">
+      <ImportForm entityTypes={['Album', 'Work', 'Version']} onSubmit={importWorks} idPattern="[12][0-9A-Z]+">
         <Button id="acum-work-submit" class="worksubmit" disabled={submissionDisabled()} onclick={submitWorks}>
           <span>Submit works</span>
         </Button>
