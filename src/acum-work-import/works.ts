@@ -8,9 +8,10 @@ import {
   REL_STATUS_ADD,
   REL_STATUS_REMOVE,
   TRANSLATOR_LINK_TYPE_ID,
+  WRITER_LINK_TYPE_ID,
 } from 'src/common/musicbrainz/constants';
 import {iterateRelationshipsInTargetTypeGroup} from 'src/common/musicbrainz/type-group';
-import {trackName, WorkBean} from './acum';
+import {isSong, trackName, WorkBean} from './acum';
 import {linkArtists} from './artists';
 import {createRelationshipState} from './relationships';
 import {AddWarning} from './ui/warnings';
@@ -139,7 +140,7 @@ export async function linkWriters(
     artistCache,
     [...(track.authors ?? []), ...(track.composersAndAuthors ?? [])],
     track.creators,
-    artist => doLink(artist, LYRICIST_LINK_TYPE_ID),
+    artist => doLink(artist, isSong(track) ? LYRICIST_LINK_TYPE_ID : WRITER_LINK_TYPE_ID),
     addWarning
   );
   await linkArtists(

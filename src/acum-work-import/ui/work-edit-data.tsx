@@ -7,7 +7,7 @@ import {mergeArrays} from 'src/common/lib/merge-arrays';
 import {LANGUAGE_ZXX_ID} from 'src/common/musicbrainz/constants';
 import {fetchEditParams, urlFromMbid} from 'src/common/musicbrainz/edits';
 import {workAttributeTypes, workLanguages, workTypes} from 'src/common/musicbrainz/type-info';
-import {essenceType, EssenceType, WorkBean, workISWCs, workLanguage, WorkLanguage} from '../acum';
+import {essenceType, EssenceType, isSong, trackName, WorkBean, workISWCs, workLanguage, WorkLanguage} from '../acum';
 import {WorkStateWithEditDataT} from '../work-state';
 import {AddWarning} from './warnings';
 
@@ -75,7 +75,7 @@ export async function workEditData(
     editData: {
       name: originalEditData.name,
       comment: originalEditData.comment,
-      type_id: [EssenceType.Song, EssenceType.ChoirSong].includes(essenceType(track))
+      type_id: isSong(track)
         ? (Object.values(await workTypes).find(workType => workType.name === 'Song')?.id ?? null)
         : originalEditData.type_id,
       languages: mergeArrays(
@@ -87,6 +87,7 @@ export async function workEditData(
               return [LANGUAGE_ZXX_ID];
             case EssenceType.Song:
             case EssenceType.ChoirSong:
+            case EssenceType.Sketch:
               return await (async () => {
                 switch (workLanguage(track)) {
                   case WorkLanguage.Hebrew:
