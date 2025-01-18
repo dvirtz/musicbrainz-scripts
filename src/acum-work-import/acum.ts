@@ -133,6 +133,7 @@ export enum EssenceType {
   LightMusicNoWords = '15', // Light music (without words)
   Song = '30', // Popular song
   Jazz = '40', // Original jazz work
+  Sketch = '41', // Audio skit
   ChoirSong = '53', // Original song for 4 part choir
   /** @knipignore */
   Unknown = '-1',
@@ -147,6 +148,10 @@ function stringToEnum<T>(value: string, enumType: {[s: string]: T}): T {
 
 export function essenceType(track: WorkBean): EssenceType {
   return stringToEnum(track.versionEssenceType, EssenceType);
+}
+
+export function isSong(track: WorkBean): boolean {
+  return [EssenceType.Song, EssenceType.ChoirSong].includes(essenceType(track));
 }
 
 export enum WorkLanguage {
