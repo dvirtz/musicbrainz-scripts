@@ -11,7 +11,7 @@ function AcumImporter(props: {form: HTMLFormElement}) {
   async function importWork(entity: Entity<'Work'>) {
     clearWarnings();
     try {
-      return await tryImportWork(entity, props.form, addWarning);
+      await tryImportWork(entity, props.form, addWarning);
     } catch (err) {
       console.error(err);
       addWarning(`Import failed: ${String(err)}`);
