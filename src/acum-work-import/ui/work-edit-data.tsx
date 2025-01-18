@@ -73,7 +73,7 @@ export async function workEditData(
   return {
     originalEditData,
     editData: {
-      name: originalEditData.name,
+      name: originalEditData.name || trackName(track),
       comment: originalEditData.comment,
       type_id: isSong(track)
         ? (Object.values(await workTypes).find(workType => workType.name === 'Song')?.id ?? null)
