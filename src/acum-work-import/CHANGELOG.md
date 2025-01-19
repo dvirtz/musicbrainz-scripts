@@ -1,3 +1,21 @@
+## [@dvirtz/acum-work-import-v1.10.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.9.1...@dvirtz/acum-work-import-v1.10.0) (2025-01-19)
+
+
+### Features
+
+* add Sketch essence type and isSong utility function ([886d85b](https://github.com/dvirtz/musicbrainz-scripts/commit/886d85bf6343860bda6cf2c9e45794738a63f9d0))
+
+
+### Bug Fixes
+
+* correct ID pattern and entity priority ([011c68e](https://github.com/dvirtz/musicbrainz-scripts/commit/011c68e55eafedbea30b8b4b463886540b9d63a8))
+* fallback to track name if original name is missing ([19413b6](https://github.com/dvirtz/musicbrainz-scripts/commit/19413b65b662745c3610749dbb47035e3e612565))
+
+
+### Refactoring
+
+* redundant return ([0e5a28c](https://github.com/dvirtz/musicbrainz-scripts/commit/0e5a28ccc13246a94c709df031ce8c027f413f04))
+
 ## [@dvirtz/acum-work-import-v1.9.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.9.0...@dvirtz/acum-work-import-v1.9.1) (2025-01-17)
 
 
