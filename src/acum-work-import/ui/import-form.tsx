@@ -12,7 +12,7 @@ export function ImportForm<T extends EntityT>(
 ) {
   const uniqueTypes = Array.from(new Set(props.entityTypes));
 
-  const [entity, setEntity] = createSignal(new Entity<T>(''), {
+  const [entity, setEntity] = createSignal(new Entity<T>('', props.entityTypes[0]), {
     equals: (a, b) => a?.toString() === b?.toString(),
   });
   const [importing, setImporting] = createSignal(false);

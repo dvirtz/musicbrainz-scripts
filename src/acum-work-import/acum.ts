@@ -168,10 +168,10 @@ export function workLanguage(track: WorkBean): WorkLanguage {
 export type EntityT = 'Work' | 'Album' | 'Version';
 
 export class Entity<T extends EntityT = EntityT> {
-  entityType: T | undefined;
+  entityType: T;
   id: string;
 
-  constructor(id: string, entityType?: T) {
+  constructor(id: string, entityType: T) {
     this.entityType = entityType;
     this.id = id;
   }
@@ -183,7 +183,7 @@ export class Entity<T extends EntityT = EntityT> {
 
 export function replaceUrlWith<T extends EntityT>(entityTypes: T[]): (input: string) => Entity<T> {
   return (input: string) => {
-    const defaultEntity = new Entity<T>(input);
+    const defaultEntity = new Entity<T>(input, entityTypes[0]);
     try {
       const url = new URL(input);
       if (url.hostname === 'nocs.acum.org.il') {
@@ -219,8 +219,6 @@ async function fetchWorksUncached(entity: Entity): Promise<ReadonlyArray<WorkBea
       return (await fetchAlbum(entity.id))?.tracks;
     case 'Version':
       return (await fetchWork(versionWorkId(entity.id))).filter(track => track.fullWorkId === entity.id);
-    default:
-      throw new Error(`unknown entity type ${entity.entityType}`);
   }
 }
 
@@ -232,7 +230,5 @@ export function entityUrl(entity: Entity) {
       return `https://nocs.acum.org.il/acumsitesearchdb/album?albumid=${entity.id}`;
     case 'Version':
       return `https://nocs.acum.org.il/acumsitesearchdb/version?workid=${versionWorkId(entity.id)}&versionid=${entity.id}`;
-    default:
-      throw new Error(`unknown entity type ${entity.entityType}`);
   }
 }
