@@ -22,6 +22,7 @@ words:
   - metabrainz
   - musicbrainz
   - rels
+  - rollup
   - setlist
   - setlistfm
   - tampermonkey
@@ -50,6 +51,6 @@ languageSettings:
       - /class="[^"]+"/g
   - languageId: git
     ignoreRegExpList:
-      - /#\\s.*/ # comments
-      - /`.*?`/ # inline code
-      - /(```+)\\s?[\\s\\S]+?\\1/g # code block
+      - /#\\s.*/
+      - /`.*?`/
+      - /(```+)\\s?[\\s\\S]+?\\1/g
