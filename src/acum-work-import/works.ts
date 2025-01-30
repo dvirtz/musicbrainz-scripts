@@ -1,3 +1,4 @@
+import {defaultIfEmpty, filter, firstValueFrom, from, mergeMap} from 'rxjs';
 import {compareNumbers} from 'src/common/lib/compare';
 import {head} from 'src/common/lib/head';
 import {compareTargetTypeWithGroup} from 'src/common/musicbrainz/compare';
@@ -10,10 +11,13 @@ import {
   TRANSLATOR_LINK_TYPE_ID,
   WRITER_LINK_TYPE_ID,
 } from 'src/common/musicbrainz/constants';
+import {fetchJSON, tryFetchJSON} from 'src/common/musicbrainz/fetch';
+import {formatISWC} from 'src/common/musicbrainz/format-iswc';
 import {iterateRelationshipsInTargetTypeGroup} from 'src/common/musicbrainz/type-group';
-import {isSong, trackName, WorkBean} from './acum';
+import {isSong, trackName, WorkBean, workISWCs} from './acum';
 import {linkArtists} from './artists';
 import {createRelationshipState} from './relationships';
+import {shouldSearchWorks} from './ui/settings';
 import {AddWarning} from './ui/warnings';
 import {workEditData} from './ui/work-edit-data';
 import {addWorkEditor} from './ui/work-editor';
@@ -39,6 +43,40 @@ function shouldAddNewWork(relatedWorks: MediumWorkStateTreeT) {
   return true;
 }
 
+export async function findWork(track: WorkBean) {
+  const workId = await (async () => {
+    for (const iswc of await workISWCs(track.workId)) {
+      const byIswc = await tryFetchJSON<IswcLookupResultsT>(`/ws/2/iswc/${formatISWC(iswc)}?fmt=json`);
+      if (byIswc && byIswc['work-count'] > 0) {
+        return byIswc.works[0].id;
+      }
+    }
+
+    const byName = await fetchJSON<WorkSearchResultsT>(`/ws/2/work?query=work:"${trackName(track)}"&fmt=json`);
+    if (byName && byName.count > 0) {
+      const matchingWork = await firstValueFrom(
+        from(byName.works).pipe(
+          mergeMap(async work => await fetchJSON<WorkLookupResultT>(`/ws/2/work/${work.id}`)),
+          filter(
+            work =>
+              work.attributes.find(attr => attr.type === 'ACUM ID' && attr.value === track.fullWorkId) !== undefined
+          ),
+          defaultIfEmpty(undefined)
+        )
+      );
+      return matchingWork?.id;
+    }
+  })();
+
+  if (workId) {
+    const work = await fetchJSON<WorkT>(`/ws/js/entity/${workId}`);
+    workCache.set(track.fullWorkId, work);
+    return work;
+  }
+
+  return undefined;
+}
+
 export async function addWork(
   track: WorkBean,
   recordingState: MediumRecordingStateT,
@@ -55,9 +93,15 @@ export async function addWork(
 }
 
 async function createNewWork(track: WorkBean, recordingState: MediumRecordingStateT) {
-  const newWork = (() => {
+  const newWork = await (async () => {
     if (workCache.has(track.fullWorkId)) {
       return workCache.get(track.fullWorkId)!;
+    }
+    if (shouldSearchWorks()) {
+      const existingWork = await findWork(track);
+      if (existingWork) {
+        return existingWork;
+      }
     }
     const newWork = createWork({
       _fromBatchCreateWorksDialog: true,
@@ -86,7 +130,9 @@ async function createNewWork(track: WorkBean, recordingState: MediumRecordingSta
   // wait for the work to be added
   await new Promise<void>(resolve => {
     VM.observe(document.querySelector('.release-relationship-editor')!, (mutations, observer) => {
-      if (document.querySelector(`.works a[href="#new-work-${newWork.id}"]`)) {
+      if (
+        document.querySelector(`.works a[href="${newWork.gid ? `/work/${newWork.gid}` : `#new-work-${newWork.id}`}"]`)
+      ) {
         observer.disconnect();
         resolve();
       }

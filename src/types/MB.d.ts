@@ -505,14 +505,38 @@ declare global {
 
   type MBID = string;
 
-  type ArtistSearchResultsT = {
+  type CommonSearchResultsT = Readonly<{
+    count: number;
+  }>;
+
+  type ArtistSearchResultsT = CommonSearchResultsT & {
     artists: ReadonlyArray<{
       id: MBID;
       name: string;
       aliases: ReadonlyArray<{name: string}>;
     }>;
-    count: number;
   };
+
+  type WorkSearchResultsT = CommonSearchResultsT & {
+    works: ReadonlyArray<{
+      id: MBID;
+    }>;
+  };
+
+  type IswcLookupResultsT = Readonly<{
+    'work-count': number;
+    works: ReadonlyArray<{
+      id: MBID;
+    }>;
+  }>;
+
+  type WorkLookupResultT = Readonly<{
+    id: MBID;
+    attributes: ReadonlyArray<{
+      type: string;
+      value: string;
+    }>;
+  }>;
 
   type LinkAttrT = {
     credited_as?: string;

@@ -33,6 +33,8 @@ To import a single work:
 6. Review the changes.
 7. Submit the work.
 
+The script will search for existing works with the same ISWC or ACUM ID work attribute and use them if found. This can slow down the import process and can be disabled in the settings.
+
 ## Release Notes
 
 See [CHANGELOG.md](CHANGELOG.md).
