@@ -1,4 +1,5 @@
 import {tryFetchJSON} from 'src/common/lib/fetch';
+import {formatISWC} from 'src/common/musicbrainz/format-iswc';
 
 export type IPBaseNumber = string;
 
@@ -117,8 +118,6 @@ async function fetchAlbum(albumId: string): Promise<AlbumBean> {
 }
 
 export async function workISWCs(workID: string) {
-  const formatISWC = (iswc: string) => iswc.replace(/T(\d{3})(\d{3})(\d{3})(\d)/, 'T-$1.$2.$3-$4');
-
   return (await fetchWork(workID))
     ?.map(albumVersion => albumVersion.versionIswcNumber)
     .filter(iswc => iswc.length > 0)

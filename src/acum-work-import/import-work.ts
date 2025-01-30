@@ -1,12 +1,13 @@
-import {filter, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
+import {filter, first, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
 import {asyncTap} from 'src/common/lib/asyncTap';
 import {compareInsensitive} from 'src/common/lib/compare';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
 import {Entity, entityUrl, fetchWorks, IPBaseNumber} from './acum';
 import {addWriterRelationship} from './relationships';
+import {shouldSearchWorks} from './ui/settings';
 import {AddWarning} from './ui/warnings';
 import {workEditData} from './ui/work-edit-data';
-import {createWork, linkWriters} from './works';
+import {createWork, findWork, linkWriters} from './works';
 
 export async function importWork(entity: Entity<'Work'>, form: HTMLFormElement, addWarning: AddWarning) {
   // map of promises so that we don't fetch the same artist multiple times
@@ -22,6 +23,21 @@ export async function importWork(entity: Entity<'Work'>, form: HTMLFormElement, 
   if (!versions) {
     alert(`failed to find work ID ${entity.id}`);
     throw new Error(`failed to find work ID ${entity.id}`);
+  }
+
+  if (shouldSearchWorks()) {
+    await lastValueFrom(
+      from(versions).pipe(
+        switchMap(async track => await findWork(track)),
+        filter(work => work !== undefined),
+        first(),
+        tap(work => {
+          if (window.confirm('This work already exists in Musicbrainz, click "ok" to redirect to its page')) {
+            window.location.href = `/work/${work.gid}`;
+          }
+        })
+      )
+    );
   }
 
   await lastValueFrom(
