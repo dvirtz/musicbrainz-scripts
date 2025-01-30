@@ -8,11 +8,11 @@ import pkg from './package.json' with {type: 'json'};
 
 const baseImportUrl = 'src';
 
-export default defineConfig(
-  Object.entries({
-    'setlistfm-musicbrainz-import': 'src/setlistfm-musicbrainz-import/index.ts',
-    'acum-work-import': 'src/acum-work-import/index.ts',
-  }).map(([name, entry]) => ({
+export default Object.entries({
+  'setlistfm-musicbrainz-import': 'src/setlistfm-musicbrainz-import/index.ts',
+  'acum-work-import': 'src/acum-work-import/index.ts',
+}).map(([name, entry]) =>
+  defineConfig({
     logLevel: 'debug',
     input: entry,
     watch: {
@@ -48,5 +48,5 @@ export default defineConfig(
         '@violentmonkey/ui': 'VM',
       },
     },
-  }))
+  })
 );
