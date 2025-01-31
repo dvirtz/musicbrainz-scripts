@@ -1,7 +1,4 @@
-import {render} from 'solid-js/web';
-import {getPanel} from '@violentmonkey/ui';
-import panelStyle from './app.css';
-import {SettingsDialog} from './settings';
+import {registerSettingsDialog} from './settings';
 
 export function createUI(buttonText: string, onClick: () => void) {
   const div = (
@@ -20,10 +17,8 @@ export function createUI(buttonText: string, onClick: () => void) {
   const userFragment = document.querySelector('.user-fragment');
   userFragment?.insertBefore(div, userFragment.firstChild);
 
-  const panel = getPanel({style: panelStyle, theme: 'disabled'});
+  document.querySelector('div.main-navi')?.classList.add('col-md-7');
+  document.querySelector('div.user-navi')?.classList.add('col-md-5');
 
-  GM_registerMenuCommand('settings', () => {
-    render(() => <SettingsDialog mount={panel.body} />, panel.body);
-    panel.show();
-  });
+  registerSettingsDialog();
 }
