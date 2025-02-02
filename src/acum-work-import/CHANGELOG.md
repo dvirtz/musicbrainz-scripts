@@ -1,3 +1,15 @@
+## [@dvirtz/acum-work-import-v1.11.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.10.0...@dvirtz/acum-work-import-v1.11.0) (2025-02-02)
+
+
+### Features
+
+* find existing works ([a4aebb3](https://github.com/dvirtz/musicbrainz-scripts/commit/a4aebb398814ea1fb2026edf28aa7c634034152c))
+
+
+### Bug Fixes
+
+* default entity type was undefined ([2ba1452](https://github.com/dvirtz/musicbrainz-scripts/commit/2ba145275c836a0fe9ca99e9d75b069899bff09e))
+
 ## [@dvirtz/acum-work-import-v1.10.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.9.1...@dvirtz/acum-work-import-v1.10.0) (2025-01-19)
 
 
