@@ -1,3 +1,10 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.4.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.4.0...@dvirtz/setlistfm-musicbrainz-import-v1.4.1) (2025-02-03)
+
+
+### Bug Fixes
+
+* more than 1 guest ([cf990e2](https://github.com/dvirtz/musicbrainz-scripts/commit/cf990e222e8586d7aa7320516873da0b9fb2ed1d))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.4.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.3.4...@dvirtz/setlistfm-musicbrainz-import-v1.4.0) (2025-02-03)
 
 
