@@ -1,6 +1,7 @@
 import {
   concat,
   concatMap,
+  count,
   EMPTY,
   filter,
   from,
@@ -9,9 +10,12 @@ import {
   mergeMap,
   of,
   pairwise,
+  range,
   reduce,
   startWith,
+  tap,
   toArray,
+  zip,
 } from 'rxjs';
 import {tryFetchJSON, tryFetchText} from 'src/common/lib/fetch';
 import {MBID_REGEXP} from 'src/common/musicbrainz/constants';
@@ -254,14 +258,18 @@ async function submitEvent(placeMBID: string) {
   searchParams.append('rels.1.type', GUID.HeldAt);
   searchParams.append('rels.1.target', placeMBID);
 
-  for (const mbidPromise of artistMBIDCache.values()) {
-    const mbid = await mbidPromise;
-    if (mbid) {
-      searchParams.append('rels.2.type', GUID.GuestPerformer);
-      searchParams.append('rels.2.target', mbid);
-      searchParams.append('rels.2.direction', 'backward');
-    }
-  }
+  await lastValueFrom(
+    zip(artistMBIDCache.values(), range(2, 2 + artistMBIDCache.size)).pipe(
+      mergeMap(async ([mbidPromise, index]) => [await mbidPromise, index] as const),
+      filter((pair): pair is [string, number] => pair[0] !== undefined),
+      tap(([mbid, index]) => {
+        searchParams.append(`rels.${index}.type`, GUID.GuestPerformer);
+        searchParams.append(`rels.${index}.target`, mbid);
+        searchParams.append(`rels.${index}.direction`, 'backward');
+      }),
+      count()
+    )
+  );
 
   // navigate to the event creation page
   unsafeWindow.open('https://musicbrainz.org/event/create?' + searchParams.toString());
