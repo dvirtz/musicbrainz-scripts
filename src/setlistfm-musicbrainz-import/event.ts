@@ -1,4 +1,20 @@
-import {tryFetchJSON} from 'src/common/lib/fetch';
+import {
+  concat,
+  concatMap,
+  EMPTY,
+  filter,
+  from,
+  iif,
+  lastValueFrom,
+  mergeMap,
+  of,
+  pairwise,
+  reduce,
+  startWith,
+  toArray,
+} from 'rxjs';
+import {tryFetchJSON, tryFetchText} from 'src/common/lib/fetch';
+import {MBID_REGEXP} from 'src/common/musicbrainz/constants';
 import {convertMonth} from './convert-month';
 import {findVenue} from './place';
 import {addCoverComment as addCoverCommentOption} from './settings';
@@ -6,6 +22,7 @@ import {createUI} from './ui';
 
 enum GUID {
   MainPerformer = '936c7c95-3156-3889-a062-8a0cd57f8946',
+  GuestPerformer = '292df906-98a6-307e-86e8-df01a579a321',
   HeldAt = 'e2c6f697-07dc-38b1-be0b-83d740165532',
   PerformanceTime = 'ebd303c3-7f57-452a-aa3b-d780ebad868d',
 }
@@ -13,6 +30,8 @@ enum GUID {
 enum TypeID {
   SetlistFmUrl = '811', // MB.linkedEntities.link_type['027fce0c-c621-4fd1-b728-1678ae08f280'].id
 }
+
+const artistMBIDCache = new Map<string, Promise<string | undefined>>();
 
 export async function handleSetlistPage() {
   const eventMBID = await findEvent(document.location.href);
@@ -33,7 +52,7 @@ export async function handleSetlistPage() {
     }
 
     createUI('Add to MB', () => {
-      submitEvent(placeMBID || '');
+      submitEvent(placeMBID || '').catch(console.error);
     });
   }
 }
@@ -63,34 +82,96 @@ function info(comment: string) {
   return `# ${comment}`;
 }
 
-function* setlistEntry(setlistPart: Element, mainArtistName: string, addCoverComment: boolean) {
+type Song = {
+  work: string;
+  artists: Array<string>;
+  info: Array<string>;
+};
+
+type Section = {
+  info?: string;
+  songs: Array<Song>;
+};
+
+type SetlistEntry = Song | Section;
+
+async function setlistEntry(
+  setlistPart: Element,
+  mainArtist: string,
+  addCoverComment: boolean
+): Promise<SetlistEntry | undefined> {
   if (setlistPart.classList.contains('tape') || setlistPart.classList.contains('song')) {
-    yield work(setlistPart.querySelector('.songPart')!.textContent!.trim());
+    const song: Song = {
+      work: setlistPart.querySelector('.songPart')!.textContent!.trim(),
+      artists: [mainArtist],
+      info: [],
+    };
     if (setlistPart.classList.contains('tape')) {
-      yield info('from tape');
+      song.info.push('from tape');
     }
     const infoPart = setlistPart.querySelector('.infoPart');
     if (infoPart) {
-      yield* infoPart
-        .textContent!.split('\n')
-        .filter(line => line.trim().length > 0)
-        .flatMap(line => {
-          const match = line.match(/\(with (.*)\)/);
-          if (match) {
-            return [artist(`${mainArtistName} with ${match[1]}`)];
-          } else if (!line.match(/\b(cover|song)\)/) || addCoverComment) {
-            return [info(line)];
-          } else {
-            return [];
+      if (infoPart.textContent?.includes('(with ') && infoPart.querySelector('a')) {
+        for (const artist of infoPart.querySelectorAll('a')) {
+          if (artist.textContent) {
+            song.artists.push(entity(artist.textContent, await artistMBID(artist.href)));
           }
-        });
+        }
+      }
+      song.info.push(
+        ...infoPart
+          .querySelectorAll('span')
+          .values()
+          .filter(span => span.textContent !== null)
+          .map(span => span.textContent!.trim())
+          .filter(text => addCoverComment || !text.match(/\b(cover|song)\)/i))
+      );
     }
+    return song;
   } else if (setlistPart.classList.contains('encore') || setlistPart.classList.contains('section')) {
-    yield `\n${info(setlistPart.textContent!.trim())}`;
+    return {
+      info: setlistPart.textContent?.trim(),
+      songs: [],
+    } as Section;
   }
 }
 
-function submitEvent(placeMBID: string) {
+function toSetlist(section: Section) {
+  function arraysEqual<T>(a: T[], b: T[]): boolean {
+    if (a.length !== b.length) return false;
+    return a.every((value, index) => value === b[index]);
+  }
+
+  function joinArtists(artists: string[]) {
+    return artists.reduce((joined: string, artist: string, index: number) => {
+      if (index === 0) {
+        return artist;
+      }
+      if (index === 1) {
+        return `${joined} with ${artist}`;
+      }
+      if (index === artists.length - 1) {
+        return `${joined} & ${artist}`;
+      }
+      return `${joined}, ${artist}`;
+    }, '');
+  }
+
+  return from(section.songs).pipe(
+    startWith({work: '', artists: [], info: []} as Song),
+    pairwise(),
+    mergeMap(([prev, next]) =>
+      concat(
+        iif(() => arraysEqual(prev.artists, next.artists), EMPTY, of(artist(joinArtists(next.artists)))),
+        of(work(next.work)),
+        next.info.map(info)
+      )
+    ),
+    startWith(...(section.info ? [info(section.info)] : []))
+  );
+}
+
+async function submitEvent(placeMBID: string) {
   const searchParams = new URLSearchParams();
 
   const artistMBID = unsafeWindow.sfmPageAttributes.artist.mbid;
@@ -112,14 +193,30 @@ function submitEvent(placeMBID: string) {
   const addCoverComment = addCoverCommentOption();
 
   // setlist
-  const setlist = [artist(artistName, artistMBID)]
-    .concat(
-      Array.from(document.querySelectorAll('.setlistParts')).flatMap(part => [
-        ...setlistEntry(part, artistName, addCoverComment),
-      ])
+  const sections = await lastValueFrom(
+    from(document.querySelectorAll('.setlistParts')).pipe(
+      concatMap(async part => await setlistEntry(part, entity(artistName, artistMBID), addCoverComment)),
+      filter((maybeSetlist): maybeSetlist is SetlistEntry => maybeSetlist !== undefined),
+      reduce(
+        (sections: Array<Section>, entry: SetlistEntry) => {
+          if ('work' in entry) {
+            sections[sections.length - 1].songs.push(entry);
+          } else {
+            sections.push(entry);
+          }
+          return sections;
+        },
+        [{songs: []}] as Array<Section>
+      )
     )
-    .join('\n');
-  searchParams.append('edit-event.setlist', setlist);
+  );
+  const setlist = await lastValueFrom(
+    from(sections).pipe(
+      mergeMap(section => concat(toSetlist(section), [''])),
+      toArray()
+    )
+  );
+  searchParams.append('edit-event.setlist', setlist.join('\n'));
 
   // date-time
   const dateBlock = document.querySelector('.dateBlock')!;
@@ -156,6 +253,15 @@ function submitEvent(placeMBID: string) {
 
   searchParams.append('rels.1.type', GUID.HeldAt);
   searchParams.append('rels.1.target', placeMBID);
+
+  for (const mbidPromise of artistMBIDCache.values()) {
+    const mbid = await mbidPromise;
+    if (mbid) {
+      searchParams.append('rels.2.type', GUID.GuestPerformer);
+      searchParams.append('rels.2.target', mbid);
+      searchParams.append('rels.2.direction', 'backward');
+    }
+  }
 
   // navigate to the event creation page
   unsafeWindow.open('https://musicbrainz.org/event/create?' + searchParams.toString());
@@ -204,4 +310,24 @@ function addWarningIcon(type: string, query: string, afterElement: Element) {
   });
 
   afterElement.parentNode!.insertBefore(warningIcon, afterElement.nextSibling);
+}
+
+async function artistMBID(href: string): Promise<string | undefined> {
+  if (!artistMBIDCache.has(href)) {
+    artistMBIDCache.set(
+      href,
+      tryFetchText(href)
+        .then(content => {
+          const m = content?.match(/"mbid":\s*"([^"]+)"/i);
+          if (m && MBID_REGEXP.test(m[1])) {
+            return m[1];
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          return undefined;
+        })
+    );
+  }
+  return await artistMBIDCache.get(href);
 }
