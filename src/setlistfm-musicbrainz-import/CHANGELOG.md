@@ -1,3 +1,20 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.4.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.3.4...@dvirtz/setlistfm-musicbrainz-import-v1.4.0) (2025-02-03)
+
+
+### Features
+
+* populate guest performers ([36f5fa4](https://github.com/dvirtz/musicbrainz-scripts/commit/36f5fa48a293bb9cb678ac0962c3e648301ec750)), closes [#62](https://github.com/dvirtz/musicbrainz-scripts/issues/62)
+
+
+### General maintenance
+
+* fix spelling ([00389da](https://github.com/dvirtz/musicbrainz-scripts/commit/00389da1d549f164d814cb67896da8172a6c8a39))
+
+
+### Refactoring
+
+* extract settings dialog to common ([03e74d7](https://github.com/dvirtz/musicbrainz-scripts/commit/03e74d7604e581a17e0e546dccb20f8bf5338c3d))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.3.4](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.3.3...@dvirtz/setlistfm-musicbrainz-import-v1.3.4) (2024-12-17)
 
 
