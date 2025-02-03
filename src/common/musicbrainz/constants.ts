@@ -37,6 +37,7 @@ export const EMPTY_PARTIAL_DATE: PartialDateT = Object.freeze({
 });
 
 export const SERIES_ORDERING_TYPE_MANUAL = 2;
+export const MBID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[345][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i;
 
 // https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting
 export const RATE_LIMIT_INTERVAL = 1000;
