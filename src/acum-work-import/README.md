@@ -35,6 +35,15 @@ To import a single work:
 
 The script will search for existing works with the same ISWC or ACUM ID work attribute and use them if found. This can slow down the import process and can be disabled in the settings.
 
+## Settings
+
+Settings can be changed through the script manager menu.
+
+| Setting | Description | Default |
+| --- | --- | --- |
+| `Search for existing works` | Tries to detect if works already exist in MB and use them | `true` |
+| `Set language` | Get language from ACUM, which can sometimes be inaccurate | `true` |
+
 ## Release Notes
 
 See [CHANGELOG.md](CHANGELOG.md).
