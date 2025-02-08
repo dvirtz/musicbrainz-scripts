@@ -1,5 +1,6 @@
-import {filter, from, lastValueFrom, mergeMap, tap} from 'rxjs';
+import {filter, from, mergeMap, tap} from 'rxjs';
 import {compareInsensitive} from 'src/common/lib/compare';
+import {executePipeline} from 'src/common/lib/execute-pipeline';
 import {tryFetchJSON} from 'src/common/musicbrainz/fetch';
 import {Creator, CreatorFull, Creators, IPBaseNumber, RoleCode} from './acum';
 import {AddWarning} from './ui/warnings';
@@ -75,7 +76,7 @@ export async function linkArtists(
   doLink: (artist: ArtistT) => void,
   addWarning: (message: string) => Set<string>
 ) {
-  await lastValueFrom(
+  await executePipeline(
     from(writers || []).pipe(
       mergeMap(
         async author =>
@@ -86,9 +87,6 @@ export async function linkArtists(
       ),
       filter((artist): artist is ArtistT => artist !== null),
       tap(doLink)
-    ),
-    {
-      defaultValue: null,
-    }
+    )
   );
 }
