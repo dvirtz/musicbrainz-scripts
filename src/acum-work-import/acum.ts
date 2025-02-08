@@ -134,6 +134,7 @@ export enum EssenceType {
   Jazz = '40', // Original jazz work
   Sketch = '41', // Audio skit
   ChoirSong = '53', // Original song for 4 part choir
+  Poetry = '55', // Poetry
   /** @knipignore */
   Unknown = '-1',
 }

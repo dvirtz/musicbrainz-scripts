@@ -90,6 +90,7 @@ export async function workEditData(
                 case EssenceType.Song:
                 case EssenceType.ChoirSong:
                 case EssenceType.Sketch:
+                case EssenceType.Poetry:
                   return await (async () => {
                     switch (workLanguage(track)) {
                       case WorkLanguage.Hebrew:
