@@ -1,7 +1,6 @@
 import {
   concat,
   concatMap,
-  count,
   EMPTY,
   filter,
   from,
@@ -17,6 +16,7 @@ import {
   toArray,
   zip,
 } from 'rxjs';
+import {executePipeline} from 'src/common/lib/execute-pipeline';
 import {tryFetchJSON, tryFetchText} from 'src/common/lib/fetch';
 import {MBID_REGEXP} from 'src/common/musicbrainz/constants';
 import {convertMonth} from './convert-month';
@@ -115,12 +115,9 @@ async function setlistEntry(
     }
     const infoPart = setlistPart.querySelector('.infoPart');
     if (infoPart) {
-      if (infoPart.textContent?.includes('(with ') && infoPart.querySelector('a')) {
-        for (const artist of infoPart.querySelectorAll('a')) {
-          if (artist.textContent) {
-            song.artists.push(entity(artist.textContent, await artistMBID(artist.href)));
-          }
-        }
+      const m = infoPart.getHTML().match(/\(with <a href="([^"]+)"( title="")?>([^<]+)<\/a>/);
+      if (m) {
+        song.artists.push(artist(m[3], await artistMBID(m[1])));
       }
       song.info.push(
         ...infoPart
@@ -258,7 +255,7 @@ async function submitEvent(placeMBID: string) {
   searchParams.append('rels.1.type', GUID.HeldAt);
   searchParams.append('rels.1.target', placeMBID);
 
-  await lastValueFrom(
+  await executePipeline(
     zip(artistMBIDCache.values(), range(2, 2 + artistMBIDCache.size)).pipe(
       mergeMap(async ([mbidPromise, index]) => [await mbidPromise, index] as const),
       filter((pair): pair is [string, number] => pair[0] !== undefined),
@@ -266,8 +263,7 @@ async function submitEvent(placeMBID: string) {
         searchParams.append(`rels.${index}.type`, GUID.GuestPerformer);
         searchParams.append(`rels.${index}.target`, mbid);
         searchParams.append(`rels.${index}.direction`, 'backward');
-      }),
-      count()
+      })
     )
   );
 
