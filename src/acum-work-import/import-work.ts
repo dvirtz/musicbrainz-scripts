@@ -1,6 +1,7 @@
 import {filter, first, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
-import {asyncTap} from 'src/common/lib/asyncTap';
+import {asyncTap} from 'src/common/lib/async-tap';
 import {compareInsensitive} from 'src/common/lib/compare';
+import {executePipeline} from 'src/common/lib/execute-pipeline';
 import {addEditNote} from 'src/common/musicbrainz/edit-note';
 import {Entity, entityUrl, fetchWorks, IPBaseNumber} from './acum';
 import {addWriterRelationship} from './relationships';
@@ -26,7 +27,7 @@ export async function importWork(entity: Entity<'Work'>, form: HTMLFormElement, 
   }
 
   if (shouldSearchWorks()) {
-    await lastValueFrom(
+    await executePipeline(
       from(versions).pipe(
         switchMap(async track => await findWork(track)),
         filter(work => work !== undefined),
@@ -40,7 +41,7 @@ export async function importWork(entity: Entity<'Work'>, form: HTMLFormElement, 
     );
   }
 
-  await lastValueFrom(
+  await executePipeline(
     from(versions)
       .pipe(
         take(1),
