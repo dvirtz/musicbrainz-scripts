@@ -1,3 +1,4 @@
+import {filter, lastValueFrom, map, mergeAll, mergeMap, range, startWith, toArray} from 'rxjs';
 import {tryFetchJSON} from 'src/common/lib/fetch';
 import {formatISWC} from 'src/common/musicbrainz/format-iswc';
 
@@ -74,14 +75,21 @@ export type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   versionEssenceType: string;
 };
 
-type WorkInfoResponse = Response<{
+type WorkInfoPageResponseData = {
   type: 'org.acum.site.searchdb.dto.response.GetWorkInfoResponse';
-  work: WorkBean;
   workVersionCount: number;
   workVersions: ReadonlyArray<WorkVersion>;
-  workAlbumsCount: number;
-  workAlbums: ReadonlyArray<AlbumBean>;
-}>;
+};
+
+type WorkInfoPageResponse = Response<WorkInfoPageResponseData>;
+
+type WorkInfoResponse = Response<
+  WorkInfoPageResponseData & {
+    work: WorkBean;
+    workAlbumsCount: number;
+    workAlbums: ReadonlyArray<AlbumBean>;
+  }
+>;
 
 async function fetchWork(workId: string): Promise<ReadonlyArray<WorkBean>> {
   const result = await tryFetchJSON<WorkInfoResponse>(
@@ -89,7 +97,32 @@ async function fetchWork(workId: string): Promise<ReadonlyArray<WorkBean>> {
   );
   if (result) {
     if (result.errorCode == 0) {
-      return result.data.workVersions ? result.data.workVersions : [result.data.work];
+      if (result.data.workVersions) {
+        if (result.data.workVersions.length == result.data.workVersionCount) {
+          return result.data.workVersions;
+        } else {
+          return await lastValueFrom(
+            range(2, Math.ceil(result.data.workVersionCount / result.data.workVersions.length) - 1).pipe(
+              mergeMap(
+                async pageNumber =>
+                  await tryFetchJSON<WorkInfoPageResponse>(
+                    `https://nocs.acum.org.il/acumsitesearchdb/getworkinfo?workId=${workId}&pageNumber=${pageNumber}`
+                  )
+              ),
+              filter(
+                (page: WorkInfoPageResponse | null): page is WorkInfoPageResponse =>
+                  page !== null && page.errorCode == 0
+              ),
+              map(page => page.data.workVersions),
+              startWith(result.data.workVersions),
+              mergeAll(),
+              toArray()
+            )
+          );
+        }
+      } else {
+        return [result.data.work];
+      }
     }
 
     console.error('failed to fetch work %s: %s', workId, result.errorDescription);
