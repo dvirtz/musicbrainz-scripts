@@ -1,4 +1,4 @@
-import {filter, first, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
+import {filter, firstValueFrom, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
 import {asyncTap} from 'src/common/lib/async-tap';
 import {compareInsensitive} from 'src/common/lib/compare';
 import {executePipeline} from 'src/common/lib/execute-pipeline';
@@ -27,18 +27,18 @@ export async function importWork(entity: Entity<'Work'>, form: HTMLFormElement, 
   }
 
   if (shouldSearchWorks()) {
-    await executePipeline(
+    const existingWork = await firstValueFrom(
       from(versions).pipe(
         switchMap(async track => await findWork(track)),
-        filter(work => work !== undefined),
-        first(),
-        tap(work => {
-          if (window.confirm('This work already exists in Musicbrainz, click "ok" to redirect to its page')) {
-            window.location.href = `/work/${work.gid}`;
-          }
-        })
-      )
+        filter(work => work !== undefined)
+      ),
+      {
+        defaultValue: undefined,
+      }
     );
+    if (existingWork && window.confirm('This work already exists in Musicbrainz, click "ok" to redirect to its page')) {
+      window.location.href = `/work/${existingWork.gid}`;
+    }
   }
 
   await executePipeline(
