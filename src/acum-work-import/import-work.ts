@@ -10,7 +10,7 @@ import {AddWarning} from './ui/warnings';
 import {workEditData} from './ui/work-edit-data';
 import {createWork, findWork, linkWriters} from './works';
 
-export async function importWork(entity: Entity<'Work'>, form: HTMLFormElement, addWarning: AddWarning) {
+export async function importWork(entity: Entity<'Work' | 'Version'>, form: HTMLFormElement, addWarning: AddWarning) {
   // map of promises so that we don't fetch the same artist multiple times
   const artistCache = new Map<IPBaseNumber, Promise<ArtistT | null>>();
   const work =
