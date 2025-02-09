@@ -49,7 +49,7 @@ export function ImportForm<T extends EntityT>(
             alt="ACUM logo"
             style={{width: '16px', height: '16px', margin: '2px'}}
           ></img>
-          <span>Import works from ACUM</span>
+          <span>{`Import ${props.entityTypes.includes('Album' as T) ? 'works' : 'work'} from ACUM`}</span>
         </Button>
         <TextField required={true} value={entity().toString()} onChange={onInput} style={{'margin': '0 7px 0 0'}}>
           <TextField.Input pattern={props.idPattern} placeholder={`${uniqueTypes.join('/')} ID`} />
