@@ -1,4 +1,4 @@
-import {filter, firstValueFrom, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
+import {filter, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
 import {asyncTap} from 'src/common/lib/async-tap';
 import {compareInsensitive} from 'src/common/lib/compare';
 import {executePipeline} from 'src/common/lib/execute-pipeline';
@@ -21,21 +21,13 @@ export async function importWork(entity: Entity<'Work' | 'Version'>, form: HTMLF
         });
 
   const versions = await fetchWorks(entity);
-  if (!versions) {
+  if (versions.length === 0) {
     alert(`failed to find work ID ${entity.id}`);
     throw new Error(`failed to find work ID ${entity.id}`);
   }
 
   if (shouldSearchWorks()) {
-    const existingWork = await firstValueFrom(
-      from(versions).pipe(
-        switchMap(async track => await findWork(track)),
-        filter(work => work !== undefined)
-      ),
-      {
-        defaultValue: undefined,
-      }
-    );
+    const existingWork = await findWork(versions[0]);
     if (existingWork && window.confirm('This work already exists in Musicbrainz, click "ok" to redirect to its page')) {
       window.location.href = `/work/${existingWork.gid}`;
     }
