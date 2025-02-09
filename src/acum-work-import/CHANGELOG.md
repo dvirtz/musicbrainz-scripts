@@ -1,3 +1,19 @@
+## [@dvirtz/acum-work-import-v1.12.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.11.0...@dvirtz/acum-work-import-v1.12.0) (2025-02-09)
+
+
+### Features
+
+* get paged work versions ([b81038e](https://github.com/dvirtz/musicbrainz-scripts/commit/b81038e2f9068c3d645aadda8e198f57f0cb7917))
+* import version from work UI ([74464d8](https://github.com/dvirtz/musicbrainz-scripts/commit/74464d855ab24c6d1a218057405c072bffe0aa83))
+* make language setting optional ([b844a1c](https://github.com/dvirtz/musicbrainz-scripts/commit/b844a1c819862dce3b506822ea9e17d27c4e1f53)), closes [#59](https://github.com/dvirtz/musicbrainz-scripts/issues/59)
+* support poetry works ([3259abc](https://github.com/dvirtz/musicbrainz-scripts/commit/3259abc7cc9b2c0c76f96bd11d49ae34bbbf6faf))
+
+
+### Bug Fixes
+
+* empty pipeline error ([d49f72d](https://github.com/dvirtz/musicbrainz-scripts/commit/d49f72dc179ad6822b1c83b172eaac241b7c7e98))
+* error when no existing work found ([9d4de46](https://github.com/dvirtz/musicbrainz-scripts/commit/9d4de46f167686134247cf181fd1b2817935d56c))
+
 ## [@dvirtz/acum-work-import-v1.11.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.10.0...@dvirtz/acum-work-import-v1.11.0) (2025-02-02)
 
 
