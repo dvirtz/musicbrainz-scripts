@@ -1,3 +1,10 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.4.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.4.1...@dvirtz/setlistfm-musicbrainz-import-v1.4.2) (2025-02-09)
+
+
+### Bug Fixes
+
+* guest artist ([d036391](https://github.com/dvirtz/musicbrainz-scripts/commit/d036391050195181145aade950b03ddcbac096cd))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.4.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.4.0...@dvirtz/setlistfm-musicbrainz-import-v1.4.1) (2025-02-03)
 
 
