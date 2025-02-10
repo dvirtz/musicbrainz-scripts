@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.12.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.12.0...@dvirtz/acum-work-import-v1.12.1) (2025-02-10)
+
+
+### Bug Fixes
+
+* no need to search all versions ([3931bb2](https://github.com/dvirtz/musicbrainz-scripts/commit/3931bb293568d5626884ffe21ea0d769509764b8))
+
 ## [@dvirtz/acum-work-import-v1.12.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.11.0...@dvirtz/acum-work-import-v1.12.0) (2025-02-09)
 
 
