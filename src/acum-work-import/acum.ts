@@ -73,6 +73,12 @@ export type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   composersAndAuthors?: ReadonlyArray<Creator>;
   versionIswcNumber: string;
   versionEssenceType: string;
+  isMedley: '0' | '1';
+  list?: ReadonlyArray<MedleyVersionBean>;
+};
+
+type MedleyVersionBean = Bean<'org.acum.site.searchdb.dto.bean.MedleyVersionBean'> & {
+  id: string;
 };
 
 type WorkInfoPageResponseData = {

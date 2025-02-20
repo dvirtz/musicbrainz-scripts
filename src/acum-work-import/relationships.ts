@@ -1,7 +1,7 @@
 import {ARRANGER_LINK_TYPE_ID, REL_STATUS_ADD} from 'src/common/musicbrainz/constants';
 
-export function createRelationshipState<Attributes extends Pick<RelationshipStateT, 'entity0' | 'entity1'>>(
-  attributes: Attributes
+export function createRelationshipState<Fields extends Pick<RelationshipStateT, 'entity0' | 'entity1'>>(
+  fields: Fields
 ): RelationshipStateT {
   return {
     ...{
@@ -19,7 +19,7 @@ export function createRelationshipState<Attributes extends Pick<RelationshipStat
       linkOrder: 0,
       linkTypeID: null,
     },
-    ...attributes,
+    ...fields,
   };
 }
 

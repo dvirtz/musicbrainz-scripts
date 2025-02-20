@@ -1,4 +1,4 @@
-import {compareStrings} from 'src/common/lib/compare';
+import {compareNumbers, compareStrings} from 'src/common/lib/compare';
 import {EMPTY_PARTIAL_DATE} from './constants';
 
 export function compareTargetTypeWithGroup(
@@ -41,4 +41,8 @@ function compareNullableNumbers(a?: number | null, b?: number | null) {
 
 export function compareSourceWithSourceGroup(a: RelatableEntityT, [b]: RelationshipSourceGroupT): number {
   return compareStrings(a.entityType, b.entityType) || a.id - b.id;
+}
+
+export function compareWorks(a: WorkT, b: WorkT): number {
+  return compareStrings(a.name, b.name) || compareNumbers(a.id, b.id);
 }
