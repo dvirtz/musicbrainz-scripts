@@ -15,6 +15,7 @@ export const LYRICIST_LINK_TYPE_ID = 165;
 export const ARRANGER_LINK_TYPE_ID = 297;
 export const TRANSLATOR_LINK_TYPE_ID = 872;
 export const WRITER_LINK_TYPE_ID = 167;
+export const MEDLEY_LINK_TYPE_ID = 750;
 export const REL_STATUS_NOOP: RelationshipEditStatusT = 0;
 export const REL_STATUS_ADD: RelationshipEditStatusT = 1;
 export const REL_STATUS_EDIT: RelationshipEditStatusT = 2;

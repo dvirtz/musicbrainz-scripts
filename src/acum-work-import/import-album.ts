@@ -33,7 +33,13 @@ import {WorkStateWithEditDataT} from './work-state';
 import {addWork, linkWriters} from './works';
 
 type SelectedMediums = Set<[MediumWithRecordingsT, MediumRecordingStateTreeT]>;
-type SelectedRecordings = ReadonlyArray<readonly [number, WorkBean, MediumRecordingStateT]>;
+type SelectedRecording = {
+  readonly position: number;
+  readonly index: number | undefined;
+  readonly workBean: WorkBean;
+  readonly recordingState: MediumRecordingStateT;
+};
+type SelectedRecordings = ReadonlyArray<SelectedRecording>;
 // map of promises so that we don't fetch the same artist multiple times
 type ArtistCache = Map<IPBaseNumber, Promise<ArtistT | null>>;
 type SetProgress = Setter<readonly [number, string]>;
@@ -62,8 +68,8 @@ async function importSelectedWorks(
     iif(
       () => selectedRecordings.length > 0,
       from(selectedRecordings).pipe(
-        map(([position, workBean, recordingState]) => [workBean, recordingState, addTrackWarning(position)] as const),
-        tap(([workBean, recordingState, addWarning]) => {
+        map(selectedRecording => [selectedRecording, addTrackWarning(selectedRecording.position)] as const),
+        tap(([{workBean, recordingState}, addWarning]) => {
           const recording = recordingState.recording;
           if (trackName(workBean) != recording.name) {
             if (compareInsensitive(trackName(workBean), recording.name) === 0) {
@@ -74,11 +80,17 @@ async function importSelectedWorks(
           }
         }),
         mergeMap(
-          async ([workBean, recordingState, addWarning]) =>
+          async ([selectedRecording, addWarning]) =>
             [
-              workBean,
-              recordingState.recording,
-              await addWork(workBean, recordingState, addWarning),
+              selectedRecording.workBean,
+              selectedRecording.recordingState.recording,
+              await addWork(
+                selectedRecording.position,
+                selectedRecording.index,
+                selectedRecording.workBean,
+                selectedRecording.recordingState,
+                addWarning
+              ),
               addWarning,
             ] as const
         ),
@@ -173,8 +185,19 @@ async function selectedRecordings(
       }),
       zipWith(iif(() => entity.entityType != 'Album', from(workBeans).pipe(repeat()), from(workBeans))),
       map(([[position, recordingState], workBean]) => [position, workBean, recordingState] as const),
-      filter((state): state is [number, WorkBean, MediumRecordingStateT] => {
-        const [, , recordingState] = state;
+      mergeMap(([position, workBean, recordingState]) =>
+        iif(
+          () => workBean.isMedley === '1',
+          from(workBean.list ?? []).pipe(
+            mergeMap(async medleyVersion => await fetchWorks(new Entity(medleyVersion.id, 'Version'))),
+            map(medleyWorks => medleyWorks[0]),
+            map((medleyWork, index) => ({position, index, workBean: medleyWork, recordingState}))
+          ),
+          of({position, workBean, recordingState})
+        )
+      ),
+      filter((state): state is SelectedRecording => {
+        const {recordingState} = state;
         return recordingState != null && (noSelection || recordingState.isSelected);
       }),
       toArray()

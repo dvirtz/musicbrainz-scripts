@@ -19,7 +19,7 @@ import {
 } from 'rxjs';
 import {Setter} from 'solid-js';
 import {compareTargetTypeWithGroup} from 'src/common/musicbrainz/compare';
-import {EDIT_WORK_CREATE, REL_STATUS_ADD, WS_EDIT_RESPONSE_OK} from 'src/common/musicbrainz/constants';
+import {EDIT_WORK_CREATE, WS_EDIT_RESPONSE_OK} from 'src/common/musicbrainz/constants';
 import {fetchJSON, fetchResponse} from 'src/common/musicbrainz/fetch';
 import {iterateRelationshipsInTargetTypeGroup} from 'src/common/musicbrainz/type-group';
 
@@ -49,6 +49,15 @@ async function submitWork(form: HTMLFormElement): Promise<WorkT> {
   );
 }
 
+function relatedWorkRelationship(work: MediumWorkStateT, recording: RecordingT): RelationshipStateT | undefined {
+  const targetTypeGroup = MB.tree.find(work.targetTypeGroups, 'recording', compareTargetTypeWithGroup, null);
+  if (targetTypeGroup) {
+    return iterateRelationshipsInTargetTypeGroup(targetTypeGroup).find(
+      rel => rel.entity0.entityType == 'recording' && rel.entity0.id == recording.id
+    );
+  }
+}
+
 export async function submitWorks(setProgress: Setter<readonly [number, string]>): Promise<void> {
   setProgress([0, 'Submitting works']);
 
@@ -61,9 +70,12 @@ export async function submitWorks(setProgress: Setter<readonly [number, string]>
       distinct(([relatedWork]) => relatedWork.work.id),
       map(
         ([relatedWork, recordingState]) =>
-          [recordingState, document.getElementById(`submit-work-${relatedWork.work.id}`)] as const
+          [
+            relatedWorkRelationship(relatedWork, recordingState.recording),
+            document.getElementById(`submit-work-${relatedWork.work.id}`),
+          ] as const
       ),
-      filter(([, form]) => form !== null),
+      filter((pair): pair is [RelationshipStateT, HTMLFormElement] => pair[0] !== undefined && pair[1] != null),
       toArray()
     )
   );
@@ -78,25 +90,12 @@ export async function submitWorks(setProgress: Setter<readonly [number, string]>
     tap(setProgress)
   );
 
-  const workRelationships = pipe(
-    map(
-      ([recordingState, newWork]: readonly [MediumRecordingStateT, WorkT]) =>
-        [MB.tree.find(recordingState.targetTypeGroups, 'work', compareTargetTypeWithGroup, null), newWork] as const
-    ),
-    filter((pair): pair is [RelationshipTargetTypeGroupT, WorkT] => pair[0] !== null),
-    mergeMap(([workTargetGroup, newWork]) =>
-      zip(from(iterateRelationshipsInTargetTypeGroup(workTargetGroup)), of(newWork).pipe(repeat()))
-    ),
-    filter(([relationship]) => relationship._status === REL_STATUS_ADD),
-    toArray()
-  );
-
   const addWorkRelationships = await firstValueFrom(
     from(worksToSubmit).pipe(
-      mergeMap(async ([recordingState, form]) => [recordingState, await submitWork(form as HTMLFormElement)] as const),
+      mergeMap(async ([relationship, form]) => [relationship, await submitWork(form)] as const),
       connect(shared =>
         merge(
-          shared.pipe(workRelationships),
+          shared.pipe(toArray()),
           shared.pipe(
             map(([, newWork]) => newWork),
             updateProgress,
