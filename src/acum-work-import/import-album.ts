@@ -16,7 +16,6 @@ import {
   scan,
   tap,
   toArray,
-  zip,
   zipWith,
 } from 'rxjs';
 import {Setter} from 'solid-js';
@@ -171,18 +170,18 @@ async function selectedRecordings(
 ): Promise<SelectedRecordings> {
   const workBeans = await fetchWorks(entity);
 
+  const mediumTracks = (medium: MediumWithRecordingsT) =>
+    MB.relationshipEditor.state.loadedTracks.get(medium.position) || medium.tracks || [];
+
   return await lastValueFrom(
     of(head(selectedMediums.values())).pipe(
       filter(
         (mediumAndRecordings): mediumAndRecordings is [MediumWithRecordingsT, MediumRecordingStateTreeT] =>
           mediumAndRecordings != null
       ),
-      mergeMap(([medium, recordingStateTree]) => {
-        return zip(
-          from(medium.tracks?.map(track => track.position) ?? []),
-          from(medium.tracks!.map(track => trackRecordingState(track, recordingStateTree)))
-        );
-      }),
+      mergeMap(([medium, recordingStateTree]) =>
+        mediumTracks(medium).map(track => [track.position, trackRecordingState(track, recordingStateTree)] as const)
+      ),
       zipWith(iif(() => entity.entityType != 'Album', from(workBeans).pipe(repeat()), from(workBeans))),
       map(([[position, recordingState], workBean]) => [position, workBean, recordingState] as const),
       mergeMap(([position, workBean, recordingState]) =>
