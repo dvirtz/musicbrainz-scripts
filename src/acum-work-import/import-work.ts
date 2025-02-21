@@ -28,7 +28,11 @@ export async function importWork(entity: Entity<'Work' | 'Version'>, form: HTMLF
 
   if (shouldSearchWorks()) {
     const existingWork = await findWork(versions[0]);
-    if (existingWork && window.confirm('This work already exists in Musicbrainz, click "ok" to redirect to its page')) {
+    if (
+      existingWork &&
+      existingWork.id != MB.relationshipEditor.state.entity.id &&
+      window.confirm('This work already exists in Musicbrainz, click "ok" to redirect to its page')
+    ) {
       window.location.href = `/work/${existingWork.gid}`;
     }
   }
