@@ -16,6 +16,7 @@ declare global {
         }>;
         entity: NonReleaseRelatableEntityT | ReleaseWithMediumsAndReleaseGroupT;
         relationshipsBySource: RelationshipSourceGroupsT;
+        loadedTracks: LoadedTracksMapT;
       }>;
     };
     linkedEntities: {
@@ -1061,4 +1062,6 @@ declare global {
         pendingErrors?: ReadonlyArray<string>;
         type: 'field';
       };
+
+  type LoadedTracksMapT = ReadonlyMap<number, ReadonlyArray<TrackWithRecordingT>>;
 }

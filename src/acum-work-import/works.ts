@@ -1,10 +1,11 @@
 import {defaultIfEmpty, filter, firstValueFrom, from, mergeMap} from 'rxjs';
 import {compareNumbers} from 'src/common/lib/compare';
 import {head} from 'src/common/lib/head';
-import {compareTargetTypeWithGroup} from 'src/common/musicbrainz/compare';
+import {compareTargetTypeWithGroup, compareWorks} from 'src/common/musicbrainz/compare';
 import {
   COMPOSER_LINK_TYPE_ID,
   LYRICIST_LINK_TYPE_ID,
+  MEDLEY_LINK_TYPE_ID,
   RECORDING_OF_LINK_TYPE_ID,
   REL_STATUS_ADD,
   REL_STATUS_REMOVE,
@@ -25,22 +26,18 @@ import {WorkStateWithEditDataT} from './work-state';
 
 const workCache = new Map<string, WorkT>();
 
-function shouldAddNewWork(relatedWorks: MediumWorkStateTreeT) {
+function relatedWork(relatedWorks: MediumWorkStateTreeT): MediumWorkStateT | undefined {
   const relatedWork = head(MB.tree.iterate(relatedWorks));
-  if (!relatedWork) {
-    return true;
-  }
-
-  const targetTypeGroup = MB.tree.find(relatedWork.targetTypeGroups, 'recording', compareTargetTypeWithGroup, null);
-  if (!targetTypeGroup) {
-    return true;
-  }
-  for (const relationship of iterateRelationshipsInTargetTypeGroup(targetTypeGroup)) {
-    if (relationship._status !== REL_STATUS_REMOVE) {
-      return false;
+  if (relatedWork) {
+    const targetTypeGroup = MB.tree.find(relatedWork.targetTypeGroups, 'recording', compareTargetTypeWithGroup, null);
+    if (targetTypeGroup) {
+      for (const relationship of iterateRelationshipsInTargetTypeGroup(targetTypeGroup)) {
+        if (relationship._status !== REL_STATUS_REMOVE) {
+          return relatedWork;
+        }
+      }
     }
   }
-  return true;
 }
 
 export async function findWork(track: WorkBean) {
@@ -78,21 +75,58 @@ export async function findWork(track: WorkBean) {
 }
 
 export async function addWork(
+  position: number,
+  index: number | undefined,
   track: WorkBean,
   recordingState: MediumRecordingStateT,
   addWarning: AddWarning
 ): Promise<WorkStateWithEditDataT> {
-  if (shouldAddNewWork(recordingState.relatedWorks)) {
-    recordingState = await createNewWork(track, recordingState);
-  }
+  const workState = await (async () => {
+    const existing = relatedWork(recordingState.relatedWorks);
+    if (existing) {
+      return existing as WorkStateWithEditDataT;
+    }
 
-  const workState = head(MB.tree.iterate(recordingState.relatedWorks)) as WorkStateWithEditDataT;
+    const newWork = await createNewWork(position, index, track, recordingState);
+
+    recordingState = refreshRecordingState(recordingState.recording);
+
+    return MB.tree.find(
+      recordingState.relatedWorks,
+      newWork,
+      (work, relatedWork) => compareWorks(work, relatedWork.work),
+      null
+    )! as WorkStateWithEditDataT;
+  })();
+
   Object.assign(workState, await workEditData(workState.work, track, addWarning));
   addWorkEditor(workState, recordingState);
   return workState;
 }
 
-async function createNewWork(track: WorkBean, recordingState: MediumRecordingStateT) {
+function refreshRecordingState(recording: RecordingT) {
+  const mediumRecordingStates = MB.tree.find(
+    MB.relationshipEditor.state.mediums,
+    MB.relationshipEditor.state.mediumsByRecordingId.get(recording.id)![0],
+    (mediumKey, [mediumVal]) => {
+      return compareNumbers(mediumKey.id, mediumVal.id);
+    },
+    null
+  )![1];
+  return MB.tree.find(
+    mediumRecordingStates,
+    recording,
+    (recording, recordingState) => compareNumbers(recording.id, recordingState.recording.id),
+    null
+  )!;
+}
+
+async function createNewWork(
+  position: number,
+  index: number | undefined,
+  track: WorkBean,
+  recordingState: MediumRecordingStateT
+): Promise<WorkT> {
   const newWork = await (async () => {
     if (workCache.has(track.fullWorkId)) {
       return workCache.get(track.fullWorkId)!;
@@ -112,6 +146,9 @@ async function createNewWork(track: WorkBean, recordingState: MediumRecordingSta
     return newWork;
   })();
   MB.linkedEntities.work[newWork.id] = newWork;
+
+  const medleyLinkType = MB.linkedEntities.link_attribute_type[MEDLEY_LINK_TYPE_ID];
+
   MB.relationshipEditor.dispatch({
     type: 'update-relationship-state',
     sourceEntity: recordingState.recording,
@@ -124,6 +161,20 @@ async function createNewWork(track: WorkBean, recordingState: MediumRecordingSta
       entity1: newWork,
       id: MB.relationshipEditor.getRelationshipStateId(),
       linkTypeID: RECORDING_OF_LINK_TYPE_ID,
+      ...(index !== undefined
+        ? {
+            attributes: MB.tree.fromDistinctAscArray<LinkAttrT>([
+              {
+                typeID: medleyLinkType.id,
+                typeName: medleyLinkType.name,
+                type: {
+                  gid: medleyLinkType.gid,
+                },
+              },
+            ]),
+            linkOrder: index + 1,
+          }
+        : {}),
     }),
     oldRelationshipState: null,
   });
@@ -138,21 +189,7 @@ async function createNewWork(track: WorkBean, recordingState: MediumRecordingSta
       }
     });
   });
-  // refresh recording state
-  const mediumRecordingStates = MB.tree.find(
-    MB.relationshipEditor.state.mediums,
-    MB.relationshipEditor.state.mediumsByRecordingId.get(recordingState.recording.id)![0],
-    (mediumKey, [mediumVal]) => {
-      return compareNumbers(mediumKey.id, mediumVal.id);
-    },
-    null
-  )![1];
-  return MB.tree.find(
-    mediumRecordingStates,
-    recordingState.recording,
-    (recording, recordingState) => compareNumbers(recording.id, recordingState.recording.id),
-    null
-  )!;
+  return newWork;
 }
 
 export function createWork(attributes: Partial<WorkT>): WorkT {
