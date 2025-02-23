@@ -1,3 +1,16 @@
+## [@dvirtz/acum-work-import-v1.13.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.12.1...@dvirtz/acum-work-import-v1.13.0) (2025-02-23)
+
+
+### Features
+
+* support medley recordings ([6439ebf](https://github.com/dvirtz/musicbrainz-scripts/commit/6439ebf5403af15e79c640e60816e2a4a43bfa99))
+
+
+### Bug Fixes
+
+* alert on editing existing work ([c83be40](https://github.com/dvirtz/musicbrainz-scripts/commit/c83be408a3f4fdb4dea1c0ec340854eb8728365d))
+* unloaded medium tracks ([68afa7d](https://github.com/dvirtz/musicbrainz-scripts/commit/68afa7dfc6d12a039997c911f9a6daa38927c6db))
+
 ## [@dvirtz/acum-work-import-v1.12.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.12.0...@dvirtz/acum-work-import-v1.12.1) (2025-02-10)
 
 
