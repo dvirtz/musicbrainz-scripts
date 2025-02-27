@@ -1,0 +1,21 @@
+{
+  "name": "fetch",
+  "description": "URL fetch utilities",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "dependencies": {
+    "fetch-retry": "^6.0.0",
+    "p-queue": "^8.1.0"
+  },
+  "devDependencies": {
+    "eslint": "*",
+    "rollup": "*",
+    "typescript": "*"
+  }
+}

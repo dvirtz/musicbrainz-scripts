@@ -1,0 +1,7 @@
+{
+  "name": "musicbrainz-types",
+  "description": "MusicBrainz types",
+  "private": true,
+  "version": "0.0.0",
+  "types": "index.d.ts"
+}

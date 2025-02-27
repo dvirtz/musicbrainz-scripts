@@ -1,0 +1,23 @@
+{
+  "name": "musicbrainz-ext",
+  "description": "MusicBrainz extensions",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "dependencies": {
+    "fetch": "workspace:*",
+    "p-lazy": "^5.0.0",
+    "weight-balanced-tree": "^0.6.1"
+  },
+  "devDependencies": {
+    "eslint": "*",
+    "musicbrainz-types": "workspace:*",
+    "rollup": "*",
+    "typescript": "*"
+  }
+}
