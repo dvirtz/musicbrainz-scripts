@@ -19,6 +19,7 @@ import {
 import {executePipeline} from 'src/common/lib/execute-pipeline';
 import {tryFetchJSON, tryFetchText} from 'src/common/lib/fetch';
 import {MBID_REGEXP} from 'src/common/musicbrainz/constants';
+import {editNote} from 'src/common/musicbrainz/edit-note';
 import {convertMonth} from './convert-month';
 import {findVenue} from './place';
 import {addCoverComment as addCoverCommentOption} from './settings';
@@ -235,10 +236,7 @@ async function submitEvent(placeMBID: string) {
     searchParams.append('edit-event.time', doorTime);
   }
 
-  searchParams.append(
-    'edit-event.edit_note',
-    `Imported from ${document.location.href} using ${GM.info.script.name} version ${GM.info.script.version} from ${GM.info.script.namespace}.`
-  );
+  searchParams.append('edit-event.edit_note', editNote(`Imported from ${document.location.href}`));
 
   searchParams.append('edit-event.url.0.text', document.location.href);
   searchParams.append('edit-event.url.0.link_type_id', TypeID.SetlistFmUrl);

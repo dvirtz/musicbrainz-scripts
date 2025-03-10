@@ -682,6 +682,8 @@ declare global {
     entity1_credit: string;
   };
 
+  type EDIT_RELEASE_CREATE_T = 31;
+  type EDIT_MEDIUM_CREATE_T = 51;
   type EDIT_RELATIONSHIP_CREATE_T = 90;
   type EDIT_RELATIONSHIP_EDIT_T = 91;
   type EDIT_RELATIONSHIP_DELETE_T = 92;
@@ -737,21 +739,21 @@ declare global {
           relationship_id: number | null;
           response: WS_EDIT_RESPONSE_OK_T;
         }
-      // | {
-      //     edit_type: EDIT_RELEASE_CREATE_T;
-      //     entity: ReleaseT;
-      //     response: WS_EDIT_RESPONSE_OK_T;
-      //   }
+      | {
+          edit_type: EDIT_RELEASE_CREATE_T;
+          entity: ReleaseT;
+          response: WS_EDIT_RESPONSE_OK_T;
+        }
       // | {
       //     edit_type: EDIT_RELEASEGROUP_CREATE_T;
       //     entity: ReleaseGroupT;
       //     response: WS_EDIT_RESPONSE_OK_T;
       //   }
-      // | {
-      //     edit_type: EDIT_MEDIUM_CREATE_T;
-      //     entity: {id: number; position: number};
-      //     response: WS_EDIT_RESPONSE_OK_T;
-      //   }
+      | {
+          edit_type: EDIT_MEDIUM_CREATE_T;
+          entity: {id: number; position: number};
+          response: WS_EDIT_RESPONSE_OK_T;
+        }
       | {
           edit_type: EDIT_WORK_CREATE_T;
           entity: WorkT;

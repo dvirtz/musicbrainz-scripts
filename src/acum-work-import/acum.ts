@@ -264,7 +264,7 @@ async function fetchWorksUncached(entity: Entity): Promise<ReadonlyArray<WorkBea
 export function entityUrl(entity: Entity) {
   switch (entity.entityType) {
     case 'Work':
-      return `https://nocs.acum.org.il/acumsitesearchdb/work?workId=${entity.id}`;
+      return `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${entity.id}`;
     case 'Album':
       return `https://nocs.acum.org.il/acumsitesearchdb/album?albumid=${entity.id}`;
     case 'Version':
