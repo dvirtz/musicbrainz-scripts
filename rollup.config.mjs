@@ -1,5 +1,6 @@
 import {defineExternal, definePlugins} from '@gera2ld/plaid-rollup';
 import eslint from '@rollup/plugin-eslint';
+import {nodeResolve} from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import path from 'path';
 import {defineConfig} from 'rollup';
@@ -11,9 +12,8 @@ const baseImportUrl = 'src';
 export default Object.entries({
   'setlistfm-musicbrainz-import': 'src/setlistfm-musicbrainz-import/index.ts',
   'acum-work-import': 'src/acum-work-import/index.ts',
-}).map(([name, entry]) =>
+}).flatMap(([name, entry]) => [
   defineConfig({
-    logLevel: 'debug',
     input: entry,
     watch: {
       include: 'src/**/*.{ts,tsx}',
@@ -48,5 +48,19 @@ export default Object.entries({
         '@violentmonkey/ui': 'VM',
       },
     },
-  })
-);
+  }),
+  defineConfig({
+    input: 'src/common/test/userscript-manager.ts',
+    plugins: [
+      eslint({
+        throwOnError: true,
+      }),
+      typescript(),
+      nodeResolve(),
+    ],
+    output: {
+      format: 'iife',
+      file: `src/${name}/dist/userscript-manager.js`,
+    },
+  }),
+]);

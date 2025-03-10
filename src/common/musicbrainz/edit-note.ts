@@ -15,6 +15,6 @@ export function addEditNote(message: string, document: Document = window.documen
 export function editNote(message: string) {
   return dedent`
   ----
-  ${message} using ${GM.info.script.name} version ${GM.info.script.version} from ${GM.info.script.namespace}. 
+  ${message} using ${GM_info.script.name} version ${GM_info.script.version} from ${GM_info.script.namespace}.
   `;
 }

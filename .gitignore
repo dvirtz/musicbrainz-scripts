@@ -2,3 +2,10 @@ node_modules/
 .vscode/
 .yarn/
 dist/
+.env
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

@@ -26,7 +26,9 @@
     "resolveJsonModule": true,
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "tests/**/*",
+    "playwright.config.ts"
   ],
   "exclude": [
     "src/*/dist/*"
