@@ -19,7 +19,7 @@ import {
 } from 'rxjs';
 import {Setter} from 'solid-js';
 import {compareTargetTypeWithGroup} from 'src/common/musicbrainz/compare';
-import {EDIT_WORK_CREATE, WS_EDIT_RESPONSE_OK} from 'src/common/musicbrainz/constants';
+import {EDIT_WORK_CREATE, MBID_REGEXP, WS_EDIT_RESPONSE_OK} from 'src/common/musicbrainz/constants';
 import {fetchJSON, fetchResponse} from 'src/common/musicbrainz/fetch';
 import {iterateRelationshipsInTargetTypeGroup} from 'src/common/musicbrainz/type-group';
 
@@ -37,8 +37,10 @@ async function submitWork(form: HTMLFormElement): Promise<WorkT> {
             })(),
           })
       ),
-      map(response => response.url),
-      map(url => url.split('/').pop()),
+      map(response => (form.action.endsWith('/edit') ? form.action : response.url)),
+      map(url => url.match(MBID_REGEXP)),
+      filter((match): match is RegExpMatchArray => match != null),
+      map(match => match[0]),
       mergeMap(async mbid => await fetchJSON<WorkT>(`/ws/js/entity/${mbid}`)),
       tap(work => {
         if (work) {
