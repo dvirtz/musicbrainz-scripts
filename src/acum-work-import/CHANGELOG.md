@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.13.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.13.0...@dvirtz/acum-work-import-v1.13.1) (2025-03-23)
+
+
+### Bug Fixes
+
+* edit existing work results in error 400 ([c4e622b](https://github.com/dvirtz/musicbrainz-scripts/commit/c4e622bc81efaa89a9d3577852f88b152b7c0d4d))
+
 ## [@dvirtz/acum-work-import-v1.13.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.12.1...@dvirtz/acum-work-import-v1.13.0) (2025-02-23)
 
 
