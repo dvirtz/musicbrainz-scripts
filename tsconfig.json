@@ -3,7 +3,6 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
-    "noEmit": true,
     "allowSyntheticDefaultImports": true,
     // https://github.com/kobaltedev/kobalte/issues/535
     "skipLibCheck": true,
@@ -18,19 +17,6 @@
     "noImplicitAny": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "paths": {
-      "src/*": [
-        "./src/*"
-      ]
-    },
     "resolveJsonModule": true,
-  },
-  "include": [
-    "src/**/*",
-    "tests/**/*",
-    "playwright.config.ts"
-  ],
-  "exclude": [
-    "src/*/dist/*"
-  ]
+  }
 }

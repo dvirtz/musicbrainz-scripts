@@ -1,0 +1,22 @@
+{
+  "name": "common-ui",
+  "description": "Common UI components",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "dependencies": {
+    "@kobalte/core": "^0.13.8",
+    "solid-js": "^1.9.4"
+  },
+  "devDependencies": {
+    "common-types": "workspace:*",
+    "eslint": "*",
+    "rollup": "*",
+    "typescript": "*"
+  }
+}

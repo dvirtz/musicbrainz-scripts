@@ -1,0 +1,7 @@
+{
+  "name": "common-types",
+  "description": "common type declarations",
+  "private": true,
+  "version": "0.0.0",
+  "types": "index.d.ts"
+}

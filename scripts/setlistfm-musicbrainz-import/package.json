@@ -1,0 +1,22 @@
+{
+  "name": "@dvirtz/setlistfm-musicbrainz-import",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "dependencies": {
+    "common-ui": "workspace:*",
+    "fetch": "workspace:*",
+    "musicbrainz-ext": "workspace:*",
+    "rxjs": "^7.8.1",
+    "rxjs-ext": "workspace:*",
+    "solid-js": "^1.9.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "eslint": "*",
+    "rollup": "*",
+    "test-support": "workspace:*",
+    "typescript": "*"
+  }
+}

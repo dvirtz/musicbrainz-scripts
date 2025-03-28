@@ -1,0 +1,27 @@
+{
+  "name": "@dvirtz/acum-work-import",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "dependencies": {
+    "@kobalte/core": "^0.13.8",
+    "common": "workspace:*",
+    "common-ui": "workspace:*",
+    "fetch": "workspace:*",
+    "musicbrainz-ext": "workspace:*",
+    "p-lazy": "^5.0.0",
+    "rxjs": "^7.8.1",
+    "rxjs-ext": "workspace:*",
+    "solid-js": "^1.9.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "common-types": "workspace:*",
+    "eslint": "*",
+    "musicbrainz-types": "workspace:*",
+    "rollup": "*",
+    "test-support": "workspace:*",
+    "typescript": "*"
+  }
+}

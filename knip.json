@@ -1,6 +1,17 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignore": ["*.cjs", "dist/**"],
-  "project": ["**/*.{ts,tsx}"],
-  "exclude": ["dependencies"]
+  "exclude": [
+    "dependencies"
+  ],
+  "ignore": [
+    "plugin-release-config.mjs"
+  ],
+  "workspaces": {
+    "lib/test-support": {
+      "entry": [
+        "src/index.ts",
+        "src/userscript-manager.ts"
+      ]
+    }
+  }
 }
