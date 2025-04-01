@@ -11,8 +11,13 @@
 // @match        http*://*.musicbrainz.org/work/*
 // @match        http*://*.musicbrainz.org/dialog?path=%2Fwork%2F*
 // @icon         https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg
+// @require      https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2
 // @require      https://cdn.jsdelivr.net/npm/@violentmonkey/ui@0.7
 // @require      https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2/dist/solid.min.js
+// @grant        GM.info
+// @grant        GM.getValue
+// @grant        GM.setValue
+// @grant        GM.registerMenuCommand
 // @license      MIT
 // @run-at       document-end
 // ==/UserScript==
