@@ -1,6 +1,6 @@
-import { expect, mergeTests } from '@playwright/test';
-import { test as userscriptTest } from 'test-support';
-import { test as setlistfmTest } from './fixtures/setlistfm-test';
+import {expect, mergeTests} from '@playwright/test';
+import {test as userscriptTest} from 'test-support';
+import {test as setlistfmTest} from './fixtures/setlistfm-test';
 
 const test = mergeTests(userscriptTest, setlistfmTest);
 
@@ -51,11 +51,9 @@ test('missing event', async ({page, userscriptPage, setlistfmPage, baseURL}) => 
 });
 
 test('missing event and place', async ({page, userscriptPage, setlistfmPage}) => {
-  // cspell:disable-next-line
-  await setlistfmPage.goto('/setlist/avish/2025/pinkas-1-peta-tiqwa-israel-b58990a.html');
+  await setlistfmPage.goto('/setlist/eternal-gray/2011/sublime-tel-aviv-israel-53d9eba1.html');
 
-  // cspell:disable-next-line
-  const placeLink = page.getByText('at Pinkas 1');
+  const placeLink = page.getByText('at Sublime');
   const warning = placeLink.getByRole('img', {'name': 'warning'});
   await expect(warning).toBeAttached();
   await expect(warning).toHaveAttribute('title', 'place not found on MusicBrainz, click to search');
@@ -67,8 +65,7 @@ test('missing event and place', async ({page, userscriptPage, setlistfmPage}) =>
     pathname: '/search',
   });
   expect([...userscriptPage.windowOpenLog[0].searchParams.entries()]).toEqual([
-    // cspell:disable-next-line
-    ['query', 'place:Pinkas 1 AND area:Petaẖ Tiqwa'],
+    ['query', 'place:Sublime AND area:Tel Aviv'],
     ['type', 'place'],
     ['method', 'advanced'],
   ]);
