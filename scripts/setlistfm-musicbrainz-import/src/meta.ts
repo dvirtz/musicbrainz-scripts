@@ -10,8 +10,13 @@
 // @match        *://www.setlist.fm/setlist/*
 // @match        *://www.setlist.fm/venue/*
 // @icon         https://api.setlist.fm/favicon.ico
+// @require      https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2
 // @require      https://cdn.jsdelivr.net/npm/@violentmonkey/ui@0.7
 // @require      https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2/dist/solid.min.js
+// @grant        GM.info
+// @grant        GM.getValue
+// @grant        GM.setValue
+// @grant        GM.registerMenuCommand
 // @license      MIT
 // @run-at       document-end
 // ==/UserScript==
