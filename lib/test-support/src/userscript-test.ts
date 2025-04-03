@@ -8,6 +8,15 @@ const MAXIMUM_DELAY = 5 * ONE_MINUTE;
 export const test = base.extend<{userscriptPage: UserscriptPage}>({
   userscriptPage: [
     async ({page}, use, testInfo) => {
+      // exponential backoff for flaky tests
+      // https://github.com/microsoft/playwright/issues/28857#issuecomment-2511850509
+      if (testInfo.retry) {
+        const delay = Math.min(2 ** (testInfo.retry - 1) * ONE_MINUTE, MAXIMUM_DELAY);
+        testInfo.setTimeout(testInfo.timeout + delay);
+        console.info(`Exponential backoff: waiting ${delay}ms before the next test retry`);
+        await page.waitForTimeout(delay);
+      }
+
       const userscriptPage = new UserscriptPage(page);
 
       await userscriptPage.mockWindowOpen();
@@ -21,15 +30,6 @@ export const test = base.extend<{userscriptPage: UserscriptPage}>({
       });
 
       await use(userscriptPage);
-
-      // exponential backoff for flaky tests
-      // https://github.com/microsoft/playwright/issues/28857#issuecomment-2511850509
-      if (testInfo.status === 'failed') {
-        const delay = Math.min((testInfo.retry + 1) * ONE_MINUTE, MAXIMUM_DELAY);
-        testInfo.setTimeout(testInfo.timeout + delay);
-        console.info(`Exponential backoff: waiting ${delay}ms before the next test retry`);
-        await page.waitForTimeout(delay);
-      }
     },
     {auto: true},
   ],
