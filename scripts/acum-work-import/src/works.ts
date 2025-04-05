@@ -22,8 +22,8 @@ import {linkArtists} from './artists';
 import {createRelationshipState} from './relationships';
 import {shouldSearchWorks} from './ui/settings';
 import {AddWarning} from './ui/warnings';
-import {workEditData} from './work-edit-data';
 import {addWorkEditor} from './ui/work-editor';
+import {workEditData} from './work-edit-data';
 import {WorkStateWithEditDataT} from './work-state';
 
 const workCache = new Map<string, WorkT>();
@@ -198,7 +198,7 @@ async function createNewWork(
 }
 
 export function createWork(attributes: Partial<WorkT>): WorkT {
-  return MB.entity({
+  return {
     ...{
       artists: [],
       attributes: [],
@@ -215,7 +215,7 @@ export function createWork(attributes: Partial<WorkT>): WorkT {
       writers: [],
     },
     ...attributes,
-  });
+  };
 }
 
 export async function linkWriters(
