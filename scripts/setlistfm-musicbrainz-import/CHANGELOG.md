@@ -1,3 +1,20 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.4.3-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.4.2...@dvirtz/setlistfm-musicbrainz-import-v1.4.3-beta.1) (2025-04-06)
+
+
+### Bug Fixes
+
+* add missing grants ([c59efb5](https://github.com/dvirtz/musicbrainz-scripts/commit/c59efb5212241133586dafd246d3c6d6d09911d9))
+
+
+### Tests
+
+* replace removed setlist ([3f21c06](https://github.com/dvirtz/musicbrainz-scripts/commit/3f21c0629a1748716f8804c4261a81f5ca087b89))
+
+
+### Refactoring
+
+* modularize common code ([60b79c9](https://github.com/dvirtz/musicbrainz-scripts/commit/60b79c9dd587e88cb629644b78aed3ff6053debd))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.4.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.4.1...@dvirtz/setlistfm-musicbrainz-import-v1.4.2) (2025-02-09)
 
 
