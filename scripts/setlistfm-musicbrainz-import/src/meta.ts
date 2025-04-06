@@ -2,7 +2,7 @@
 // @name         setlist.fm event importer
 // @description  Add a button to import a setlist.fm event to MusicBrainz
 
-// @version      1.4.2
+// @version      1.4.4
 // @author       process.env.AUTHOR
 // @namespace    https://github.com/dvirtz/musicbrainz-scripts
 // @downloadURL  https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/setlistfm-musicbrainz-import.user.js
