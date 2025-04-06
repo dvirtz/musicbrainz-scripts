@@ -13,9 +13,10 @@
     "solid-js": "^1.9.4"
   },
   "devDependencies": {
-    "@playwright/test": "^1.51.1",
+    "@playwright/test": "*",
     "eslint": "*",
     "rollup": "*",
+    "semantic-release": "*",
     "test-support": "workspace:*",
     "typescript": "*"
   }
