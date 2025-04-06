@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.13.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.13.2...@dvirtz/acum-work-import-v1.13.3) (2025-04-06)
+
+
+### Build and continuous integration
+
+* fix semantic release ([758c368](https://github.com/dvirtz/musicbrainz-scripts/commit/758c3687579f125b97b255abb45dddf37caae612))
+
 ## [@dvirtz/acum-work-import-v1.13.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.13.1...@dvirtz/acum-work-import-v1.13.2) (2025-04-06)
 
 
