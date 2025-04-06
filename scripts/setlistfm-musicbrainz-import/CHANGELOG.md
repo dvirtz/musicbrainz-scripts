@@ -1,3 +1,10 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.4.4-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.4.3...@dvirtz/setlistfm-musicbrainz-import-v1.4.4-beta.1) (2025-04-06)
+
+
+### Build and continuous integration
+
+* fix semantic release ([45abc24](https://github.com/dvirtz/musicbrainz-scripts/commit/45abc24ceeef5d6d2ac932e097dc32586c4d47d9))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.4.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.4.2...@dvirtz/setlistfm-musicbrainz-import-v1.4.3) (2025-04-06)
 
 
