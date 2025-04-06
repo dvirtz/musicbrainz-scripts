@@ -1,3 +1,16 @@
+## [@dvirtz/acum-work-import-v1.13.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.13.1...@dvirtz/acum-work-import-v1.13.2) (2025-04-06)
+
+
+### Bug Fixes
+
+* add missing grants ([e9f31e2](https://github.com/dvirtz/musicbrainz-scripts/commit/e9f31e22cebb486cf67e440ea4281a2c2aea763c))
+* wait for MB to be populated ([88fbd47](https://github.com/dvirtz/musicbrainz-scripts/commit/88fbd47f0019e86927a8ca64938b6bb8200b933a))
+
+
+### Refactoring
+
+* modularize common code ([efda267](https://github.com/dvirtz/musicbrainz-scripts/commit/efda267b776499ceb62b41ff6de373d3640daf3f))
+
 ## [@dvirtz/acum-work-import-v1.13.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.13.0...@dvirtz/acum-work-import-v1.13.1) (2025-03-23)
 
 
