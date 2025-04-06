@@ -16,11 +16,12 @@
     "solid-js": "^1.9.4"
   },
   "devDependencies": {
-    "@playwright/test": "^1.51.1",
+    "@playwright/test": "*",
     "common-types": "workspace:*",
     "eslint": "*",
     "musicbrainz-types": "workspace:*",
     "rollup": "*",
+    "semantic-release": "*",
     "test-support": "workspace:*",
     "typescript": "*"
   }
