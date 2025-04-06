@@ -25,7 +25,7 @@
     "lint": "yarn knip && yarn spell",
     "build": "yarn run foreach-script --recursive --topological-dev run build",
     "ci": "yarn lint && yarn build",
-    "semantic-release": "yarn foreach-script --worktree exec semantic-release",
+    "semantic-release": "yarn workspaces foreach --all --topological-dev --exclude 'lib/*' exec semantic-release",
     "knip": "knip --tags=-knipignore",
     "spell": "cspell",
     "test": "yarn foreach-script --worktree --from 'scripts/*' exec playwright test"
