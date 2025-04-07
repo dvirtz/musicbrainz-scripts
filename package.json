@@ -20,14 +20,15 @@
     "lib/*"
   ],
   "scripts": {
-    "foreach-script": "yarn workspaces foreach --from 'scripts/*' --interlaced",
-    "prepare": "husky",
-    "lint": "yarn knip && yarn spell",
     "build": "yarn run foreach-script --recursive --topological-dev run build",
     "ci": "yarn lint && yarn build",
+    "foreach-script": "yarn workspaces foreach --from 'scripts/*' --interlaced",
+    "lint:knip": "knip --tags=-knipignore",
+    "lint:markdown": "markdownlint-cli2",
+    "lint:spell": "cspell",
+    "lint": "yarn lint:knip && yarn lint:spell && yarn lint:markdown",
+    "prepare": "husky",
     "semantic-release": "yarn workspaces foreach --all --topological-dev --exclude 'lib/*' exec semantic-release",
-    "knip": "knip --tags=-knipignore",
-    "spell": "cspell",
     "test": "yarn foreach-script --worktree --from 'scripts/*' exec playwright test"
   },
   "repository": {
@@ -72,6 +73,9 @@
     "husky": "^9.0.11",
     "knip": "^5.36.3",
     "lint-staged": "^15.2.2",
+    "markdownlint": "^0.37.4",
+    "markdownlint-cli2": "^0.17.2",
+    "markdownlint-rule-relative-links": "^4.0.1",
     "prettier": "^3.2.5",
     "rollup": "^4.21.2",
     "rollup-plugin-dts": "^6.1.1",
