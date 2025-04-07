@@ -1,5 +1,6 @@
 import {Page} from '@playwright/test';
 import * as path from 'path';
+
 export class MusicbrainzPage {
   protected constructor(public readonly page: Page) {}
 
