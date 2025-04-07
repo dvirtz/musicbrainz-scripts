@@ -1,6 +1,6 @@
-import {filter, lastValueFrom, map, mergeAll, mergeMap, range, startWith, toArray} from 'rxjs';
 import {tryFetchJSON} from 'fetch';
 import {formatISWC} from 'musicbrainz-ext';
+import {filter, lastValueFrom, map, mergeAll, mergeMap, range, startWith, toArray} from 'rxjs';
 
 export type IPBaseNumber = string;
 
@@ -97,10 +97,11 @@ type WorkInfoResponse = Response<
   }
 >;
 
+const baseUrl = 'https://nocs.acum.org.il/acumsitesearchdb';
+// cSpell:ignoreRegExp `\${baseUrl}\/[^`]*`
+
 async function fetchWork(workId: string): Promise<ReadonlyArray<WorkBean>> {
-  const result = await tryFetchJSON<WorkInfoResponse>(
-    `https://nocs.acum.org.il/acumsitesearchdb/getworkinfo?workId=${workId}`
-  );
+  const result = await tryFetchJSON<WorkInfoResponse>(`${baseUrl}/getworkinfo?workId=${workId}`);
   if (result) {
     if (result.errorCode == 0) {
       if (result.data.workVersions) {
@@ -112,7 +113,7 @@ async function fetchWork(workId: string): Promise<ReadonlyArray<WorkBean>> {
               mergeMap(
                 async pageNumber =>
                   await tryFetchJSON<WorkInfoPageResponse>(
-                    `https://nocs.acum.org.il/acumsitesearchdb/getworkinfo?workId=${workId}&pageNumber=${pageNumber}`
+                    `${baseUrl}/getworkinfo?workId=${workId}&pageNumber=${pageNumber}`
                   )
               ),
               filter(
@@ -142,9 +143,7 @@ function versionWorkId(versionId: string) {
 }
 
 async function fetchAlbum(albumId: string): Promise<AlbumBean> {
-  const result = await tryFetchJSON<AlbumInfoResponse>(
-    `https://nocs.acum.org.il/acumsitesearchdb/getalbuminfo?albumId=${albumId}`
-  );
+  const result = await tryFetchJSON<AlbumInfoResponse>(`${baseUrl}/getalbuminfo?albumId=${albumId}`);
   if (result) {
     if (result.errorCode == 0) {
       return result.data.albumBean;
@@ -264,10 +263,14 @@ async function fetchWorksUncached(entity: Entity): Promise<ReadonlyArray<WorkBea
 export function entityUrl(entity: Entity) {
   switch (entity.entityType) {
     case 'Work':
-      return `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${entity.id}`;
+      return `${baseUrl}/work?workid=${entity.id}`;
     case 'Album':
-      return `https://nocs.acum.org.il/acumsitesearchdb/album?albumid=${entity.id}`;
+      return `${baseUrl}/album?albumid=${entity.id}`;
     case 'Version':
-      return `https://nocs.acum.org.il/acumsitesearchdb/version?workid=${versionWorkId(entity.id)}&versionid=${entity.id}`;
+      return `${baseUrl}/version?workid=${versionWorkId(entity.id)}&versionid=${entity.id}`;
   }
+}
+
+export function creatorUrl(creator: CreatorBase<string>) {
+  return `${baseUrl}/results?creatorid=${creator.creatorIpBaseNumber}`;
 }

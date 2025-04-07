@@ -21,17 +21,10 @@ export async function handleVenuePage() {
 }
 
 export async function findVenue(url: string) {
-  type Venue = {
-    relations: ReadonlyArray<{
-      place: {
-        id: string;
-      };
-    }>;
-  };
-  const existingVenue = await tryFetchJSON<Venue>(
+  const existingVenue = await tryFetchJSON<UrlRelsSearchResultsT<'place'>>(
     `https://musicbrainz.org/ws/2/url?resource=${url}&inc=place-rels&fmt=json`
   );
-  return existingVenue && existingVenue['relations'][0]['place'].id;
+  return existingVenue && existingVenue.relations[0].place.id;
 }
 
 function submitPlace() {

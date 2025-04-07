@@ -3356,6 +3356,7 @@ __metadata:
     eslint: "npm:*"
     fetch: "workspace:*"
     musicbrainz-ext: "workspace:*"
+    musicbrainz-types: "workspace:*"
     rollup: "npm:*"
     rxjs: "npm:^7.8.1"
     rxjs-ext: "workspace:*"

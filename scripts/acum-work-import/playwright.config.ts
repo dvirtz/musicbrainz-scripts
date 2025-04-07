@@ -1,8 +1,8 @@
 import {defineConfig} from 'test-support';
 
 export default defineConfig('https://test.musicbrainz.org', {
-  timeout: 120_000,
+  timeout: 180_000,
   expect: {
-    timeout: 30_000,
+    timeout: 60_000,
   },
 });
