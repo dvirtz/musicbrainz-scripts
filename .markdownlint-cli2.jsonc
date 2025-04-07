@@ -1,0 +1,29 @@
+// import relativeLinksRule from 'markdownlint-rule-relative-links';
+// const config = {
+//   config: {
+//     default: true,
+//     'relative-links': true,
+//   },
+//   globs: ['**/*.md'],
+//   ignores: ['**/node_modules'],
+//   customRules: [relativeLinksRule],
+// };
+// export default config;
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "relative-links": true
+  },
+  "globs": [
+    "**/*.md"
+  ],
+  "ignores": [
+    "**/node_modules",
+    "**/CHANGELOG.md",
+    "LICENSE.md"
+  ],
+  "customRules": [
+    "markdownlint-rule-relative-links"
+  ]
+}
