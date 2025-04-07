@@ -1,7 +1,7 @@
 import {compareInsensitive, tryFetchJSON} from 'musicbrainz-ext';
 import {filter, from, mergeMap, tap} from 'rxjs';
 import {executePipeline} from 'rxjs-ext';
-import {Creator, CreatorFull, Creators, IPBaseNumber, RoleCode} from './acum';
+import {Creator, CreatorFull, Creators, creatorUrl, IPBaseNumber, RoleCode} from './acum';
 import {AddWarning} from './ui/warnings';
 
 function nameMatch(creator: CreatorFull, artistName: string): boolean {
@@ -39,6 +39,13 @@ async function findArtist(
     const byIpi = await tryFetchJSON<ArtistSearchResultsT>(`/ws/2/artist?query=ipi:${creator.number}&limit=1&fmt=json`);
     if (byIpi && byIpi.artists.length > 0) {
       return byIpi.artists[0].id;
+    }
+
+    const byLink = await tryFetchJSON<UrlRelsSearchResultsT<'artist'>>(
+      `/ws/2/url?resource=${creatorUrl(creator)}&inc=artist-rels&fmt=json`
+    );
+    if (byLink && byLink.relations[0].artist.id) {
+      return byLink.relations[0].artist.id;
     }
 
     const byName = await tryFetchJSON<ArtistSearchResultsT>(

@@ -1070,4 +1070,12 @@ declare global {
       };
 
   type LoadedTracksMapT = ReadonlyMap<number, ReadonlyArray<TrackWithRecordingT>>;
-}
+
+  type UrlRelsSearchResultsT<K extends NonUrlRelatableEntityTypeT> = {
+    relations: ReadonlyArray<{
+      [key in K]: {
+        id: MBID;
+      };
+    }>;
+  };
+} // end of global declaration

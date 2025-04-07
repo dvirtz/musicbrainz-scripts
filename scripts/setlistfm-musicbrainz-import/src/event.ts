@@ -286,17 +286,10 @@ function parseTime(query: string) {
 }
 
 async function findEvent(url: string) {
-  type Event = {
-    relations: ReadonlyArray<{
-      event: {
-        id: string;
-      };
-    }>;
-  };
-  const existingEvent = await tryFetchJSON<Event>(
+  const existingEvent = await tryFetchJSON<UrlRelsSearchResultsT<'event'>>(
     `https://musicbrainz.org/ws/2/url?resource=${url}&inc=event-rels&fmt=json`
   );
-  return existingEvent && existingEvent['relations'][0]['event'].id;
+  return existingEvent && existingEvent.relations[0].event.id;
 }
 
 function addWarningIcon(type: string, query: string, afterElement: Element) {

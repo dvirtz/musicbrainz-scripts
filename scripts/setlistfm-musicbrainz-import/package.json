@@ -8,6 +8,7 @@
     "common-ui": "workspace:*",
     "fetch": "workspace:*",
     "musicbrainz-ext": "workspace:*",
+    "musicbrainz-types": "workspace:*",
     "rxjs": "^7.8.1",
     "rxjs-ext": "workspace:*",
     "solid-js": "^1.9.4"
