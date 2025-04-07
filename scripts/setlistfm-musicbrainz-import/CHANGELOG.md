@@ -1,3 +1,15 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.5.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.4.4...@dvirtz/setlistfm-musicbrainz-import-v1.5.0) (2025-04-07)
+
+
+### Features
+
+* match artists by ACUM link ([dd0a27c](https://github.com/dvirtz/musicbrainz-scripts/commit/dd0a27c02df26be5192b2b279fe53f2e3143e39a)), closes [#79](https://github.com/dvirtz/musicbrainz-scripts/issues/79)
+
+
+### Tests
+
+* import userscript using absolute path ([4748f0d](https://github.com/dvirtz/musicbrainz-scripts/commit/4748f0d4e02cb3533b3de251904c3f0c0b6946b9))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.4.4](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.4.3...@dvirtz/setlistfm-musicbrainz-import-v1.4.4) (2025-04-06)
 
 
