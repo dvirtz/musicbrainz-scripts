@@ -1,4 +1,5 @@
 import {Page} from '@playwright/test';
+import * as path from 'path';
 
 export class SetlistFmPage {
   constructor(public readonly page: Page) {}
@@ -21,7 +22,7 @@ export class SetlistFmPage {
 
   private async injectUserScript() {
     await this.page.addScriptTag({
-      path: 'dist/setlistfm-musicbrainz-import.user.js',
+      path: path.resolve(import.meta.dirname, '..', '..', 'dist', 'setlistfm-musicbrainz-import.user.js'),
     });
   }
 }
