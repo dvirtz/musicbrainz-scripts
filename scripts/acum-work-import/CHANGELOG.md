@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.14.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.14.0...@dvirtz/acum-work-import-v1.14.1) (2025-04-09)
+
+
+### Documentation
+
+* fix broken markdown links ([f376d25](https://github.com/dvirtz/musicbrainz-scripts/commit/f376d25aedeebaa004974707222cf26d6f5b82ce))
+
 ## [@dvirtz/acum-work-import-v1.14.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.13.3...@dvirtz/acum-work-import-v1.14.0) (2025-04-07)
 
 
