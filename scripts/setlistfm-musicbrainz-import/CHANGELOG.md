@@ -1,3 +1,10 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.5.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.5.0...@dvirtz/setlistfm-musicbrainz-import-v1.5.1) (2025-04-09)
+
+
+### Documentation
+
+* fix broken markdown links ([f376d25](https://github.com/dvirtz/musicbrainz-scripts/commit/f376d25aedeebaa004974707222cf26d6f5b82ce))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.5.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.4.4...@dvirtz/setlistfm-musicbrainz-import-v1.5.0) (2025-04-07)
 
 
