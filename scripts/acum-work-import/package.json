@@ -2,7 +2,7 @@
   "name": "@dvirtz/acum-work-import",
   "type": "module",
   "scripts": {
-    "build": "rollup -c"
+    "build": "vite build"
   },
   "dependencies": {
     "@kobalte/core": "^0.13.8",
@@ -20,9 +20,10 @@
     "common-types": "workspace:*",
     "eslint": "*",
     "musicbrainz-types": "workspace:*",
-    "rollup": "*",
     "semantic-release": "*",
     "test-support": "workspace:*",
-    "typescript": "*"
+    "typescript": "*",
+    "vite": "*",
+    "vite-plugin-solid": "*"
   }
 }

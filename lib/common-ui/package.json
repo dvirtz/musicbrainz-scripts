@@ -4,10 +4,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/common-ui.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c"
+    "build": "vite build"
   },
   "dependencies": {
     "@kobalte/core": "^0.13.8",
@@ -16,7 +16,7 @@
   "devDependencies": {
     "common-types": "workspace:*",
     "eslint": "*",
-    "rollup": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "vite": "*"
   }
 }

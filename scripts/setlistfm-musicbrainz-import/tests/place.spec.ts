@@ -1,6 +1,6 @@
-import { expect, mergeTests } from '@playwright/test';
-import { test as userscriptTest } from 'test-support';
-import { test as setlistfmTest } from './fixtures/setlistfm-test';
+import {expect, mergeTests} from '@playwright/test';
+import {test as userscriptTest} from 'test-support';
+import {test as setlistfmTest} from './fixtures/setlistfm-test';
 
 const test = mergeTests(userscriptTest, setlistfmTest);
 
@@ -15,7 +15,7 @@ test('existing place', async ({page, userscriptPage, setlistfmPage}) => {
   ]);
 });
 
-test('missing event', async ({page, userscriptPage, setlistfmPage, baseURL}) => {
+test('missing place', async ({page, userscriptPage, setlistfmPage, baseURL}) => {
   // cspell:disable-next-line
   await setlistfmPage.goto('/venue/el-teatrito-buenos-aires-argentina-4bd61f1e.html');
 
