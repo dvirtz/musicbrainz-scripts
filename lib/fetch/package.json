@@ -4,10 +4,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/fetch.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c"
+    "build": "vite build"
   },
   "dependencies": {
     "fetch-retry": "^6.0.0",
@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "eslint": "*",
-    "rollup": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "vite": "*"
   }
 }

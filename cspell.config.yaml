@@ -23,7 +23,6 @@ words:
   - metabrainz
   - musicbrainz
   - rels
-  - rollup
   - setlist
   - setlistfm
   - tampermonkey
@@ -41,9 +40,9 @@ overrides:
   - filename: package.json
     includeRegExpList:
       - /"description":.*/g
-  - filename: meta.ts
+  - filename: vite.config.ts
     ignoreRegExpList:
-      - /@match .*/g
+      - /'http\*\:\/\/.*/g
 languageSettings:
   - languageId: typescriptreact
     ignoreRegExpList:
@@ -55,3 +54,5 @@ languageSettings:
       - /#\s.*/
       - /`.*?`/
       - /(```+)\s?[\s\S]+?\1/g
+    dictionaries:
+      - npm

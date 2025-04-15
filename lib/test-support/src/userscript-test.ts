@@ -1,5 +1,5 @@
 import {test as base} from '@playwright/test';
-import path from 'path';
+import {fileURLToPath} from 'node:url';
 import {UserscriptPage} from './userscript-page';
 
 const ONE_MINUTE = 60_000;
@@ -17,17 +17,17 @@ export const test = base.extend<{userscriptPage: UserscriptPage}>({
         await page.waitForTimeout(delay);
       }
 
-      const userscriptPage = new UserscriptPage(page);
-
-      await userscriptPage.mockWindowOpen();
-
-      await page.addInitScript({path: path.resolve(import.meta.dirname, 'userscript-manager.js')});
-
       page.on('console', msg => {
         if (msg.type() === 'error' && !msg.text().includes('Failed to load resource')) {
           console.error(`error: "${msg.text()}"`);
         }
       });
+
+      const userscriptPage = new UserscriptPage(page);
+
+      await userscriptPage.mockWindowOpen();
+
+      await page.addInitScript({path: fileURLToPath(import.meta.resolve('userscript-manager-mock'))});
 
       await use(userscriptPage);
     },

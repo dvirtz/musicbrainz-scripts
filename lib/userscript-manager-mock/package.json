@@ -1,9 +1,9 @@
 {
-  "name": "common",
+  "name": "userscript-manager-mock",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/common.js",
+  "main": "./dist/userscript-manager-mock.iife.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "vite build"

@@ -1,5 +1,5 @@
 import {styleInject} from './styleInject';
-import toolboxStyle from './toolbox.css';
+import toolboxStyle from './toolbox.css?inline';
 
 export function Toolbox(doc: Document, className: 'full-page' | 'half-page' | 'iframe'): HTMLDivElement {
   const ID = 'dvirtz-toolbox';

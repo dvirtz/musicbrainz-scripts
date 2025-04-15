@@ -2,7 +2,7 @@ import {Checkbox as CheckboxRoot} from '@kobalte/core/checkbox';
 import {Dialog} from '@kobalte/core/dialog';
 import {createSignal, JSX, ParentProps} from 'solid-js';
 import {render} from 'solid-js/web';
-import style from './settings.css';
+import style from './settings.css?inline';
 
 type OptionsDialogProps = ParentProps & {
   mount: HTMLElement;
