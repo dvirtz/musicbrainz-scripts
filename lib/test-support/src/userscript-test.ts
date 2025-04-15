@@ -1,5 +1,4 @@
 import {test as base} from '@playwright/test';
-import {fileURLToPath} from 'node:url';
 import {UserscriptPage} from './userscript-page';
 
 const ONE_MINUTE = 60_000;
@@ -23,11 +22,7 @@ export const test = base.extend<{userscriptPage: UserscriptPage}>({
         }
       });
 
-      const userscriptPage = new UserscriptPage(page);
-
-      await userscriptPage.mockWindowOpen();
-
-      await page.addInitScript({path: fileURLToPath(import.meta.resolve('userscript-manager-mock'))});
+      const userscriptPage = await UserscriptPage.create(page);
 
       await use(userscriptPage);
     },

@@ -24,7 +24,7 @@ export default function userscriptConfig(fileBaseName: string, userScript: Monke
           namespace: rootPackage.homepage,
           author: `${rootPackage.author.name} <${rootPackage.author.email}>`,
           supportURL: rootPackage.bugs.url,
-          downloadURL: `${rootPackage.repository.url}/releases/latest/download/${fileBaseName}.user.js`,
+          downloadURL: `${rootPackage.homepage}/releases/latest/download/${fileBaseName}.user.js`,
           license: rootPackage.license,
           ...userScript,
         },

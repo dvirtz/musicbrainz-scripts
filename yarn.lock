@@ -1392,15 +1392,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.21.5, @babel/runtime@npm:^7.25.9":
-  version: 7.27.0
-  resolution: "@babel/runtime@npm:7.27.0"
-  dependencies:
-    regenerator-runtime: "npm:^0.14.0"
-  checksum: 10c0/35091ea9de48bd7fd26fb177693d64f4d195eb58ab2b142b893b7f3fa0f1d7c677604d36499ae0621a3703f35ba0c6a8f6c572cc8f7dc0317213841e493cf663
-  languageName: node
-  linkType: hard
-
 "@babel/runtime@npm:^7.8.4":
   version: 7.25.6
   resolution: "@babel/runtime@npm:7.25.6"
@@ -2253,7 +2244,6 @@ __metadata:
     "@types/babel__preset-env": "npm:^7"
     "@types/greasemonkey": "npm:^4.0.7"
     "@types/node": "npm:^22.9.0"
-    "@violentmonkey/dom": "npm:^2.2.1"
     babel-preset-solid: "npm:^1.8.22"
     cross-env: "npm:^7.0.3"
     cspell: "npm:^8.14.2"
@@ -2639,15 +2629,6 @@ __metadata:
   version: 0.2.8
   resolution: "@floating-ui/utils@npm:0.2.8"
   checksum: 10c0/a8cee5f17406c900e1c3ef63e3ca89b35e7a2ed645418459a73627b93b7377477fc888081011c6cd177cac45ec2b92a6cab018c14ea140519465498dddd2d3f9
-  languageName: node
-  linkType: hard
-
-"@gera2ld/jsx-dom@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "@gera2ld/jsx-dom@npm:2.2.2"
-  dependencies:
-    "@babel/runtime": "npm:^7.21.5"
-  checksum: 10c0/57b6273772c6986e583f41302024490fde07ed24d853730b4aea09e114a739784e3821c5d052534762c72f1b56dbf2e04aabb297e1e1ed88faf42d1f4369108a
   languageName: node
   linkType: hard
 
@@ -4341,17 +4322,6 @@ __metadata:
     "@typescript-eslint/types": "npm:8.11.0"
     eslint-visitor-keys: "npm:^3.4.3"
   checksum: 10c0/7a5a49609fdc47e114fe59eee56393c90b122ec8e9520f90b0c5e189635ae1ccfa8e00108f641342c2c8f4637fe9d40c77927cf7c8248a3a660812cb4b7d0c08
-  languageName: node
-  linkType: hard
-
-"@violentmonkey/dom@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "@violentmonkey/dom@npm:2.2.1"
-  dependencies:
-    "@babel/runtime": "npm:^7.25.9"
-    "@gera2ld/jsx-dom": "npm:^2.2.2"
-    solid-js: "npm:^1.9.5"
-  checksum: 10c0/ac70cf5adb007068cd1293b7b7c9cc4a5d291da65c330ca6b732de60f4eb91dd233bd5b78bafdfded9af5274500d334cabbb0c14704521c41d1a4bbba98da732
   languageName: node
   linkType: hard
 
@@ -11418,7 +11388,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"solid-js@npm:^1.9.4, solid-js@npm:^1.9.5":
+"solid-js@npm:^1.9.4":
   version: 1.9.5
   resolution: "solid-js@npm:1.9.5"
   dependencies:
@@ -11872,7 +11842,6 @@ __metadata:
     "@playwright/test": "npm:^1.51.1"
     eslint: "npm:*"
     typescript: "npm:*"
-    userscript-manager-mock: "workspace:*"
     vite: "npm:*"
   languageName: unknown
   linkType: soft
@@ -12330,16 +12299,6 @@ __metadata:
   checksum: 10c0/ed2b166b4b5a98adcf6828a48b6bd6df1dac4c8a464a73cf4d8e2457ed410dd8da6be0d24855b86026cd7f5c5a3657c1b7b2c7a7c5b8870af17635a41387b04c
   languageName: node
   linkType: hard
-
-"userscript-manager-mock@workspace:*, userscript-manager-mock@workspace:lib/userscript-manager-mock":
-  version: 0.0.0-use.local
-  resolution: "userscript-manager-mock@workspace:lib/userscript-manager-mock"
-  dependencies:
-    eslint: "npm:*"
-    typescript: "npm:*"
-    vite: "npm:*"
-  languageName: unknown
-  linkType: soft
 
 "util-deprecate@npm:^1.0.2, util-deprecate@npm:~1.0.1":
   version: 1.0.2

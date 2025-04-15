@@ -9,8 +9,7 @@
     "build": "vite build --ssr"
   },
   "dependencies": {
-    "@playwright/test": "^1.51.1",
-    "userscript-manager-mock": "workspace:*"
+    "@playwright/test": "^1.51.1"
   },
   "devDependencies": {
     "eslint": "*",
