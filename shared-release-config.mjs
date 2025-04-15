@@ -15,7 +15,7 @@ const types = [
 const releaseRules = [
   {type: 'ci', release: 'patch'},
   {type: 'docs', release: 'patch'},
-  {type: 'test', release: 'patch'},
+  {type: 'build', release: 'patch'},
 ];
 
 export default {
