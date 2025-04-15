@@ -10,10 +10,5 @@ export default defineConfig('acum-work-import', {
     'http*://*.musicbrainz.org/work/*',
     'http*://*.musicbrainz.org/dialog?path=%2Fwork%2F*',
   ],
-  require: [
-    'https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2',
-    'https://cdn.jsdelivr.net/npm/@violentmonkey/ui@0.7',
-    'https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2/dist/solid.min.js',
-  ],
   'run-at': 'document-end',
 });

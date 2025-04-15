@@ -6,10 +6,5 @@ export default defineConfig('setlistfm-musicbrainz-import', {
   version: '1.5.2-beta.1',
   icon: 'https://api.setlist.fm/favicon.ico',
   match: ['*://www.setlist.fm/setlist/*', '*://www.setlist.fm/venue/*'],
-  require: [
-    'https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2',
-    'https://cdn.jsdelivr.net/npm/@violentmonkey/ui@0.7',
-    'https://cdn.jsdelivr.net/npm/@violentmonkey/dom@2/dist/solid.min.js',
-  ],
   'run-at': 'document-end',
 });

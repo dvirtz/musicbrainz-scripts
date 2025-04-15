@@ -28,7 +28,6 @@ words:
   - tampermonkey
   - userscript
   - userscripts
-  - violentmonkey
   - yitzchaki
 patterns:
   - name: user_script_id
