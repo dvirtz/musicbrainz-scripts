@@ -1,3 +1,5 @@
+import dedent from 'dedent';
+
 export function addEditNote(message: string, document: Document = window.document) {
   const textArea = document.querySelector<HTMLTextAreaElement>('textarea.edit-note');
   const note = editNote(message);

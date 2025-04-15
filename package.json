@@ -1,10 +1,13 @@
 {
   "name": "@dvirtz/musicbrainz-scripts",
-  "version": "0.0.0",
   "description": "Collection of userscripts for MusicBrainz",
   "author": {
     "name": "Dvir Yitzchaki",
     "email": "dvirtz@gmail.com"
+  },
+  "homepage": "https://github.com/dvirtz/musicbrainz-scripts",
+  "bugs": {
+    "url": "https://github.com/dvirtz/musicbrainz-scripts/issues"
   },
   "license": "BSL-1.0",
   "private": true,
@@ -29,7 +32,7 @@
     "lint": "yarn lint:knip && yarn lint:spell && yarn lint:markdown",
     "prepare": "husky",
     "semantic-release": "yarn workspaces foreach --all --topological-dev --exclude 'lib/*' exec semantic-release",
-    "test": "yarn foreach-script --worktree --from 'scripts/*' exec playwright test"
+    "test": "yarn foreach-script --worktree exec playwright test"
   },
   "repository": {
     "type": "git",
@@ -44,12 +47,7 @@
     "@dvirtz/acum-work-import": "workspace:^",
     "@dvirtz/setlistfm-musicbrainz-import": "workspace:^",
     "@eslint/js": "^9.14.0",
-    "@gera2ld/plaid": "~2.7.0",
-    "@gera2ld/plaid-rollup": "~2.7.0",
     "@playwright/test": "^1.51.1",
-    "@rollup/plugin-eslint": "^9.0.5",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-typescript": "^12.1.2",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^11.0.0",
     "@semantic-release/git": "^10.0.1",
@@ -59,8 +57,6 @@
     "@types/babel__preset-env": "^7",
     "@types/greasemonkey": "^4.0.7",
     "@types/node": "^22.9.0",
-    "@violentmonkey/dom": "^2.2.1",
-    "babel-plugin-dedent": "^2.1.0",
     "babel-preset-solid": "^1.8.22",
     "cross-env": "^7.0.3",
     "cspell": "^8.14.2",
@@ -77,16 +73,17 @@
     "markdownlint-cli2": "^0.17.2",
     "markdownlint-rule-relative-links": "^4.0.1",
     "prettier": "^3.2.5",
-    "rollup": "^4.21.2",
-    "rollup-plugin-dts": "^6.1.1",
-    "rollup-plugin-import-css": "^3.5.8",
-    "rollup-plugin-userscript": "^0.3.2",
     "semantic-release": "^22.0.0",
     "semantic-release-mirror-version": "^1.1.2",
     "semantic-release-monorepo": "^8.0.2",
     "solid-js": "^1.9.4",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.11.0",
+    "vite": "^6.2.6",
+    "vite-plugin-checker": "^0.9.1",
+    "vite-plugin-dts": "^4.5.3",
+    "vite-plugin-monkey": "^5.0.8",
+    "vite-plugin-solid": "^2.11.6",
     "weight-balanced-tree": "^0.6.1"
   },
   "lint-staged": {
@@ -122,9 +119,6 @@
         "always"
       ]
     }
-  },
-  "resolutions": {
-    "@rollup/plugin-eslint/eslint": "^9.9.1"
   },
   "packageManager": "yarn@4.3.1"
 }
