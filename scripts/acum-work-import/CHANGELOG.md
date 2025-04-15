@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.14.2-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.14.1...@dvirtz/acum-work-import-v1.14.2-beta.1) (2025-04-15)
+
+
+### Build and continuous integration
+
+* build with vite ([e52d6a2](https://github.com/dvirtz/musicbrainz-scripts/commit/e52d6a2dc14128d8d0bb89ecc737bf573b4f2864)), closes [#60](https://github.com/dvirtz/musicbrainz-scripts/issues/60)
+
 ## [@dvirtz/acum-work-import-v1.14.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.14.0...@dvirtz/acum-work-import-v1.14.1) (2025-04-09)
 
 
