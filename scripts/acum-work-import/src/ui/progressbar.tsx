@@ -1,7 +1,7 @@
 import {Progress} from '@kobalte/core/progress';
 import {styleInject} from 'common-ui';
 import {ComponentProps, Show, splitProps} from 'solid-js';
-import progressBarStyle from './progressbar.css';
+import progressBarStyle from './progressbar.css?inline';
 
 styleInject(progressBarStyle);
 

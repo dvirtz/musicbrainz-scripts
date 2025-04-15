@@ -3,14 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/common.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c"
+    "build": "vite build"
   },
   "devDependencies": {
     "eslint": "*",
-    "rollup": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "vite": "*"
   }
 }

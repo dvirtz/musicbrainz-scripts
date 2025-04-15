@@ -17,7 +17,7 @@ import {FormRow} from './form-row';
 import {SelectBox} from './select-box';
 import {WorkAttributes} from './work-attributes';
 import {useWorkEditData} from './work-edit-data-provider';
-import workEditDialogStyle from './work-edit-dialog.css';
+import workEditDialogStyle from './work-edit-dialog.css?inline';
 import {WorkISWCsEditor} from './work-iswcs-editor';
 import {WorkLanguageEditor} from './work-language-editor';
 

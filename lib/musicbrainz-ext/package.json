@@ -4,12 +4,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/musicbrainz-ext.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rollup -c"
+    "build": "vite build"
   },
   "dependencies": {
+    "dedent": "^1.5.3",
     "fetch": "workspace:*",
     "p-lazy": "^5.0.0",
     "weight-balanced-tree": "^0.6.1"
@@ -17,7 +18,7 @@
   "devDependencies": {
     "eslint": "*",
     "musicbrainz-types": "workspace:*",
-    "rollup": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "vite": "*"
   }
 }
