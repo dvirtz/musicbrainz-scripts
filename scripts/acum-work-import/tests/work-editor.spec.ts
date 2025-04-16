@@ -1,8 +1,5 @@
-import {expect, Locator, mergeTests} from '@playwright/test';
-import {test as userscriptTest} from 'test-support';
-import {test as musicbrainzPage} from './fixtures/musicbrainz-test';
-
-const test = mergeTests(userscriptTest, musicbrainzPage);
+import {expect, Locator} from '@playwright/test';
+import {test} from './fixtures/musicbrainz-test';
 
 async function selectBoxText(locator: Locator) {
   return await locator.evaluate((typeNode: HTMLSelectElement) => typeNode.options[typeNode.options.selectedIndex].text);

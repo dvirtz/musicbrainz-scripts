@@ -1,8 +1,11 @@
 import {Page} from '@playwright/test';
 import {fileURLToPath} from 'node:url';
+import {UserscriptPage} from 'test-support';
 
-export class SetlistFmPage {
-  constructor(public readonly page: Page) {}
+export class SetlistFmPage extends UserscriptPage {
+  public constructor(page: Page) {
+    super(page);
+  }
 
   async goto(url: string) {
     await this.page.goto(url);

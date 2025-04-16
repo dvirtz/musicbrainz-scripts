@@ -1,32 +1,29 @@
-import {expect, mergeTests} from '@playwright/test';
-import {test as userscriptTest} from 'test-support';
-import {test as setlistfmTest} from './fixtures/setlistfm-test';
+import {expect} from '@playwright/test';
+import {test} from './fixtures/setlistfm-test';
 
-const test = mergeTests(userscriptTest, setlistfmTest);
-
-test('existing event', async ({page, userscriptPage, setlistfmPage}) => {
+test('existing event', async ({page, setlistfmPage}) => {
   await setlistfmPage.goto('/setlist/elton-john/2022/enterprise-center-st-louis-mo-4389530f.html');
 
   const openInMB = page.getByRole('button', {name: 'Open in MB'});
   await expect(openInMB).toBeAttached();
   await openInMB.click();
-  expect(userscriptPage.windowOpenLog).toEqual([
+  expect(setlistfmPage.windowOpenLog).toEqual([
     URL.parse('https://musicbrainz.org/event/f03ab6fe-e45a-44a4-80d1-12b4e63ef082'),
   ]);
 });
 
-test('missing event', async ({page, userscriptPage, setlistfmPage, baseURL}) => {
+test('missing event', async ({page, setlistfmPage, baseURL}) => {
   await setlistfmPage.goto('/setlist/artificial-joy/1991/whisky-a-go-go-west-hollywood-ca-1b85add4.html');
 
   const addToMB = page.getByRole('button', {name: 'Add to MB'});
   await expect(addToMB).toBeAttached();
   await addToMB.click();
-  expect(userscriptPage.windowOpenLog).toHaveLength(1);
-  expect(userscriptPage.windowOpenLog[0]).toMatchObject({
+  expect(setlistfmPage.windowOpenLog).toHaveLength(1);
+  expect(setlistfmPage.windowOpenLog[0]).toMatchObject({
     hostname: 'musicbrainz.org',
     pathname: '/event/create',
   });
-  expect([...userscriptPage.windowOpenLog[0].searchParams.entries()]).toEqual([
+  expect([...setlistfmPage.windowOpenLog[0].searchParams.entries()]).toEqual([
     ['edit-event.name', 'Artificial Joy at Whisky A Go Go'],
     ['edit-event.type_id', '1'],
     ['edit-event.setlist', ''],
@@ -50,7 +47,7 @@ test('missing event', async ({page, userscriptPage, setlistfmPage, baseURL}) => 
   ]);
 });
 
-test('missing event and place', async ({page, userscriptPage, setlistfmPage}) => {
+test('missing event and place', async ({page, setlistfmPage}) => {
   await setlistfmPage.goto('/setlist/eternal-gray/2011/sublime-tel-aviv-israel-53d9eba1.html');
 
   const placeLink = page.getByText('at Sublime');
@@ -59,12 +56,12 @@ test('missing event and place', async ({page, userscriptPage, setlistfmPage}) =>
   await expect(warning).toHaveAttribute('title', 'place not found on MusicBrainz, click to search');
   await warning.click();
 
-  expect(userscriptPage.windowOpenLog).toHaveLength(1);
-  expect(userscriptPage.windowOpenLog[0]).toMatchObject({
+  expect(setlistfmPage.windowOpenLog).toHaveLength(1);
+  expect(setlistfmPage.windowOpenLog[0]).toMatchObject({
     hostname: 'musicbrainz.org',
     pathname: '/search',
   });
-  expect([...userscriptPage.windowOpenLog[0].searchParams.entries()]).toEqual([
+  expect([...setlistfmPage.windowOpenLog[0].searchParams.entries()]).toEqual([
     ['query', 'place:Sublime AND area:Tel Aviv'],
     ['type', 'place'],
     ['method', 'advanced'],
