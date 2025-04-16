@@ -1,9 +1,8 @@
 import {expect, mergeTests} from '@playwright/test';
-import {test as userscriptTest} from 'test-support';
 import {test as musicbrainzPage} from './fixtures/musicbrainz-test';
 import {test as testRelease} from './fixtures/test-release';
 
-const test = mergeTests(userscriptTest, testRelease, musicbrainzPage);
+const test = mergeTests(testRelease, musicbrainzPage);
 
 test.describe('release editor', () => {
   test('can import album', async ({page, testRelease, musicbrainzPage}) => {

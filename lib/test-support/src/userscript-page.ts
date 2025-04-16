@@ -5,14 +5,14 @@ export class UserscriptPage {
   windowOpenLog: URL[] = [];
   menuCommands: Map<string, MenuCommand> = new Map();
 
-  static async create(page: Page) {
-    const userscriptPage = new UserscriptPage(page);
+  static async create<T extends UserscriptPage>(this: new (page: Page) => T, page: Page) {
+    const userscriptPage = new this(page);
     await userscriptPage.mockWindowOpen();
     await userscriptPage.mockUserscriptManager();
     return userscriptPage;
   }
 
-  private constructor(public readonly page: Page) {}
+  protected constructor(public readonly page: Page) {}
 
   private async mockWindowOpen() {
     // Expose function for pushing messages to the Node.js script.
