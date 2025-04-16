@@ -1,11 +1,15 @@
 import {Page} from '@playwright/test';
 import * as path from 'path';
+import {UserscriptPage} from 'test-support';
 
-export class MusicbrainzPage {
-  protected constructor(public readonly page: Page) {}
+export class MusicbrainzPage extends UserscriptPage {
+  public constructor(page: Page) {
+    super(page);
+  }
 
+  static async create<T extends UserscriptPage>(this: new (page: Page) => T, page: Page): Promise<T>;
   static async create(page: Page) {
-    const musicbrainzPage = new MusicbrainzPage(page);
+    const musicbrainzPage = await super.create<MusicbrainzPage>(page);
     await musicbrainzPage.login();
     return musicbrainzPage;
   }
