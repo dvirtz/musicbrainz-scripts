@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@playwright/test": "*",
+    "common-types": "workspace:*",
     "eslint": "*",
     "semantic-release": "*",
     "test-support": "workspace:*",

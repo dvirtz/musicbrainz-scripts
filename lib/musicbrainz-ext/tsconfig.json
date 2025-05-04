@@ -3,8 +3,8 @@
   "compilerOptions": {
     "noEmit": true,
     "types": [
+      "common-types",
       "musicbrainz-types",
-      "@types/greasemonkey"
     ]
   }
 }

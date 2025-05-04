@@ -12,6 +12,7 @@
     "@playwright/test": "^1.51.1"
   },
   "devDependencies": {
+    "common-types": "workspace:*",
     "eslint": "*",
     "typescript": "*",
     "vite": "*"
