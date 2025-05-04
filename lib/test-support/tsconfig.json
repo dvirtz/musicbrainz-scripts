@@ -1,3 +1,8 @@
 {
   "extends": "../../tsconfig.lib.json",
+  "compilerOptions": {
+    "types": [
+      "common-types",
+    ]
+  }
 }

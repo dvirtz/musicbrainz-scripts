@@ -1,9 +1,8 @@
-import type {Page} from '@playwright/test';
-import {MenuCommand, mockUserscriptManager} from './userscript-manager-mock';
+import {expect, type Page} from '@playwright/test';
+import {invokeMenuCommand, mockUserscriptManager, waitForMenuCommand} from './userscript-manager-mock';
 
 export class UserscriptPage {
   windowOpenLog: URL[] = [];
-  menuCommands: Map<string, MenuCommand> = new Map();
 
   static async create<T extends UserscriptPage>(this: new (page: Page) => T, page: Page) {
     const userscriptPage = new this(page);
@@ -29,11 +28,52 @@ export class UserscriptPage {
   }
 
   private async mockUserscriptManager() {
-    const pushMenuCommand = (name: string, command: MenuCommand) => {
-      console.log('Menu command registered:', name);
-      this.menuCommands.set(name, command);
-    };
-    await this.page.exposeFunction('pushMenuCommand', pushMenuCommand);
-    await this.page.addInitScript(mockUserscriptManager, pushMenuCommand);
+    await this.page.addInitScript(mockUserscriptManager);
+  }
+
+  public async waitForMenuCommand(name: string) {
+    await this.page.evaluate(waitForMenuCommand, name);
+  }
+
+  public async invokeMenuCommand(name: string) {
+    await this.page.evaluate(invokeMenuCommand, name);
+  }
+
+  public async testSettings(options: {name: string; description: string; defaultValue: boolean}[]) {
+    await this.waitForMenuCommand('settings');
+    await this.invokeMenuCommand('settings');
+
+    const settingsDialog = this.page.getByLabel('userscript options');
+    await expect(settingsDialog).toBeVisible();
+
+    const saveButton = this.page.getByText('Save changes');
+    await expect(saveButton).toBeVisible();
+
+    const cancelButton = this.page.getByText('Cancel');
+    await expect(cancelButton).toBeVisible();
+
+    for (const {description, defaultValue} of options) {
+      const checkbox = this.page.getByLabel(description);
+      await expect(checkbox).toBeVisible();
+      if (defaultValue) {
+        await expect(checkbox).toBeChecked();
+      } else {
+        await expect(checkbox).not.toBeChecked();
+      }
+      const text = this.page.getByText(description, {exact: true});
+      await text.click();
+      if (defaultValue) {
+        await expect(checkbox).not.toBeChecked();
+      } else {
+        await expect(checkbox).toBeChecked();
+      }
+    }
+
+    await saveButton.click();
+    const storage = await this.page.context().storageState();
+
+    expect(storage.origins[0].localStorage).toEqual(
+      expect.arrayContaining(options.map(({name, defaultValue}) => ({name, value: (!defaultValue).toString()})))
+    );
   }
 }

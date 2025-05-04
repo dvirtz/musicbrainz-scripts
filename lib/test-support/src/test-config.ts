@@ -1,4 +1,4 @@
-import {defineConfig as defineTestConfig, type PlaywrightTestConfig} from '@playwright/test';
+import {defineConfig as defineTestConfig, devices, type PlaywrightTestConfig} from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -36,5 +36,11 @@ export function defineConfig(baseURL: string, options?: PlaywrightTestConfig) {
       baseURL,
     },
     ...options,
+    projects: [
+      {
+        name: 'chromium',
+        use: {...devices['Desktop Chrome']},
+      },
+    ],
   });
 }

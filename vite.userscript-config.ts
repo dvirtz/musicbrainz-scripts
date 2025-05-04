@@ -18,7 +18,7 @@ export default function userscriptConfig(fileBaseName: string, userScript: Monke
       monkey({
         entry: 'src/index.ts',
         server: {
-          open: false,
+          mountGmApi: true,
         },
         userscript: {
           namespace: rootPackage.homepage,
