@@ -8,6 +8,7 @@
     "@kobalte/core": "^0.13.8",
     "common": "workspace:*",
     "common-ui": "workspace:*",
+    "dom-mutations": "^1.0.0",
     "fetch": "workspace:*",
     "musicbrainz-ext": "workspace:*",
     "p-lazy": "^5.0.0",
@@ -18,6 +19,7 @@
   "devDependencies": {
     "@playwright/test": "*",
     "common-types": "workspace:*",
+    "cross-env": "*",
     "eslint": "*",
     "musicbrainz-types": "workspace:*",
     "semantic-release": "*",
