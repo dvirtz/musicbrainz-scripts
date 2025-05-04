@@ -1,20 +1,19 @@
-import {defineConfig, LibraryOptions, PluginOption} from 'vite';
+import {defineConfig, UserConfig} from 'vite';
 import checker from 'vite-plugin-checker';
 import dts from 'vite-plugin-dts';
 
-export default function libConfig(
-  libraryOptions?: Omit<LibraryOptions, 'entry'> & {entry?: string | string[]},
-  plugins: PluginOption[] = []
-) {
+export default function libConfig(customConfig?: UserConfig) {
+  const {build, plugins, ...restConfig} = customConfig || {};
+  const {lib, ...restBuild} = build || {};
   return defineConfig({
     build: {
       lib: {
-        entry: libraryOptions?.entry || 'src/index.ts',
-        formats: libraryOptions?.formats || ['es'],
-        name: libraryOptions?.name,
-        fileName: libraryOptions?.fileName,
+        entry: 'src/index.ts',
+        formats: ['es'],
+        ...lib,
       },
       sourcemap: true,
+      ...restBuild,
     },
     plugins: [
       checker({
@@ -32,7 +31,8 @@ export default function libConfig(
           'declarationMap': true,
         },
       }),
-      ...plugins,
+      ...(plugins || []),
     ],
+    ...restConfig,
   });
 }
