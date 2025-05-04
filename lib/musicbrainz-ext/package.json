@@ -16,6 +16,7 @@
     "weight-balanced-tree": "^0.6.1"
   },
   "devDependencies": {
+    "common-types": "workspace:*",
     "eslint": "*",
     "musicbrainz-types": "workspace:*",
     "typescript": "*",

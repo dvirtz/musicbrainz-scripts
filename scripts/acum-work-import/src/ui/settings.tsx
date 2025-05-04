@@ -1,5 +1,4 @@
-import {Checkbox, registerSettingsDialog as registerSettings} from 'common-ui';
-import {createSignal} from 'solid-js';
+import {registerSettingsDialog as registerSettings} from 'common-ui';
 
 export async function shouldSearchWorks() {
   return await GM.getValue('searchWorks', true);
@@ -10,23 +9,16 @@ export async function shouldSetLanguage() {
 }
 
 export async function registerSettingsDialog() {
-  const [searchWorks, setSearchWorks] = createSignal(await shouldSearchWorks());
-  const [setLanguage, setSetLanguage] = createSignal(await shouldSetLanguage());
-  const saveOptions = () => {
-    Promise.all([GM.setValue('searchWorks', searchWorks()), GM.setValue('setLanguage', setLanguage())]).catch(
-      console.error
-    );
-  };
-
-  registerSettings(
-    saveOptions,
-    <div>
-      <div>
-        <Checkbox label="Search for existing works" checked={searchWorks()} onChange={setSearchWorks} />
-      </div>
-      <div>
-        <Checkbox label="Set language" checked={setLanguage()} onChange={setSetLanguage} />
-      </div>
-    </div>
-  );
+  await registerSettings([
+    {
+      name: 'searchWorks',
+      description: 'Search for existing works',
+      defaultValue: true,
+    },
+    {
+      name: 'setLanguage',
+      description: 'Set work language',
+      defaultValue: true,
+    },
+  ]);
 }

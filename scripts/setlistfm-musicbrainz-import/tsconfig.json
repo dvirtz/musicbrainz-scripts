@@ -2,8 +2,8 @@
   "extends": "../../tsconfig.userscript.json",
   "compilerOptions": {
     "types": [
+      "common-types",
       "musicbrainz-types",
-      "@types/greasemonkey",
       "node",
     ]
   }
