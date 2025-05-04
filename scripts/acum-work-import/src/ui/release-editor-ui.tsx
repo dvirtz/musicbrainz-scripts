@@ -1,5 +1,5 @@
 import {Button} from '@kobalte/core/button';
-import {Toolbox} from 'common-ui';
+import {toolbox} from 'common-ui';
 import {createEffect, createMemo, createSignal} from 'solid-js';
 import {render} from 'solid-js/web';
 import {Entity} from '../acum';
@@ -7,7 +7,10 @@ import {importAlbum as tryImportWorks} from '../import-album';
 import {submitWorks as trySubmitWorks} from '../submit';
 import {ImportForm} from './import-form';
 import {ProgressBar} from './progressbar';
+import progressBarStyle from './progressbar.css?inline';
+import {waitForElement} from './wait-for-element';
 import {useWarnings, WarningsProvider} from './warnings';
+import workEditDialogStyle from './work-edit-dialog.css?inline';
 
 function AcumImporter() {
   const {addWarning, clearWarnings} = useWarnings();
@@ -82,22 +85,37 @@ function AcumImporter() {
 
 const releaseEditorContainerId = 'acum-release-editor-container';
 
-export function createReleaseEditorUI() {
+export async function createReleaseEditorUI() {
   if (document.querySelector(`#${releaseEditorContainerId}`)) {
     return;
   }
 
-  const container = (<div id={releaseEditorContainerId}></div>) as HTMLDivElement;
-  const theToolbox = Toolbox(document, 'full-page');
-  theToolbox.append(container);
-  document.querySelector('div.tabs')?.insertAdjacentElement('afterend', theToolbox);
+  await GM.addStyle(workEditDialogStyle);
+  await GM.addStyle(progressBarStyle);
 
-  render(
-    () => (
-      <WarningsProvider>
-        <AcumImporter />
-      </WarningsProvider>
-    ),
-    container
-  );
+  const doRender = async () => {
+    console.debug('Creating release editor');
+    const container = (<div id={releaseEditorContainerId}></div>) as HTMLDivElement;
+    const theToolbox = await toolbox(document, 'full-page');
+    theToolbox.append(container);
+    document.querySelector('div.tabs')?.insertAdjacentElement('afterend', theToolbox);
+
+    render(
+      () => (
+        <WarningsProvider>
+          <AcumImporter />
+        </WarningsProvider>
+      ),
+      container
+    );
+  };
+
+  const submitButton =
+    document.querySelector('button.submit') ??
+    (await waitForElement(
+      (node): node is HTMLButtonElement => node instanceof HTMLButtonElement && node.classList.contains('submit')
+    ));
+  if (submitButton) {
+    await doRender();
+  }
 }

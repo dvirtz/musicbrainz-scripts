@@ -10,18 +10,14 @@
  */
 
 import {Popover} from '@kobalte/core/popover';
-import {styleInject} from 'common-ui';
 import {buildOptionList, parseIntegerOrNull} from 'musicbrainz-ext';
 import {createSignal, onCleanup} from 'solid-js';
 import {FormRow} from './form-row';
 import {SelectBox} from './select-box';
 import {WorkAttributes} from './work-attributes';
 import {useWorkEditData} from './work-edit-data-provider';
-import workEditDialogStyle from './work-edit-dialog.css?inline';
 import {WorkISWCsEditor} from './work-iswcs-editor';
 import {WorkLanguageEditor} from './work-language-editor';
-
-styleInject(workEditDialogStyle);
 
 export function WorkEditDialog(props: {onSubmit: () => void}) {
   const {editData, setEditData, isModified, workName, submitUrl, saveEditData, workId} = useWorkEditData();
