@@ -10,13 +10,15 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@kobalte/core": "^0.13.8",
-    "solid-js": "^1.9.4"
+    "@kobalte/core": "^0.13.8"
   },
   "devDependencies": {
     "common-types": "workspace:*",
     "eslint": "*",
     "typescript": "*",
     "vite": "*"
+  },
+  "peerDependencies": {
+    "solid-js": "*"
   }
 }

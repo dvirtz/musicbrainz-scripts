@@ -1,8 +1,9 @@
-import {Toolbox} from 'common-ui';
+import {toolbox} from 'common-ui';
 import {render} from 'solid-js/web';
 import {Entity} from '../acum';
 import {importWork as tryImportWork} from '../import-work';
 import {ImportForm} from './import-form';
+import {waitForElement} from './wait-for-element';
 import {useWarnings, WarningsProvider} from './warnings';
 
 function AcumImporter(props: {form: HTMLFormElement}) {
@@ -23,23 +24,38 @@ function AcumImporter(props: {form: HTMLFormElement}) {
 
 const releaseEditorContainerId = 'acum-work-import-container';
 
-export function createWorkEditorUI(workForm: HTMLFormElement) {
-  if (workForm.querySelector(`#${releaseEditorContainerId}`)) {
-    return;
+export async function createWorkEditorUI() {
+  const doRender = async (workForm: HTMLFormElement) => {
+    if (workForm.querySelector(`#${releaseEditorContainerId}`)) {
+      return;
+    }
+
+    console.debug('Creating work editor');
+
+    const container = (<div id={releaseEditorContainerId}></div>) as HTMLDivElement;
+    const inIframe = location.pathname.startsWith('/dialog');
+    const theToolbox = await toolbox(workForm.ownerDocument, inIframe ? 'iframe' : 'half-page');
+    theToolbox.append(container);
+    workForm
+      .querySelector(inIframe ? '.half-width' : '.documentation')
+      ?.insertAdjacentElement('beforebegin', theToolbox);
+
+    render(
+      () => (
+        <WarningsProvider>
+          <AcumImporter form={workForm} />
+        </WarningsProvider>
+      ),
+      container
+    );
+  };
+
+  const workForm =
+    document.querySelector<HTMLFormElement>('form.edit-work') ??
+    (await waitForElement(
+      (node): node is HTMLFormElement => node instanceof HTMLFormElement && node.classList.contains('edit-work')
+    ));
+  if (workForm) {
+    await doRender(workForm);
   }
-
-  const container = (<div id={releaseEditorContainerId}></div>) as HTMLDivElement;
-  const inIframe = location.pathname.startsWith('/dialog');
-  const toolbox = Toolbox(workForm.ownerDocument, inIframe ? 'iframe' : 'half-page');
-  toolbox.append(container);
-  workForm.querySelector(inIframe ? '.half-width' : '.documentation')?.insertAdjacentElement('beforebegin', toolbox);
-
-  render(
-    () => (
-      <WarningsProvider>
-        <AcumImporter form={workForm} />
-      </WarningsProvider>
-    ),
-    container
-  );
 }

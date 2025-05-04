@@ -5,6 +5,11 @@
     "types": [
       "common-types",
       "@types/greasemonkey",
+    ],
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules"
+      }
     ]
-  }
+  },
 }
