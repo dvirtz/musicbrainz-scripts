@@ -1,3 +1,20 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.5.2-beta.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.5.2-beta.1...@dvirtz/setlistfm-musicbrainz-import-v1.5.2-beta.2) (2025-05-05)
+
+
+### Bug Fixes
+
+* settings dialog rendering ([e5bbb07](https://github.com/dvirtz/musicbrainz-scripts/commit/e5bbb0786dbce74bf3255752137045030774117e))
+
+
+### General maintenance
+
+* vite ([d7eb414](https://github.com/dvirtz/musicbrainz-scripts/commit/d7eb414c10656aa8e9bf832d5bfb7b6d9c106bf1))
+
+
+### Refactoring
+
+* simplify test fixture with inheritance ([ae49f6a](https://github.com/dvirtz/musicbrainz-scripts/commit/ae49f6a828a37fbfe9cf82636483ae269119ab8a))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.5.2-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.5.1...@dvirtz/setlistfm-musicbrainz-import-v1.5.2-beta.1) (2025-04-15)
 
 
