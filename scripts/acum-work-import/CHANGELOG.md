@@ -1,3 +1,25 @@
+## [@dvirtz/acum-work-import-v1.15.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.14.1...@dvirtz/acum-work-import-v1.15.0) (2025-05-06)
+
+
+### Features
+
+* use GM.addStyle to insert css ([f12a19b](https://github.com/dvirtz/musicbrainz-scripts/commit/f12a19be715ed964377fed3062701b22a009983f))
+
+
+### Bug Fixes
+
+* settings dialog rendering ([381788e](https://github.com/dvirtz/musicbrainz-scripts/commit/381788e687abf484dbbaa7472b635c5ac906ab7b))
+
+
+### Build and continuous integration
+
+* build with vite ([9cdacc0](https://github.com/dvirtz/musicbrainz-scripts/commit/9cdacc0d32b34da4855ecfcd0cb8e57f0499fe43)), closes [#60](https://github.com/dvirtz/musicbrainz-scripts/issues/60)
+
+
+### Refactoring
+
+* simplify test fixture with inheritance ([4219037](https://github.com/dvirtz/musicbrainz-scripts/commit/421903774280e3199fd86970f5ff093022259a97))
+
 ## [@dvirtz/acum-work-import-v1.14.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.14.0...@dvirtz/acum-work-import-v1.14.1) (2025-04-09)
 
 
