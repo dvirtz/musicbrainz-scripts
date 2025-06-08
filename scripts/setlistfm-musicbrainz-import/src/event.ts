@@ -1,5 +1,12 @@
-import {tryFetchJSON, tryFetchText} from 'fetch';
-import {editNote, MBID_REGEXP} from 'musicbrainz-ext';
+import {convertMonth} from '#convert-month.ts';
+import {findVenue} from '#place.ts';
+import {addCoverComment as addCoverCommentOption} from '#settings.tsx';
+import {createUI} from '#ui.tsx';
+import {tryFetchJSON, tryFetchText} from '@repo/fetch/fetch';
+import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
+import {editNote} from '@repo/musicbrainz-ext/edit-note';
+import {UrlRelsSearchResultsT} from '@repo/musicbrainz-ext/search-results';
+import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {
   concat,
   concatMap,
@@ -18,11 +25,6 @@ import {
   toArray,
   zip,
 } from 'rxjs';
-import {executePipeline} from 'rxjs-ext';
-import {convertMonth} from './convert-month';
-import {findVenue} from './place';
-import {addCoverComment as addCoverCommentOption} from './settings';
-import {createUI} from './ui';
 
 enum GUID {
   MainPerformer = '936c7c95-3156-3889-a062-8a0cd57f8946',
@@ -69,7 +71,7 @@ function tourName() {
   // Filter anchors based on href pattern
   const filteredAnchors = Array.from(anchors).filter(anchor => anchor.href.match(/search\?artist=\w+&tour=\w+/));
 
-  return filteredAnchors.length > 0 ? filteredAnchors[0].textContent : null;
+  return filteredAnchors[0]?.textContent ?? null;
 }
 
 function entity(name: string, mbid?: string) {
@@ -119,7 +121,7 @@ async function setlistEntry(
     if (infoPart) {
       const m = infoPart.getHTML().match(/\(with <a href="([^"]+)"( title="")?>([^<]+)<\/a>/);
       if (m) {
-        song.artists.push(artist(m[3], await artistMBID(m[1])));
+        song.artists.push(artist(m[3]!, await artistMBID(m[1]!)));
       }
       song.info.push(
         ...infoPart
@@ -203,7 +205,7 @@ async function submitEvent(placeMBID: string) {
       reduce(
         (sections: Array<Section>, entry: SetlistEntry) => {
           if ('work' in entry) {
-            sections[sections.length - 1].songs.push(entry);
+            sections[sections.length - 1]?.songs.push(entry);
           } else {
             sections.push(entry);
           }
@@ -228,7 +230,7 @@ async function submitEvent(placeMBID: string) {
   const day = dateBlock?.querySelector('.day')?.textContent ?? '';
   for (const period of ['begin', 'end']) {
     searchParams.append(`edit-event.period.${period}_date.year`, year);
-    searchParams.append(`edit-event.period.${period}_date.month`, month?.toString());
+    searchParams.append(`edit-event.period.${period}_date.month`, month?.toString() ?? '');
     searchParams.append(`edit-event.period.${period}_date.day`, day);
   }
 
@@ -275,7 +277,7 @@ function parseTime(query: string) {
   if (mainTime) {
     const m = mainTime.textContent?.match(/(\d+):(\d+)\s*(PM)?/);
     if (m) {
-      let hours = parseInt(m[1]);
+      let hours = parseInt(m[1]!);
       const minutes = m[2];
       if (m[3]) {
         hours += 12;
@@ -289,7 +291,7 @@ async function findEvent(url: string) {
   const existingEvent = await tryFetchJSON<UrlRelsSearchResultsT<'event'>>(
     `https://musicbrainz.org/ws/2/url?resource=${url}&inc=event-rels&fmt=json`
   );
-  return existingEvent && existingEvent.relations[0].event.id;
+  return existingEvent && existingEvent.relations[0]?.event.id;
 }
 
 function addWarningIcon(type: string, query: string, afterElement: Element) {
@@ -315,7 +317,7 @@ async function artistMBID(href: string): Promise<string | undefined> {
       tryFetchText(href)
         .then(content => {
           const m = content?.match(/"mbid":\s*"([^"]+)"/i);
-          if (m && MBID_REGEXP.test(m[1])) {
+          if (m && MBID_REGEXP.test(m[1]!)) {
             return m[1];
           }
         })

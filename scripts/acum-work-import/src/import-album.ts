@@ -1,5 +1,14 @@
-import {head} from 'common';
-import {addEditNote, compareInsensitive, trackRecordingState} from 'musicbrainz-ext';
+import {Creator, Creators, Entity, entityUrl, fetchWorks, IPBaseNumber, trackName, WorkBean} from '#acum.ts';
+import {linkArtists} from '#artists.ts';
+import {addArrangerRelationship, addWriterRelationship} from '#relationships.ts';
+import {AddWarning} from '#ui/warnings.tsx';
+import {workEditDataEqual} from '#work-edit-data.ts';
+import {WorkStateWithEditDataT} from '#work-state.ts';
+import {addWork, linkWriters} from '#works.ts';
+import {head} from '@repo/common/head';
+import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
+import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
+import {trackRecordingState} from '@repo/musicbrainz-ext/track-recording-state';
 import {
   connect,
   count,
@@ -21,13 +30,15 @@ import {
   zipWith,
 } from 'rxjs';
 import {Setter} from 'solid-js';
-import {Creator, Creators, Entity, entityUrl, fetchWorks, IPBaseNumber, trackName, WorkBean} from './acum';
-import {linkArtists} from './artists';
-import {addArrangerRelationship, addWriterRelationship} from './relationships';
-import {AddWarning} from './ui/warnings';
-import {workEditDataEqual} from './work-edit-data';
-import {WorkStateWithEditDataT} from './work-state';
-import {addWork, linkWriters} from './works';
+import {isReleaseRelationshipEditor} from 'typedbrainz';
+import {
+  ArtistT,
+  MediumRecordingStateT,
+  MediumRecordingStateTreeT,
+  MediumWithRecordingsT,
+  RecordingT,
+  ReleaseRelationshipEditorStateT,
+} from 'typedbrainz/types';
 
 type SelectedMediums = Set<[MediumWithRecordingsT, MediumRecordingStateTreeT]>;
 type SelectedRecording = {
@@ -44,7 +55,8 @@ type SetProgress = Setter<readonly [number, string]>;
 export async function importAlbum(entity: Entity, addWarning: AddWarning, setProgress: SetProgress): Promise<boolean> {
   setProgress([0, 'Loading album info']);
 
-  const noSelection = (MB.relationshipEditor.state.selectedRecordings?.size ?? 0) === 0;
+  const noSelection =
+    ((MB?.relationshipEditor.state as ReleaseRelationshipEditorStateT).selectedRecordings?.size ?? 0) === 0;
   const mediums = selectedMediums(entity, noSelection, addWarning);
   const recordings = await selectedRecordings(entity, noSelection, mediums);
 
@@ -169,7 +181,9 @@ async function selectedRecordings(
   const workBeans = await fetchWorks(entity);
 
   const mediumTracks = (medium: MediumWithRecordingsT) =>
-    MB.relationshipEditor.state.loadedTracks.get(medium.position) || medium.tracks || [];
+    (MB?.relationshipEditor.state as ReleaseRelationshipEditorStateT).loadedTracks.get(medium.position) ||
+    medium.tracks ||
+    [];
 
   return await lastValueFrom(
     of(head(selectedMediums.values())).pipe(
@@ -203,13 +217,17 @@ async function selectedRecordings(
 }
 
 function selectedMediums(entity: Entity, noSelection: boolean, addWarning: AddWarning): SelectedMediums | undefined {
+  if (!MB || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
+    return;
+  }
+
   const selected = new Set(
     noSelection
-      ? MB.tree.iterate(MB.relationshipEditor.state.mediums)
-      : MB.tree
-          .iterate(MB.relationshipEditor.state.mediums)
+      ? MB?.tree?.iterate(MB.relationshipEditor.state.mediums)
+      : MB?.tree
+          ?.iterate(MB.relationshipEditor.state.mediums)
           .filter(([, recordingStateTree]) =>
-            MB.tree.iterate(recordingStateTree).some(recording => recording.isSelected)
+            MB?.tree?.iterate(recordingStateTree).some(recording => recording.isSelected)
           )
   );
 

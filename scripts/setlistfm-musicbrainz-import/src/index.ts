@@ -1,5 +1,5 @@
-import {handleSetlistPage} from './event';
-import {handleVenuePage} from './place';
+import {handleSetlistPage} from '#event.ts';
+import {handleVenuePage} from '#place.ts';
 
 main().catch(console.error);
 

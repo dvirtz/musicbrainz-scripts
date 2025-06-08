@@ -1,4 +1,4 @@
-import {registerSettingsDialog} from './settings';
+import {registerSettingsDialog} from '#settings.tsx';
 
 export async function createUI(buttonText: string, onClick: () => void) {
   const div = (

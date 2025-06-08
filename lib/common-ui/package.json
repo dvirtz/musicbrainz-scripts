@@ -1,22 +1,25 @@
 {
-  "name": "common-ui",
+  "name": "@repo/common-ui",
   "description": "Common UI components",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/common-ui.js",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    "./settings": "./src/settings.tsx",
+    "./toolbox": "./src/toolbox.tsx"
+  },
   "scripts": {
-    "build": "vite build"
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@kobalte/core": "^0.13.8"
   },
   "devDependencies": {
-    "common-types": "workspace:*",
+    "@repo/common-types": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "eslint": "*",
-    "typescript": "*",
-    "vite": "*"
+    "typescript": "*"
   },
   "peerDependencies": {
     "solid-js": "*"

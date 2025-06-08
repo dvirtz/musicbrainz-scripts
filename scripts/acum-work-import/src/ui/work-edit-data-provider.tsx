@@ -1,8 +1,8 @@
-import {urlFromMbid} from 'musicbrainz-ext';
+import {workEditDataEqual} from '#work-edit-data.ts';
+import {WorkStateWithEditDataT} from '#work-state.ts';
+import {urlFromMbid} from '@repo/musicbrainz-ext/edits';
 import {createContext, ParentProps, useContext} from 'solid-js';
 import {createStore, unwrap} from 'solid-js/store';
-import {workEditDataEqual} from '../work-edit-data';
-import {WorkStateWithEditDataT} from '../work-state';
 
 const makeWorkEditDataContext = (workState: WorkStateWithEditDataT) => {
   const [editData, setEditData] = createStore(structuredClone(workState.editData));

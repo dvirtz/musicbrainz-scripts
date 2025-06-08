@@ -1,16 +1,16 @@
+import {Entity, EntityT, replaceUrlWith} from '#acum.ts';
 import {Button} from '@kobalte/core/button';
 import {TextField} from '@kobalte/core/text-field';
 import {createEffect, createSignal, ParentProps} from 'solid-js';
-import {Entity, EntityT, replaceUrlWith} from '../acum';
 
 export function ImportForm<T extends EntityT>(
   props: ParentProps & {
-    entityTypes: T[];
+    entityTypes: [T, ...T[]];
     onSubmit: (entity: Entity<T>) => Promise<void>;
     idPattern: string;
   }
 ) {
-  const uniqueTypes = Array.from(new Set(props.entityTypes));
+  const uniqueTypes = Array.from(new Set(props.entityTypes)) as [T, ...T[]];
 
   const [entity, setEntity] = createSignal(new Entity<T>('', props.entityTypes[0]), {
     equals: (a, b) => a?.toString() === b?.toString(),

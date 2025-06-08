@@ -1,5 +1,7 @@
 // adapted from https://github.com/metabrainz/musicbrainz-server/blob/f47a266d79224df119fa9f28a5fbcbd85b869e00/root/static/scripts/edit/utility/createField.js
 
+import {FieldT} from 'typedbrainz/types';
+
 /*
  * Copyright (C) 2017 MetaBrainz Foundation
  *
@@ -26,6 +28,17 @@ export function createField<T>(name: string, value: T): FieldT<T> {
     value,
   };
 }
+
+export type RepeatableFieldT<F> = {
+  errors: ReadonlyArray<string>;
+  field: Array<F>;
+  has_errors: boolean;
+  html_name: string;
+  id: number;
+  last_index: number;
+  pendingErrors?: ReadonlyArray<string>;
+  type: 'repeatable_field';
+};
 
 export function createRepeatableField<T>(name: string, field: T[]): RepeatableFieldT<T> {
   return {

@@ -1,18 +1,14 @@
 // adapted from https://github.dev/loujine/musicbrainz-scripts/blob/master/mbz-loujine-common.js
 
-import {mergeArrays} from 'common';
-import {
-  fetchEditParams,
-  LANGUAGE_ZXX_ID,
-  urlFromMbid,
-  workAttributeTypes,
-  workLanguages,
-  workTypes,
-} from 'musicbrainz-ext';
+import {essenceType, EssenceType, isSong, trackName, WorkBean, workISWCs, workLanguage, WorkLanguage} from '#acum.ts';
+import {shouldSetLanguage} from '#ui/settings.tsx';
+import {AddWarning} from '#ui/warnings.tsx';
+import {mergeArrays} from '@repo/common/merge-arrays';
+import {LANGUAGE_ZXX_ID} from '@repo/musicbrainz-ext/constants';
+import {fetchEditParams, urlFromMbid} from '@repo/musicbrainz-ext/edits';
+import {workAttributeTypes, workLanguages, workTypes} from '@repo/musicbrainz-ext/type-info';
 import PLazy from 'p-lazy';
-import {essenceType, EssenceType, isSong, trackName, WorkBean, workISWCs, workLanguage, WorkLanguage} from './acum';
-import {shouldSetLanguage} from './ui/settings';
-import {AddWarning} from './ui/warnings';
+import {IswcT, WorkAttributeT, WorkLanguageT, WorkT} from 'typedbrainz/types';
 
 const ACUM_TYPE_ID = PLazy.from(async () => {
   return Object.values(await workAttributeTypes).find(type => type.name === 'ACUM ID')!.id;
@@ -41,7 +37,7 @@ function getWorkEditParams(work: WorkT): WorkEditData {
   };
 }
 
-async function fetchWorkEditParams(mbid: MBID): Promise<WorkEditData> {
+async function fetchWorkEditParams(mbid: string): Promise<WorkEditData> {
   const url = urlFromMbid('work', mbid);
   const work = await fetchEditParams<WorkT>(url);
   return getWorkEditParams(work);
@@ -58,7 +54,7 @@ export function workEditDataEqual(lhs: WorkEditData, rhs: WorkEditData) {
     lhs.languages.every((lang, idx) => lang === rhs.languages[idx]) &&
     lhs.iswcs.every((iswc, idx) => iswc === rhs.iswcs[idx]) &&
     lhs.attributes.every(
-      (attr, idx) => attr.type_id === rhs.attributes[idx].type_id && attr.value === rhs.attributes[idx].value
+      (attr, idx) => attr.type_id === rhs.attributes[idx]?.type_id && attr.value === rhs.attributes[idx]?.value
     )
   );
 }

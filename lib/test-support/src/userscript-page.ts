@@ -1,5 +1,5 @@
+import {invokeMenuCommand, mockUserscriptManager, waitForMenuCommand} from '#userscript-manager-mock.ts';
 import {expect, type Page} from '@playwright/test';
-import {invokeMenuCommand, mockUserscriptManager, waitForMenuCommand} from './userscript-manager-mock';
 
 export class UserscriptPage {
   windowOpenLog: URL[] = [];
@@ -72,7 +72,7 @@ export class UserscriptPage {
     await saveButton.click();
     const storage = await this.page.context().storageState();
 
-    expect(storage.origins[0].localStorage).toEqual(
+    expect(storage.origins[0]?.localStorage).toEqual(
       expect.arrayContaining(options.map(({name, defaultValue}) => ({name, value: (!defaultValue).toString()})))
     );
   }

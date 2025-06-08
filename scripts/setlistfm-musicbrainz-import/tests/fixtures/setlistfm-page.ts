@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
+import {UserscriptPage} from '@repo/test-support/userscript-page';
 import {fileURLToPath} from 'node:url';
-import {UserscriptPage} from 'test-support';
 
 export class SetlistFmPage extends UserscriptPage {
   public constructor(page: Page) {

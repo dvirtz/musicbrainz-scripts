@@ -2,24 +2,33 @@
   "name": "@dvirtz/setlistfm-musicbrainz-import",
   "type": "module",
   "main": "./dist/setlistfm-musicbrainz-import.user.js",
+  "imports": {
+    "#*": "./src/*",
+    "#tests/*": "./tests/*"
+  },
   "scripts": {
-    "build": "vite build"
+    "build": "vite --configLoader runner build",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "release": "semantic-release",
+    "test": "playwright test"
   },
   "dependencies": {
-    "common-ui": "workspace:*",
-    "fetch": "workspace:*",
-    "musicbrainz-ext": "workspace:*",
-    "musicbrainz-types": "workspace:*",
+    "@repo/common-ui": "workspace:*",
+    "@repo/fetch": "workspace:*",
+    "@repo/musicbrainz-ext": "workspace:*",
+    "@repo/rxjs-ext": "workspace:*",
     "rxjs": "^7.8.1",
-    "rxjs-ext": "workspace:*",
     "solid-js": "^1.9.4"
   },
   "devDependencies": {
     "@playwright/test": "*",
-    "common-types": "workspace:*",
+    "@repo/common-types": "workspace:*",
+    "@repo/test-support": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/vite-config": "workspace:*",
     "eslint": "*",
     "semantic-release": "*",
-    "test-support": "workspace:*",
     "typescript": "*",
     "vite": "*",
     "vite-plugin-solid": "*"

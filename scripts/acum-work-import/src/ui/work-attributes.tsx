@@ -1,6 +1,6 @@
+import {WorkAttributeRow} from '#ui/work-attributes-row.tsx';
+import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
 import {For, Suspense} from 'solid-js';
-import {useWorkEditData} from './work-edit-data-provider';
-import {WorkAttributeRow} from './work-attributes-row';
 
 export function WorkAttributes() {
   const {editData, setEditData} = useWorkEditData();

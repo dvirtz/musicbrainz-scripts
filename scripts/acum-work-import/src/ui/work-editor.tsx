@@ -1,9 +1,11 @@
+import {useWorkEditData, WorkEditDataProvider} from '#ui/work-edit-data-provider.tsx';
+import {WorkEditDialog} from '#ui/work-edit-dialog.tsx';
+import {WorkStateWithEditDataT} from '#work-state.ts';
 import {Button} from '@kobalte/core/button';
 import {createEffect, createSignal, JSX, Show} from 'solid-js';
 import {render} from 'solid-js/web';
-import {WorkStateWithEditDataT} from '../work-state';
-import {useWorkEditData, WorkEditDataProvider} from './work-edit-data-provider';
-import {WorkEditDialog} from './work-edit-dialog';
+import {isReleaseRelationshipEditor} from 'typedbrainz';
+import {MediumRecordingStateT, WorkT} from 'typedbrainz/types';
 
 function isNewWork(work: WorkT) {
   return !work.gid;
@@ -23,20 +25,24 @@ function WorkEditor(props: {
   const [isPending, setIsPending] = createSignal(isModified());
 
   const selectRecording: JSX.ChangeEventHandler<HTMLInputElement, Event> = event => {
-    MB.relationshipEditor.dispatch({
-      isSelected: event.currentTarget.checked,
-      work: props.workState.work,
-      type: 'toggle-select-work',
-    });
+    if (MB && isReleaseRelationshipEditor(MB.relationshipEditor)) {
+      MB.relationshipEditor.dispatch({
+        isSelected: event.currentTarget.checked,
+        work: props.workState.work,
+        type: 'toggle-select-work',
+      });
+    }
   };
 
   const removeWork: JSX.EventHandler<HTMLButtonElement, MouseEvent> = () => {
     setIsPending(false);
-    MB.relationshipEditor.dispatch({
-      recording: props.recordingState.recording,
-      type: 'remove-work',
-      workState: props.workState,
-    });
+    if (MB && isReleaseRelationshipEditor(MB.relationshipEditor)) {
+      MB.relationshipEditor.dispatch({
+        recording: props.recordingState.recording,
+        type: 'remove-work',
+        workState: props.workState,
+      });
+    }
   };
 
   createEffect((previousDisplay?: string) => {

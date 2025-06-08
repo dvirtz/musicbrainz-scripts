@@ -8,8 +8,14 @@
  * later version: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-import {getSelectValue} from 'musicbrainz-ext';
+import {
+  getSelectValue,
+  MaybeGroupedOptionsT,
+  SelectOptionsT,
+  SelectOptionT,
+} from '@repo/musicbrainz-ext/get-select-value';
 import {JSX, mergeProps, splitProps} from 'solid-js';
+import {FieldT} from 'typedbrainz/types';
 
 const buildOption = (option: SelectOptionT, value: string | string[]) => {
   const values = Array.isArray(value) ? value : [value];

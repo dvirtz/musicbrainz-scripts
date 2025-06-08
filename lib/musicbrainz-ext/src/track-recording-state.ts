@@ -1,5 +1,7 @@
 // adapted from https://github.com/metabrainz/musicbrainz-server/blob/5a64d781cb84039afd4894688f12164f21dc92f0/root/static/scripts/release/components/MediumRelationshipEditor.js
 
+import {MediumRecordingStateT, MediumRecordingStateTreeT, RecordingT, TrackWithRecordingT} from 'typedbrainz/types';
+
 /*
  * @flow strict-local
  * Copyright (C) 2020 MetaBrainz Foundation
@@ -13,6 +15,9 @@ function compareRecordingWithRecordingState(recording: RecordingT, recordingStat
   return recording.id - recordingState.recording.id;
 }
 
-export function trackRecordingState(track: TrackWithRecordingT, recordingStates: MediumRecordingStateTreeT) {
-  return MB.tree.find(recordingStates, track.recording, compareRecordingWithRecordingState, null);
+export function trackRecordingState(
+  track: TrackWithRecordingT,
+  recordingStates: MediumRecordingStateTreeT
+): MediumRecordingStateT | null {
+  return MB?.tree?.find(recordingStates, track.recording, compareRecordingWithRecordingState, null) ?? null;
 }

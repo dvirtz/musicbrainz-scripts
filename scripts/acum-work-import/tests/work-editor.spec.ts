@@ -1,8 +1,10 @@
+import {test} from '#tests/fixtures/musicbrainz-test.ts';
 import {expect, Locator} from '@playwright/test';
-import {test} from './fixtures/musicbrainz-test';
 
 async function selectBoxText(locator: Locator) {
-  return await locator.evaluate((typeNode: HTMLSelectElement) => typeNode.options[typeNode.options.selectedIndex].text);
+  return await locator.evaluate(
+    (typeNode: HTMLSelectElement) => typeNode.options[typeNode.options.selectedIndex]?.text
+  );
 }
 
 test.describe('work editor', () => {

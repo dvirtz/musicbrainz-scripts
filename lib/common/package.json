@@ -1,16 +1,19 @@
 {
-  "name": "common",
+  "name": "@repo/common",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
-  "main": "./dist/common.js",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    "./head": "./src/head.ts",
+    "./merge-arrays": "./src/merge-arrays.ts",
+    "./remove-at-index": "./src/remove-at-index.ts"
+  },
   "scripts": {
-    "build": "vite build"
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
   },
   "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
     "eslint": "*",
-    "typescript": "*",
-    "vite": "*"
+    "typescript": "*"
   }
 }

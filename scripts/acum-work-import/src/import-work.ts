@@ -1,18 +1,21 @@
-import {addEditNote, compareInsensitive} from 'musicbrainz-ext';
+import {Entity, entityUrl, fetchWorks, IPBaseNumber} from '#acum.ts';
+import {addWriterRelationship} from '#relationships.ts';
+import {shouldSearchWorks} from '#ui/settings.tsx';
+import {AddWarning} from '#ui/warnings.tsx';
+import {workEditData} from '#work-edit-data.ts';
+import {createWork, findWork, linkWriters} from '#works.ts';
+import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
+import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
+import {asyncTap} from '@repo/rxjs-ext/async-tap';
+import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {filter, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
-import {asyncTap, executePipeline} from 'rxjs-ext';
-import {Entity, entityUrl, fetchWorks, IPBaseNumber} from './acum';
-import {addWriterRelationship} from './relationships';
-import {shouldSearchWorks} from './ui/settings';
-import {AddWarning} from './ui/warnings';
-import {workEditData} from './work-edit-data';
-import {createWork, findWork, linkWriters} from './works';
+import {ArtistT, WorkAttributeT} from 'typedbrainz/types';
 
 export async function importWork(entity: Entity<'Work' | 'Version'>, form: HTMLFormElement, addWarning: AddWarning) {
   // map of promises so that we don't fetch the same artist multiple times
   const artistCache = new Map<IPBaseNumber, Promise<ArtistT | null>>();
   const work =
-    MB.relationshipEditor.state.entity.entityType == 'work'
+    MB?.relationshipEditor.state?.entity.entityType == 'work'
       ? MB.relationshipEditor.state.entity
       : createWork({
           name: form.querySelector('[name="edit-work.name"]')?.getAttribute('value') || '',
@@ -25,10 +28,10 @@ export async function importWork(entity: Entity<'Work' | 'Version'>, form: HTMLF
   }
 
   if (await shouldSearchWorks()) {
-    const existingWork = await findWork(versions[0]);
+    const existingWork = await findWork(versions[0]!);
     if (
       existingWork &&
-      existingWork.id != MB.relationshipEditor.state.entity.id &&
+      existingWork.id != MB?.relationshipEditor.state?.entity.id &&
       window.confirm('This work already exists in Musicbrainz, click "ok" to redirect to its page')
     ) {
       window.location.href = `/work/${existingWork.gid}`;

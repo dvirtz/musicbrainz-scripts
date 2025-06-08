@@ -1,15 +1,15 @@
+import {Entity} from '#acum.ts';
+import {importAlbum as tryImportWorks} from '#import-album.ts';
+import {submitWorks as trySubmitWorks} from '#submit.ts';
+import {ImportForm} from '#ui/import-form.tsx';
+import {ProgressBar} from '#ui/progressbar.tsx';
+import {waitForElement} from '#ui/wait-for-element.ts';
+import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
 import {Button} from '@kobalte/core/button';
-import {toolbox} from 'common-ui';
+import {toolbox} from '@repo/common-ui/toolbox';
 import {createEffect, createMemo, createSignal} from 'solid-js';
 import {render} from 'solid-js/web';
-import {Entity} from '../acum';
-import {importAlbum as tryImportWorks} from '../import-album';
-import {submitWorks as trySubmitWorks} from '../submit';
-import {ImportForm} from './import-form';
-import {ProgressBar} from './progressbar';
 import progressBarStyle from './progressbar.css?inline';
-import {waitForElement} from './wait-for-element';
-import {useWarnings, WarningsProvider} from './warnings';
 import workEditDialogStyle from './work-edit-dialog.css?inline';
 
 function AcumImporter() {

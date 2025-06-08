@@ -1,4 +1,4 @@
-import defineConfig from '../../vite.userscript-config';
+import defineConfig from '@repo/vite-config/userscript-config';
 
 export default defineConfig('acum-work-import', {
   name: 'ACUM work importer',

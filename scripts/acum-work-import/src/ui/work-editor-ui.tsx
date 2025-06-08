@@ -1,10 +1,10 @@
-import {toolbox} from 'common-ui';
+import {Entity} from '#acum.ts';
+import {importWork as tryImportWork} from '#import-work.ts';
+import {ImportForm} from '#ui/import-form.tsx';
+import {waitForElement} from '#ui/wait-for-element.ts';
+import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
+import {toolbox} from '@repo/common-ui/toolbox';
 import {render} from 'solid-js/web';
-import {Entity} from '../acum';
-import {importWork as tryImportWork} from '../import-work';
-import {ImportForm} from './import-form';
-import {waitForElement} from './wait-for-element';
-import {useWarnings, WarningsProvider} from './warnings';
 
 function AcumImporter(props: {form: HTMLFormElement}) {
   const {addWarning, clearWarnings} = useWarnings();

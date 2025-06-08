@@ -8,10 +8,13 @@
  * later version: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
+import {FieldErrors} from '#ui/field-errors.tsx';
+import {FormRow} from '#ui/form-row.tsx';
+import {SelectField} from '#ui/select-field.tsx';
+import {RepeatableFieldT} from '@repo/musicbrainz-ext/create-field';
+import {MaybeGroupedOptionsT} from '@repo/musicbrainz-ext/get-select-value';
 import {For, JSX, mergeProps} from 'solid-js';
-import {FormRow} from './form-row';
-import {SelectField} from './select-field';
-import {FieldErrors} from './field-errors';
+import {FieldT} from 'typedbrainz/types';
 
 export function FormRowSelectList<S extends {id: number}>(props: {
   addId: string;

@@ -1,6 +1,7 @@
+import {MusicbrainzPage} from '#tests/fixtures/musicbrainz-page.ts';
 import {test as base, expect, Page} from '@playwright/test';
-import {EDIT_MEDIUM_CREATE, EDIT_RELEASE_CREATE, WS_EDIT_RESPONSE_OK} from 'musicbrainz-ext';
-import {MusicbrainzPage} from './musicbrainz-page';
+import {EDIT_MEDIUM_CREATE, EDIT_RELEASE_CREATE, WS_EDIT_RESPONSE_OK} from '@repo/musicbrainz-ext/constants';
+import {EDIT_MEDIUM_CREATE_T, EDIT_RELEASE_CREATE_T, ReleaseT, WS_EDIT_RESPONSE_OK_T} from 'typedbrainz/types';
 
 export class TestRelease {
   // cspell:disable
@@ -317,7 +318,7 @@ export class TestRelease {
     },
   ];
   // cspell:enable
-  private constructor(public readonly gid: MBID) {}
+  private constructor(public readonly gid: string) {}
 
   static async create(page: Page) {
     const musicbrainzPage = await MusicbrainzPage.create(page);
@@ -378,7 +379,7 @@ export class TestRelease {
     return responseEdit.entity.gid;
   }
 
-  static async createMedium(page: MusicbrainzPage, releaseGid: MBID) {
+  static async createMedium(page: MusicbrainzPage, releaseGid: string) {
     // cspell:disable
     const response = await page.createEdit({
       'edits': [

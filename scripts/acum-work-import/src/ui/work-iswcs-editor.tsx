@@ -1,7 +1,7 @@
-import {removeAtIndex} from 'common';
+import {FormRow} from '#ui/form-row.tsx';
+import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
+import {removeAtIndex} from '@repo/common/remove-at-index';
 import {For} from 'solid-js';
-import {FormRow} from './form-row';
-import {useWorkEditData} from './work-edit-data-provider';
 
 export function WorkISWCsEditor() {
   const {editData, setEditData} = useWorkEditData();
