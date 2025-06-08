@@ -1,4 +1,4 @@
-import {test} from './fixtures/musicbrainz-test';
+import {test} from '#tests/fixtures/musicbrainz-test.ts';
 
 test('musicbrainz settings dialog', async ({musicbrainzPage}) => {
   await musicbrainzPage.goto('/work/create');

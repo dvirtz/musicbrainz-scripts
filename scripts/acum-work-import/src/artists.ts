@@ -1,8 +1,11 @@
-import {compareInsensitive, tryFetchJSON} from 'musicbrainz-ext';
+import {Creator, CreatorFull, Creators, creatorUrl, IPBaseNumber, RoleCode} from '#acum.ts';
+import {AddWarning} from '#ui/warnings.tsx';
+import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
+import {tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
+import {ArtistSearchResultsT, UrlRelsSearchResultsT} from '@repo/musicbrainz-ext/search-results';
+import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {filter, from, mergeMap, tap} from 'rxjs';
-import {executePipeline} from 'rxjs-ext';
-import {Creator, CreatorFull, Creators, creatorUrl, IPBaseNumber, RoleCode} from './acum';
-import {AddWarning} from './ui/warnings';
+import {ArtistT} from 'typedbrainz/types';
 
 function nameMatch(creator: CreatorFull, artistName: string): boolean {
   return (
@@ -38,22 +41,22 @@ async function findArtist(
     })();
     const byIpi = await tryFetchJSON<ArtistSearchResultsT>(`/ws/2/artist?query=ipi:${creator.number}&limit=1&fmt=json`);
     if (byIpi && byIpi.artists.length > 0) {
-      return byIpi.artists[0].id;
+      return byIpi.artists[0]!.id;
     }
 
     const byLink = await tryFetchJSON<UrlRelsSearchResultsT<'artist'>>(
       `/ws/2/url?resource=${creatorUrl(creator)}&inc=artist-rels&fmt=json`
     );
-    if (byLink && byLink.relations[0].artist.id) {
-      return byLink.relations[0].artist.id;
+    if (byLink && byLink.relations.length > 0 && byLink.relations[0]!.artist.id) {
+      return byLink.relations[0]!.artist.id;
     }
 
     const byName = await tryFetchJSON<ArtistSearchResultsT>(
       `/ws/2/artist?query=name:(${creator.creatorHebName} OR ${creator.creatorEngName})&limit=1&fmt=json`
     );
-    if (byName && byName.artists.length > 0 && nameMatch(creator, byName.artists[0].name)) {
-      addWarning(`${role} ${byName.artists[0].name} found by name search, please verify (IPI = ${creator.number})`);
-      return byName.artists[0].id;
+    if (byName && byName.artists.length > 0 && nameMatch(creator, byName.artists[0]!.name)) {
+      addWarning(`${role} ${byName.artists[0]!.name} found by name search, please verify (IPI = ${creator.number})`);
+      return byName.artists[0]!.id;
     }
 
     const byAlias = await tryFetchJSON<ArtistSearchResultsT>(
@@ -62,10 +65,10 @@ async function findArtist(
     if (
       byAlias &&
       byAlias.artists.length > 0 &&
-      byAlias.artists[0].aliases.some(alias => nameMatch(creator, alias.name))
+      byAlias.artists[0]!.aliases.some(alias => nameMatch(creator, alias.name))
     ) {
-      addWarning(`${role} ${byAlias.artists[0].name} found by alias search, please verify (IPI = ${creator.number})`);
-      return byAlias.artists[0].id;
+      addWarning(`${role} ${byAlias.artists[0]!.name} found by alias search, please verify (IPI = ${creator.number})`);
+      return byAlias.artists[0]!.id;
     }
 
     addWarning(`failed to find ${role} ${creator.creatorHebName || creator.creatorEngName}, IPI ${creator.number}`);

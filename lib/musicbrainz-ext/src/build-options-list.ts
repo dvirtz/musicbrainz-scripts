@@ -8,6 +8,12 @@
  * and is licensed under the GPL version 2, or (at your option) any
  * later version: http://www.gnu.org/licenses/gpl-2.0.txt
  */
+import {OptionTreeT} from 'typedbrainz/types';
+
+export type OptionListT = ReadonlyArray<{
+  text: string;
+  value: number;
+}>;
 
 export function buildOptionList<T extends OptionTreeT<unknown>>(options: ReadonlyArray<T>): OptionListT {
   return buildOptionListFromKeys(options, 'name', 'id');

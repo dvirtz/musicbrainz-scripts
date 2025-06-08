@@ -1,5 +1,5 @@
-import {tryFetchJSON} from 'fetch';
-import {formatISWC} from 'musicbrainz-ext';
+import {tryFetchJSON} from '@repo/fetch/fetch';
+import {formatISWC} from '@repo/musicbrainz-ext/format-iswc';
 import {filter, lastValueFrom, map, mergeAll, mergeMap, range, startWith, toArray} from 'rxjs';
 
 export type IPBaseNumber = string;
@@ -181,7 +181,7 @@ function stringToEnum<T>(value: string, enumType: {[s: string]: T}): T {
   if (Object.values(enumType).includes(value as T)) {
     return value as T;
   }
-  return enumType.Unknown;
+  return enumType.Unknown!;
 }
 
 export function essenceType(track: WorkBean): EssenceType {
@@ -219,7 +219,7 @@ export class Entity<T extends EntityT = EntityT> {
   }
 }
 
-export function replaceUrlWith<T extends EntityT>(entityTypes: T[]): (input: string) => Entity<T> {
+export function replaceUrlWith<T extends EntityT>(entityTypes: [T, ...T[]]): (input: string) => Entity<T> {
   return (input: string) => {
     const defaultEntity = new Entity<T>(input, entityTypes[0]);
     try {

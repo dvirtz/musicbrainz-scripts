@@ -1,29 +1,38 @@
 {
   "name": "@dvirtz/acum-work-import",
   "type": "module",
+  "imports": {
+    "#*": "./src/*",
+    "#tests/*": "./tests/*"
+  },
   "scripts": {
-    "build": "vite build"
+    "build": "vite --configLoader runner build",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "release": "semantic-release",
+    "test": "playwright test"
   },
   "dependencies": {
     "@kobalte/core": "^0.13.8",
-    "common": "workspace:*",
-    "common-ui": "workspace:*",
+    "@repo/common": "workspace:*",
+    "@repo/common-ui": "workspace:*",
+    "@repo/fetch": "workspace:*",
+    "@repo/musicbrainz-ext": "workspace:*",
+    "@repo/rxjs-ext": "workspace:*",
     "dom-mutations": "^1.0.0",
-    "fetch": "workspace:*",
-    "musicbrainz-ext": "workspace:*",
     "p-lazy": "^5.0.0",
     "rxjs": "^7.8.1",
-    "rxjs-ext": "workspace:*",
     "solid-js": "^1.9.4"
   },
   "devDependencies": {
     "@playwright/test": "*",
-    "common-types": "workspace:*",
+    "@repo/common-types": "workspace:*",
+    "@repo/test-support": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/vite-config": "workspace:*",
     "cross-env": "*",
     "eslint": "*",
-    "musicbrainz-types": "workspace:*",
     "semantic-release": "*",
-    "test-support": "workspace:*",
     "typescript": "*",
     "vite": "*",
     "vite-plugin-solid": "*"

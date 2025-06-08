@@ -1,20 +1,28 @@
 {
-  "name": "test-support",
+  "name": "@repo/test-support",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    "./test-config": "./src/test-config.ts",
+    "./userscript-page": "./src/userscript-page.ts",
+    "./userscript-test": "./src/userscript-test.ts",
+    "./userscript-manager-mock": "./src/userscript-manager-mock.ts"
+  },
+  "imports": {
+    "#*": "./src/*"
+  },
   "scripts": {
-    "build": "vite build --ssr"
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@playwright/test": "^1.51.1"
   },
   "devDependencies": {
-    "common-types": "workspace:*",
+    "@repo/common-types": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "eslint": "*",
-    "typescript": "*",
-    "vite": "*"
+    "typescript": "*"
   }
 }

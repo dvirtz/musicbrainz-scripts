@@ -1,13 +1,13 @@
-import {createReleaseEditorUI} from './ui/release-editor-ui';
-import {registerSettingsDialog} from './ui/settings';
-import {createWorkEditorUI} from './ui/work-editor-ui';
+import {createReleaseEditorUI} from '#ui/release-editor-ui.tsx';
+import {registerSettingsDialog} from '#ui/settings.tsx';
+import {createWorkEditorUI} from '#ui/work-editor-ui.tsx';
 
 main().catch(console.error);
 
 function waitForEditorState() {
   return new Promise(resolve => {
     const interval = setInterval(() => {
-      if (MB.relationshipEditor.state) {
+      if (MB?.relationshipEditor.state) {
         console.debug('Editor state is ready');
         clearInterval(interval);
         resolve(MB.relationshipEditor.state);

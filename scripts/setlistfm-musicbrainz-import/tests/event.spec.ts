@@ -1,5 +1,5 @@
+import {test} from '#tests/fixtures/setlistfm-test.ts';
 import {expect} from '@playwright/test';
-import {test} from './fixtures/setlistfm-test';
 
 test('existing event', async ({page, setlistfmPage}) => {
   await setlistfmPage.goto('/setlist/elton-john/2022/enterprise-center-st-louis-mo-4389530f.html');
@@ -23,7 +23,7 @@ test('missing event', async ({page, setlistfmPage, baseURL}) => {
     hostname: 'musicbrainz.org',
     pathname: '/event/create',
   });
-  expect([...setlistfmPage.windowOpenLog[0].searchParams.entries()]).toEqual([
+  expect([...setlistfmPage.windowOpenLog[0]!.searchParams.entries()]).toEqual([
     ['edit-event.name', 'Artificial Joy at Whisky A Go Go'],
     ['edit-event.type_id', '1'],
     ['edit-event.setlist', ''],
@@ -61,7 +61,7 @@ test('missing event and place', async ({page, setlistfmPage}) => {
     hostname: 'musicbrainz.org',
     pathname: '/search',
   });
-  expect([...setlistfmPage.windowOpenLog[0].searchParams.entries()]).toEqual([
+  expect([...setlistfmPage.windowOpenLog[0]!.searchParams.entries()]).toEqual([
     ['query', 'place:Sublime AND area:Tel Aviv'],
     ['type', 'place'],
     ['method', 'advanced'],

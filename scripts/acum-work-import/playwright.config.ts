@@ -1,4 +1,4 @@
-import {defineConfig} from 'test-support';
+import {defineConfig} from '@repo/test-support/test-config';
 
 export default defineConfig('https://test.musicbrainz.org', {
   timeout: 180_000,

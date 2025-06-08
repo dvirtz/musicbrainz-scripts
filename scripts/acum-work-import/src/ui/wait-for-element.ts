@@ -1,6 +1,6 @@
+import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import domMutations from 'dom-mutations';
 import {filter, first, from, mergeMap} from 'rxjs';
-import {executePipeline} from 'rxjs-ext';
 
 export async function waitForElement<T extends Node>(condition: (t: Node) => t is T): Promise<T | undefined> {
   return await executePipeline(

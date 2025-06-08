@@ -1,9 +1,8 @@
 {
-  "extends": "../../tsconfig.userscript.json",
+  "extends": "@repo/typescript-config/jsx.json",
   "compilerOptions": {
     "types": [
-      "common-types",
-      "musicbrainz-types",
+      "@repo/common-types",
       "node",
     ]
   }

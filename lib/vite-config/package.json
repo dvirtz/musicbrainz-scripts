@@ -1,9 +1,9 @@
 {
-  "name": "@repo/common-types",
-  "description": "common type declarations",
-  "private": true,
-  "version": "0.0.0",
-  "types": "index.d.ts",
+  "name": "@repo/vite-config",
+  "type": "module",
+  "exports": {
+    "./userscript-config": "./vite.userscript-config.ts"
+  },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit"
@@ -11,6 +11,7 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "eslint": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "vite": "*"
   }
 }

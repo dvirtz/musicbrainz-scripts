@@ -1,5 +1,6 @@
+import {tryFetchJSON} from '#fetch.ts';
 import PLazy from 'p-lazy';
-import {tryFetchJSON} from './fetch';
+import {LinkedEntitiesT, OptionTreeT} from 'typedbrainz/types';
 
 function byId<T extends {id: number}>(list: ReadonlyArray<T>) {
   return Object.fromEntries(list.map(item => [item.id, item])) as Record<number, T>;
@@ -9,13 +10,13 @@ function fetchTypeInfo<T extends {id: number}>(url: string, key: string) {
   return PLazy.from(async () => byId((await tryFetchJSON<{[key: string]: T[]}>(url))?.[key] ?? []));
 }
 
-function fetchOrGetFromCache<K extends keyof typeof MB.linkedEntities, T extends (typeof MB.linkedEntities)[K][0]>(
+function fetchOrGetFromCache<K extends keyof LinkedEntitiesT, T extends LinkedEntitiesT[K][0] & {id: number}>(
   url: string,
   key: string,
   cacheKey?: K
 ) {
   return PLazy.from(async () =>
-    cacheKey && Object.keys(MB.linkedEntities[cacheKey]).length > 0
+    MB && cacheKey && Object.keys(MB.linkedEntities[cacheKey]).length > 0
       ? MB.linkedEntities[cacheKey]
       : fetchTypeInfo<T>(url, key)
   );
@@ -26,6 +27,11 @@ export const workAttributeTypes = fetchOrGetFromCache(
   'work_attribute_type_list',
   'work_attribute_type'
 );
+
+type WorkAttributeTypeAllowedValueT = OptionTreeT<'work_attribute_type_allowed_value'> & {
+  value: string;
+  workAttributeTypeID: number;
+};
 
 export const workAttributeAllowedValues = fetchTypeInfo<WorkAttributeTypeAllowedValueT>(
   '/ws/js/type-info/work_attribute_type_allowed_value',

@@ -8,7 +8,7 @@
  * later version: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-import {subfieldErrors} from 'musicbrainz-ext';
+import {AnyFieldT, subfieldErrors} from '@repo/musicbrainz-ext/subfield-errors';
 import {For, mergeProps} from 'solid-js';
 
 function FieldErrorsList(props: {errors?: ReadonlyArray<string>}) {

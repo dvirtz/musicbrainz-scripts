@@ -1,6 +1,7 @@
 import {Page} from '@playwright/test';
+import {UserscriptPage} from '@repo/test-support/userscript-page';
 import * as path from 'path';
-import {UserscriptPage} from 'test-support';
+import {NonUrlRelatableEntityTypeT, WsJsEditResponseT} from 'typedbrainz/types';
 
 export class MusicbrainzPage extends UserscriptPage {
   public constructor(page: Page) {
@@ -57,7 +58,7 @@ export class MusicbrainzPage extends UserscriptPage {
     return (await response.json()) as WsJsEditResponseT;
   }
 
-  async deleteEntity(entityType: NonUrlRelatableEntityTypeT, gid: MBID, editNote: string) {
+  async deleteEntity(entityType: NonUrlRelatableEntityTypeT, gid: string, editNote: string) {
     await this.page.request.post(`/${entityType}/${gid}/delete`, {
       form: {
         'confirm.edit_note': editNote,

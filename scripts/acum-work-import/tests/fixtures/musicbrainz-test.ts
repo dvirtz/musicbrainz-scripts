@@ -1,5 +1,5 @@
+import {MusicbrainzPage} from '#tests/fixtures/musicbrainz-page.ts';
 import {test as base} from '@playwright/test';
-import {MusicbrainzPage} from './musicbrainz-page';
 
 export const test = base.extend<{musicbrainzPage: MusicbrainzPage}>({
   musicbrainzPage: async ({page}, use) => {
