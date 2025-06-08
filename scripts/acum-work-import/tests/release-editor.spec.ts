@@ -1,6 +1,6 @@
+import {test as musicbrainzPage} from '#tests/fixtures/musicbrainz-test.ts';
+import {test as testRelease} from '#tests/fixtures/test-release.ts';
 import {expect, mergeTests} from '@playwright/test';
-import {test as musicbrainzPage} from './fixtures/musicbrainz-test';
-import {test as testRelease} from './fixtures/test-release';
 
 const test = mergeTests(testRelease, musicbrainzPage);
 

@@ -1,3 +1,3 @@
-import {defineConfig} from 'test-support';
+import {defineConfig} from '@repo/test-support/test-config';
 
 export default defineConfig('https://www.setlist.fm');

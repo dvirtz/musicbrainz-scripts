@@ -1,5 +1,5 @@
+import {test} from '#tests/fixtures/setlistfm-test.ts';
 import {expect} from '@playwright/test';
-import {test} from './fixtures/setlistfm-test';
 
 test('existing place', async ({page, setlistfmPage}) => {
   await setlistfmPage.goto('/venue/whisky-a-go-go-west-hollywood-ca-usa-5bd66bd4.html');
@@ -24,7 +24,7 @@ test('missing place', async ({page, setlistfmPage, baseURL}) => {
     hostname: 'musicbrainz.org',
     pathname: '/place/create',
   });
-  expect([...setlistfmPage.windowOpenLog[0].searchParams.entries()]).toEqual([
+  expect([...setlistfmPage.windowOpenLog[0]!.searchParams.entries()]).toEqual([
     // cspell:disable
     ['edit-place.name', 'El Teatrito'],
     [

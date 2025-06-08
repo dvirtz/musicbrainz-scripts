@@ -1,8 +1,9 @@
 // adapted from https://github.dev/loujine/musicbrainz-scripts/blob/master/mbz-loujine-common.js
 
-import {tryFetchText} from './fetch';
+import {tryFetchText} from '#fetch.ts';
+import {RelatableEntityTypeT} from 'typedbrainz/types';
 
-export function urlFromMbid(entityType: RelatableEntityTypeT, mbid: MBID) {
+export function urlFromMbid(entityType: RelatableEntityTypeT, mbid: string) {
   return `/${entityType}/${encodeURIComponent(mbid)}/edit`;
 }
 
@@ -14,7 +15,7 @@ export async function fetchEditParams<T>(url: string) {
   const editPage = await tryFetchText(url);
   const result = editPage?.match(/source_entity":(.*)},"user":/);
   if (result) {
-    return JSON.parse(result[1]) as T;
+    return JSON.parse(result[1]!) as T;
   }
   throw Error(`failed to find source_entity in ${url}`);
 }

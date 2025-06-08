@@ -1,25 +1,43 @@
 {
-  "name": "musicbrainz-ext",
+  "name": "@repo/musicbrainz-ext",
   "description": "MusicBrainz extensions",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "./dist/musicbrainz-ext.js",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    "./build-options-list": "./src/build-options-list.ts",
+    "./compare": "./src/compare.ts",
+    "./constants": "./src/constants.ts",
+    "./create-field": "./src/create-field.ts",
+    "./edit-note": "./src/edit-note.ts",
+    "./edits": "./src/edits.ts",
+    "./fetch": "./src/fetch.ts",
+    "./format-iswc": "./src/format-iswc.ts",
+    "./get-select-value": "./src/get-select-value.ts",
+    "./parse-integer": "./src/parse-integer.ts",
+    "./parse-integer-or-null": "./src/parse-integer-or-null.ts",
+    "./search-results": "./src/search-results.ts",
+    "./subfield-errors": "./src/subfield-errors.ts",
+    "./track-recording-state": "./src/track-recording-state.ts",
+    "./type-group": "./src/type-group.ts",
+    "./type-info": "./src/type-info.ts"
+  },
+  "imports": {
+    "#*": "./src/*"
+  },
   "scripts": {
-    "build": "vite build"
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@repo/fetch": "workspace:*",
     "dedent": "^1.5.3",
-    "fetch": "workspace:*",
-    "p-lazy": "^5.0.0",
-    "weight-balanced-tree": "^0.6.1"
+    "p-lazy": "^5.0.0"
   },
   "devDependencies": {
-    "common-types": "workspace:*",
+    "@repo/common-types": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "eslint": "*",
-    "musicbrainz-types": "workspace:*",
-    "typescript": "*",
-    "vite": "*"
+    "typescript": "*"
   }
 }

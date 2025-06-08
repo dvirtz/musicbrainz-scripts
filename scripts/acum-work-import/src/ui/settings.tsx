@@ -1,4 +1,4 @@
-import {registerSettingsDialog as registerSettings} from 'common-ui';
+import {registerSettingsDialog as registerSettings} from '@repo/common-ui/settings';
 
 export async function shouldSearchWorks() {
   return await GM.getValue('searchWorks', true);

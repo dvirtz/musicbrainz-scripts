@@ -1,16 +1,12 @@
-import {removeAtIndex} from 'common';
-import {
-  buildOptionList,
-  buildOptionListFromKeys,
-  parseIntegerOrNull,
-  workAttributeAllowedValues,
-  workAttributeTypes,
-} from 'musicbrainz-ext';
+import {SelectBox} from '#ui/select-box.tsx';
+import {WorkEditData} from '#work-edit-data.ts';
+import {removeAtIndex} from '@repo/common/remove-at-index';
+import {buildOptionList, buildOptionListFromKeys} from '@repo/musicbrainz-ext/build-options-list';
+import {parseIntegerOrNull} from '@repo/musicbrainz-ext/parse-integer-or-null';
+import {workAttributeAllowedValues, workAttributeTypes} from '@repo/musicbrainz-ext/type-info';
 import PLazy from 'p-lazy';
 import {Accessor, createResource, createSignal, Show} from 'solid-js';
 import {SetStoreFunction} from 'solid-js/store';
-import {SelectBox} from './select-box';
-import {WorkEditData} from '../work-edit-data';
 
 const lazyAttributeTypes = PLazy.from(async () => buildOptionList(Object.values(await workAttributeTypes)));
 
@@ -58,7 +54,7 @@ export function WorkAttributeRow(props: {
         >
           <SelectBox
             name={`edit-work.attributes.${props.index()}.value`}
-            options={allowedValues()!}
+            options={allowedValues() ?? []}
             value={allowedValues()?.find(x => x.text === props.attribute.value)?.value}
             onChange={value =>
               props.setEditData(

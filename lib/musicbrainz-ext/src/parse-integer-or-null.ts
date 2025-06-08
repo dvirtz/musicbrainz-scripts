@@ -8,7 +8,7 @@
  * later version: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-import {parseInteger} from './parse-integer.js';
+import {parseInteger} from '#parse-integer.js';
 
 export function parseIntegerOrNull(value?: string | number): number | null {
   if (value == null) {

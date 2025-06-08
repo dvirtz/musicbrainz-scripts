@@ -9,15 +9,16 @@
  * later version: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
+import {FormRow} from '#ui/form-row.tsx';
+import {SelectBox} from '#ui/select-box.tsx';
+import {WorkAttributes} from '#ui/work-attributes.tsx';
+import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
+import {WorkISWCsEditor} from '#ui/work-iswcs-editor.tsx';
+import {WorkLanguageEditor} from '#ui/work-language-editor.tsx';
 import {Popover} from '@kobalte/core/popover';
-import {buildOptionList, parseIntegerOrNull} from 'musicbrainz-ext';
+import {buildOptionList} from '@repo/musicbrainz-ext/build-options-list';
+import {parseIntegerOrNull} from '@repo/musicbrainz-ext/parse-integer-or-null';
 import {createSignal, onCleanup} from 'solid-js';
-import {FormRow} from './form-row';
-import {SelectBox} from './select-box';
-import {WorkAttributes} from './work-attributes';
-import {useWorkEditData} from './work-edit-data-provider';
-import {WorkISWCsEditor} from './work-iswcs-editor';
-import {WorkLanguageEditor} from './work-language-editor';
 
 export function WorkEditDialog(props: {onSubmit: () => void}) {
   const {editData, setEditData, isModified, workName, submitUrl, saveEditData, workId} = useWorkEditData();
@@ -83,7 +84,7 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
                 <SelectBox
                   id="id-edit-work.type_id"
                   name="edit-work.type_id"
-                  options={buildOptionList(Object.values(MB.linkedEntities.work_type))}
+                  options={buildOptionList(Object.values(MB?.linkedEntities.work_type || {}))}
                   value={editData.type_id || undefined}
                   onChange={workType => setEditData('type_id', parseIntegerOrNull(workType))}
                 />

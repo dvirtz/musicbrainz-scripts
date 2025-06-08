@@ -1,8 +1,8 @@
 {
-  "extends": "../../tsconfig.lib.json",
+  "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "types": [
-      "common-types",
+      "@repo/common-types",
     ]
   }
 }

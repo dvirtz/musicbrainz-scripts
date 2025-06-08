@@ -3,6 +3,7 @@ node_modules/
 .yarn/
 dist/
 .env
+.turbo/
 
 # Playwright
 test-results/

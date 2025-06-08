@@ -8,7 +8,8 @@
  * later version: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-import {parseInteger} from 'musicbrainz-ext';
+import {OptionListT} from '@repo/musicbrainz-ext/build-options-list';
+import {parseInteger} from '@repo/musicbrainz-ext/parse-integer';
 import {For, Show, splitProps} from 'solid-js';
 
 export type SelectBoxStateT = {

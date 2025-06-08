@@ -1,5 +1,14 @@
 // adapted from https://github.com/metabrainz/musicbrainz-server/blob/dccbf69fd541cceebdb5908f58589483cf1b98e3/root/static/scripts/common/utility/compare.js
-import {EMPTY_PARTIAL_DATE} from './constants';
+import {EMPTY_PARTIAL_DATE} from '#constants.ts';
+import {
+  LinkAttrT,
+  PartialDateT,
+  RelatableEntityT,
+  RelatableEntityTypeT,
+  RelationshipSourceGroupT,
+  RelationshipTargetTypeGroupT,
+  WorkT,
+} from 'typedbrainz/types';
 
 export function compareStrings(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
@@ -32,9 +41,9 @@ export function compareTargetTypeWithGroup(
 }
 
 export function compareLinkAttributeRootIds(a: LinkAttrT, b: LinkAttrT): number {
-  const attributeTypeA = MB.linkedEntities.link_attribute_type[a.typeID];
-  const attributeTypeB = MB.linkedEntities.link_attribute_type[b.typeID];
-  return attributeTypeA.root_id - attributeTypeB.root_id;
+  const attributeTypeA = MB?.linkedEntities.link_attribute_type[a.typeID];
+  const attributeTypeB = MB?.linkedEntities.link_attribute_type[b.typeID];
+  return (attributeTypeA?.root_id ?? 0) - (attributeTypeB?.root_id ?? 0);
 }
 
 export function compareLinkAttributeIds(a: LinkAttrT, b: LinkAttrT): number {

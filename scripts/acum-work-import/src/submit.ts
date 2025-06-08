@@ -1,12 +1,7 @@
-import {
-  compareTargetTypeWithGroup,
-  EDIT_WORK_CREATE,
-  fetchJSON,
-  fetchResponse,
-  iterateRelationshipsInTargetTypeGroup,
-  MBID_REGEXP,
-  WS_EDIT_RESPONSE_OK,
-} from 'musicbrainz-ext';
+import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
+import {EDIT_WORK_CREATE, MBID_REGEXP, WS_EDIT_RESPONSE_OK} from '@repo/musicbrainz-ext/constants';
+import {fetchJSON, fetchResponse} from '@repo/musicbrainz-ext/fetch';
+import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {
   connect,
   distinct,
@@ -27,6 +22,16 @@ import {
   zip,
 } from 'rxjs';
 import {Setter} from 'solid-js';
+import {isReleaseRelationshipEditor} from 'typedbrainz';
+import {
+  MediumRecordingStateT,
+  MediumWorkStateT,
+  RecordingT,
+  RelationshipStateT,
+  ReleaseRelationshipEditorStateT,
+  WorkLanguageT,
+  WorkT,
+} from 'typedbrainz/types';
 
 async function submitWork(form: HTMLFormElement): Promise<WorkT> {
   return await firstValueFrom(
@@ -37,7 +42,10 @@ async function submitWork(form: HTMLFormElement): Promise<WorkT> {
             method: 'POST',
             body: (() => {
               const formData = new FormData(form);
-              formData.append('edit-work.edit_note', MB.relationshipEditor.state.editNoteField.value);
+              formData.append(
+                'edit-work.edit_note',
+                (MB?.relationshipEditor.state as ReleaseRelationshipEditorStateT).editNoteField.value
+              );
               return formData;
             })(),
           })
@@ -57,7 +65,7 @@ async function submitWork(form: HTMLFormElement): Promise<WorkT> {
 }
 
 function relatedWorkRelationship(work: MediumWorkStateT, recording: RecordingT): RelationshipStateT | undefined {
-  const targetTypeGroup = MB.tree.find(work.targetTypeGroups, 'recording', compareTargetTypeWithGroup, null);
+  const targetTypeGroup = MB?.tree?.find(work.targetTypeGroups, 'recording', compareTargetTypeWithGroup, null);
   if (targetTypeGroup) {
     return iterateRelationshipsInTargetTypeGroup(targetTypeGroup).find(
       rel => rel.entity0.entityType == 'recording' && rel.entity0.id == recording.id
@@ -66,13 +74,17 @@ function relatedWorkRelationship(work: MediumWorkStateT, recording: RecordingT):
 }
 
 export async function submitWorks(setProgress: Setter<readonly [number, string]>): Promise<void> {
+  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
+    return;
+  }
+
   setProgress([0, 'Submitting works']);
 
   const worksToSubmit = await firstValueFrom(
     from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(
-      mergeMap(([, mediumState]) => from(MB.tree.iterate(mediumState))),
+      mergeMap(([, mediumState]) => from(MB!.tree!.iterate(mediumState))),
       mergeMap((recordingState: MediumRecordingStateT) =>
-        zip(from(MB.tree.iterate(recordingState.relatedWorks)), of(recordingState).pipe(repeat()))
+        zip(from(MB!.tree!.iterate(recordingState.relatedWorks)), of(recordingState).pipe(repeat()))
       ),
       distinct(([relatedWork]) => relatedWork.work.id),
       map(
