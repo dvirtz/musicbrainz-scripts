@@ -1,4 +1,5 @@
-import {isSong, trackName, WorkBean, workISWCs} from '#acum.ts';
+import {AcumWorkType} from '#acum-work-type.ts';
+import {trackName, WorkBean, workISWCs, workType} from '#acum.ts';
 import {linkArtists} from '#artists.ts';
 import {createRelationshipState} from '#relationships.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
@@ -247,11 +248,20 @@ export async function linkWriters(
   doLink: (artist: ArtistT, linkTypeID: number) => void,
   addWarning: (message: string) => Set<string>
 ) {
+  const authorLinkTypeId = (() => {
+    switch (workType(track)) {
+      case AcumWorkType.PopularSong:
+      case AcumWorkType.OriginalSongFor4PartChoir:
+        return LYRICIST_LINK_TYPE_ID;
+      default:
+        return WRITER_LINK_TYPE_ID;
+    }
+  })();
   await linkArtists(
     artistCache,
     [...(track.authors ?? []), ...(track.composersAndAuthors ?? [])],
     track.creators,
-    artist => doLink(artist, isSong(track) ? LYRICIST_LINK_TYPE_ID : WRITER_LINK_TYPE_ID),
+    artist => doLink(artist, authorLinkTypeId),
     addWarning
   );
   await linkArtists(

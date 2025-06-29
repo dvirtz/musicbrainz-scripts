@@ -1,6 +1,7 @@
 import {tryFetchJSON} from '@repo/fetch/fetch';
 import {formatISWC} from '@repo/musicbrainz-ext/format-iswc';
 import {filter, lastValueFrom, map, mergeAll, mergeMap, range, startWith, toArray} from 'rxjs';
+import {AcumWorkType} from '#acum-work-type.ts';
 
 export type IPBaseNumber = string;
 
@@ -75,6 +76,14 @@ export type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   versionEssenceType: string;
   isMedley: '0' | '1';
   list?: ReadonlyArray<MedleyVersionBean>;
+  origin?: TranslatedOriginalVersion;
+  workType?: string;
+};
+
+type TranslatedOriginalVersion = Bean<'org.acum.site.searchdb.dto.bean.TranslatedOriginalVersionBean'> & {
+  workType: string;
+  versionId: string;
+  workId: string;
 };
 
 type MedleyVersionBean = Bean<'org.acum.site.searchdb.dto.bean.MedleyVersionBean'> & {
@@ -166,17 +175,6 @@ export function trackName(track: WorkBean): string {
   return workLanguage(track) == WorkLanguage.Hebrew ? track.workHebName : track.workEngName;
 }
 
-export enum EssenceType {
-  LightMusicNoWords = '15', // Light music (without words)
-  Song = '30', // Popular song
-  Jazz = '40', // Original jazz work
-  Sketch = '41', // Audio skit
-  ChoirSong = '53', // Original song for 4 part choir
-  Poetry = '55', // Poetry
-  /** @knipignore */
-  Unknown = '-1',
-}
-
 function stringToEnum<T>(value: string, enumType: {[s: string]: T}): T {
   if (Object.values(enumType).includes(value as T)) {
     return value as T;
@@ -184,12 +182,9 @@ function stringToEnum<T>(value: string, enumType: {[s: string]: T}): T {
   return enumType.Unknown!;
 }
 
-export function essenceType(track: WorkBean): EssenceType {
-  return stringToEnum(track.versionEssenceType, EssenceType);
-}
-
-export function isSong(track: WorkBean): boolean {
-  return [EssenceType.Song, EssenceType.ChoirSong].includes(essenceType(track));
+export function workType(track: WorkBean): AcumWorkType {
+  const workType = track.origin ? track.origin.workType : track.workType;
+  return stringToEnum(`${workType}${track.versionEssenceType}`, AcumWorkType);
 }
 
 export enum WorkLanguage {
