@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "yarn turbo watch check-types lint",
+    "dev": "yarn turbo watch check-types lint --experimental-write-cache",
     "release": "turbo run release",
     "test": "turbo run test",
     "ci": "yarn check-types && yarn lint && yarn build",
