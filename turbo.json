@@ -2,6 +2,12 @@
   "$schema": "https://turborepo.com/schema.json",
   "tasks": {
     "build": {
+      "inputs": [
+        "src/**",
+        "package.json",
+        "tsconfig.json",
+        "vite.config.ts"
+      ],
       "outputs": [
         "dist/**"
       ]
@@ -9,21 +15,24 @@
     "check-types": {
       "dependsOn": [
         "^check-types"
-      ]
+      ],
+      "outputLogs": "errors-only"
     },
     "lint": {
       "dependsOn": [
         "^lint"
-      ]
+      ],
+      "outputLogs": "errors-only"
     },
     "//#lint:root": {},
-    "dev": {
-      "persistent": true,
-      "cache": false
-    },
     "test": {
       "dependsOn": [
+        "build",
         "^test"
+      ],
+      "outputs": [
+        "test-results/**",
+        "playwright-report/**"
       ],
       "env": [
         "MB_USERNAME",
