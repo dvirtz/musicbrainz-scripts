@@ -1,6 +1,7 @@
 // adapted from https://github.dev/loujine/musicbrainz-scripts/blob/master/mbz-loujine-common.js
 
-import {essenceType, EssenceType, isSong, trackName, WorkBean, workISWCs, workLanguage, WorkLanguage} from '#acum.ts';
+import {AcumWorkType} from '#acum-work-type.ts';
+import {workType, trackName, WorkBean, workISWCs, workLanguage, WorkLanguage} from '#acum.ts';
 import {shouldSetLanguage} from '#ui/settings.tsx';
 import {AddWarning} from '#ui/warnings.tsx';
 import {mergeArrays} from '@repo/common/merge-arrays';
@@ -69,26 +70,96 @@ export async function workEditData(
       ? await fetchWorkEditParams(work.gid)
       : getWorkEditParams(work);
   const acumTypeId = await ACUM_TYPE_ID;
+  const acumWorkType = workType(track);
+  const workTypesValues = Object.values(await workTypes);
   return {
     originalEditData,
     editData: {
       name: originalEditData.name || trackName(track),
       comment: originalEditData.comment,
-      type_id: isSong(track)
-        ? (Object.values(await workTypes).find(workType => workType.name === 'Song')?.id ?? null)
-        : originalEditData.type_id,
+      type_id: (() => {
+        switch (acumWorkType) {
+          case AcumWorkType.PopularSong:
+          case AcumWorkType.OriginalSongFor4PartChoir:
+            return workTypesValues.find(workType => workType.name === 'Song')?.id ?? null;
+
+          case AcumWorkType.AudioVisualSkit:
+          case AcumWorkType.AudioSkit:
+          case AcumWorkType.DocumentaryDidacticalTvOrRadioScript:
+          case AcumWorkType.DramaWithOriginalMusic:
+            return workTypesValues.find(workType => workType.name === 'Audio drama')?.id ?? null;
+
+          case AcumWorkType.Prose:
+          case AcumWorkType.LiteratureNonFiction:
+          case AcumWorkType.DramaticWorksInProse:
+            return workTypesValues.find(workType => workType.name === 'Prose')?.id ?? null;
+
+          case AcumWorkType.Poetry:
+          case AcumWorkType.Poetry2:
+            return workTypesValues.find(workType => workType.name === 'Poem')?.id ?? null;
+
+          case AcumWorkType.MusicalPlay:
+            return workTypesValues.find(workType => workType.name === 'Musical')?.id ?? null;
+
+          default:
+            return originalEditData.type_id;
+        }
+      })(),
       languages: (await shouldSetLanguage())
         ? mergeArrays(
             originalEditData.languages,
             await (async () => {
-              switch (essenceType(track)) {
-                case EssenceType.LightMusicNoWords:
-                case EssenceType.Jazz:
+              switch (acumWorkType) {
+                case AcumWorkType.ChamberMusic12Instruments:
+                case AcumWorkType.ChamberMusic311Instruments:
+                case AcumWorkType.SyncLicensingOnly:
+                case AcumWorkType.OriginalJazzWork:
+                case AcumWorkType.StationIdentificationMusic:
+                case AcumWorkType.Mailbox:
+                case AcumWorkType.SyncLicensingOnly2:
+                case AcumWorkType.ProgramIdentificationMusic:
+                case AcumWorkType.ElectroAcousticWorks:
+                case AcumWorkType.InterludeInProgram:
+                case AcumWorkType.Jingle2:
+                case AcumWorkType.SymphonyChamberMusFor12InstAndMore:
+                case AcumWorkType.MusicForFilms:
+                case AcumWorkType.DramaticMusicalWorksWithOrch:
+                case AcumWorkType.PromoForStation:
+                case AcumWorkType.LightMusicWithoutWords:
+                case AcumWorkType.Promo2:
+                case AcumWorkType.LibraryWork:
+                case AcumWorkType.Ringtone:
+                case AcumWorkType.InstrumentalMusicForDanceElectronMusic:
                   return [LANGUAGE_ZXX_ID];
-                case EssenceType.Song:
-                case EssenceType.ChoirSong:
-                case EssenceType.Sketch:
-                case EssenceType.Poetry:
+                case AcumWorkType.StoryForEducationalProgram:
+                case AcumWorkType.TvScriptForEducationalProgram:
+                case AcumWorkType.Jingle:
+                case AcumWorkType.Promo:
+                case AcumWorkType.DocumentaryDidacticalTvOrRadioScript:
+                case AcumWorkType.StoryForChildYouth:
+                case AcumWorkType.TvScriptForChildYouth:
+                case AcumWorkType.ChildrenDubbingScript:
+                case AcumWorkType.Recitation:
+                case AcumWorkType.AudioVisualSkit:
+                case AcumWorkType.AudioSkit:
+                case AcumWorkType.LiteratureNonFiction:
+                case AcumWorkType.Prose:
+                case AcumWorkType.Storyteller:
+                case AcumWorkType.Poetry:
+                case AcumWorkType.DramaticWorksInProse:
+                case AcumWorkType.OriginalScriptForTvSeries:
+                case AcumWorkType.OriginalDramaticTvOrRadioScript:
+                case AcumWorkType.DramaWithOriginalMusic:
+                case AcumWorkType.DramaticLyricalWorks:
+                case AcumWorkType.Poetry2:
+                case AcumWorkType.KaraokeMobilePhone:
+                case AcumWorkType.PopularSong:
+                case AcumWorkType.WorkForChapel3Voices:
+                case AcumWorkType.SongAndMessage:
+                case AcumWorkType.OriginalSongFor4PartChoir:
+                case AcumWorkType.MusicalPlay:
+                case AcumWorkType.TranslationOfForeignWork:
+                case AcumWorkType.SongAndMessage2:
                   return await (async () => {
                     switch (workLanguage(track)) {
                       case WorkLanguage.Hebrew:
@@ -103,7 +174,7 @@ export async function workEditData(
                     }
                   })();
                 default:
-                  addWarning(`Unknown work type ${track.versionEssenceType}`);
+                  addWarning(`Unknown work type ${track.workType}${track.versionEssenceType}`);
                   return originalEditData.languages;
               }
             })()

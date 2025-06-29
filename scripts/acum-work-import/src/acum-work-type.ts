@@ -1,0 +1,54 @@
+// cspell:ignoreRegExp /\/\/ .*/
+export enum AcumWorkType {
+  StoryForEducationalProgram = '910', // סיפורת לבתי ספר
+  TvScriptForEducationalProgram = '911', // תסריט לבתי ספר
+  Jingle = '912', // זמריר
+  Promo = '914', // פרומו
+  DocumentaryDidacticalTvOrRadioScript = '920', // תסכית/תסריט דידקטי או דוקומנטרי
+  StoryForChildYouth = '930', // סיפורת לילד/נוער
+  TvScriptForChildYouth = '931', // תסריט לילד/נוער
+  ChildrenDubbingScript = '932', // תסריט ילדים מדובב
+  Recitation = '933', // קטעי מלל או דקלום בקלטת ילדים
+  AudioVisualSkit = '940', // מערכון אודיו ויזואלי
+  AudioSkit = '941', // מערכון אודיו
+  LiteratureNonFiction = '945', // תמליל ומסה ספרותית
+  Prose = '950', // סיפורת
+  Storyteller = '951', // סיפור במסגרת מספרי סיפורים
+  Poetry = '955', // שירה
+  DramaticWorksInProse = '960', // מחזה פרוזה
+  OriginalScriptForTvSeries = '965', // תסריט מקורי לסדרת טלויזיה
+  OriginalDramaticTvOrRadioScript = '966', // תסכית/תסריט דרמטי מקורי
+  DramaWithOriginalMusic = '970', // מחזה עם מוס. מקורית שתזמונה לפחות 1/3 מהתזמון הכולל
+  DramaticLyricalWorks = '971', // מחזה פיוט
+  Poetry2 = '972', // פיוט
+  SyncLicensingOnly = '990', // לצורך רשיון פרטני לפרסומת והסרטה
+  KaraokeMobilePhone = '0KA', // קריוקי בסלולאר
+  PopularSong = '030', // שיר זמר,פופ,רוק
+  WorkForChapel3Voices = '036', // יצירה למקהלת א-קאפלה עד 3 קולות
+  OriginalJazzWork = '040', // קטע מולחן בסגנון ג׳ז
+  StationIdentificationMusic = '009', // אות תחנה/מעברון תחנה
+  Mailbox = '0MB', // מענה קולי בסלולאר
+  SyncLicensingOnly2 = '090', // לצורך רשיון פרטני לפרסומת והסרטה
+  SongAndMessage = '9SA', // שיר וברכה בסלולאר
+  ChamberMusic12Instruments = '050', // (מוסיקה קאמרית ל 2-1  כלים/תפקידים (עם או בלי זמרה
+  ChamberMusic311Instruments = '051', // (מוסיקה קאמרית ל 11-3 כלים/תפקידים (עם או בלי זמרה
+  OriginalSongFor4PartChoir = '053', // יצירה למקהלת א-קאפלה ל-4 קולות ויותר
+  ProgramIdentificationMusic = '010', // אות תוכנית
+  ElectroAcousticWorks = '055', // מוסיקה אלקטרו-אקוסטית
+  InterludeInProgram = '011', // מעברון בתוכנית
+  MusicalPlay = '056', // מחזמר מקורי בשלמותו / בחלקים מהותיים
+  Jingle2 = '012', // זמריר
+  SymphonyChamberMusFor12InstAndMore = '057', // (מוסיקה לתז׳ סימפ/קאמרית מ-12 כלים (עם או בלי מלים
+  MusicForFilms = '013', // מוסיקה לסרטים
+  DramaticMusicalWorksWithOrch = '058', // יצירה דרמטית-מוסיקלית עם תזמורת-אופרה
+  PromoForStation = '014', // פרומו תחנה
+  LightMusicWithoutWords = '015', // (מוסיקה קלה וקלאסית קלה לתזמורת (ללא מילים
+  Promo2 = '016', // פרומו תוכנית
+  LibraryWork = '020', // (מוסיקת ספריה (עם או בלי מילים
+  Ringtone = '0RT', // (רינגטון (צלצול טלפון
+  InstrumentalMusicForDanceElectronMusic = '025', // מוסיקה כלית לריקודים,מוסיקה קלה אלקטרונית
+  TranslationOfForeignWork = '9TW', // תרגום מלים לשיר לועזי
+  SongAndMessage2 = '0SA', // (שיר וברכה (הקראת מלים של פזמון בסלולאר
+  /** @knipignore */
+  Unknown = '-1',
+}
