@@ -1,0 +1,40 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "watch",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: watch",
+			"detail": "yarn turbo watch check-types lint --experimental-write-cache",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
+		{
+			"type": "shell",
+			"label": "npm: dev",
+			"command": "yarn",
+			"args": [
+				"workspace",
+				"@dvirtz/${input:workspace}",
+				"dev"
+			],
+			"problemMatcher": [],
+		}
+	],
+	"inputs": [
+		{
+			"id": "workspace",
+			"type": "command",
+			"command": "shellCommand.execute",
+			"args": {
+				"command": "node -e \"const fs = require('fs'); const path = require('path'); try { const dirs = fs.readdirSync('scripts', { withFileTypes: true }).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name); console.log(dirs.join('\\n')); } catch (err) { console.error('Error:', err.message); }\"",
+				"rememberPrevious": true,
+				"taskId": "workspace",
+				"useSingleResult": true,
+			},
+		}
+	]
+}
