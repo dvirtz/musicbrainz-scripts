@@ -1,5 +1,6 @@
 {
   "name": "@repo/vite-config",
+  "private": true,
   "type": "module",
   "exports": {
     "./userscript-config": "./vite.userscript-config.ts"
