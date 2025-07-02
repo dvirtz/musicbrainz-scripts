@@ -76,7 +76,7 @@ export type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   versionEssenceType: string;
   isMedley: '0' | '1';
   list?: ReadonlyArray<MedleyVersionBean>;
-  origin?: TranslatedOriginalVersion;
+  original?: TranslatedOriginalVersion;
   workType?: string;
 };
 
@@ -183,7 +183,7 @@ function stringToEnum<T>(value: string, enumType: {[s: string]: T}): T {
 }
 
 export function workType(track: WorkBean): AcumWorkType {
-  const workType = track.origin ? track.origin.workType : track.workType;
+  const workType = track.original ? track.original.workType : track.workType;
   return stringToEnum(`${workType}${track.versionEssenceType}`, AcumWorkType);
 }
 
