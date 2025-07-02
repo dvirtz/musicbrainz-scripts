@@ -1,0 +1,38 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Userscript",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "npm: dev"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Musicbrainz",
+      "url": "https://test.musicbrainz.org/release/eff491a0-8c25-4f8c-ac72-491e13f70706/edit-relationships",
+      "webRoot": "${workspaceFolder}/scripts/${input:workspace}",
+      "pathMapping": {
+        "localhost:5173": "${workspaceFolder}/scripts/${input:workspace}"
+      },
+      "preLaunchTask": "npm: dev"
+    },
+  ],
+  "inputs": [
+    {
+      "id": "workspace",
+      "type": "command",
+      "command": "shellCommand.execute",
+      "args": {
+        "command": "echo ${taskId:workspace}",
+        "useSingleResult": true,
+      }
+    }
+  ],
+}

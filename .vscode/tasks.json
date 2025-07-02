@@ -21,12 +21,35 @@
 				"@dvirtz/${input:workspace}",
 				"dev"
 			],
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"pattern": [
+						{
+							"regexp": ".",
+							"file": 1,
+							"location": 2,
+							"message": 3
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": "press h + enter to show help",
+						"endsPattern": "."
+					}
+				}
+			]
+		},
+		{
+			"label": "configure active workspace",
+			"type": "shell",
+			"command": "echo ${input:configure-workspace}",
 			"problemMatcher": [],
 		}
 	],
 	"inputs": [
 		{
-			"id": "workspace",
+			"id": "configure-workspace",
 			"type": "command",
 			"command": "shellCommand.execute",
 			"args": {
@@ -35,6 +58,15 @@
 				"taskId": "workspace",
 				"useSingleResult": true,
 			},
+		},
+		{
+			"id": "workspace",
+			"type": "command",
+			"command": "shellCommand.execute",
+			"args": {
+				"command": "echo ${taskId:workspace}",
+				"useSingleResult": true,
+			}
 		}
 	]
 }
