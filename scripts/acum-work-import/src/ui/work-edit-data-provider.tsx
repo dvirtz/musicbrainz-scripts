@@ -21,6 +21,9 @@ const makeWorkEditDataContext = (workState: WorkStateWithEditDataT) => {
       workState.editData.iswcs = unwrapped.iswcs.filter(iswc => iswc !== '');
       workState.editData.attributes = unwrapped.attributes.filter(attr => attr.value !== '');
     },
+    restoreEditData: () => {
+      setEditData(structuredClone(workState.editData));
+    },
     workId: () => workState.work.id,
   } as const;
 };
