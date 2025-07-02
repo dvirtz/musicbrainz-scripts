@@ -5,6 +5,9 @@ import rootPackage from '../../package.json' with {type: 'json'};
 
 export default function userscriptConfig(fileBaseName: string, userScript: MonkeyUserScript) {
   return defineConfig({
+    server: {
+      open: false, // Do not open the browser automatically
+    },
     plugins: [
       solidPlugin(),
       monkey({
