@@ -21,7 +21,8 @@ import {parseIntegerOrNull} from '@repo/musicbrainz-ext/parse-integer-or-null';
 import {createSignal, onCleanup} from 'solid-js';
 
 export function WorkEditDialog(props: {onSubmit: () => void}) {
-  const {editData, setEditData, isModified, workName, submitUrl, saveEditData, workId} = useWorkEditData();
+  const {editData, setEditData, isModified, workName, submitUrl, saveEditData, restoreEditData, workId} =
+    useWorkEditData();
   const isNameBlank = () => /^\s*$/.test(workName());
   const [open, setOpen] = createSignal(false);
 
@@ -95,7 +96,9 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
             <WorkAttributes />
           </div>
           <div class="buttons" style={{'margin-top': '1em'}}>
-            <Popover.CloseButton class="negative">{'Cancel'} </Popover.CloseButton>
+            <Popover.CloseButton class="negative" onClick={restoreEditData}>
+              {'Cancel'}{' '}
+            </Popover.CloseButton>
             <Popover.CloseButton class="positive" disabled={isNameBlank()} onClick={saveEditData}>
               {'Done'}
             </Popover.CloseButton>
