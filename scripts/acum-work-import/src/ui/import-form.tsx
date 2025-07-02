@@ -5,7 +5,7 @@ import {createEffect, createSignal, ParentProps} from 'solid-js';
 
 export function ImportForm<T extends EntityT>(
   props: ParentProps & {
-    entityTypes: [T, ...T[]];
+    entityTypes: readonly [T, ...T[]];
     onSubmit: (entity: Entity<T>) => Promise<void>;
     idPattern: string;
   }
@@ -35,7 +35,16 @@ export function ImportForm<T extends EntityT>(
       .finally(() => setImporting(false));
   };
 
-  const onInput = (value: string) => {
+  const onPaste = (ev: ClipboardEvent) => {
+    const pastedText = ev.clipboardData?.getData('text');
+    if (pastedText) {
+      const newEntity = replaceUrlWith(uniqueTypes)(pastedText);
+      setEntity(newEntity);
+      ev.preventDefault(); // Prevent the default paste behavior
+    }
+  };
+
+  const onChange = (value: string) => {
     const newEntity = replaceUrlWith(uniqueTypes)(value);
     setEntity(newEntity);
   };
@@ -51,7 +60,13 @@ export function ImportForm<T extends EntityT>(
           ></img>
           <span>{`Import ${props.entityTypes.includes('Album' as T) ? 'works' : 'work'} from ACUM`}</span>
         </Button>
-        <TextField required={true} value={entity().toString()} onChange={onInput} style={{'margin': '0 7px 0 0'}}>
+        <TextField
+          required={true}
+          value={entity().toString()}
+          onChange={onChange}
+          onPaste={onPaste}
+          style={{'margin': '0 7px 0 0'}}
+        >
           <TextField.Input pattern={props.idPattern} placeholder={`${uniqueTypes.join('/')} ID`} />
         </TextField>
         {props.children}
