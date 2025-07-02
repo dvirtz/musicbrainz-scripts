@@ -1,62 +1,74 @@
-.edit-work-button-container {
-  .work-dialog {
+.works {
+  button.edit-item.pending {
     display: none;
+  }  
+  
+  .edit-work-button-container {
+    display: inline;
 
-    div.half-width {
-      width: 100%;
+    button.edit-item {
+      display: initial;
+    }
+    
+    .work-dialog {
+      display: none;
 
-      fieldset {
-        label.row {
-          width: 100%;
+      div.half-width {
+        width: 100%;
+
+        fieldset {
+          label.row {
+            width: 100%;
+          }
+
+          select {
+            width: 100%;
+          }
+
+          input {
+            width: 100%;
+          }
+
+          div.text-list-row,
+          div.select-list-row {
+            display: flex;
+          }
+
+          div.row {
+            display: flex;
+            margin: 6px;
+          }
+
+          div.form-row-add {
+            width: 100%;
+          }
+
+          div.form-row-select-list,
+          div.form-row-text-list {
+            margin-left: 0;
+            flex: 1;
+          }
         }
+      }
 
-        select {
-          width: 100%;
-        }
+      table.row-form {
+        > tbody > tr,
+        > thead > tr {
+          > td:first-child,
+          > th:first-child {
+            padding: 0 6px;
+          }
 
-        input {
-          width: 100%;
-        }
-
-        div.text-list-row,
-        div.select-list-row {
-          display: flex;
-        }
-
-        div.row {
-          display: flex;
-          margin: 6px;
-        }
-
-        div.form-row-add {
-          width: 100%;
-        }
-
-        div.form-row-select-list,
-        div.form-row-text-list {
-          margin-left: 0;
-          flex: 1;
+          > td,
+          > th {
+            background-color: unset;
+          }
         }
       }
     }
 
-    table.row-form {
-      > tbody > tr,
-      > thead > tr {
-        > td:first-child,
-        > th:first-child {
-          padding: 0 6px;
-        }
-
-        > td,
-        > th {
-          background-color: unset;
-        }
-      }
+    .work-dialog[data-expanded] {
+      display: inherit;
     }
-  }
-
-  .work-dialog[data-expanded] {
-    display: inherit;
   }
 }
