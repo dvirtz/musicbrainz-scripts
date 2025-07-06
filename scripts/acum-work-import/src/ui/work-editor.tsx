@@ -67,7 +67,7 @@ export function addWorkEditor(workState: WorkStateWithEditDataT, recordingState:
       container.remove();
     });
     header.querySelector<HTMLButtonElement>('button.edit-item')?.classList.add('replaced');
-    header.querySelector<HTMLAnchorElement>('a[href^="/work/"]')?.classList.add('replaced');
+    header.querySelector<HTMLAnchorElement>('a[href*="work"]')?.classList.add('replaced');
     render(
       () => (
         <WorkEditDataProvider workState={workState}>
