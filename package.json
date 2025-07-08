@@ -25,7 +25,7 @@
   "scripts": {
     "build": "turbo run build",
     "watch": "yarn turbo watch check-types lint --experimental-write-cache",
-    "release": "turbo run release",
+    "release": "yarn workspaces foreach --all --topological-dev --exclude 'lib/*' exec semantic-release",
     "test": "turbo run test",
     "ci": "yarn check-types && yarn lint && yarn build",
     "lint:knip": "knip --tags=-knipignore",

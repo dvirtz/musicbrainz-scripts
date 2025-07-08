@@ -10,7 +10,6 @@
     "build": "vite --configLoader runner build",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "release": "semantic-release",
     "test": "playwright test"
   },
   "dependencies": {
