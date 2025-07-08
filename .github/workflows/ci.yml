@@ -73,6 +73,4 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # https://github.com/pmowrer/semantic-release-monorepo/issues/160
-        # https://github.com/vercel/turborepo/discussions/7493
-        run: yarn release -- --concurrency 1
+        run: yarn release
