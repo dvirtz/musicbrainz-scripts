@@ -38,6 +38,16 @@
         "MB_USERNAME",
         "MB_PASSWORD"
       ]
+    },
+    "release": {
+      "dependsOn": [
+        "build",
+        "^release"
+      ],
+      "outputs": [
+        "dist/**",
+        "scripts/*/vite.config.ts"
+      ]
     }
   }
 }
