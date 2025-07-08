@@ -1,3 +1,27 @@
+## [@dvirtz/acum-work-import-v1.16.0-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.15.0...@dvirtz/acum-work-import-v1.16.0-beta.1) (2025-07-08)
+
+
+### Features
+
+* less custom UI ([ea7fc52](https://github.com/dvirtz/musicbrainz-scripts/commit/ea7fc523d808566b29f0bd1237b9815edcb43a52)), closes [#88](https://github.com/dvirtz/musicbrainz-scripts/issues/88) [#92](https://github.com/dvirtz/musicbrainz-scripts/issues/92)
+* replace url with ID when pasting a link ([7631634](https://github.com/dvirtz/musicbrainz-scripts/commit/76316346a7f5f48fadec2c5fcaa6cd9597c3d9bd)), closes [#95](https://github.com/dvirtz/musicbrainz-scripts/issues/95)
+
+
+### Bug Fixes
+
+* support all ACUM work types ([c55eaf3](https://github.com/dvirtz/musicbrainz-scripts/commit/c55eaf3b981d887f0076785d8455853a3b60c5ca)), closes [#86](https://github.com/dvirtz/musicbrainz-scripts/issues/86)
+* translated work field name ([14d2429](https://github.com/dvirtz/musicbrainz-scripts/commit/14d242973bd725ea6bdae17f5c31b6a5c463f98d))
+
+
+### Build and continuous integration
+
+* use Turborepo for project management ([2107f3e](https://github.com/dvirtz/musicbrainz-scripts/commit/2107f3e5e7b0f9ab8f03c8a1e8c2427cf730d10e))
+
+
+### General maintenance
+
+* add dev scripts ([fa48b83](https://github.com/dvirtz/musicbrainz-scripts/commit/fa48b83a04b2ee7f8695d8794fbd05a6ca5d437d))
+
 ## [@dvirtz/acum-work-import-v1.15.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.14.1...@dvirtz/acum-work-import-v1.15.0) (2025-05-06)
 
 
