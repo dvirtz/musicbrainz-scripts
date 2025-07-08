@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.16.0-beta.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.16.0-beta.1...@dvirtz/acum-work-import-v1.16.0-beta.2) (2025-07-08)
+
+
+### Bug Fixes
+
+* semantic release ([b9c066c](https://github.com/dvirtz/musicbrainz-scripts/commit/b9c066ccf687b5d31efc10398b2cb105f99a2d60))
+
 ## [@dvirtz/acum-work-import-v1.16.0-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.15.0...@dvirtz/acum-work-import-v1.16.0-beta.1) (2025-07-08)
 
 
