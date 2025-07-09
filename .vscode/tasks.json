@@ -42,6 +42,12 @@
 			"type": "shell",
 			"command": "echo ${input:configure-workspace}",
 			"problemMatcher": [],
+		},
+		{
+			"label": "configure musicbrainz url",
+			"type": "shell",
+			"command": "echo ${input:configure-musicbrainz-url}",
+			"problemMatcher": [],
 		}
 	],
 	"inputs": [
@@ -63,6 +69,17 @@
 			"args": {
 				"command": "echo ${taskId:workspace}",
 				"useSingleResult": true,
+			}
+		},
+		{
+			"id": "configure-musicbrainz-url",
+			"type": "command",
+			"command": "shellCommand.execute",
+			"args": {
+				"command": "echo ${prompt:Enter MusicBrainz URL}",
+				"useSingleResult": true,
+				"taskId": "musicbrainz-url",
+				"rememberPrevious": true,
 			}
 		}
 	]
