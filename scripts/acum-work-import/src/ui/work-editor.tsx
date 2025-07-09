@@ -28,7 +28,7 @@ function WorkEditor(props: {workState: WorkStateWithEditDataT; originalHeader: H
   });
 
   createEffect(() => {
-    props.originalHeader.querySelectorAll<HTMLElement>(':scope > .replaced').forEach(el => {
+    props.originalHeader.querySelectorAll<HTMLElement>('.replaced').forEach(el => {
       el.classList.toggle('pending', isPending());
     });
   });
