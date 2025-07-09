@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.16.1-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.16.0...@dvirtz/acum-work-import-v1.16.1-beta.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* take version work ID from url if available ([dee1682](https://github.com/dvirtz/musicbrainz-scripts/commit/dee1682f739509bc558a9bd2b1c99ab23be73300)), closes [#94](https://github.com/dvirtz/musicbrainz-scripts/issues/94)
+
 ## [@dvirtz/acum-work-import-v1.16.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.15.0...@dvirtz/acum-work-import-v1.16.0) (2025-07-09)
 
 
