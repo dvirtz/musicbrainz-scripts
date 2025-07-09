@@ -74,6 +74,7 @@ export type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   composersAndAuthors?: ReadonlyArray<Creator>;
   versionIswcNumber: string;
   versionEssenceType: string;
+  versionId: string;
   isMedley: '0' | '1';
   list?: ReadonlyArray<MedleyVersionBean>;
   original?: TranslatedOriginalVersion;
@@ -88,6 +89,7 @@ type TranslatedOriginalVersion = Bean<'org.acum.site.searchdb.dto.bean.Translate
 
 type MedleyVersionBean = Bean<'org.acum.site.searchdb.dto.bean.MedleyVersionBean'> & {
   id: string;
+  workId: string;
 };
 
 type WorkInfoPageResponseData = {
@@ -201,16 +203,23 @@ export function workLanguage(track: WorkBean): WorkLanguage {
 export type EntityT = 'Work' | 'Album' | 'Version';
 
 export class Entity<T extends EntityT = EntityT> {
-  entityType: T;
-  id: string;
-
-  constructor(id: string, entityType: T) {
-    this.entityType = entityType;
-    this.id = id;
-  }
+  constructor(
+    readonly id: string,
+    readonly entityType: T
+  ) {}
 
   toString(): string {
     return this.id;
+  }
+}
+
+export class Version<T extends EntityT = 'Version'> extends Entity<T> {
+  constructor(
+    readonly id: string,
+    readonly workId: string,
+    readonly entityType: T = 'Version' as T
+  ) {
+    super(id, entityType);
   }
 }
 
@@ -224,7 +233,12 @@ export function replaceUrlWith<T extends EntityT>(entityTypes: [T, ...T[]]): (in
           entityTypes
             .map(entityType => [entityType, url.searchParams.get(`${entityType.toLowerCase()}id`)] as const)
             .filter((pair): pair is [T, string] => !!pair[1])
-            .map(([entityType, id]) => new Entity<T>(id, entityType))
+            .map(([entityType, id]) => {
+              if (entityType === 'Version') {
+                return new Version<T>(id, url.searchParams.get(`${'work'}id`) ?? versionWorkId(id));
+              }
+              return new Entity<T>(id, entityType);
+            })
             .at(0) ?? defaultEntity
         );
       }
@@ -251,7 +265,9 @@ async function fetchWorksUncached(entity: Entity): Promise<ReadonlyArray<WorkBea
     case 'Album':
       return (await fetchAlbum(entity.id))?.tracks;
     case 'Version':
-      return (await fetchWork(versionWorkId(entity.id))).filter(track => track.fullWorkId === entity.id);
+      return (await fetchWorks(new Entity((entity as Version).workId, 'Work'))).filter(
+        track => track.versionId === entity.id
+      );
   }
 }
 
