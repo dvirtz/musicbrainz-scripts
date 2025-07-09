@@ -1,3 +1,16 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.5.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.5.2...@dvirtz/setlistfm-musicbrainz-import-v1.5.3) (2025-07-09)
+
+
+### Build and continuous integration
+
+* release without turbo ([0c5103a](https://github.com/dvirtz/musicbrainz-scripts/commit/0c5103a3b5f20606c3ce989a71fc8bfceecc4a19)), closes [#103](https://github.com/dvirtz/musicbrainz-scripts/issues/103)
+* use Turborepo for project management ([2107f3e](https://github.com/dvirtz/musicbrainz-scripts/commit/2107f3e5e7b0f9ab8f03c8a1e8c2427cf730d10e))
+
+
+### General maintenance
+
+* add dev scripts ([fa48b83](https://github.com/dvirtz/musicbrainz-scripts/commit/fa48b83a04b2ee7f8695d8794fbd05a6ca5d437d))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.5.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.5.1...@dvirtz/setlistfm-musicbrainz-import-v1.5.2) (2025-05-06)
 
 
