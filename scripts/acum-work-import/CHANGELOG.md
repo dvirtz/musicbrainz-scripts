@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.16.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.16.0...@dvirtz/acum-work-import-v1.16.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* two work links visible ([3b59778](https://github.com/dvirtz/musicbrainz-scripts/commit/3b597788e01fabf36f344154674354381142d1ed)), closes [#107](https://github.com/dvirtz/musicbrainz-scripts/issues/107)
+
 ## [@dvirtz/acum-work-import-v1.16.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.15.0...@dvirtz/acum-work-import-v1.16.0) (2025-07-09)
 
 
