@@ -16,7 +16,7 @@
       "type": "chrome",
       "request": "launch",
       "name": "Musicbrainz",
-      "url": "https://test.musicbrainz.org/release/eff491a0-8c25-4f8c-ac72-491e13f70706/edit-relationships",
+      "url": "${input:musicbrainz-url}",
       "webRoot": "${workspaceFolder}/scripts/${input:workspace}",
       "pathMapping": {
         "localhost:5173": "${workspaceFolder}/scripts/${input:workspace}"
@@ -31,6 +31,15 @@
       "command": "shellCommand.execute",
       "args": {
         "command": "echo ${taskId:workspace}",
+        "useSingleResult": true,
+      }
+    },
+    {
+      "id": "musicbrainz-url",
+      "type": "command",
+      "command": "shellCommand.execute",
+      "args": {
+        "command": "echo ${taskId:musicbrainz-url}",
         "useSingleResult": true,
       }
     }
