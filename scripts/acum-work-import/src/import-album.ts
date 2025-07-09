@@ -1,4 +1,4 @@
-import {Creator, Creators, Entity, entityUrl, fetchWorks, IPBaseNumber, trackName, WorkBean} from '#acum.ts';
+import {Creator, Creators, Entity, entityUrl, fetchWorks, IPBaseNumber, trackName, Version, WorkBean} from '#acum.ts';
 import {linkArtists} from '#artists.ts';
 import {addArrangerRelationship, addWriterRelationship} from '#relationships.ts';
 import {AddWarning} from '#ui/warnings.tsx';
@@ -189,6 +189,10 @@ async function selectedRecordings(
 ): Promise<SelectedRecordings> {
   const workBeans = await fetchWorks(entity);
 
+  if (workBeans.length === 0) {
+    throw new Error(`No works found for entity ${entity.toString()}`);
+  }
+
   const mediumTracks = (medium: MediumWithRecordingsT) =>
     (MB?.relationshipEditor.state as ReleaseRelationshipEditorStateT).loadedTracks.get(medium.position) ||
     medium.tracks ||
@@ -209,7 +213,7 @@ async function selectedRecordings(
         iif(
           () => workBean.isMedley === '1',
           from(workBean.list ?? []).pipe(
-            mergeMap(async medleyVersion => await fetchWorks(new Entity(medleyVersion.id, 'Version'))),
+            mergeMap(async medleyVersion => await fetchWorks(new Version(medleyVersion.id, medleyVersion.workId))),
             map(medleyWorks => medleyWorks[0]),
             map((medleyWork, index) => ({position, index, workBean: medleyWork, recordingState}))
           ),
