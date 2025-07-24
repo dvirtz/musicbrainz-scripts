@@ -8,7 +8,7 @@ export class TestRelease {
   public static readonly tracks = [
     {
       'id': null,
-      'name': "סע לאט ב'",
+      'name': 'סע לאט ב׳',
       'artist_credit': {
         'names': [
           {

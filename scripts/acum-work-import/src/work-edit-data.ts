@@ -181,17 +181,18 @@ export async function workEditData(
           )
         : originalEditData.languages,
       iswcs: mergeArrays(originalEditData.iswcs, (await workISWCs(track.workId)) ?? []),
-      attributes: originalEditData.attributes.find(
-        element => element.type_id === acumTypeId && element.value === track.fullWorkId
-      )
-        ? originalEditData.attributes
-        : [
-            ...originalEditData.attributes,
-            {
-              type_id: acumTypeId,
-              value: track.fullWorkId,
-            },
-          ],
+      // remove older longer ACUM ID attributes
+      attributes: [
+        ...originalEditData.attributes.filter(
+          element =>
+            element.type_id !== acumTypeId ||
+            (element.value !== track.workId && element.value.length == track.workId.length)
+        ),
+        {
+          type_id: acumTypeId,
+          value: track.workId,
+        },
+      ],
     },
   };
 }
