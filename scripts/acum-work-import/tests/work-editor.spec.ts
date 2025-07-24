@@ -36,7 +36,7 @@ test.describe('work editor', () => {
     expect(attributeType).toMatch(/\s*ACUM ID/);
 
     const attributeValue = page.locator('input[name="edit-work.attributes.0.value"]');
-    await expect(attributeValue).toHaveValue(versionId);
+    await expect(attributeValue).toHaveValue(workId);
 
     for (const role of ['composer', 'lyricist']) {
       const roleRow = page.getByRole('row', {name: role});
@@ -75,7 +75,7 @@ test.describe('work editor', () => {
     expect(attributeType).toMatch(/\s*ACUM ID/);
 
     const attributeValue = page.locator('input[name="edit-work.attributes.0.value"]');
-    await expect(attributeValue).toHaveValue(versionId);
+    await expect(attributeValue).toHaveValue(workId);
 
     for (const role of ['composer', 'lyricist']) {
       const roleRow = page.getByRole('row', {name: role});
