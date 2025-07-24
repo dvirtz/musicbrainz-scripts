@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.17.0-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.16.3...@dvirtz/acum-work-import-v1.17.0-beta.1) (2025-07-24)
+
+
+### Features
+
+* use workId as ACUM ID instead of versionId ([3c8175b](https://github.com/dvirtz/musicbrainz-scripts/commit/3c8175b97f605f07915b57afd04c7bfdc1834ac5))
+
 ## [@dvirtz/acum-work-import-v1.16.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.16.2...@dvirtz/acum-work-import-v1.16.3) (2025-07-24)
 
 
