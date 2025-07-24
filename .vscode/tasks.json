@@ -44,9 +44,9 @@
 			"problemMatcher": [],
 		},
 		{
-			"label": "configure musicbrainz url",
+			"label": "configure debug url",
 			"type": "shell",
-			"command": "echo ${input:configure-musicbrainz-url}",
+			"command": "echo ${input:configure-debug-url}",
 			"problemMatcher": [],
 		}
 	],
@@ -72,13 +72,13 @@
 			}
 		},
 		{
-			"id": "configure-musicbrainz-url",
+			"id": "configure-debug-url",
 			"type": "command",
 			"command": "shellCommand.execute",
 			"args": {
-				"command": "echo ${prompt:Enter MusicBrainz URL}",
+				"command": "echo ${prompt:prompt=Enter Debug URL}",
 				"useSingleResult": true,
-				"taskId": "musicbrainz-url",
+				"taskId": "debug-url",
 				"rememberPrevious": true,
 			}
 		}
