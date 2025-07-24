@@ -17,7 +17,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@playwright/test": "^1.51.1"
+    "@playwright/test": "*"
   },
   "devDependencies": {
     "@repo/common-types": "workspace:*",

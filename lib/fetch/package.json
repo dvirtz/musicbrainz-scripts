@@ -13,8 +13,8 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "fetch-retry": "^6.0.0",
-    "p-queue": "^8.1.0"
+    "fetch-retry": "*",
+    "p-queue": "*"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
