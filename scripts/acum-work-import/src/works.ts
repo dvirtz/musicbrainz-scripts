@@ -37,7 +37,9 @@ export async function findWork(track: WorkBean) {
           mergeMap(async work => await fetchJSON<WorkLookupResultT>(`/ws/2/work/${work.id}`)),
           filter(
             work =>
-              work.attributes.find(attr => attr.type === 'ACUM ID' && attr.value === track.fullWorkId) !== undefined
+              work.attributes.find(
+                attr => attr.type === 'ACUM ID' && (attr.value === track.workId || attr.value === track.fullWorkId)
+              ) !== undefined
           ),
           defaultIfEmpty(undefined)
         )
@@ -48,7 +50,7 @@ export async function findWork(track: WorkBean) {
 
   if (workId) {
     const work = await fetchJSON<WorkT>(`/ws/js/entity/${workId}`);
-    workCache.set(track.fullWorkId, work);
+    workCache.set(track.workId, work);
     return work;
   }
 
@@ -65,8 +67,8 @@ export async function createNewWork(
   }
 
   const newWork = await (async () => {
-    if (workCache.has(track.fullWorkId)) {
-      return workCache.get(track.fullWorkId)!;
+    if (workCache.has(track.workId)) {
+      return workCache.get(track.workId)!;
     }
     if (await shouldSearchWorks()) {
       const existingWork = await findWork(track);
@@ -78,7 +80,7 @@ export async function createNewWork(
       _fromBatchCreateWorksDialog: true,
       name: trackName(track),
     });
-    workCache.set(track.fullWorkId, newWork);
+    workCache.set(track.workId, newWork);
     return newWork;
   })();
   MB.linkedEntities.work[newWork.id] = newWork;
