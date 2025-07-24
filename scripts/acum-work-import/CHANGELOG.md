@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.16.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.16.2...@dvirtz/acum-work-import-v1.16.3) (2025-07-24)
+
+
+### Build and continuous integration
+
+* keep dependency versions same across packages ([6c3a2b5](https://github.com/dvirtz/musicbrainz-scripts/commit/6c3a2b585de396b43186e04e8c8a1e7791d095e9))
+
 ## [@dvirtz/acum-work-import-v1.16.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.16.1...@dvirtz/acum-work-import-v1.16.2) (2025-07-10)
 
 
