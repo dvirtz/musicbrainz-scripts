@@ -18,8 +18,8 @@
     "@repo/fetch": "workspace:*",
     "@repo/musicbrainz-ext": "workspace:*",
     "@repo/rxjs-ext": "workspace:*",
-    "rxjs": "^7.8.1",
-    "solid-js": "^1.9.4"
+    "rxjs": "*",
+    "solid-js": "*"
   },
   "devDependencies": {
     "@playwright/test": "*",

@@ -90,6 +90,17 @@
     "vite-plugin-monkey": "^5.0.8",
     "vite-plugin-solid": "^2.11.6"
   },
+  "resolutions": {
+    "rxjs": "^7.8.2",
+    "dom-mutations": "^1.0.0",
+    "@kobalte/core": "^0.13.8",
+    "p-lazy": "^5.0.0",
+    "solid-js": "^1.9.4",
+    "fetch-retry": "^6.0.0",
+    "p-queue": "^8.1.0",
+    "dedent": "^1.5.3",
+    "@playwright/test": "^1.51.1"
+  },
   "lint-staged": {
     "src/**": [
       "eslint --fix",

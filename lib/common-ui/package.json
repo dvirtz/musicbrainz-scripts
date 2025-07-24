@@ -13,7 +13,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@kobalte/core": "^0.13.8"
+    "@kobalte/core": "*"
   },
   "devDependencies": {
     "@repo/common-types": "workspace:*",

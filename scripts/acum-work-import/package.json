@@ -13,16 +13,16 @@
     "test": "playwright test"
   },
   "dependencies": {
-    "@kobalte/core": "^0.13.8",
+    "@kobalte/core": "*",
     "@repo/common": "workspace:*",
     "@repo/common-ui": "workspace:*",
     "@repo/fetch": "workspace:*",
     "@repo/musicbrainz-ext": "workspace:*",
     "@repo/rxjs-ext": "workspace:*",
-    "dom-mutations": "^1.0.0",
-    "p-lazy": "^5.0.0",
-    "rxjs": "^7.8.1",
-    "solid-js": "^1.9.4"
+    "dom-mutations": "*",
+    "p-lazy": "*",
+    "rxjs": "*",
+    "solid-js": "*"
   },
   "devDependencies": {
     "@playwright/test": "*",

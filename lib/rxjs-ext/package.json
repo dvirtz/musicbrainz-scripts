@@ -13,7 +13,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "rxjs": "^7.8.1"
+    "rxjs": "*"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
