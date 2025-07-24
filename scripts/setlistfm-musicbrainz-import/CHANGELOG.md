@@ -1,3 +1,10 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.5.4](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.5.3...@dvirtz/setlistfm-musicbrainz-import-v1.5.4) (2025-07-24)
+
+
+### Build and continuous integration
+
+* keep dependency versions same across packages ([6c3a2b5](https://github.com/dvirtz/musicbrainz-scripts/commit/6c3a2b585de396b43186e04e8c8a1e7791d095e9))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.5.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.5.2...@dvirtz/setlistfm-musicbrainz-import-v1.5.3) (2025-07-09)
 
 
