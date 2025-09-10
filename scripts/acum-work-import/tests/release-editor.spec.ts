@@ -18,13 +18,7 @@ test.describe('release editor', () => {
 
     // import the album
     const importButton = page.getByRole('button', {name: 'Import works from ACUM'});
-    const submitWorks = page.getByRole('button', {name: 'Submit works'});
-    await expect(submitWorks).toBeDisabled();
     await importButton.click();
-    await expect(submitWorks).toBeEnabled();
-
-    const enterEdit = page.getByRole('button', {name: 'Enter edit'});
-    await expect(enterEdit).toBeDisabled();
 
     const recordingOfLabels = page.getByText('recording of:');
     await expect(recordingOfLabels).toHaveCount(testRelease.tracks().length);
@@ -32,9 +26,8 @@ test.describe('release editor', () => {
     const arrangerLabels = page.getByText('arranger:');
     await expect(arrangerLabels).toHaveCount(testRelease.tracks().length);
 
-    await submitWorks.click();
-    await expect(enterEdit).toBeEnabled();
-
+    // Now click "Enter edit" which will automatically submit works first, then proceed with the edit
+    const enterEdit = page.getByRole('button', {name: 'Enter edit'});
     await enterEdit.click();
     await expect(page).toHaveURL(`/release/${testRelease.gid}`);
   });
