@@ -5,52 +5,82 @@ import {ImportForm} from '#ui/import-form.tsx';
 import {ProgressBar} from '#ui/progressbar.tsx';
 import {waitForElement} from '#ui/wait-for-element.ts';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
-import {Button} from '@kobalte/core/button';
 import {toolbox} from '@repo/common-ui/toolbox';
-import {createEffect, createMemo, createSignal} from 'solid-js';
+import {createSignal} from 'solid-js';
 import {render} from 'solid-js/web';
 import progressBarStyle from './progressbar.css?inline';
 import workEditDialogStyle from './work-edit-dialog.css?inline';
+import {ReleaseRelationshipEditor} from 'typedbrainz/types';
+import domMutations from 'dom-mutations';
+import {first, from, tap} from 'rxjs';
+import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 
 function AcumImporter() {
   const {addWarning, clearWarnings} = useWarnings();
-  const [worksPending, setWorksPending] = createSignal(false);
-  const [submitting, setSubmitting] = createSignal(false);
   const [progress, setProgress] = createSignal<readonly [number, string]>([0, '']);
-  const submissionDisabled = createMemo(() => !worksPending() || submitting());
 
-  createEffect((prevTitle?: string) => {
-    const submitButton = document.querySelector('button.submit') as HTMLButtonElement;
-    submitButton.disabled = worksPending();
-    submitButton.title = worksPending() ? 'Submit works or cancel first' : (prevTitle ?? submitButton.title);
-    return submitButton.title;
-  });
+  // One-time button replacement on mount
+  function replaceSubmitButton() {
+    const originalSubmitButton = document.querySelector('button.submit') as HTMLButtonElement;
+    if (originalSubmitButton && !originalSubmitButton.dataset.acumReplaced) {
+      // Replace the original submit button with our custom one
+      const newSubmitButton = document.createElement('button');
+      newSubmitButton.className = originalSubmitButton.className;
+      newSubmitButton.textContent = originalSubmitButton.textContent;
+      newSubmitButton.type = 'button';
+      newSubmitButton.dataset.acumReplaced = 'true';
+
+      newSubmitButton.onclick = async () => {
+        if (await submitWorks()) {
+          await executePipeline(
+            from(domMutations(originalSubmitButton, {attributeFilter: ['disabled']})).pipe(
+              tap(() => {
+                originalSubmitButton.click();
+              }),
+              first()
+            )
+          );
+        }
+      };
+
+      // Hide the original button and insert our new one
+      originalSubmitButton.style.display = 'none';
+      originalSubmitButton.parentNode?.insertBefore(newSubmitButton, originalSubmitButton);
+    }
+  }
 
   async function importWorks(entity: Entity) {
     clearWarnings();
     try {
-      setWorksPending(await tryImportWorks(entity, addWarning, setProgress));
+      if (await tryImportWorks(entity, addWarning, setProgress)) {
+        replaceSubmitButton();
+      }
     } catch (err) {
       console.error(err);
       addWarning(`Import failed: ${String(err)}`);
     }
   }
 
-  function submitWorks() {
-    setSubmitting(true);
+  async function submitWorks() {
+    const submitButton = document.querySelector<HTMLButtonElement>('button[data-acum-replaced]');
+    if (submitButton) submitButton.disabled = true;
+    (MB?.relationshipEditor as ReleaseRelationshipEditor).dispatch?.({
+      type: 'start-submission',
+    });
     clearWarnings(/submission failed.*/);
-    trySubmitWorks(setProgress)
-      .then(() => {
-        setWorksPending(false);
-        clearWarnings();
-      })
-      .catch(err => addWarning(`Submission failed: ${err}`))
-      .finally(() => setSubmitting(false));
-  }
-
-  function cancel() {
-    setWorksPending(false);
-    clearWarnings();
+    try {
+      await trySubmitWorks(setProgress);
+      clearWarnings();
+      return true;
+    } catch (err) {
+      addWarning(`Submission failed: ${String(err)}`);
+      if (submitButton) submitButton.disabled = false;
+      return false;
+    } finally {
+      (MB?.relationshipEditor as ReleaseRelationshipEditor).dispatch?.({
+        type: 'stop-submission',
+      });
+    }
   }
 
   addWarning(
@@ -61,12 +91,6 @@ function AcumImporter() {
   return (
     <>
       <ImportForm entityTypes={['Album', 'Version', 'Work']} onSubmit={importWorks} idPattern="[0-9A-Z]+">
-        <Button id="acum-work-submit" class="worksubmit" disabled={submissionDisabled()} onclick={submitWorks}>
-          <span>Submit works</span>
-        </Button>
-        <Button id="acum-work-cancel" class="worksubmit" disabled={submissionDisabled()} onclick={cancel}>
-          <span>Cancel</span>
-        </Button>
         <ProgressBar
           value={progress()[0]}
           label={progress()[1]}
