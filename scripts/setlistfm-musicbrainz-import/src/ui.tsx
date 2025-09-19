@@ -17,8 +17,5 @@ export async function createUI(buttonText: string, onClick: () => void) {
   const userFragment = document.querySelector('.user-fragment');
   userFragment?.insertBefore(div, userFragment.firstChild);
 
-  document.querySelector('div.main-navi')?.classList.add('col-md-7');
-  document.querySelector('div.user-navi')?.classList.add('col-md-5');
-
   await registerSettingsDialog();
 }
