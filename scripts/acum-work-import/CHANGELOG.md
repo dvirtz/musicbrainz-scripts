@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.18.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.17.0...@dvirtz/acum-work-import-v1.18.0) (2025-09-19)
+
+
+### Features
+
+* replace original submit button with a custom button in AcumImporter ([eaefb58](https://github.com/dvirtz/musicbrainz-scripts/commit/eaefb58ef93667be7e8a00b34ee061765e0d5646))
+
 ## [@dvirtz/acum-work-import-v1.17.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.16.3...@dvirtz/acum-work-import-v1.17.0) (2025-07-25)
 
 
