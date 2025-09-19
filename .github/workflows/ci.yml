@@ -35,6 +35,8 @@ jobs:
         env:
           MB_USERNAME: ${{ secrets.MB_USERNAME }}
           MB_PASSWORD: ${{ secrets.MB_PASSWORD }}
+          # https://github.com/nodejs/node/issues/59364
+          NODE_OPTIONS: --no-experimental-strip-types
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
