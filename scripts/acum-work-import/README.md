@@ -18,8 +18,7 @@ To import a whole medium:
    ![updated works](assets/updated-works.png)
 7. Review the changes by opening the edit dialogs before submitting the changes.
    ![work edit](assets/work-edit.png)
-8. When ready, submit the works by clicking the "Submit Works" button or "Cancel" to skip ISWCs and work attribute submission.
-9. Submit the rest of the relationships as usual.
+8. When submitting the changes, works will be created and updated as needed.
 
 Since ACUM database treats every medium as a separate album all selected recordings should be under a single medium.
 
