@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.18.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.18.0...@dvirtz/acum-work-import-v1.18.1) (2025-09-20)
+
+
+### Documentation
+
+* update README to clarify submission process and modify related image ([1553902](https://github.com/dvirtz/musicbrainz-scripts/commit/155390255b179c94d79083465fab2303ce3e348b))
+
 ## [@dvirtz/acum-work-import-v1.18.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.17.0...@dvirtz/acum-work-import-v1.18.0) (2025-09-19)
 
 
