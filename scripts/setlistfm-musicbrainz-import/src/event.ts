@@ -41,26 +41,40 @@ const artistMBIDCache = new Map<string, Promise<string | undefined>>();
 
 export async function handleSetlistPage() {
   const eventMBID = await findEvent(document.location.href);
+  const venueElement = document.querySelector<HTMLAnchorElement>('a[href*="/venue/"]');
+  if (!venueElement) {
+    return;
+  }
+  const placeMBID = (await findVenue(venueElement.href)) || '';
+  if (!placeMBID) {
+    addWarningIcon(
+      'place',
+      `place:${unsafeWindow.sfmPageAttributes.venue.name} AND area:${unsafeWindow.sfmPageAttributes.venue.city}`,
+      venueElement
+    );
+  }
   if (eventMBID) {
-    await createUI('Open in MB', () => {
-      window.open(`https://musicbrainz.org/event/${eventMBID}`);
-    });
+    await createUI(
+      {label: 'Open in MB', onSelect: () => window.open(`https://musicbrainz.org/event/${eventMBID}`)},
+      {
+        label: 'Edit in MB',
+        onSelect: () => {
+          submitEvent(placeMBID, eventMBID).catch(console.error);
+        },
+      },
+      {
+        label: 'Add to MB',
+        onSelect: () => {
+          submitEvent(placeMBID).catch(console.error);
+        },
+      }
+    );
   } else {
-    const venueElement = document.querySelector<HTMLAnchorElement>('a[href*="/venue/"]');
-    if (!venueElement) {
-      return;
-    }
-    const placeMBID = await findVenue(venueElement.href);
-    if (!placeMBID) {
-      addWarningIcon(
-        'place',
-        `place:${unsafeWindow.sfmPageAttributes.venue.name} AND area:${unsafeWindow.sfmPageAttributes.venue.city}`,
-        venueElement
-      );
-    }
-
-    await createUI('Add to MB', () => {
-      submitEvent(placeMBID || '').catch(console.error);
+    await createUI({
+      label: 'Add to MB',
+      onSelect: () => {
+        submitEvent(placeMBID).catch(console.error);
+      },
     });
   }
 }
@@ -176,7 +190,7 @@ function toSetlist(section: Section) {
   );
 }
 
-async function submitEvent(placeMBID: string) {
+async function submitEvent(placeMBID: string, eventMBID?: string) {
   const searchParams = new URLSearchParams();
 
   const artistMBID = unsafeWindow.sfmPageAttributes.artist.mbid;
@@ -269,7 +283,11 @@ async function submitEvent(placeMBID: string) {
   );
 
   // navigate to the event creation page
-  unsafeWindow.open('https://musicbrainz.org/event/create?' + searchParams.toString());
+  if (eventMBID) {
+    unsafeWindow.open(`https://musicbrainz.org/event/${eventMBID}/edit?` + searchParams.toString());
+  } else {
+    unsafeWindow.open('https://musicbrainz.org/event/create?' + searchParams.toString());
+  }
 }
 
 function parseTime(query: string) {

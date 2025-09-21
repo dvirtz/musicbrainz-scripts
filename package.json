@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "watch": "yarn turbo watch check-types lint --experimental-write-cache",
+    "watch": "yarn turbo watch build --experimental-write-cache",
     "release": "yarn workspaces foreach --all --topological-dev --exclude 'lib/*' exec semantic-release",
     "test": "turbo run test",
     "ci": "yarn check-types && yarn lint && yarn build",
@@ -98,7 +98,7 @@
     "solid-js": "^1.9.4",
     "fetch-retry": "^6.0.0",
     "p-queue": "^8.1.0",
-    "dedent": "^1.5.3",
+    "dedent": "^1.7.0",
     "@playwright/test": "^1.51.1"
   },
   "lint-staged": {

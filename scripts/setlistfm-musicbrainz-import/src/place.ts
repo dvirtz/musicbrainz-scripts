@@ -11,13 +11,13 @@ enum TypeID {
 export async function handleVenuePage() {
   const placeMBID = await findVenue(document.location.href);
   if (placeMBID) {
-    await createUI('Open in MB', () => {
-      window.open(`https://musicbrainz.org/place/${placeMBID}`);
-    });
+    await createUI(
+      {label: 'Open in MB', onSelect: () => window.open(`https://musicbrainz.org/place/${placeMBID}`)},
+      {label: 'Edit in MB', onSelect: () => submitPlace(placeMBID)},
+      {label: 'Add to MB', onSelect: () => submitPlace()}
+    );
   } else {
-    await createUI('Add to MB', () => {
-      submitPlace();
-    });
+    await createUI({label: 'Add to MB', onSelect: () => submitPlace()});
   }
 }
 
@@ -28,7 +28,7 @@ export async function findVenue(url: string) {
   return existingVenue && existingVenue.relations[0]?.place.id;
 }
 
-function submitPlace() {
+function submitPlace(placeMBID?: string) {
   const searchParams = new URLSearchParams();
 
   searchParams.append('edit-place.name', unsafeWindow.sfmPageAttributes.venue.name);
@@ -78,5 +78,9 @@ function submitPlace() {
   searchParams.append('edit-place.url.0.link_type_id', TypeID.SetlistFmUrl);
 
   // navigate to the place creation page
-  unsafeWindow.open('https://musicbrainz.org/place/create?' + searchParams.toString());
+  if (placeMBID) {
+    unsafeWindow.open(`https://musicbrainz.org/place/${placeMBID}/edit?` + searchParams.toString());
+  } else {
+    unsafeWindow.open('https://musicbrainz.org/place/create?' + searchParams.toString());
+  }
 }
