@@ -135,5 +135,9 @@
       ]
     }
   },
+  "browserslist": [
+    "defaults and fully supports es6-module",
+    "maintained node versions"
+  ],
   "packageManager": "yarn@4.3.1"
 }
