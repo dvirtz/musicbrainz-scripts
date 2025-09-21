@@ -1,3 +1,15 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.6.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.5.4...@dvirtz/setlistfm-musicbrainz-import-v1.6.0) (2025-09-21)
+
+
+### Features
+
+* add alternative actions ([ed715c3](https://github.com/dvirtz/musicbrainz-scripts/commit/ed715c349daba8532be09d083d6f6788d2847c37))
+
+
+### Bug Fixes
+
+* class override breaks layout with new website ([fe6fec2](https://github.com/dvirtz/musicbrainz-scripts/commit/fe6fec219acd2556c4f38d1c021494e18295e1d1))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.5.4](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.5.3...@dvirtz/setlistfm-musicbrainz-import-v1.5.4) (2025-07-24)
 
 
