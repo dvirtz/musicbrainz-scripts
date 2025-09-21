@@ -27,6 +27,7 @@
     "@repo/test-support": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/vite-config": "workspace:*",
+    "dedent": "^1.7.0",
     "eslint": "*",
     "semantic-release": "*",
     "typescript": "*",

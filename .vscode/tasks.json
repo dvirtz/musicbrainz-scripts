@@ -7,7 +7,10 @@
 			"group": "build",
 			"problemMatcher": [],
 			"label": "npm: watch",
-			"detail": "yarn turbo watch check-types lint --experimental-write-cache",
+			"detail": "yarn turbo watch build --experimental-write-cache",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
 		},
 		{
 			"type": "shell",

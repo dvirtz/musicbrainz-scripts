@@ -1,15 +1,57 @@
 import {test} from '#tests/fixtures/setlistfm-test.ts';
 import {expect} from '@playwright/test';
 
-test('existing place', async ({page, setlistfmPage}) => {
+test('existing place', async ({page, setlistfmPage, baseURL}) => {
   await setlistfmPage.goto('/venue/whisky-a-go-go-west-hollywood-ca-usa-5bd66bd4.html');
 
   const openInMB = page.getByRole('button', {name: 'Open in MB'});
   await expect(openInMB).toBeAttached();
   await openInMB.click();
-  expect(setlistfmPage.windowOpenLog).toEqual([
-    URL.parse('https://beta.musicbrainz.org/place/414283ed-c2a6-4e27-93cb-3663ab2ac3e9'),
-  ]);
+  expect(setlistfmPage.windowOpenLog[0]).toMatchObject({
+    hostname: 'musicbrainz.org',
+    pathname: '/place/414283ed-c2a6-4e27-93cb-3663ab2ac3e9',
+  });
+
+  // also verify the alternate 'Edit in MB' action from the menu using Playwright locators
+  const toggle = page.getByLabel('More actions');
+  await expect(toggle).toBeAttached();
+  await toggle.click();
+
+  const expectedSearchParams = [
+    ['edit-place.name', 'Whisky A Go Go'],
+    [
+      'edit-place.edit_note',
+      `----\nImported from ${baseURL}/venue/whisky-a-go-go-west-hollywood-ca-usa-5bd66bd4.html using userscript version 1.0.0 from https://homepage.com.`,
+    ],
+    ['edit-place.area.name', 'West Hollywood'],
+    ['edit-place.address', '8901 West Sunset Boulevard, West Hollywood, CA 90069, USA'],
+    ['edit-place.period.begin_date.year', '1964'],
+    ['edit-place.period.begin_date.month', '1'],
+    ['edit-place.period.begin_date.day', '16'],
+    ['edit-place.url.1.text', `http://www.whiskyagogo.com/`],
+    ['edit-place.url.2.text', `http://en.wikipedia.org/wiki/Whisky_a_Go_Go`],
+    ['edit-place.url.0.text', `${baseURL}/venue/whisky-a-go-go-west-hollywood-ca-usa-5bd66bd4.html`],
+    ['edit-place.url.0.link_type_id', '817'],
+  ];
+
+  const editInMB = page.getByRole('menuitem', {name: 'Edit in MB'});
+  await expect(editInMB).toBeAttached();
+  await editInMB.click();
+  expect(setlistfmPage.windowOpenLog[1]).toMatchObject({
+    hostname: 'musicbrainz.org',
+    pathname: '/place/414283ed-c2a6-4e27-93cb-3663ab2ac3e9/edit',
+  });
+  expect([...setlistfmPage.windowOpenLog[1]!.searchParams.entries()]).toEqual(expectedSearchParams);
+
+  await toggle.click();
+  const addToMB = page.getByRole('menuitem', {name: 'Add to MB'});
+  await expect(addToMB).toBeAttached();
+  await addToMB.click();
+  expect(setlistfmPage.windowOpenLog[2]).toMatchObject({
+    hostname: 'musicbrainz.org',
+    pathname: '/place/create',
+  });
+  expect([...setlistfmPage.windowOpenLog[2]!.searchParams.entries()]).toEqual(expectedSearchParams);
 });
 
 test('missing place', async ({page, setlistfmPage, baseURL}) => {
