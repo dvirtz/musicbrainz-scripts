@@ -1,6 +1,6 @@
 import {Creator, Creators, Entity, entityUrl, fetchWorks, IPBaseNumber, trackName, Version, WorkBean} from '#acum.ts';
 import {linkArtists} from '#artists.ts';
-import {addArrangerRelationship, addWriterRelationship} from '#relationships.ts';
+import {addArrangerRelationship} from '#relationships.ts';
 import {AddWarning} from '#ui/warnings.tsx';
 import {addWorkEditor} from '#ui/work-editor.tsx';
 import {workEditData, workEditDataEqual} from '#work-edit-data.ts';
@@ -155,13 +155,7 @@ async function linkCreators(
   workState: WorkStateWithEditDataT,
   addWarning: AddWarning
 ): Promise<WorkStateWithEditDataT> {
-  const work = workState.work;
-  await linkWriters(
-    artistCache,
-    workBean,
-    (artist: ArtistT, linkTypeId: number) => addWriterRelationship(work, artist, linkTypeId),
-    addWarning
-  );
+  await linkWriters(artistCache, workBean, workState.work, workState.targetTypeGroups, addWarning);
   await linkArrangers(artistCache, recording, workBean.arrangers, workBean.creators, addWarning);
   return workState;
 }
