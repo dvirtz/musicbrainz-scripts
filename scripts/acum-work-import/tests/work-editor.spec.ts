@@ -90,4 +90,31 @@ test.describe('work editor', () => {
       `\n----\nImported from ${workUrl} using userscript version 1.0.0 from https://homepage.com.`
     );
   });
+
+  test('avoid adding special purpose artists when other artists exist and artists which are already linked', async ({
+    page,
+    musicbrainzPage,
+  }) => {
+    await musicbrainzPage.goto('/work/85a460d6-0c92-4b5f-8fe2-7dfc639a6d56/edit');
+    const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/version?workid=1010819&versionid=1010819002`;
+
+    const input = page.getByPlaceholder('Version/Work ID');
+    await input.fill(workUrl);
+    await expect(input).toHaveValue('1010819002');
+
+    const consoleMessages: string[] = [];
+    page.on('console', msg => {
+      consoleMessages.push(msg.text());
+    });
+
+    const importButton = page.getByRole('button', {name: 'Import work from ACUM'});
+    await importButton.click();
+
+    await expect(page.getByRole('row', {name: 'composer'}).getByRole('link', {name: '[traditional]'})).toHaveCount(0);
+    await expect(page.getByText('skipping special purpose artist')).toHaveCount(1);
+
+    // cspell: disable-next-line
+    await expect(page.getByRole('row', {name: 'lyricist'}).getByRole('link', {name: 'נתן אלתרמן'})).toHaveCount(0);
+    expect(consoleMessages.filter(msg => msg.includes('skipping existing author'))).toHaveLength(1);
+  });
 });

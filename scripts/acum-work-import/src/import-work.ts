@@ -1,11 +1,11 @@
 import {Entity, entityUrl, fetchWorks, IPBaseNumber} from '#acum.ts';
-import {addWriterRelationship} from '#relationships.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
 import {AddWarning} from '#ui/warnings.tsx';
 import {workEditData} from '#work-edit-data.ts';
 import {createWork, findWork, linkWriters} from '#works.ts';
 import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
 import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
+import {findTargetTypeGroups} from '@repo/musicbrainz-ext/type-group';
 import {asyncTap} from '@repo/rxjs-ext/async-tap';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {filter, from, lastValueFrom, map, switchMap, take, tap, toArray, zip} from 'rxjs';
@@ -113,7 +113,8 @@ export async function importWork(entity: Entity<'Work' | 'Version'>, form: HTMLF
           await linkWriters(
             artistCache,
             track,
-            (artist: ArtistT, linkTypeId: number) => addWriterRelationship(work, artist, linkTypeId),
+            work,
+            findTargetTypeGroups(MB?.relationshipEditor.state?.existingRelationshipsBySource ?? null, work),
             addWarning
           );
         }),
