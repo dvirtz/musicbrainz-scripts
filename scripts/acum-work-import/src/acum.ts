@@ -111,8 +111,10 @@ type WorkInfoResponse = Response<
 const baseUrl = 'https://nocs.acum.org.il/acumsitesearchdb';
 // cSpell:ignoreRegExp `\${baseUrl}\/[^`]*`
 
-async function fetchWork(workId: string): Promise<ReadonlyArray<WorkBean>> {
-  const result = await tryFetchJSON<WorkInfoResponse>(`${baseUrl}/getworkinfo?workId=${workId}`);
+async function fetchWork(workId: string, versionId?: string): Promise<ReadonlyArray<WorkBean>> {
+  const result = await tryFetchJSON<WorkInfoResponse>(
+    `${baseUrl}/getworkinfo?workId=${workId}${versionId ? `&versionId=${versionId}` : ''}`
+  );
   if (result) {
     if (result.errorCode == 0) {
       if (result.data.workVersions) {
@@ -150,7 +152,7 @@ async function fetchWork(workId: string): Promise<ReadonlyArray<WorkBean>> {
 }
 
 function versionWorkId(versionId: string) {
-  return versionId.substring(0, versionId.length - 3);
+  return versionId.substring(0, 7);
 }
 
 async function fetchAlbum(albumId: string): Promise<AlbumBean> {
@@ -264,10 +266,14 @@ async function fetchWorksUncached(entity: Entity): Promise<ReadonlyArray<WorkBea
       return await fetchWork(entity.id);
     case 'Album':
       return (await fetchAlbum(entity.id))?.tracks;
-    case 'Version':
-      return (await fetchWorks(new Entity((entity as Version).workId, 'Work'))).filter(
-        track => track.versionId === entity.id
-      );
+    case 'Version': {
+      // only add versionId if it does not start with workId (usually for translated versions)
+      const workId = (entity as Version).workId ?? versionWorkId(entity.id);
+      if (entity.id.startsWith(workId)) {
+        return await fetchWork(workId);
+      }
+      return await fetchWork(workId, entity.id);
+    }
   }
 }
 
