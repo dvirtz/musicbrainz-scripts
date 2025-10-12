@@ -23,3 +23,7 @@ export async function toolbox(doc: Document, className: 'full-page' | 'half-page
     </div>
   ) as HTMLDivElement;
 }
+
+export function warning(message: string) {
+  return (<p class={classes['warning']}>{message}</p>) as HTMLParagraphElement;
+}
