@@ -1,8 +1,9 @@
 import {AcumWorkType} from '#acum-work-type.ts';
 import {trackName, WorkBean, workISWCs, workType} from '#acum.ts';
 import {linkArtists} from '#artists.ts';
-import {createRelationshipState} from '#relationships.ts';
+import {addWriterRelationship, createRelationshipState} from '#relationships.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
+import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {
   COMPOSER_LINK_TYPE_ID,
   LYRICIST_LINK_TYPE_ID,
@@ -15,9 +16,10 @@ import {
 import {fetchJSON, tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {formatISWC} from '@repo/musicbrainz-ext/format-iswc';
 import {IswcLookupResultsT, WorkLookupResultT, WorkSearchResultsT} from '@repo/musicbrainz-ext/search-results';
+import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {defaultIfEmpty, filter, firstValueFrom, from, mergeMap} from 'rxjs';
 import {isReleaseRelationshipEditor} from 'typedbrainz';
-import {ArtistT, LinkAttrT, MediumRecordingStateT, WorkT} from 'typedbrainz/types';
+import {ArtistT, LinkAttrT, MediumRecordingStateT, RelationshipTargetTypeGroupsT, WorkT} from 'typedbrainz/types';
 
 const workCache = new Map<string, WorkT>();
 
@@ -153,12 +155,41 @@ export function createWork(attributes: Partial<WorkT>): WorkT {
   };
 }
 
+const SPECIAL_PURPOSE_ARTISTS = [
+  '9be7f096-97ec-4615-8957-8d40b5dcbc41', // [traditional]
+  'f731ccc4-e22a-43af-a747-64213329e088', // [unknown]
+];
+
+function workAuthors(targetTypeGroups: RelationshipTargetTypeGroupsT): readonly ArtistT[] | undefined {
+  const targetTypeGroup = MB?.tree?.find(targetTypeGroups, 'artist', compareTargetTypeWithGroup, null);
+  if (targetTypeGroup) {
+    return iterateRelationshipsInTargetTypeGroup(targetTypeGroup)
+      .filter(rel => rel.entity0.entityType === 'artist')
+      .map(rel => rel.entity0 as ArtistT)
+      .toArray();
+  }
+}
+
 export async function linkWriters(
   artistCache: Map<string, Promise<ArtistT | null>>,
   track: WorkBean,
-  doLink: (artist: ArtistT, linkTypeID: number) => void,
+  work: WorkT,
+  workTargetTypeGroups: RelationshipTargetTypeGroupsT,
   addWarning: (message: string) => Set<string>
 ) {
+  const authors = (workTargetTypeGroups && workAuthors(workTargetTypeGroups)) ?? [];
+  const doLink = (linkTypeID: number) => (artist: ArtistT) => {
+    if (SPECIAL_PURPOSE_ARTISTS.includes(artist.gid) && authors.length > 0) {
+      addWarning(`skipping special purpose artist ${artist.name} when there are existing authors`);
+      return;
+    }
+    if (authors.some(existing => existing.gid === artist.gid)) {
+      console.log(`skipping existing author ${artist.name} for work ${work.name}`);
+      return;
+    }
+    addWriterRelationship(work, artist, linkTypeID);
+  };
+
   const authorLinkTypeId = (() => {
     switch (workType(track)) {
       case AcumWorkType.PopularSong:
@@ -172,21 +203,15 @@ export async function linkWriters(
     artistCache,
     [...(track.authors ?? []), ...(track.composersAndAuthors ?? [])],
     track.creators,
-    artist => doLink(artist, authorLinkTypeId),
+    doLink(authorLinkTypeId),
     addWarning
   );
   await linkArtists(
     artistCache,
     [...(track.composers ?? []), ...(track.composersAndAuthors ?? [])],
     track.creators,
-    artist => doLink(artist, COMPOSER_LINK_TYPE_ID),
+    doLink(COMPOSER_LINK_TYPE_ID),
     addWarning
   );
-  await linkArtists(
-    artistCache,
-    track.translators,
-    track.creators,
-    artist => doLink(artist, TRANSLATOR_LINK_TYPE_ID),
-    addWarning
-  );
+  await linkArtists(artistCache, track.translators, track.creators, doLink(TRANSLATOR_LINK_TYPE_ID), addWarning);
 }
