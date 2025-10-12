@@ -1,3 +1,4 @@
+import {warning} from '@repo/common-ui/toolbox';
 import {createContext, createSignal, FlowProps, For, useContext} from 'solid-js';
 
 const makeWarningContext = () => {
@@ -35,5 +36,5 @@ export type AddWarning = ReturnType<typeof useWarnings>['addWarning'];
 
 function Warnings() {
   const {state} = useWarnings();
-  return <For each={[...state()]}>{message => <p class={`warning`}>{message}</p>}</For>;
+  return <For each={[...state()]}>{warning}</For>;
 }
