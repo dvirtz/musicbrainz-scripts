@@ -1,3 +1,16 @@
+## [@dvirtz/acum-work-import-v1.19.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.18.1...@dvirtz/acum-work-import-v1.19.0) (2025-10-16)
+
+
+### Features
+
+* avoid adding unknown artist or already linked artists to existing works ([c32dc32](https://github.com/dvirtz/musicbrainz-scripts/commit/c32dc32f42a3657b2f8cb3d95842f2115ea9fdc5)), closes [#112](https://github.com/dvirtz/musicbrainz-scripts/issues/112)
+
+
+### Bug Fixes
+
+* only get specific translated version ([12304af](https://github.com/dvirtz/musicbrainz-scripts/commit/12304af63ccbc4bcd013160c070e9d4568342f5a))
+* warning css on work editor ([b823fd3](https://github.com/dvirtz/musicbrainz-scripts/commit/b823fd38b012744c2f67e1ffd835692bcf1da77d))
+
 ## [@dvirtz/acum-work-import-v1.18.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.18.0...@dvirtz/acum-work-import-v1.18.1) (2025-09-20)
 
 
