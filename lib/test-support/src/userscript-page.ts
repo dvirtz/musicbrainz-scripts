@@ -4,14 +4,32 @@ import {expect, type Page} from '@playwright/test';
 export class UserscriptPage {
   windowOpenLog: URL[] = [];
 
-  static async create<T extends UserscriptPage>(this: new (page: Page) => T, page: Page) {
-    const userscriptPage = new this(page);
+  static async create(
+    this: new (page: Page, userscriptPath: string) => UserscriptPage,
+    page: Page,
+    userscriptPath: string
+  ) {
+    const userscriptPage = new this(page, userscriptPath);
     await userscriptPage.mockWindowOpen();
     await userscriptPage.mockUserscriptManager();
     return userscriptPage;
   }
 
-  protected constructor(public readonly page: Page) {}
+  public constructor(
+    public readonly page: Page,
+    readonly userscriptPath: string
+  ) {}
+
+  public async goto(url: string) {
+    await this.page.goto(url);
+    await this.injectUserScript();
+  }
+
+  private async injectUserScript() {
+    await this.page.addScriptTag({
+      path: this.userscriptPath,
+    });
+  }
 
   private async mockWindowOpen() {
     // Expose function for pushing messages to the Node.js script.

@@ -1,6 +1,7 @@
 {
   "name": "@dvirtz/acum-work-import",
   "type": "module",
+  "main": "dist/acum-work-import.user.js",
   "imports": {
     "#*": "./src/*",
     "#tests/*": "./tests/*"

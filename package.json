@@ -27,7 +27,7 @@
     "watch": "yarn turbo watch build --experimental-write-cache",
     "release": "yarn workspaces foreach --all --topological-dev --exclude 'lib/*' exec semantic-release",
     "test": "turbo run test",
-    "ci": "yarn check-types && yarn lint && yarn build",
+    "ci": "yarn check-types && yarn build && yarn lint",
     "lint:knip": "knip --tags=-knipignore",
     "lint:markdown": "markdownlint-cli2",
     "lint:spell": "cspell",

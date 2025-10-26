@@ -1,13 +1,13 @@
 import {test} from '#tests/fixtures/setlistfm-test.ts';
 import {expect} from '@playwright/test';
 
-test('existing place', async ({page, setlistfmPage, baseURL}) => {
+test('existing place', async ({page, setlistfmPage, userscriptPage, baseURL}) => {
   await setlistfmPage.goto('/venue/whisky-a-go-go-west-hollywood-ca-usa-5bd66bd4.html');
 
   const openInMB = page.getByRole('button', {name: 'Open in MB'});
   await expect(openInMB).toBeAttached();
   await openInMB.click();
-  expect(setlistfmPage.windowOpenLog[0]).toMatchObject({
+  expect(userscriptPage.windowOpenLog[0]).toMatchObject({
     hostname: 'musicbrainz.org',
     pathname: '/place/414283ed-c2a6-4e27-93cb-3663ab2ac3e9',
   });
@@ -37,36 +37,36 @@ test('existing place', async ({page, setlistfmPage, baseURL}) => {
   const editInMB = page.getByRole('menuitem', {name: 'Edit in MB'});
   await expect(editInMB).toBeAttached();
   await editInMB.click();
-  expect(setlistfmPage.windowOpenLog[1]).toMatchObject({
+  expect(userscriptPage.windowOpenLog[1]).toMatchObject({
     hostname: 'musicbrainz.org',
     pathname: '/place/414283ed-c2a6-4e27-93cb-3663ab2ac3e9/edit',
   });
-  expect([...setlistfmPage.windowOpenLog[1]!.searchParams.entries()]).toEqual(expectedSearchParams);
+  expect([...userscriptPage.windowOpenLog[1]!.searchParams.entries()]).toEqual(expectedSearchParams);
 
   await toggle.click();
   const addToMB = page.getByRole('menuitem', {name: 'Add to MB'});
   await expect(addToMB).toBeAttached();
   await addToMB.click();
-  expect(setlistfmPage.windowOpenLog[2]).toMatchObject({
+  expect(userscriptPage.windowOpenLog[2]).toMatchObject({
     hostname: 'musicbrainz.org',
     pathname: '/place/create',
   });
-  expect([...setlistfmPage.windowOpenLog[2]!.searchParams.entries()]).toEqual(expectedSearchParams);
+  expect([...userscriptPage.windowOpenLog[2]!.searchParams.entries()]).toEqual(expectedSearchParams);
 });
 
-test('missing place', async ({page, setlistfmPage, baseURL}) => {
+test('missing place', async ({page, setlistfmPage, userscriptPage, baseURL}) => {
   // cspell:disable-next-line
   await setlistfmPage.goto('/venue/el-teatrito-buenos-aires-argentina-4bd61f1e.html');
 
   const addToMB = page.getByRole('button', {name: 'Add to MB'});
   await expect(addToMB).toBeAttached();
   await addToMB.click();
-  expect(setlistfmPage.windowOpenLog).toHaveLength(1);
-  expect(setlistfmPage.windowOpenLog[0]).toMatchObject({
+  expect(userscriptPage.windowOpenLog).toHaveLength(1);
+  expect(userscriptPage.windowOpenLog[0]).toMatchObject({
     hostname: 'musicbrainz.org',
     pathname: '/place/create',
   });
-  expect([...setlistfmPage.windowOpenLog[0]!.searchParams.entries()]).toEqual([
+  expect([...userscriptPage.windowOpenLog[0]!.searchParams.entries()]).toEqual([
     // cspell:disable
     ['edit-place.name', 'El Teatrito'],
     [
