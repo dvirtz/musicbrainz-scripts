@@ -40,3 +40,9 @@ export type WorkSearchResultsT = CommonSearchResultsT & {
     id: string;
   }>;
 };
+
+export type ReleaseSearchResultsT = CommonSearchResultsT & {
+  releases: ReadonlyArray<{
+    id: string;
+  }>;
+};
