@@ -1,15 +1,13 @@
-import {Page} from '@playwright/test';
 import {UserscriptPage} from '@repo/test-support/userscript-page';
-import {fileURLToPath} from 'node:url';
 
-export class SetlistFmPage extends UserscriptPage {
-  public constructor(page: Page) {
-    super(page);
-  }
+export class SetlistFmPage {
+  public constructor(
+    private userscriptPage: UserscriptPage,
+    public page = userscriptPage.page
+  ) {}
 
   async goto(url: string) {
-    await this.page.goto(url);
-    await this.injectUserScript();
+    await this.userscriptPage.goto(url);
     await this.acceptConsent();
   }
 
@@ -21,11 +19,5 @@ export class SetlistFmPage extends UserscriptPage {
     } catch {
       // No consent required
     }
-  }
-
-  private async injectUserScript() {
-    await this.page.addScriptTag({
-      path: fileURLToPath(import.meta.resolve('@dvirtz/setlistfm-musicbrainz-import')),
-    });
   }
 }

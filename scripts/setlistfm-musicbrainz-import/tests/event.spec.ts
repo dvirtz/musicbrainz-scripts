@@ -2,13 +2,13 @@ import {test} from '#tests/fixtures/setlistfm-test.ts';
 import {expect} from '@playwright/test';
 import dedent from 'dedent';
 
-test('existing event', async ({page, setlistfmPage, baseURL}) => {
+test('existing event', async ({page, setlistfmPage, userscriptPage, baseURL}) => {
   await setlistfmPage.goto('/setlist/elton-john/2022/enterprise-center-st-louis-mo-4389530f.html');
 
   const openInMB = page.getByRole('button', {name: 'Open in MB'});
   await expect(openInMB).toBeAttached();
   await openInMB.click();
-  expect(setlistfmPage.windowOpenLog).toEqual([
+  expect(userscriptPage.windowOpenLog).toEqual([
     URL.parse('https://musicbrainz.org/event/f03ab6fe-e45a-44a4-80d1-12b4e63ef082'),
   ]);
 
@@ -83,35 +83,35 @@ test('existing event', async ({page, setlistfmPage, baseURL}) => {
   const editInMB = page.getByRole('menuitem', {name: 'Edit in MB'});
   await expect(editInMB).toBeAttached();
   await editInMB.click();
-  expect(setlistfmPage.windowOpenLog[1]).toMatchObject({
+  expect(userscriptPage.windowOpenLog[1]).toMatchObject({
     hostname: 'musicbrainz.org',
     pathname: '/event/f03ab6fe-e45a-44a4-80d1-12b4e63ef082/edit',
   });
-  expect([...setlistfmPage.windowOpenLog[1]!.searchParams.entries()]).toEqual(expectedSearchParams);
+  expect([...userscriptPage.windowOpenLog[1]!.searchParams.entries()]).toEqual(expectedSearchParams);
 
   await toggle.click();
   const addToMB = page.getByRole('menuitem', {name: 'Add to MB'});
   await expect(addToMB).toBeAttached();
   await addToMB.click();
-  expect(setlistfmPage.windowOpenLog[2]).toMatchObject({
+  expect(userscriptPage.windowOpenLog[2]).toMatchObject({
     hostname: 'musicbrainz.org',
     pathname: '/event/create',
   });
-  expect([...setlistfmPage.windowOpenLog[2]!.searchParams.entries()]).toEqual(expectedSearchParams);
+  expect([...userscriptPage.windowOpenLog[2]!.searchParams.entries()]).toEqual(expectedSearchParams);
 });
 
-test('missing event', async ({page, setlistfmPage, baseURL}) => {
+test('missing event', async ({page, setlistfmPage, userscriptPage, baseURL}) => {
   await setlistfmPage.goto('/setlist/artificial-joy/1991/whisky-a-go-go-west-hollywood-ca-1b85add4.html');
 
   const addToMB = page.getByRole('button', {name: 'Add to MB'});
   await expect(addToMB).toBeAttached();
   await addToMB.click();
-  expect(setlistfmPage.windowOpenLog).toHaveLength(1);
-  expect(setlistfmPage.windowOpenLog[0]).toMatchObject({
+  expect(userscriptPage.windowOpenLog).toHaveLength(1);
+  expect(userscriptPage.windowOpenLog[0]).toMatchObject({
     hostname: 'musicbrainz.org',
     pathname: '/event/create',
   });
-  expect([...setlistfmPage.windowOpenLog[0]!.searchParams.entries()]).toEqual([
+  expect([...userscriptPage.windowOpenLog[0]!.searchParams.entries()]).toEqual([
     ['edit-event.name', 'Artificial Joy at Whisky A Go Go'],
     ['edit-event.type_id', '1'],
     ['edit-event.setlist', ''],
@@ -135,7 +135,7 @@ test('missing event', async ({page, setlistfmPage, baseURL}) => {
   ]);
 });
 
-test('missing event and place', async ({page, setlistfmPage}) => {
+test('missing event and place', async ({page, setlistfmPage, userscriptPage}) => {
   await setlistfmPage.goto('/setlist/eternal-gray/2011/sublime-tel-aviv-israel-53d9eba1.html');
 
   const placeLink = page.getByText('at Sublime');
@@ -144,12 +144,12 @@ test('missing event and place', async ({page, setlistfmPage}) => {
   await expect(warning).toHaveAttribute('title', 'place not found on MusicBrainz, click to search');
   await warning.click();
 
-  expect(setlistfmPage.windowOpenLog).toHaveLength(1);
-  expect(setlistfmPage.windowOpenLog[0]).toMatchObject({
+  expect(userscriptPage.windowOpenLog).toHaveLength(1);
+  expect(userscriptPage.windowOpenLog[0]).toMatchObject({
     hostname: 'musicbrainz.org',
     pathname: '/search',
   });
-  expect([...setlistfmPage.windowOpenLog[0]!.searchParams.entries()]).toEqual([
+  expect([...userscriptPage.windowOpenLog[0]!.searchParams.entries()]).toEqual([
     ['query', 'place:Sublime AND area:Tel Aviv'],
     ['type', 'place'],
     ['method', 'advanced'],

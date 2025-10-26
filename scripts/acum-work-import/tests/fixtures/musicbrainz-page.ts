@@ -1,29 +1,16 @@
-import {Page} from '@playwright/test';
 import {UserscriptPage} from '@repo/test-support/userscript-page';
-import * as path from 'path';
 import {NonUrlRelatableEntityTypeT, WsJsEditResponseT} from 'typedbrainz/types';
 
-export class MusicbrainzPage extends UserscriptPage {
-  public constructor(page: Page) {
-    super(page);
-  }
+export class MusicbrainzPage {
+  public constructor(
+    public userscriptPage: UserscriptPage,
+    public page = userscriptPage.page
+  ) {}
 
-  static async create<T extends UserscriptPage>(this: new (page: Page) => T, page: Page): Promise<T>;
-  static async create(page: Page) {
-    const musicbrainzPage = await super.create<MusicbrainzPage>(page);
+  static async create(userscriptPage: UserscriptPage) {
+    const musicbrainzPage = new MusicbrainzPage(userscriptPage);
     await musicbrainzPage.login();
     return musicbrainzPage;
-  }
-
-  async goto(path: string) {
-    await this.page.goto(path);
-    await this.injectUserScript();
-  }
-
-  async injectUserScript() {
-    await this.page.addScriptTag({
-      path: path.resolve(import.meta.dirname, '..', '..', 'dist', 'acum-work-import.user.js'),
-    });
   }
 
   async login() {

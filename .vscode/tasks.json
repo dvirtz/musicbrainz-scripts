@@ -44,13 +44,20 @@
 			"label": "configure active workspace",
 			"type": "shell",
 			"command": "echo ${input:configure-workspace}",
-			"problemMatcher": [],
+			"problemMatcher": []
 		},
 		{
 			"label": "configure debug url",
 			"type": "shell",
 			"command": "echo ${input:configure-debug-url}",
+			"problemMatcher": []
+		},
+		{
+			"type": "npm",
+			"script": "lint",
 			"problemMatcher": [],
+			"label": "npm: lint",
+			"detail": "turbo run lint lint:root"
 		}
 	],
 	"inputs": [
