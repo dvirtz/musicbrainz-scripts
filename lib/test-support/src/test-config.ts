@@ -1,6 +1,7 @@
 import {defineConfig as defineTestConfig, devices, type PlaywrightTestConfig} from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
+import {UserscriptTestOptions} from '#userscript-test.ts';
 
 /**
  * Read environment variables from file.
@@ -11,8 +12,8 @@ dotenv.config({path: path.resolve(import.meta.dirname, '..', '..', '..', '.env')
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export function defineConfig(baseURL: string, options?: PlaywrightTestConfig) {
-  return defineTestConfig({
+export function defineConfig(baseURL: string, userscriptPath: string, options?: PlaywrightTestConfig) {
+  return defineTestConfig<UserscriptTestOptions>({
     /* Run tests in files in parallel */
     fullyParallel: true,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -34,6 +35,8 @@ export function defineConfig(baseURL: string, options?: PlaywrightTestConfig) {
       bypassCSP: true,
 
       baseURL,
+
+      userscriptPath,
     },
     ...options,
     projects: [

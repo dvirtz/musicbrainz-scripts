@@ -1,10 +1,17 @@
+import {UserscriptPage} from '#userscript-page.ts';
 import {test as base} from '@playwright/test';
 
 const ONE_MINUTE = 60_000;
 const MAXIMUM_DELAY = 5 * ONE_MINUTE;
 
-export const test = base.extend({
-  page: async ({page}, use, testInfo) => {
+export type UserscriptTestOptions = {
+  userscriptPath: string;
+};
+
+export const test = base.extend<UserscriptTestOptions & {userscriptPage: UserscriptPage}>({
+  userscriptPath: ['', {option: true}],
+
+  userscriptPage: async ({page, userscriptPath}, use, testInfo) => {
     // exponential backoff for flaky tests
     // https://github.com/microsoft/playwright/issues/28857#issuecomment-2511850509
     if (testInfo.retry) {
@@ -20,6 +27,7 @@ export const test = base.extend({
       }
     });
 
-    await use(page);
+    const userscriptPage = await UserscriptPage.create(page, userscriptPath);
+    await use(userscriptPage);
   },
 });

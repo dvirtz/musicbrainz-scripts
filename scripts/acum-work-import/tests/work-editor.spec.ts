@@ -8,8 +8,8 @@ async function selectBoxText(locator: Locator) {
 }
 
 test.describe('work editor', () => {
-  test('can import work', async ({page, musicbrainzPage}) => {
-    await musicbrainzPage.goto('/work/create');
+  test('can import work', async ({page, userscriptPage}) => {
+    await userscriptPage.goto('/work/create');
 
     const versionId = '2661255001';
     const workId = versionId.substring(0, versionId.length - 3);
@@ -51,8 +51,8 @@ test.describe('work editor', () => {
     );
   });
 
-  test('can find all artists', async ({page, musicbrainzPage}) => {
-    await musicbrainzPage.goto('/work/create');
+  test('can find all artists', async ({page, userscriptPage}) => {
+    await userscriptPage.goto('/work/create');
 
     const versionId = '1119554001';
     const workId = versionId.substring(0, versionId.length - 3);
@@ -93,9 +93,9 @@ test.describe('work editor', () => {
 
   test('avoid adding special purpose artists when other artists exist and artists which are already linked', async ({
     page,
-    musicbrainzPage,
+    userscriptPage,
   }) => {
-    await musicbrainzPage.goto('/work/85a460d6-0c92-4b5f-8fe2-7dfc639a6d56/edit');
+    await userscriptPage.goto('/work/85a460d6-0c92-4b5f-8fe2-7dfc639a6d56/edit');
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/version?workid=1010819&versionid=1010819002`;
 
     const input = page.getByPlaceholder('Version/Work ID');
