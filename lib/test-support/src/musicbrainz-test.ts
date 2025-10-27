@@ -1,4 +1,4 @@
-import {MusicbrainzPage} from '#tests/fixtures/musicbrainz-page.ts';
+import {MusicbrainzPage} from '#musicbrainz-page.ts';
 import {test as base} from '@repo/test-support/userscript-test';
 
 export const test = base.extend<{musicbrainzPage: MusicbrainzPage}>({
