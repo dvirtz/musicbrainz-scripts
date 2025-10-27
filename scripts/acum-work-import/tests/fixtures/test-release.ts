@@ -1,5 +1,5 @@
-import {MusicbrainzPage} from '#tests/fixtures/musicbrainz-page.ts';
-import {test as base} from '#tests/fixtures/musicbrainz-test.ts';
+import {MusicbrainzPage} from '@repo/test-support/musicbrainz-page';
+import {test as base} from '@repo/test-support/userscript-test';
 import {expect} from '@playwright/test';
 import {EDIT_MEDIUM_CREATE, EDIT_RELEASE_CREATE, WS_EDIT_RESPONSE_OK} from '@repo/musicbrainz-ext/constants';
 import {ReleaseSearchResultsT} from '@repo/musicbrainz-ext/search-results';
