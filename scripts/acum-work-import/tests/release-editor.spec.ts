@@ -1,8 +1,8 @@
-import {test as musicbrainzPage} from '#tests/fixtures/musicbrainz-test.ts';
+import {test as musicbrainzTest} from '@repo/test-support/musicbrainz-test';
 import {test as testRelease} from '#tests/fixtures/test-release.ts';
 import {expect, mergeTests} from '@playwright/test';
 
-const test = mergeTests(testRelease, musicbrainzPage);
+const test = mergeTests(testRelease, musicbrainzTest);
 
 test.describe('release editor', () => {
   test('can import album', async ({page, testRelease, musicbrainzPage, baseURL}) => {

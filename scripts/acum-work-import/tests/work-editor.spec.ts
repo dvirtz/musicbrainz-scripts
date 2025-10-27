@@ -1,4 +1,4 @@
-import {test} from '#tests/fixtures/musicbrainz-test.ts';
+import {test} from '@repo/test-support/musicbrainz-test';
 import {expect, Locator} from '@playwright/test';
 
 async function selectBoxText(locator: Locator) {

@@ -4,10 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
+    "./musicbrainz-page": "./src/musicbrainz-page.ts",
+    "./musicbrainz-test": "./src/musicbrainz-test.ts",
     "./test-config": "./src/test-config.ts",
+    "./userscript-manager-mock": "./src/userscript-manager-mock.ts",
     "./userscript-page": "./src/userscript-page.ts",
-    "./userscript-test": "./src/userscript-test.ts",
-    "./userscript-manager-mock": "./src/userscript-manager-mock.ts"
+    "./userscript-test": "./src/userscript-test.ts"
   },
   "imports": {
     "#*": "./src/*"
