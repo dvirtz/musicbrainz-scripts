@@ -1,13 +1,20 @@
-import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
+import {executePipeline} from '#execute-pipeline.ts';
 import domMutations from 'dom-mutations';
-import {filter, first, from, mergeMap} from 'rxjs';
+import {filter, first, from, mergeMap, Observable} from 'rxjs';
 
-export async function waitForElement<T extends Node>(condition: (t: Node) => t is T): Promise<T | undefined> {
-  return await executePipeline(
-    from(domMutations(document.body)).pipe(
-      mergeMap(m => from(m.addedNodes)),
-      filter(condition),
-      first()
-    )
+export function newElements<T extends Node>(
+  filterPredicate: (t: Node) => t is T,
+  options?: MutationObserverInit
+): Observable<T> {
+  return from(domMutations(document.body, options)).pipe(
+    mergeMap((m: MutationRecord) => from(Array.from(m.addedNodes))),
+    filter(filterPredicate)
   );
+}
+
+export async function waitForElement<T extends Node>(
+  condition: (t: Node) => t is T,
+  options?: MutationObserverInit
+): Promise<T | undefined> {
+  return await executePipeline(newElements<T>(condition, options).pipe(first()));
 }
