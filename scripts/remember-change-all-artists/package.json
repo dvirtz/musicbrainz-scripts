@@ -1,0 +1,34 @@
+{
+  "name": "@dvirtz/remember-change-all-artists",
+  "type": "module",
+  "main": "./dist/remember-change-all-artists.user.js",
+  "imports": {
+    "#*": "./src/*",
+    "#tests/*": "./tests/*"
+  },
+  "scripts": {
+    "dev": "vite --configLoader runner",
+    "build": "vite --configLoader runner build",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "*",
+    "@repo/test-support": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/vite-config": "workspace:*",
+    "cross-env": "*",
+    "eslint": "*",
+    "semantic-release": "*",
+    "vite": "*"
+  },
+  "dependencies": {
+    "@kobalte/core": "*",
+    "@repo/common-types": "workspace:^",
+    "@repo/common-ui": "workspace:^",
+    "@repo/rxjs-ext": "workspace:*",
+    "dom-mutations": "*",
+    "rxjs": "*"
+  }
+}
