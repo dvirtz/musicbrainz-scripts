@@ -2287,6 +2287,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@dvirtz/remember-change-all-artists@workspace:scripts/remember-change-all-artists":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/remember-change-all-artists@workspace:scripts/remember-change-all-artists"
+  dependencies:
+    "@playwright/test": "npm:*"
+    "@repo/rxjs-ext": "workspace:*"
+    "@repo/test-support": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
+    "@repo/vite-config": "workspace:*"
+    cross-env: "npm:*"
+    dom-mutations: "npm:*"
+    eslint: "npm:*"
+    rxjs: "npm:*"
+    semantic-release: "npm:*"
+    vite: "npm:*"
+  languageName: unknown
+  linkType: soft
+
 "@dvirtz/setlistfm-musicbrainz-import@workspace:^, @dvirtz/setlistfm-musicbrainz-import@workspace:scripts/setlistfm-musicbrainz-import":
   version: 0.0.0-use.local
   resolution: "@dvirtz/setlistfm-musicbrainz-import@workspace:scripts/setlistfm-musicbrainz-import"
