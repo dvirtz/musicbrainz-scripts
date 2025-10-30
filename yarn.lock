@@ -2287,6 +2287,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@dvirtz/remember-change-all-artists@workspace:scripts/remember-change-all-artists":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/remember-change-all-artists@workspace:scripts/remember-change-all-artists"
+  dependencies:
+    "@kobalte/core": "npm:*"
+    "@playwright/test": "npm:*"
+    "@repo/common-types": "workspace:^"
+    "@repo/common-ui": "workspace:^"
+    "@repo/rxjs-ext": "workspace:*"
+    "@repo/test-support": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
+    "@repo/vite-config": "workspace:*"
+    cross-env: "npm:*"
+    dom-mutations: "npm:*"
+    eslint: "npm:*"
+    rxjs: "npm:*"
+    semantic-release: "npm:*"
+    vite: "npm:*"
+  languageName: unknown
+  linkType: soft
+
 "@dvirtz/setlistfm-musicbrainz-import@workspace:^, @dvirtz/setlistfm-musicbrainz-import@workspace:scripts/setlistfm-musicbrainz-import":
   version: 0.0.0-use.local
   resolution: "@dvirtz/setlistfm-musicbrainz-import@workspace:scripts/setlistfm-musicbrainz-import"
@@ -3533,7 +3554,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@repo/common-types@workspace:*, @repo/common-types@workspace:lib/common-types":
+"@repo/common-types@workspace:*, @repo/common-types@workspace:^, @repo/common-types@workspace:lib/common-types":
   version: 0.0.0-use.local
   resolution: "@repo/common-types@workspace:lib/common-types"
   dependencies:
@@ -3543,7 +3564,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@repo/common-ui@workspace:*, @repo/common-ui@workspace:lib/common-ui":
+"@repo/common-ui@workspace:*, @repo/common-ui@workspace:^, @repo/common-ui@workspace:lib/common-ui":
   version: 0.0.0-use.local
   resolution: "@repo/common-ui@workspace:lib/common-ui"
   dependencies:
@@ -3598,6 +3619,7 @@ __metadata:
   resolution: "@repo/rxjs-ext@workspace:lib/rxjs-ext"
   dependencies:
     "@repo/typescript-config": "workspace:*"
+    dom-mutations: "npm:*"
     eslint: "npm:*"
     rxjs: "npm:*"
     typescript: "npm:*"
