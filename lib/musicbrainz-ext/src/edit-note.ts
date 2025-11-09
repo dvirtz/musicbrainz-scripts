@@ -4,7 +4,7 @@ import {isReleaseRelationshipEditor} from 'typedbrainz';
 
 export function addEditNote(message: string, document: Document = window.document) {
   const textArea = document.querySelector<HTMLTextAreaElement>('textarea.edit-note');
-  const note = editNote(message);
+  const note = editNoteFormat(message);
   if (textArea && !textArea?.value.includes(message)) {
     const newNote = `${textArea?.value}\n${note}`;
     if (MB?.relationshipEditor && isReleaseRelationshipEditor(MB?.relationshipEditor)) {
@@ -16,7 +16,15 @@ export function addEditNote(message: string, document: Document = window.documen
   }
 }
 
-export function editNote(message: string): string {
+export function editNote(): string | undefined {
+  if (MB?.relationshipEditor && isReleaseRelationshipEditor(MB.relationshipEditor)) {
+    return MB.relationshipEditor.state.editNoteField.value;
+  }
+  const textArea = document.querySelector<HTMLTextAreaElement>('textarea.edit-note');
+  return textArea?.value;
+}
+
+export function editNoteFormat(message: string): string {
   return dedent`
   ----
   ${message} using ${GM.info.script.name} version ${GM.info.script.version} from ${GM.info.script.namespace}.

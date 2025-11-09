@@ -1,7 +1,7 @@
 import {convertMonth} from '#convert-month.ts';
 import {createUI} from '#ui.tsx';
 import {tryFetchJSON} from '@repo/fetch/fetch';
-import {editNote} from '@repo/musicbrainz-ext/edit-note';
+import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
 import {UrlRelsSearchResultsT} from '@repo/musicbrainz-ext/search-results';
 
 enum TypeID {
@@ -33,7 +33,7 @@ function submitPlace(placeMBID?: string) {
 
   searchParams.append('edit-place.name', unsafeWindow.sfmPageAttributes.venue.name);
 
-  searchParams.append('edit-place.edit_note', editNote(`Imported from ${document.location.href}`));
+  searchParams.append('edit-place.edit_note', editNoteFormat(`Imported from ${document.location.href}`));
 
   searchParams.append('edit-place.area.name', unsafeWindow.sfmPageAttributes.venue.city);
 
