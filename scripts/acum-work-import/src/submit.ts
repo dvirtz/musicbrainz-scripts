@@ -1,5 +1,6 @@
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {EDIT_WORK_CREATE, MBID_REGEXP, WS_EDIT_RESPONSE_OK} from '@repo/musicbrainz-ext/constants';
+import {editNote} from '@repo/musicbrainz-ext/edit-note';
 import {fetchJSON, fetchResponse} from '@repo/musicbrainz-ext/fetch';
 import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {
@@ -28,27 +29,24 @@ import {
   MediumWorkStateT,
   RecordingT,
   RelationshipStateT,
-  ReleaseRelationshipEditorStateT,
   WorkLanguageT,
   WorkT,
 } from 'typedbrainz/types';
 
 async function submitWork(form: HTMLFormElement): Promise<WorkT> {
+  const withEditNote = (form: HTMLFormElement) => {
+    const formData = new FormData(form);
+    formData.append('edit-work.edit_note', editNote() ?? '');
+    return formData;
+  };
   return await firstValueFrom(
     of(form).pipe(
-      mergeMap(
-        async form =>
-          await fetchResponse(form.action, {
-            method: 'POST',
-            body: (() => {
-              const formData = new FormData(form);
-              formData.append(
-                'edit-work.edit_note',
-                (MB?.relationshipEditor.state as ReleaseRelationshipEditorStateT).editNoteField.value
-              );
-              return formData;
-            })(),
-          })
+      map(form => [form.action, withEditNote(form)] as const),
+      mergeMap(([action, body]) =>
+        fetchResponse(action, {
+          method: 'POST',
+          body,
+        })
       ),
       map(response => (form.action.endsWith('/edit') ? form.action : response.url)),
       map(url => url.match(MBID_REGEXP)),

@@ -4,7 +4,7 @@ import {addCoverComment as addCoverCommentOption} from '#settings.tsx';
 import {createUI} from '#ui.tsx';
 import {tryFetchJSON, tryFetchText} from '@repo/fetch/fetch';
 import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
-import {editNote} from '@repo/musicbrainz-ext/edit-note';
+import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
 import {UrlRelsSearchResultsT} from '@repo/musicbrainz-ext/search-results';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {
@@ -253,7 +253,7 @@ async function submitEvent(placeMBID: string, eventMBID?: string) {
     searchParams.append('edit-event.time', doorTime);
   }
 
-  searchParams.append('edit-event.edit_note', editNote(`Imported from ${document.location.href}`));
+  searchParams.append('edit-event.edit_note', editNoteFormat(`Imported from ${document.location.href}`));
 
   searchParams.append('edit-event.url.0.text', document.location.href);
   searchParams.append('edit-event.url.0.link_type_id', TypeID.SetlistFmUrl);
