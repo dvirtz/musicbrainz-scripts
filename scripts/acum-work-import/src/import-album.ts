@@ -99,16 +99,11 @@ async function importSelectedWorks(
           }
         }),
         mergeMap(
-          async ([selectedRecording, addWarning]) =>
+          async ([{index, workBean, recordingState}, addWarning]) =>
             [
-              selectedRecording.workBean,
-              selectedRecording.recordingState.recording,
-              await addWork(
-                selectedRecording.index,
-                selectedRecording.workBean,
-                selectedRecording.recordingState,
-                addWarning
-              ),
+              workBean,
+              recordingState.recording,
+              await addWork(index, workBean, recordingState, addWarning),
               addWarning,
             ] as const
         ),
