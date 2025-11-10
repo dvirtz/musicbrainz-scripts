@@ -270,7 +270,8 @@ async function fetchWorksUncached(entity: Entity): Promise<ReadonlyArray<WorkBea
       // only add versionId if it does not start with workId (usually for translated versions)
       const workId = (entity as Version).workId ?? versionWorkId(entity.id);
       if (entity.id.startsWith(workId)) {
-        return await fetchWork(workId);
+        // call fetchWorks so that the work is cached
+        return (await fetchWorks(new Entity(workId, 'Work'))).filter(track => track.versionId === entity.id);
       }
       return await fetchWork(workId, entity.id);
     }

@@ -322,10 +322,10 @@ export class TestRelease {
   ];
   private static readonly works = [
     {
-      languages: ['heb'],
+      languages: ['167'],
       language: 'heb',
       id: 'e27fb430-c92d-3b60-a640-032ef8ed8b30',
-      'type-id': 'f061270a-2fd6-32f1-a641-f0f8676d14e6',
+      'type-id': '17',
       disambiguation: '',
       title: 'סע לאט ב׳',
       iswcs: ['T-002.099.496-0'],
@@ -333,10 +333,14 @@ export class TestRelease {
         {
           type: 'ACUM ID',
           value: '1056363',
-          'type-id': 'ce4b678c-7d4d-4423-8cf5-75b6513ade5c',
+          'type-id': '141',
         },
       ],
       type: 'Song',
+      lyricists: ['אריק איינשטיין'],
+      composers: ['שם טוב לוי'],
+      arrangers: ['שם טוב לוי'],
+      acumUrl: 'https://nocs.acum.org.il/acumsitesearchdb/version?workid=1056363&versionid=1056363001',
     },
     {
       disambiguation: '',
@@ -344,28 +348,32 @@ export class TestRelease {
         {
           type: 'ACUM ID',
           value: '1056369',
-          'type-id': 'ce4b678c-7d4d-4423-8cf5-75b6513ade5c',
+          'type-id': '141',
         },
       ],
       type: 'Song',
       title: 'אותך',
       iswcs: ['T-002.099.506-5'],
-      languages: ['heb'],
+      languages: ['167'],
       id: '80dc0585-e13f-3e82-b104-0bdb66b629d0',
       language: 'heb',
-      'type-id': 'f061270a-2fd6-32f1-a641-f0f8676d14e6',
+      'type-id': '17',
+      lyricists: ['אריק איינשטיין'],
+      composers: ['שם טוב לוי'],
+      arrangers: ['שם טוב לוי'],
+      acumUrl: 'https://nocs.acum.org.il/acumsitesearchdb/version?workid=1056369&versionid=1056369001',
     },
     {
-      'type-id': 'f061270a-2fd6-32f1-a641-f0f8676d14e6',
+      'type-id': '17',
       id: 'de010f9d-1727-3c41-a96a-abdcd7f644fb',
       language: 'heb',
-      languages: ['heb'],
+      languages: ['167'],
       type: 'Song',
       attributes: [
         {
           type: 'ACUM ID',
           value: '1052784',
-          'type-id': 'ce4b678c-7d4d-4423-8cf5-75b6513ade5c',
+          'type-id': '141',
         },
       ],
       title: 'יש בי אהבה',
@@ -373,11 +381,15 @@ export class TestRelease {
         'T-002.096.935-0',
         'T-002.096.936-1',
         'T-002.096.937-2',
+        'T-931.118.944-3',
         'T-002.638.254-6',
         'T-002.638.255-7',
-        'T-931.118.944-3',
       ],
       disambiguation: '',
+      lyricists: ['ארקדי דוכין'],
+      composers: ['ארקדי דוכין'],
+      arrangers: ['שם טוב לוי'],
+      acumUrl: 'https://nocs.acum.org.il/acumsitesearchdb/version?workid=1052784&versionid=1052784001',
     },
     {
       disambiguation: '',
@@ -386,55 +398,67 @@ export class TestRelease {
       type: 'Song',
       attributes: [
         {
-          'type-id': 'ce4b678c-7d4d-4423-8cf5-75b6513ade5c',
+          'type-id': '141',
           type: 'ACUM ID',
           value: '1056364',
         },
       ],
-      languages: ['heb'],
+      languages: ['167'],
       language: 'heb',
       id: '8d437693-20ac-4361-bb5f-4998faeda88a',
-      'type-id': 'f061270a-2fd6-32f1-a641-f0f8676d14e6',
+      'type-id': '17',
+      lyricists: [], // lyricist does not exist in test server
+      composers: ['שם טוב לוי'],
+      arrangers: ['שם טוב לוי'],
+      acumUrl: 'https://nocs.acum.org.il/acumsitesearchdb/version?workid=1056364&versionid=1056364001',
     },
     {
-      languages: ['heb'],
+      languages: ['167'],
       id: '960c1321-e1c9-3a80-8b69-0205f556855a',
       language: 'heb',
-      'type-id': 'f061270a-2fd6-32f1-a641-f0f8676d14e6',
+      'type-id': '17',
       disambiguation: '',
       iswcs: ['T-002.099.499-3'],
       title: 'אני מתגעגע אבא',
       attributes: [
         {
-          'type-id': 'ce4b678c-7d4d-4423-8cf5-75b6513ade5c',
+          'type-id': '141',
           value: '1056365',
           type: 'ACUM ID',
         },
       ],
       type: 'Song',
+      lyricists: ['אריק איינשטיין'],
+      composers: ['שם טוב לוי'],
+      arrangers: ['שם טוב לוי'],
+      acumUrl: 'https://nocs.acum.org.il/acumsitesearchdb/version?workid=1056365&versionid=1056365001',
     },
     {
       disambiguation: '',
       title: 'בגללך',
-      iswcs: ['T-002.096.946-3', 'T-002.096.947-4', 'T-002.588.603-6', 'T-002.638.256-8'],
+      iswcs: ['T-002.096.946-3', 'T-002.096.947-4', 'T-002.638.256-8', 'T-002.588.603-6'],
       type: 'Song',
       attributes: [
         {
           value: '1052785',
           type: 'ACUM ID',
-          'type-id': 'ce4b678c-7d4d-4423-8cf5-75b6513ade5c',
+          'type-id': '141',
         },
       ],
-      languages: ['heb'],
+      languages: ['167'],
       language: 'heb',
       id: '4290ef6a-f8a9-370b-b41a-86020039ad95',
-      'type-id': 'f061270a-2fd6-32f1-a641-f0f8676d14e6',
+      'type-id': '17',
+      lyricists: ['מיכה שטרית'],
+      composers: ['ארקדי דוכין'],
+      arrangers: ['שם טוב לוי'],
+      acumUrl: 'https://nocs.acum.org.il/acumsitesearchdb/version?workid=1052785&versionid=1052785001',
     },
     {
-      languages: ['heb'],
+      languages: ['167'],
       id: 'b9ef772e-aa54-3b98-98c1-0e46aee7011d',
       language: 'heb',
-      'type-id': 'f061270a-2fd6-32f1-a641-f0f8676d14e6',
+      'type-id': '17',
       disambiguation: '',
       title: 'לבכות לך',
       iswcs: [
@@ -450,9 +474,13 @@ export class TestRelease {
         {
           type: 'ACUM ID',
           value: '1050936',
-          'type-id': 'ce4b678c-7d4d-4423-8cf5-75b6513ade5c',
+          'type-id': '141',
         },
       ],
+      lyricists: ['אביב גפן'],
+      composers: ['אביב גפן'],
+      arrangers: ['שם טוב לוי', 'יוני רכטר'],
+      acumUrl: 'https://nocs.acum.org.il/acumsitesearchdb/version?workid=1050936&versionid=1050936001',
     },
     {
       disambiguation: '',
@@ -463,13 +491,17 @@ export class TestRelease {
         {
           type: 'ACUM ID',
           value: '1057428',
-          'type-id': 'ce4b678c-7d4d-4423-8cf5-75b6513ade5c',
+          'type-id': '141',
         },
       ],
-      languages: ['heb'],
+      languages: ['167'],
       id: '2ff2a33f-6517-347c-be5d-3f7e0b3d0e37',
       language: 'heb',
-      'type-id': 'f061270a-2fd6-32f1-a641-f0f8676d14e6',
+      'type-id': '17',
+      lyricists: ['יצחק קלפטר'],
+      composers: ['יצחק קלפטר'],
+      arrangers: ['יצחק קלפטר'],
+      acumUrl: 'https://nocs.acum.org.il/acumsitesearchdb/version?workid=1057428&versionid=1057428001',
     },
     {
       iswcs: ['T-002.099.502-1'],
@@ -479,33 +511,43 @@ export class TestRelease {
         {
           type: 'ACUM ID',
           value: '1056367',
-          'type-id': 'ce4b678c-7d4d-4423-8cf5-75b6513ade5c',
+          'type-id': '141',
         },
       ],
       disambiguation: '',
-      'type-id': 'f061270a-2fd6-32f1-a641-f0f8676d14e6',
+      'type-id': '17',
       language: 'heb',
       id: 'a2aae6d9-119e-3e9f-bce2-754f4bab3cee',
-      languages: ['heb'],
+      languages: ['167'],
+      lyricists: ['אריק איינשטיין'],
+      composers: ['שם טוב לוי'],
+      arrangers: ['שם טוב לוי'],
+      acumUrl: 'https://nocs.acum.org.il/acumsitesearchdb/version?workid=1056367&versionid=1056367001',
     },
     {
-      languages: ['heb', 'zho'],
+      languages: ['167'],
       language: 'mul',
       id: '79a83020-3378-324e-abf0-995fe1608fb7',
-      'type-id': 'f061270a-2fd6-32f1-a641-f0f8676d14e6',
+      'type-id': '17',
       disambiguation: '',
       type: 'Song',
       attributes: [
         {
-          'type-id': 'ce4b678c-7d4d-4423-8cf5-75b6513ade5c',
+          'type-id': '141',
           value: '1056362',
           type: 'ACUM ID',
         },
       ],
       title: 'אדם האמין',
       iswcs: ['T-002.099.493-7', 'T-002.588.626-3'],
+      lyricists: ['אברהם חלפי'],
+      composers: ['שם טוב לוי'],
+      arrangers: ['שם טוב לוי'],
+      acumUrl: 'https://nocs.acum.org.il/acumsitesearchdb/version?workid=1056362&versionid=1056362001',
     },
   ];
+  private static readonly acumUrl = 'https://nocs.acum.org.il/acumsitesearchdb/album?albumid=006625';
+
   // cspell:enable
   private constructor(public readonly gid: string) {}
 
@@ -613,12 +655,20 @@ export class TestRelease {
     await musicbrainzPage.deleteEntity('release', this.gid, 'deleting test release');
   }
 
+  acumUrl() {
+    return TestRelease.acumUrl;
+  }
+
   tracks() {
     return TestRelease.tracks;
   }
 
   work(title: string) {
     return TestRelease.works.find(work => work.title === title);
+  }
+
+  works() {
+    return TestRelease.works;
   }
 }
 

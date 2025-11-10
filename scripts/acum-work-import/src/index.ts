@@ -17,7 +17,6 @@ function waitForEditorState() {
 }
 
 async function main() {
-  console.debug('start');
   await registerSettingsDialog();
   await waitForEditorState();
   if (location.pathname.startsWith('/release/')) {
