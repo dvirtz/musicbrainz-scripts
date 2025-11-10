@@ -1,3 +1,24 @@
+## [@dvirtz/acum-work-import-v1.19.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.0...@dvirtz/acum-work-import-v1.19.1) (2025-11-10)
+
+
+### Bug Fixes
+
+* main website match ([e083654](https://github.com/dvirtz/musicbrainz-scripts/commit/e0836546005ee472bee4cb161fa97766e552151e))
+* unrelated arrangers imported ([0a03c12](https://github.com/dvirtz/musicbrainz-scripts/commit/0a03c12dba5333e0e26abc7ae7b7350a904afdea)), closes [#128](https://github.com/dvirtz/musicbrainz-scripts/issues/128)
+
+
+### Tests
+
+* make musicbrainz-test reusable by other scripts ([ca39c12](https://github.com/dvirtz/musicbrainz-scripts/commit/ca39c125edcdb70b1d2b5beb3c3ce9ac66a92905))
+* move script injection to base class ([2e95da6](https://github.com/dvirtz/musicbrainz-scripts/commit/2e95da6c8d0e47e5f9defd5623be49d51dd0911f))
+* reuse test release ([8d32bc2](https://github.com/dvirtz/musicbrainz-scripts/commit/8d32bc281fce41276fdea4f0fcaadfd8324c2385))
+* unset timeout during debug ([2b50c5f](https://github.com/dvirtz/musicbrainz-scripts/commit/2b50c5fd7d739e4c99800157e6b3322dfe5d3882))
+
+
+### Refactoring
+
+* add function to get current edit note ([3051bab](https://github.com/dvirtz/musicbrainz-scripts/commit/3051babb6ecf642620b1bf248c3f270f2fd2acf9))
+
 ## [@dvirtz/acum-work-import-v1.19.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.18.1...@dvirtz/acum-work-import-v1.19.0) (2025-10-16)
 
 
