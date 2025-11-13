@@ -1,9 +1,9 @@
 import {Entity} from '#acum.ts';
 import {importWork as tryImportWork} from '#import-work.ts';
 import {ImportForm} from '#ui/import-form.tsx';
-import {waitForElement} from '#ui/wait-for-element.ts';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
 import {toolbox} from '@repo/common-ui/toolbox';
+import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import {render} from 'solid-js/web';
 
 function AcumImporter(props: {form: HTMLFormElement}) {

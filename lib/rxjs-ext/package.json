@@ -4,15 +4,20 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "imports": {
+    "#*": "./src/*"
+  },
   "exports": {
     "./async-tap": "./src/async-tap.ts",
-    "./execute-pipeline": "./src/execute-pipeline.ts"
+    "./execute-pipeline": "./src/execute-pipeline.ts",
+    "./wait-for-element": "./src/wait-for-element.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "dom-mutations": "*",
     "rxjs": "*"
   },
   "devDependencies": {
