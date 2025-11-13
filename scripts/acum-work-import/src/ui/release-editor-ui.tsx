@@ -3,17 +3,17 @@ import {importAlbum as tryImportWorks} from '#import-album.ts';
 import {submitWorks as trySubmitWorks} from '#submit.ts';
 import {ImportForm} from '#ui/import-form.tsx';
 import {ProgressBar} from '#ui/progressbar.tsx';
-import {waitForElement} from '#ui/wait-for-element.ts';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
 import {toolbox} from '@repo/common-ui/toolbox';
-import {createSignal} from 'solid-js';
-import {render} from 'solid-js/web';
-import progressBarStyle from './progressbar.css?inline';
-import workEditDialogStyle from './work-edit-dialog.css?inline';
-import {ReleaseRelationshipEditor} from 'typedbrainz/types';
+import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
+import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import domMutations from 'dom-mutations';
 import {first, from, tap} from 'rxjs';
-import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
+import {createSignal} from 'solid-js';
+import {render} from 'solid-js/web';
+import {ReleaseRelationshipEditor} from 'typedbrainz/types';
+import progressBarStyle from './progressbar.css?inline';
+import workEditDialogStyle from './work-edit-dialog.css?inline';
 
 function AcumImporter() {
   const {addWarning, clearWarnings} = useWarnings();
