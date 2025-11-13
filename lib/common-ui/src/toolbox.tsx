@@ -11,19 +11,18 @@ export async function toolbox(doc: Document, className: 'full-page' | 'half-page
   await GM.addStyle(style);
 
   return (
-    <div
+    <fieldset
       id={ID}
       classList={{
         [classes['half-page']!]: className === 'half-page',
         [classes['iframe']!]: className === 'iframe',
       }}
     >
-      <h2>dvirtz MusicBrainz scripts</h2>
-      <br />
-    </div>
+      <legend>dvirtz MusicBrainz scripts</legend>
+    </fieldset>
   ) as HTMLDivElement;
 }
 
 export function warning(message: string) {
-  return (<p class={classes['warning']}>{message}</p>) as HTMLParagraphElement;
+  return (<p class={'error'}>{message}</p>) as HTMLParagraphElement;
 }
