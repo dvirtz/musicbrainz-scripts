@@ -1,7 +1,7 @@
+import {AcumWorkType} from '#acum-work-type.ts';
 import {tryFetchJSON} from '@repo/fetch/fetch';
 import {formatISWC} from '@repo/musicbrainz-ext/format-iswc';
 import {filter, lastValueFrom, map, mergeAll, mergeMap, range, startWith, toArray} from 'rxjs';
-import {AcumWorkType} from '#acum-work-type.ts';
 
 export type IPBaseNumber = string;
 
@@ -237,7 +237,7 @@ export function replaceUrlWith<T extends EntityT>(entityTypes: [T, ...T[]]): (in
             .filter((pair): pair is [T, string] => !!pair[1])
             .map(([entityType, id]) => {
               if (entityType === 'Version') {
-                return new Version<T>(id, url.searchParams.get(`${'work'}id`) ?? versionWorkId(id));
+                return new Version<T>(id, url.searchParams.get('workid') ?? versionWorkId(id));
               }
               return new Entity<T>(id, entityType);
             })

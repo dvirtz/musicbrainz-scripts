@@ -1,14 +1,14 @@
-import {test as musicbrainzTest} from '@repo/test-support/musicbrainz-test';
 import {test as testRelease} from '#tests/fixtures/test-release.ts';
 import {expect, mergeTests} from '@playwright/test';
+import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
 import {
   ARRANGER_LINK_TYPE_ID,
   COMPOSER_LINK_TYPE_ID,
   EDIT_RELATIONSHIP_CREATE,
   LYRICIST_LINK_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
+import {test as musicbrainzTest} from '@repo/test-support/musicbrainz-test';
 import {WsJsEditRelationshipCreateT, WsJsRelationshipCommonT} from 'typedbrainz/types';
-import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
 
 const base = mergeTests(testRelease, musicbrainzTest);
 
@@ -164,7 +164,7 @@ test.describe('release editor', () => {
     for (let index = 0; index < works.length; index++) {
       const work = works[index]!;
       await input.fill(work.acumUrl);
-      await expect(input).toHaveValue(new URL(work.acumUrl).searchParams.get(`${'version'}id`)!);
+      await expect(input).toHaveValue(new URL(work.acumUrl).searchParams.get('versionid')!);
 
       const checkBox = page.getByRole('cell', {name: tracks[index]?.name}).getByRole('checkbox').first();
       await checkBox.check();
@@ -180,5 +180,31 @@ test.describe('release editor', () => {
       // uncheck the checkbox for the next iteration
       await checkBox.uncheck();
     }
+  });
+});
+
+base.describe('release editor', () => {
+  base('work import does not add arrangers', async ({page, testRelease, musicbrainzPage}) => {
+    await testRelease.editRelationships(musicbrainzPage);
+
+    const work = testRelease.works()[2]!;
+
+    const input = page.getByPlaceholder('Album/Version/Work ID');
+
+    await input.fill(work.acumUrl.replace(/version\?workid=(.*)&versionid=(.*)/, 'work?workid=$1'));
+
+    const trackRow = page.getByRole('row', {name: work.title});
+    const checkBox = trackRow.getByRole('checkbox').first();
+    await checkBox.check();
+
+    const importButton = page.getByRole('button', {name: 'Import works from ACUM'});
+    await importButton.click();
+    await expect(importButton).toBeDisabled();
+
+    // wait for import to finish
+    await expect(importButton).toBeEnabled();
+
+    const arrangerLabels = trackRow.getByText('arranger:');
+    await expect(arrangerLabels).toHaveCount(0);
   });
 });

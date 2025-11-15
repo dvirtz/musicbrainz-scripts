@@ -17,6 +17,7 @@ import {REL_STATUS_REMOVE} from '@repo/musicbrainz-ext/constants';
 import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
 import {trackRecordingState} from '@repo/musicbrainz-ext/track-recording-state';
 import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
+import {asyncTap} from '@repo/rxjs-ext/async-tap';
 import {
   connect,
   count,
@@ -107,7 +108,13 @@ async function importSelectedWorks(
               addWarning,
             ] as const
         ),
-        mergeMap(args => linkCreators(artistCache, ...args)),
+        asyncTap(async ([workBean, recording, workState, addWarning]) => {
+          await linkWriters(artistCache, workBean, workState.work, workState.targetTypeGroups, addWarning);
+          if (entity.entityType !== 'Work') {
+            await linkArrangers(artistCache, recording, workBean.arrangers, workBean.creators, addWarning);
+          }
+        }),
+        map(([, , workState]) => workState),
         connect(shared =>
           merge(
             shared.pipe(maybeSetEditNote(entity, addWarning)),
@@ -141,18 +148,6 @@ function maybeSetEditNote(entity: Entity, addWarning: AddWarning) {
       }
     })
   );
-}
-
-async function linkCreators(
-  artistCache: ArtistCache,
-  workBean: WorkBean,
-  recording: RecordingT,
-  workState: WorkStateWithEditDataT,
-  addWarning: AddWarning
-): Promise<WorkStateWithEditDataT> {
-  await linkWriters(artistCache, workBean, workState.work, workState.targetTypeGroups, addWarning);
-  await linkArrangers(artistCache, recording, workBean.arrangers, workBean.creators, addWarning);
-  return workState;
 }
 
 async function linkArrangers(
