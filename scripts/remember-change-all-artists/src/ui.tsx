@@ -1,0 +1,47 @@
+// cspell: ignore guesscase
+
+import {Checkbox} from '@kobalte/core/checkbox';
+import {toolbox} from '@repo/common-ui/toolbox';
+import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
+import {createSignal} from 'solid-js';
+import {render} from 'solid-js/web';
+
+function RememberChangeAllArtists(props: {initiallyChecked: boolean}) {
+  const [checked, setChecked] = createSignal(props.initiallyChecked);
+
+  const onChange = (newValue: boolean) => {
+    setChecked(newValue);
+    GM.setValue('change-matching-artists', newValue).catch(console.error);
+  };
+
+  return (
+    <Checkbox>
+      <Checkbox.Label>
+        <input type="checkbox" checked={checked()} onChange={e => onChange(e.currentTarget.checked)} />
+        Remember "Change all artists" option
+      </Checkbox.Label>
+    </Checkbox>
+  );
+}
+
+export async function createUI() {
+  const guessCaseBox =
+    document.querySelector<HTMLDivElement>('div:has(> fieldset.guesscase)') ??
+    (await waitForElement(
+      (node): node is HTMLDivElement =>
+        node instanceof HTMLDivElement && node.querySelector('fieldset.guesscase') !== null
+    ));
+
+  const containerId = 'remember-change-all-artists-toolbox';
+  if (document.getElementById(containerId)) {
+    return;
+  }
+
+  const theToolbox = await toolbox(document, 'full-page');
+  guessCaseBox?.insertAdjacentElement('afterend', theToolbox);
+
+  const container = (<div id={containerId}></div>) as HTMLDivElement;
+  theToolbox.appendChild(container);
+  const initiallyChecked = await GM.getValue('change-matching-artists', false);
+  render(() => <RememberChangeAllArtists initiallyChecked={initiallyChecked} />, container);
+}

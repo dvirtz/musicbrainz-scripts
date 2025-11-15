@@ -1,14 +1,8 @@
 #dvirtz-toolbox {
-  padding: 8px;
-  border: 5px dotted rgb(171, 171, 109);
-  margin: 0px -6px 6px;
-
-  .warning {
-    border: 2px red dotted;
-    background: #FBE3E4;
-    padding: 0.5em;
-    font-weight: bold;
-  }
+  padding: 12px;
+  margin-top: 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
 
 #dvirtz-toolbox.half-page {

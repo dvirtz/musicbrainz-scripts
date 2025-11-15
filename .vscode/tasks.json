@@ -58,6 +58,15 @@
 			"problemMatcher": [],
 			"label": "npm: lint",
 			"detail": "turbo run lint lint:root"
+		},
+		{
+			"type": "npm",
+			"script": "check-types",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"label": "npm: check-types",
+			"detail": "turbo run check-types"
 		}
 	],
 	"inputs": [
