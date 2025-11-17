@@ -1,3 +1,15 @@
+## [@dvirtz/acum-work-import-v1.19.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.1...@dvirtz/acum-work-import-v1.19.2) (2025-11-17)
+
+
+### Bug Fixes
+
+* avoid adding arrangers when importing a work ([26febc8](https://github.com/dvirtz/musicbrainz-scripts/commit/26febc8187482f781a2de24813ae9f7986dbda29)), closes [#122](https://github.com/dvirtz/musicbrainz-scripts/issues/122)
+
+
+### Refactoring
+
+* move wait-for-element to a common lib ([d4f75b3](https://github.com/dvirtz/musicbrainz-scripts/commit/d4f75b3c978fe25f2e6ba0712838e20784becfc5))
+
 ## [@dvirtz/acum-work-import-v1.19.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.0...@dvirtz/acum-work-import-v1.19.1) (2025-11-10)
 
 
