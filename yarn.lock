@@ -2232,6 +2232,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@dvirtz/change-all-artists-default@workspace:scripts/change-all-artists-default":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/change-all-artists-default@workspace:scripts/change-all-artists-default"
+  dependencies:
+    "@kobalte/core": "npm:*"
+    "@playwright/test": "npm:*"
+    "@repo/common-types": "workspace:^"
+    "@repo/common-ui": "workspace:^"
+    "@repo/rxjs-ext": "workspace:*"
+    "@repo/test-support": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
+    "@repo/vite-config": "workspace:*"
+    cross-env: "npm:*"
+    dom-mutations: "npm:*"
+    eslint: "npm:*"
+    rxjs: "npm:*"
+    semantic-release: "npm:*"
+    vite: "npm:*"
+  languageName: unknown
+  linkType: soft
+
 "@dvirtz/musicbrainz-scripts@workspace:.":
   version: 0.0.0-use.local
   resolution: "@dvirtz/musicbrainz-scripts@workspace:."
@@ -2284,27 +2305,6 @@ __metadata:
     vite-plugin-dts: "npm:^4.5.3"
     vite-plugin-monkey: "npm:^5.0.8"
     vite-plugin-solid: "npm:^2.11.6"
-  languageName: unknown
-  linkType: soft
-
-"@dvirtz/remember-change-all-artists@workspace:scripts/remember-change-all-artists":
-  version: 0.0.0-use.local
-  resolution: "@dvirtz/remember-change-all-artists@workspace:scripts/remember-change-all-artists"
-  dependencies:
-    "@kobalte/core": "npm:*"
-    "@playwright/test": "npm:*"
-    "@repo/common-types": "workspace:^"
-    "@repo/common-ui": "workspace:^"
-    "@repo/rxjs-ext": "workspace:*"
-    "@repo/test-support": "workspace:*"
-    "@repo/typescript-config": "workspace:*"
-    "@repo/vite-config": "workspace:*"
-    cross-env: "npm:*"
-    dom-mutations: "npm:*"
-    eslint: "npm:*"
-    rxjs: "npm:*"
-    semantic-release: "npm:*"
-    vite: "npm:*"
   languageName: unknown
   linkType: soft
 

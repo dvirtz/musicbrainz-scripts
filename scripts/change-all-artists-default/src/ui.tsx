@@ -6,7 +6,7 @@ import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import {createSignal} from 'solid-js';
 import {render} from 'solid-js/web';
 
-function RememberChangeAllArtists(props: {initiallyChecked: boolean}) {
+function ChangeAllArtistsDefault(props: {initiallyChecked: boolean}) {
   const [checked, setChecked] = createSignal(props.initiallyChecked);
 
   const onChange = (newValue: boolean) => {
@@ -18,7 +18,7 @@ function RememberChangeAllArtists(props: {initiallyChecked: boolean}) {
     <Checkbox>
       <Checkbox.Label>
         <input type="checkbox" checked={checked()} onChange={e => onChange(e.currentTarget.checked)} />
-        Remember "Change all artists" option
+        "Change all artists" default
       </Checkbox.Label>
     </Checkbox>
   );
@@ -32,7 +32,7 @@ export async function createUI() {
         node instanceof HTMLDivElement && node.querySelector('fieldset.guesscase') !== null
     ));
 
-  const containerId = 'remember-change-all-artists-toolbox';
+  const containerId = 'change-all-artists-default-toolbox';
   if (document.getElementById(containerId)) {
     return;
   }
@@ -43,5 +43,5 @@ export async function createUI() {
   const container = (<div id={containerId}></div>) as HTMLDivElement;
   theToolbox.appendChild(container);
   const initiallyChecked = await GM.getValue('change-matching-artists', false);
-  render(() => <RememberChangeAllArtists initiallyChecked={initiallyChecked} />, container);
+  render(() => <ChangeAllArtistsDefault initiallyChecked={initiallyChecked} />, container);
 }
