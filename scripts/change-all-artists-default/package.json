@@ -1,7 +1,7 @@
 {
-  "name": "@dvirtz/remember-change-all-artists",
+  "name": "@dvirtz/change-all-artists-default",
   "type": "module",
-  "main": "./dist/remember-change-all-artists.user.js",
+  "main": "./dist/change-all-artists-default.user.js",
   "imports": {
     "#*": "./src/*",
     "#tests/*": "./tests/*"
