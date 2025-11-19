@@ -1,3 +1,15 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.6.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.6.0...@dvirtz/setlistfm-musicbrainz-import-v1.6.1) (2025-11-19)
+
+
+### Tests
+
+* move script injection to base class ([2e95da6](https://github.com/dvirtz/musicbrainz-scripts/commit/2e95da6c8d0e47e5f9defd5623be49d51dd0911f))
+
+
+### Refactoring
+
+* add function to get current edit note ([3051bab](https://github.com/dvirtz/musicbrainz-scripts/commit/3051babb6ecf642620b1bf248c3f270f2fd2acf9))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.6.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.5.4...@dvirtz/setlistfm-musicbrainz-import-v1.6.0) (2025-09-21)
 
 
