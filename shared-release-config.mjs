@@ -16,6 +16,7 @@ const releaseRules = [
   {type: 'ci', release: 'patch'},
   {type: 'docs', release: 'patch'},
   {type: 'build', release: 'patch'},
+  {type: 'refactor', release: 'patch'},
 ];
 
 export default {
