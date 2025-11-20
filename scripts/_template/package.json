@@ -1,0 +1,34 @@
+{
+  "name": "@dvirtz/__ID__",
+  "type": "module",
+  "main": "./dist/__ID__.user.js",
+  "imports": {
+    "#*": "./src/*",
+    "#tests/*": "./tests/*"
+  },
+  "scripts": {
+    "dev": "vite --configLoader runner",
+    "build": "vite --configLoader runner build",
+    "build-watch": "yarn run build --watch",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@repo/common-types": "workspace:*",
+    "@repo/rxjs-ext": "workspace:*",
+    "dom-mutations": "*",
+    "rxjs": "*"
+  },
+  "devDependencies": {
+    "@playwright/test": "*",
+    "@repo/test-support": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/vite-config": "workspace:*",
+    "cross-env": "*",
+    "eslint": "*",
+    "semantic-release": "*",
+    "typescript": "*",
+    "vite": "*"
+  }
+}

@@ -20,6 +20,7 @@
   ],
   "workspaces": [
     "scripts/*",
+    "!scripts/_template",
     "lib/*"
   ],
   "scripts": {
@@ -34,7 +35,8 @@
     "lint:root": "yarn lint:knip && yarn lint:spell && yarn lint:markdown",
     "lint": "turbo run lint lint:root",
     "check-types": "turbo run check-types",
-    "prepare": "husky"
+    "prepare": "husky",
+    "create-script": "node --no-warnings=ExperimentalWarning --experimental-strip-types scripts/create-script.mts"
   },
   "repository": {
     "type": "git",

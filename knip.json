@@ -4,7 +4,8 @@
     "dependencies"
   ],
   "ignore": [
-    "plugin-release-config.mjs"
+    "plugin-release-config.mjs",
+    "scripts/create-script.mts"
   ],
   "workspaces": {
     "lib/test-support": {
