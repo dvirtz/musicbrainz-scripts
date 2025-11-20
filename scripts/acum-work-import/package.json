@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite --configLoader runner",
     "build": "vite --configLoader runner build",
+    "build-watch": "yarn run build --watch",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
     "test": "playwright test"

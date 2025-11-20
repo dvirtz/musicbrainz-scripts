@@ -12,6 +12,18 @@
         "dist/**"
       ]
     },
+    "build-watch": {
+      "inputs": [
+        "src/**",
+        "package.json",
+        "tsconfig.json",
+        "vite.config.ts"
+      ],
+      "outputs": [
+        "dist/**"
+      ],
+      "persistent": true
+    },
     "check-types": {
       "dependsOn": [
         "^check-types"

@@ -7,7 +7,7 @@
 			"group": "build",
 			"problemMatcher": [],
 			"label": "npm: watch",
-			"detail": "yarn turbo watch build --experimental-write-cache",
+			"detail": "turbo run build-watch",
 			"runOptions": {
 				"runOn": "folderOpen"
 			}
