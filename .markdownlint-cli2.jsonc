@@ -21,7 +21,8 @@
   "ignores": [
     "**/node_modules",
     "**/CHANGELOG.md",
-    "LICENSE.md"
+    "LICENSE.md",
+    "scripts/_template/**"
   ],
   "customRules": [
     "markdownlint-rule-relative-links"
