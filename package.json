@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "watch": "yarn turbo watch build --experimental-write-cache",
+    "watch": "turbo run build-watch",
     "release": "yarn workspaces foreach --all --topological-dev --exclude 'lib/*' exec semantic-release",
     "test": "turbo run test",
     "ci": "yarn check-types && yarn build && yarn lint",
