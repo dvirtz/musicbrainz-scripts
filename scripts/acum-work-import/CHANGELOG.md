@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.19.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.2...@dvirtz/acum-work-import-v1.19.3) (2025-11-20)
+
+
+### Performance improvements
+
+* move artist cache to module level ([4c12bc9](https://github.com/dvirtz/musicbrainz-scripts/commit/4c12bc9c7582e557f89be1fdb2929ff87abf840d))
+
 ## [@dvirtz/acum-work-import-v1.19.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.1...@dvirtz/acum-work-import-v1.19.2) (2025-11-17)
 
 
