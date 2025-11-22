@@ -6,6 +6,6 @@
     ]
   },
   "include": [
-    "create-script.ts"
+    "create-script.mts"
   ]
 }

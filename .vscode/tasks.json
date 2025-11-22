@@ -75,7 +75,7 @@
 			"type": "command",
 			"command": "shellCommand.execute",
 			"args": {
-				"command": "node -e \"const fs = require('fs'); const path = require('path'); try { const dirs = fs.readdirSync('scripts', { withFileTypes: true }).filter(dirent => dirent.isDirectory()).map(dirent => dirent.name); console.log(dirs.join('\\n')); } catch (err) { console.error('Error:', err.message); }\"",
+				"command": "node -p \"require('child_process').execSync('yarn workspaces list --json').toString().trim().split('\\n').map(JSON.parse).map(o=>o.location||'').filter(l=>l.startsWith('scripts/')).map(l=>l.split('/').filter(Boolean).pop()).filter(n=>n!=='_template').sort().join('\\n')\"",
 				"rememberPrevious": true,
 				"taskId": "workspace",
 				"useSingleResult": true,
