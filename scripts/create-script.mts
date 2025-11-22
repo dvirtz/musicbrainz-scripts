@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import {execSync} from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline';
@@ -17,6 +18,7 @@ interface ScriptContext {
   runAt: string;
   matches: string[];
   includeUi: boolean;
+  baseUrl: string;
 }
 
 interface ParsedArgs {
@@ -28,6 +30,7 @@ interface ParsedArgs {
   runAt?: string;
   match?: string;
   ui?: string;
+  baseUrl?: string;
 }
 
 function parseArgs(): ParsedArgs {
@@ -45,7 +48,7 @@ function parseArgs(): ParsedArgs {
 
 async function promptInputs(nonInteractive: ScriptContext | null): Promise<ScriptContext> {
   if (nonInteractive) return nonInteractive;
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  const rl = readline.createInterface({input: process.stdin, output: process.stdout});
   const ask = (q: string): Promise<string> => new Promise(r => rl.question(q, ans => r(ans.trim())));
   const id = (await ask('Script id (kebab-case): ')) || 'new-script';
   const display = (await ask('Display name: ')) || id;
@@ -61,8 +64,10 @@ async function promptInputs(nonInteractive: ScriptContext | null): Promise<Scrip
     matches.push(m);
   }
   const includeUi = (await ask('Include UI (Solid + Kobalte)? (y/N): ')).toLowerCase() === 'y';
+  const baseUrl =
+    (await ask('Base URL for tests (default https://test.musicbrainz.org): ')) || 'https://test.musicbrainz.org';
   rl.close();
-  return { id, display, desc, version, icon, runAt, matches, includeUi };
+  return {id, display, desc, version, icon, runAt, matches, includeUi, baseUrl};
 }
 
 function ensureUnique(id: string): string {
@@ -81,14 +86,14 @@ function tokenReplace(content: string, ctx: ScriptContext): string {
     .replace(/__DESCRIPTION__/g, ctx.desc)
     .replace(/__VERSION__/g, ctx.version)
     .replace(/__RUN_AT__/g, ctx.runAt)
-    .replace(/__MATCH_LIST__/g, ctx.matches.join('\n'))
     .replace(/__MATCH_ARRAY__/g, ctx.matches.map(m => `    '${m}',`).join('\n'))
-    .replace(/__ICON_LINE__/g, ctx.icon ? `icon: '${ctx.icon}',` : '');
+    .replace(/__ICON_LINE__/g, ctx.icon ? `icon: '${ctx.icon}',` : '')
+    .replace(/__BASE_URL__/g, ctx.baseUrl);
 }
 
 function copyTemplate(dest: string, ctx: ScriptContext): void {
   fs.mkdirSync(dest);
-  const entries = fs.readdirSync(templateDir, { withFileTypes: true });
+  const entries = fs.readdirSync(templateDir, {withFileTypes: true});
   for (const e of entries) {
     const srcPath = path.join(templateDir, e.name);
     const destPath = path.join(dest, e.name);
@@ -103,7 +108,7 @@ function copyTemplate(dest: string, ctx: ScriptContext): void {
 
 function copyDir(src: string, dest: string, ctx: ScriptContext): void {
   fs.mkdirSync(dest);
-  for (const e of fs.readdirSync(src, { withFileTypes: true })) {
+  for (const e of fs.readdirSync(src, {withFileTypes: true})) {
     const srcPath = path.join(src, e.name);
     const destPath = path.join(dest, e.name);
     if (e.isDirectory()) copyDir(srcPath, destPath, ctx);
@@ -141,6 +146,7 @@ async function main(): Promise<void> {
               .filter(Boolean)
           : [],
         includeUi: args.ui === 'true' || args.ui === '1' || false,
+        baseUrl: args.baseUrl || 'https://test.musicbrainz.org',
       }
     : null;
   const ctx = await promptInputs(nonInteractive);
@@ -150,7 +156,7 @@ async function main(): Promise<void> {
   if (ctx.includeUi) {
     const pkgPath = path.join(dest, 'package.json');
     const pkgRaw = fs.readFileSync(pkgPath, 'utf8');
-    const pkg = JSON.parse(pkgRaw) as any;
+    const pkg = JSON.parse(pkgRaw) as {dependencies?: Record<string, string>; devDependencies?: Record<string, string>};
     pkg.dependencies = {
       ...pkg.dependencies,
       '@repo/common-ui': 'workspace:*',
@@ -163,6 +169,19 @@ async function main(): Promise<void> {
     };
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
   }
+
+  // Run eslint fix on generated files
+  console.log('\nFixing linting issues...');
+  try {
+    execSync(`yarn eslint --fix scripts/${ctx.id}`, {
+      cwd: path.join(root, '..'),
+      stdio: 'inherit',
+    });
+    console.log('✓ Linting fixed');
+  } catch (err) {
+    console.warn('Warning: eslint fix encountered issues, but continuing...', err);
+  }
+
   postMessage(ctx);
 }
 

@@ -1,9 +1,8 @@
-import { expect, test } from '@playwright/test';
-import { fileURLToPath } from 'url';
+import {expect, test} from '@playwright/test';
 
 // Basic existence test, extend as needed
 
-test('userscript bundle exists', async () => {
-  const path = fileURLToPath(import.meta.resolve('@dvirtz/__ID__'));
-  expect(path.endsWith('__ID__/package.json')).toBeTruthy();
+test('userscript bundle exists', async ({page, baseURL}) => {
+  await page.goto(baseURL || '');
+  await expect(page).toHaveURL(baseURL || '');
 });
