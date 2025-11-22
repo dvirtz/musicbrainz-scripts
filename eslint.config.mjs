@@ -9,7 +9,14 @@ export default tsEslint.config(
   eslint.configs.recommended,
   ...tsEslint.configs.recommendedTypeChecked,
   {
-    ignores: ['**/dist/**', '_template/**'],
+    ignores: [
+      '**/dist/**',
+      '_template/**',
+      '**/node_modules/**',
+      '**/.turbo/**',
+      '**/playwright-report/**',
+      '**/test-results/**',
+    ],
   },
   {
     languageOptions: {
