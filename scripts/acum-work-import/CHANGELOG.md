@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.19.4](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.3...@dvirtz/acum-work-import-v1.19.4) (2025-11-22)
+
+
+### Build and continuous integration
+
+* use vite watch mode instead of turbo ([5686300](https://github.com/dvirtz/musicbrainz-scripts/commit/5686300254ceeb270aa56b317da9f3dad7a2e492))
+
 ## [@dvirtz/acum-work-import-v1.19.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.2...@dvirtz/acum-work-import-v1.19.3) (2025-11-20)
 
 
