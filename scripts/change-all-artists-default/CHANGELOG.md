@@ -1,3 +1,10 @@
+## [@dvirtz/change-all-artists-default-v1.0.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/change-all-artists-default-v1.0.0...@dvirtz/change-all-artists-default-v1.0.1) (2025-11-22)
+
+
+### Build and continuous integration
+
+* use vite watch mode instead of turbo ([5686300](https://github.com/dvirtz/musicbrainz-scripts/commit/5686300254ceeb270aa56b317da9f3dad7a2e492))
+
 ## @dvirtz/change-all-artists-default-v1.0.0 (2025-11-19)
 
 
