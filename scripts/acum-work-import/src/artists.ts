@@ -14,11 +14,18 @@ function nameMatch(creator: CreatorFull, artistName: string): boolean {
   );
 }
 
+const artistCache = new Map<string, ArtistT>();
+
 async function findArtist(
   ipBaseNumber: IPBaseNumber,
   creators: Creators | undefined,
   addWarning: AddWarning
 ): Promise<ArtistT | null> {
+  const cached = artistCache.get(ipBaseNumber);
+  if (cached) {
+    return cached;
+  }
+
   const artistMBID = await (async () => {
     const creator = creators?.find(creator => creator.creatorIpBaseNumber === ipBaseNumber);
     if (!creator) {
@@ -75,11 +82,19 @@ async function findArtist(
     return null;
   })();
 
-  return artistMBID ? await tryFetchJSON<ArtistT>(`/ws/js/entity/${artistMBID}`) : null;
+  if (artistMBID) {
+    const artist = await tryFetchJSON<ArtistT>(`/ws/js/entity/${artistMBID}`);
+    if (artist) {
+      artistCache.set(ipBaseNumber, artist);
+      return artist;
+    }
+  }
+
+  return null;
 }
 
 export async function linkArtists(
-  artistCache: Map<string, Promise<ArtistT | null>>,
+  pendingArtistCache: Map<string, Promise<ArtistT | null>>,
   writers: readonly Creator[] | undefined,
   creators: Creators | undefined,
   doLink: (artist: ArtistT) => void,
@@ -89,8 +104,8 @@ export async function linkArtists(
     from(writers || []).pipe(
       mergeMap(
         async author =>
-          await (artistCache.get(author.creatorIpBaseNumber) ||
-            artistCache
+          await (pendingArtistCache.get(author.creatorIpBaseNumber) ||
+            pendingArtistCache
               .set(author.creatorIpBaseNumber, findArtist(author.creatorIpBaseNumber, creators, addWarning))
               .get(author.creatorIpBaseNumber))
       ),
