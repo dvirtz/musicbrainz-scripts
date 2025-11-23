@@ -74,14 +74,14 @@ export async function importAlbum(entity: Entity, addWarning: AddWarning, setPro
   return await importSelectedWorks(entity, recordings, addWarning, setProgress);
 }
 
-const artistCache: ArtistCache = new Map();
-
 async function importSelectedWorks(
   entity: Entity,
   selectedRecordings: SelectedRecordings,
   addWarning: AddWarning,
   setProgress: SetProgress
 ) {
+  const artistCache: ArtistCache = new Map();
+
   const addTrackWarning = (position: number) => (warning: string) => addWarning(`Track ${position}: ${warning}`);
 
   return await lastValueFrom(

@@ -1,8 +1,8 @@
-import {MusicbrainzPage} from '@repo/test-support/musicbrainz-page';
-import {test as base} from '@repo/test-support/userscript-test';
-import {expect} from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 import {EDIT_MEDIUM_CREATE, EDIT_RELEASE_CREATE, WS_EDIT_RESPONSE_OK} from '@repo/musicbrainz-ext/constants';
 import {ReleaseSearchResultsT} from '@repo/musicbrainz-ext/search-results';
+import {MusicbrainzPage} from '@repo/test-support/musicbrainz-page';
+import {test as base} from '@repo/test-support/userscript-test';
 import {EDIT_MEDIUM_CREATE_T, EDIT_RELEASE_CREATE_T, ReleaseT, WS_EDIT_RESPONSE_OK_T} from 'typedbrainz/types';
 
 export class TestRelease {
@@ -669,6 +669,16 @@ export class TestRelease {
 
   works() {
     return TestRelease.works;
+  }
+
+  async importAlbum(page: Page) {
+    const importButton = page.getByRole('button', {name: 'Import works from ACUM'});
+
+    await importButton.click();
+    await expect(importButton).toBeDisabled();
+
+    // wait for import to finish
+    await expect(importButton).toBeEnabled();
   }
 }
 

@@ -1,5 +1,5 @@
 import {test as testRelease} from '#tests/fixtures/test-release.ts';
-import {expect, mergeTests} from '@playwright/test';
+import {expect, mergeTests, Route} from '@playwright/test';
 import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
 import {
   ARRANGER_LINK_TYPE_ID,
@@ -151,8 +151,7 @@ test.describe('release editor', () => {
     await expect(input).toHaveValue('006625');
 
     // import the album
-    const importButton = page.getByRole('button', {name: 'Import works from ACUM'});
-    await importButton.click();
+    await testRelease.importAlbum(page);
   });
 
   test('can import individual works', async ({page, testRelease}) => {
@@ -169,13 +168,7 @@ test.describe('release editor', () => {
       const checkBox = page.getByRole('cell', {name: tracks[index]?.name}).getByRole('checkbox').first();
       await checkBox.check();
 
-      const importButton = page.getByRole('button', {name: 'Import works from ACUM'});
-      await importButton.click();
-
-      await expect(importButton).toBeDisabled();
-
-      // wait for import to finish
-      await expect(importButton).toBeEnabled();
+      await testRelease.importAlbum(page);
 
       // uncheck the checkbox for the next iteration
       await checkBox.uncheck();
@@ -197,14 +190,51 @@ base.describe('release editor', () => {
     const checkBox = trackRow.getByRole('checkbox').first();
     await checkBox.check();
 
-    const importButton = page.getByRole('button', {name: 'Import works from ACUM'});
-    await importButton.click();
-    await expect(importButton).toBeDisabled();
-
-    // wait for import to finish
-    await expect(importButton).toBeEnabled();
+    await testRelease.importAlbum(page);
 
     const arrangerLabels = trackRow.getByText('arranger:');
     await expect(arrangerLabels).toHaveCount(0);
+  });
+
+  base('retries fetching missing artists', async ({page, testRelease, musicbrainzPage}) => {
+    await testRelease.editRelationships(musicbrainzPage);
+
+    const work = testRelease.works()[0]!;
+
+    const input = page.getByPlaceholder('Album/Version/Work ID');
+
+    await input.fill(work.acumUrl);
+
+    const trackRow = page.getByRole('row', {name: work.title});
+    const checkBox = trackRow.getByRole('checkbox').first();
+    await checkBox.check();
+
+    const reject = async (route: Route) => {
+      await route.fulfill({
+        status: 404,
+      });
+    };
+
+    // make sure artist is not found
+    await page.route((url: URL) => {
+      if (url.pathname === '/ws/2/artist') {
+        const query = url.searchParams.get('query');
+        return query ? query.includes(work.lyricists[0]!) || query.includes('ipi:') : false;
+      }
+      return url.pathname === '/ws/2/url';
+    }, reject);
+
+    await testRelease.importAlbum(page);
+
+    const failedToFindWarning = page.getByText('failed to find');
+    await expect(failedToFindWarning).toContainText(`Track 1: failed to find lyricist ${work.lyricists[0]}`);
+
+    // enable artist fetching again
+    await page.unrouteAll();
+
+    await testRelease.importAlbum(page);
+
+    const lyricistLinks = trackRow.getByRole('link', {name: work.lyricists[0]!});
+    await expect(lyricistLinks).toHaveCount(1);
   });
 });

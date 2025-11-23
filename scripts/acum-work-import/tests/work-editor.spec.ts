@@ -1,5 +1,5 @@
-import {test} from '@repo/test-support/musicbrainz-test';
 import {expect, Locator} from '@playwright/test';
+import {test} from '@repo/test-support/musicbrainz-test';
 
 async function selectBoxText(locator: Locator) {
   return await locator.evaluate(
