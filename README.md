@@ -45,6 +45,17 @@ Sets the default value of "Change all artists" check box in the track list edit 
 
 See the script [README](scripts/change-all-artists-default/README.md) for more information.
 
+## Single Language Tracklist
+
+[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/single-language-tracklist.user.js)
+[![source][badge-source]](scripts/single-language-tracklist/src/index.ts)
+
+Keeps one language of a double language tracklist (like often seen in Discogs).
+
+![toolbox](scripts/single-language-tracklist/assets/toolbox.png)
+
+See the script [README](scripts/single-language-tracklist/README.md) for more information.
+
 ## Development
 
 This is a TypeScript monorepo using Yarn workspaces and Turbo for build orchestration.
