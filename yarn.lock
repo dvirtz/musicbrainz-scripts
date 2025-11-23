@@ -2249,6 +2249,7 @@ __metadata:
     eslint: "npm:*"
     rxjs: "npm:*"
     semantic-release: "npm:*"
+    solid-js: "npm:*"
     vite: "npm:*"
   languageName: unknown
   linkType: soft
@@ -3572,9 +3573,8 @@ __metadata:
     "@repo/common-types": "workspace:*"
     "@repo/typescript-config": "workspace:*"
     eslint: "npm:*"
+    solid-js: "npm:*"
     typescript: "npm:*"
-  peerDependencies:
-    solid-js: "*"
   languageName: unknown
   linkType: soft
 
