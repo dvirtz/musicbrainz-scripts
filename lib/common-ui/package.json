@@ -13,15 +13,13 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@kobalte/core": "*"
+    "@kobalte/core": "*",
+    "solid-js": "*"
   },
   "devDependencies": {
     "@repo/common-types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "eslint": "*",
     "typescript": "*"
-  },
-  "peerDependencies": {
-    "solid-js": "*"
   }
 }
