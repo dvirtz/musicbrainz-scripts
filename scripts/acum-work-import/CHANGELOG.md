@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.19.5](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.4...@dvirtz/acum-work-import-v1.19.5) (2025-11-23)
+
+
+### Bug Fixes
+
+* restore refetching missing artists ([ff00018](https://github.com/dvirtz/musicbrainz-scripts/commit/ff00018af3e2c15b5fc77ea9cca26ff05ab77782)), closes [#138](https://github.com/dvirtz/musicbrainz-scripts/issues/138)
+
 ## [@dvirtz/acum-work-import-v1.19.4](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.3...@dvirtz/acum-work-import-v1.19.4) (2025-11-22)
 
 
