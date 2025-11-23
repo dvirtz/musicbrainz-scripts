@@ -30,6 +30,7 @@
     "@repo/common-ui": "workspace:^",
     "@repo/rxjs-ext": "workspace:*",
     "dom-mutations": "*",
-    "rxjs": "*"
+    "rxjs": "*",
+    "solid-js": "*"
   }
 }
