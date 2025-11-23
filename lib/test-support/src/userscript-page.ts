@@ -26,6 +26,9 @@ export class UserscriptPage {
   }
 
   private async injectUserScript() {
+    // Wait for document.body to exist, simulating @run-at document-end
+    await this.page.waitForFunction(() => document.body !== null);
+
     await this.page.addScriptTag({
       path: this.userscriptPath,
     });
@@ -93,5 +96,32 @@ export class UserscriptPage {
     expect(storage.origins[0]?.localStorage).toEqual(
       expect.arrayContaining(options.map(({name, defaultValue}) => ({name, value: (!defaultValue).toString()})))
     );
+  }
+
+  public async submitForm(formData: Record<string, string>, actionUrl: string) {
+    // Create HTML with form and auto-submit
+    const html = `
+    <html>
+      <body>
+        <form id="testForm" method="POST" action="${actionUrl}">
+          ${Object.entries(formData)
+            .map(([name, value]) => `<input type="hidden" name="${name}" value="${value}">`)
+            .join('\n')}
+            <button type="submit">Submit</button>
+        </form>
+      </body>
+    </html>
+    `;
+
+    // Load the HTML and let it auto-submit
+    await this.page.setContent(html);
+
+    const submitButton = this.page.locator('button[type="submit"]');
+    await submitButton.click();
+
+    await expect(this.page).toHaveURL(actionUrl);
+
+    // Re-inject userscript after navigation
+    await this.injectUserScript();
   }
 }
