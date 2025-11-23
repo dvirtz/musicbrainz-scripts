@@ -2333,6 +2333,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@dvirtz/single-language-tracklist@workspace:scripts/single-language-tracklist":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/single-language-tracklist@workspace:scripts/single-language-tracklist"
+  dependencies:
+    "@kobalte/core": "npm:*"
+    "@playwright/test": "npm:*"
+    "@repo/common-types": "workspace:*"
+    "@repo/common-ui": "workspace:*"
+    "@repo/rxjs-ext": "workspace:*"
+    "@repo/test-support": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
+    "@repo/vite-config": "workspace:*"
+    cross-env: "npm:*"
+    dom-mutations: "npm:*"
+    eslint: "npm:*"
+    rxjs: "npm:*"
+    semantic-release: "npm:*"
+    solid-js: "npm:*"
+    typescript: "npm:*"
+    vite: "npm:*"
+  languageName: unknown
+  linkType: soft
+
 "@esbuild/aix-ppc64@npm:0.25.2":
   version: 0.25.2
   resolution: "@esbuild/aix-ppc64@npm:0.25.2"
