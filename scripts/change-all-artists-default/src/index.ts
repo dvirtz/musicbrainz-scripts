@@ -11,9 +11,7 @@ async function main() {
     return node instanceof HTMLElement && node.id === 'artist-credit-bubble';
   };
 
-  await executePipeline(
-    newElements(isArtistCreditBubble, {subtree: true, childList: true}).pipe(asyncTap(modifyArtistCreditBubble))
-  );
+  await executePipeline(newElements(isArtistCreditBubble).pipe(asyncTap(modifyArtistCreditBubble)));
 }
 
 main().catch(console.error);
