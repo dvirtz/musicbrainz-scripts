@@ -51,7 +51,7 @@ import {
   ReleaseRelationshipEditorStateT,
 } from 'typedbrainz/types';
 
-type SelectedMediums = Set<[MediumWithRecordingsT, MediumRecordingStateTreeT]>;
+type SelectedMediums = ReadonlyArray<[MediumWithRecordingsT, MediumRecordingStateTreeT]>;
 type SelectedRecording = {
   readonly position: number;
   readonly index: number | undefined;
@@ -68,7 +68,7 @@ export async function importAlbum(entity: Entity, addWarning: AddWarning, setPro
 
   const noSelection =
     ((MB?.relationshipEditor.state as ReleaseRelationshipEditorStateT).selectedRecordings?.size ?? 0) === 0;
-  const mediums = selectedMediums(entity, noSelection, addWarning);
+  const mediums = selectedMediums(entity, noSelection) ?? [];
   const recordings = await selectedRecordings(entity, noSelection, mediums);
 
   return await importSelectedWorks(entity, recordings, addWarning, setProgress);
@@ -169,7 +169,7 @@ async function linkArrangers(
 async function selectedRecordings(
   entity: Entity,
   noSelection: boolean,
-  selectedMediums: SelectedMediums = new Set()
+  selectedMediums: SelectedMediums
 ): Promise<SelectedRecordings> {
   const workBeans = await fetchWorks(entity);
 
@@ -213,24 +213,22 @@ async function selectedRecordings(
   );
 }
 
-function selectedMediums(entity: Entity, noSelection: boolean, addWarning: AddWarning): SelectedMediums | undefined {
-  if (!MB || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
+function selectedMediums(entity: Entity, noSelection: boolean): SelectedMediums | undefined {
+  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
     return;
   }
 
-  const selected = new Set(
-    noSelection
-      ? MB?.tree?.iterate(MB.relationshipEditor.state.mediums)
-      : MB?.tree
-          ?.iterate(MB.relationshipEditor.state.mediums)
-          .filter(([, recordingStateTree]) =>
-            MB?.tree?.iterate(recordingStateTree).some(recording => recording.isSelected)
-          )
-  );
+  const selected = noSelection
+    ? MB.tree.toArray(MB.relationshipEditor.state.mediums)
+    : MB.tree
+        .toArray(MB.relationshipEditor.state.mediums)
+        .filter(([, recordingStateTree]) =>
+          MB?.tree?.iterate(recordingStateTree).some(recording => recording.isSelected)
+        );
 
-  switch (selected.size) {
+  switch (selected.length) {
     case 0:
-      addWarning('select at least one recording');
+      alert('select at least one recording');
       return;
     case 1: {
       const [medium] = head(selected.values())!;
@@ -239,14 +237,23 @@ function selectedMediums(entity: Entity, noSelection: boolean, addWarning: AddWa
         medium.track_count !== 1 &&
         MB.relationshipEditor.state.selectedRecordings?.size !== 1
       ) {
-        addWarning('select exactly one recording');
-        return;
+        const confirmed = confirm(
+          'more than one recording is selected, proceed to import work for the first one only?'
+        );
+        if (!confirmed) {
+          return;
+        }
       }
       break;
     }
-    default:
-      addWarning('select recordings only from a single medium');
-      return;
+    default: {
+      const confirmed = confirm('more than one medium is selected, proceed to import works for the first only?');
+      if (!confirmed) {
+        return;
+      }
+
+      return selected.slice(0, 1);
+    }
   }
 
   return selected;
