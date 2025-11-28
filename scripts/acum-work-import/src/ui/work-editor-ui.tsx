@@ -34,11 +34,10 @@ export async function createWorkEditorUI() {
 
     const container = (<div id={releaseEditorContainerId}></div>) as HTMLDivElement;
     const inIframe = location.pathname.startsWith('/dialog');
-    const theToolbox = await toolbox(workForm.ownerDocument, inIframe ? 'iframe' : 'half-page');
+    const theToolbox = await toolbox(workForm.ownerDocument, inIframe ? 'iframe' : 'half-page', toolbox =>
+      workForm.querySelector(inIframe ? '.half-width' : '.documentation')?.insertAdjacentElement('beforebegin', toolbox)
+    );
     theToolbox.append(container);
-    workForm
-      .querySelector(inIframe ? '.half-width' : '.documentation')
-      ?.insertAdjacentElement('beforebegin', theToolbox);
 
     render(
       () => (

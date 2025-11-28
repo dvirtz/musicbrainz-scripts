@@ -1,7 +1,11 @@
 import classes from './toolbox.module.css';
 import style from './toolbox.module.css?inline';
 
-export async function toolbox(doc: Document, className: 'full-page' | 'half-page' | 'iframe') {
+export async function toolbox(
+  doc: Document,
+  className: 'full-page' | 'half-page' | 'iframe',
+  inserter: (toolbox: HTMLDivElement) => void
+) {
   const ID = classes['dvirtz-toolbox'];
   const existing = doc.getElementById(ID!);
   if (existing) {
@@ -10,7 +14,7 @@ export async function toolbox(doc: Document, className: 'full-page' | 'half-page
 
   await GM.addStyle(style);
 
-  return (
+  const res = (
     <fieldset
       id={ID}
       classList={{
@@ -21,6 +25,8 @@ export async function toolbox(doc: Document, className: 'full-page' | 'half-page
       <legend>dvirtz MusicBrainz scripts</legend>
     </fieldset>
   ) as HTMLDivElement;
+  inserter(res);
+  return res;
 }
 
 export function warning(message: string) {
