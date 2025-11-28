@@ -120,9 +120,10 @@ export async function createReleaseEditorUI() {
   const doRender = async () => {
     console.debug('Creating release editor');
     const container = (<div id={releaseEditorContainerId}></div>) as HTMLDivElement;
-    const theToolbox = await toolbox(document, 'full-page');
+    const theToolbox = await toolbox(document, 'full-page', toolbox =>
+      document.querySelector('div.tabs')?.insertAdjacentElement('afterend', toolbox)
+    );
     theToolbox.append(container);
-    document.querySelector('div.tabs')?.insertAdjacentElement('afterend', theToolbox);
 
     render(
       () => (

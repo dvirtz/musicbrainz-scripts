@@ -25,6 +25,11 @@ function ChangeAllArtistsDefault(props: {initiallyChecked: boolean}) {
 }
 
 export async function createUI() {
+  const containerId = 'change-all-artists-default-toolbox';
+  if (document.getElementById(containerId)) {
+    return;
+  }
+
   const guessCaseBox =
     document.querySelector<HTMLDivElement>('div:has(> fieldset.guesscase)') ??
     (await waitForElement(
@@ -32,13 +37,9 @@ export async function createUI() {
         node instanceof HTMLDivElement && node.querySelector('fieldset.guesscase') !== null
     ));
 
-  const containerId = 'change-all-artists-default-toolbox';
-  if (document.getElementById(containerId)) {
-    return;
-  }
-
-  const theToolbox = await toolbox(document, 'full-page');
-  guessCaseBox?.insertAdjacentElement('afterend', theToolbox);
+  const theToolbox = await toolbox(document, 'full-page', toolbox => {
+    guessCaseBox?.insertAdjacentElement('afterend', toolbox);
+  });
 
   const container = (<div id={containerId}></div>) as HTMLDivElement;
   theToolbox.appendChild(container);
