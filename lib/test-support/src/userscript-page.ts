@@ -1,5 +1,5 @@
 import {invokeMenuCommand, mockUserscriptManager, waitForMenuCommand} from '#userscript-manager-mock.ts';
-import {expect, type Page} from '@playwright/test';
+import {expect, type Page, type Response} from '@playwright/test';
 
 export class UserscriptPage {
   windowOpenLog: URL[] = [];
@@ -20,9 +20,18 @@ export class UserscriptPage {
     readonly userscriptPath: string
   ) {}
 
-  public async goto(url: string) {
-    await this.page.goto(url);
+  public async goto(url: string): Promise<null | Response> {
+    const res = await this.page.goto(url);
+    expect(res?.ok(), `Failed to navigate to ${url}: ${res?.status()}`).toBeTruthy();
     await this.injectUserScript();
+    return res;
+  }
+
+  public async reload(): Promise<null | Response> {
+    const res = await this.page.reload();
+    expect(res?.ok(), `Failed to reload ${this.page.url()}: ${res?.status()}`).toBeTruthy();
+    await this.injectUserScript();
+    return res;
   }
 
   private async injectUserScript() {
