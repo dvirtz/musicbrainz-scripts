@@ -1,3 +1,15 @@
+## [@dvirtz/change-all-artists-default-v1.1.0-beta.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/change-all-artists-default-v1.1.0-beta.1...@dvirtz/change-all-artists-default-v1.1.0-beta.2) (2025-11-30)
+
+
+### Bug Fixes
+
+* only insert toolbox when it's created ([415c772](https://github.com/dvirtz/musicbrainz-scripts/commit/415c772c78d5b02ffd2afd338dad104c8d81864f))
+
+
+### Tests
+
+* make sure page loads succeed ([302e54f](https://github.com/dvirtz/musicbrainz-scripts/commit/302e54f3e5e4705fcd40336cda73c0c0e6e6f39b))
+
 ## [@dvirtz/change-all-artists-default-v1.1.0-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/change-all-artists-default-v1.0.1...@dvirtz/change-all-artists-default-v1.1.0-beta.1) (2025-11-28)
 
 
