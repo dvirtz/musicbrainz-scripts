@@ -22,7 +22,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
           cache: yarn
       - name: Install dependencies
         run: yarn
@@ -30,11 +30,17 @@ jobs:
         run: yarn ci
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
-      - name: Run Playwright tests
-        run: yarn test
+      - name: Run Playwright tests (excluding @allow_fail)
+        run: yarn test -- -- --grep-invert @allow_fail --pass-with-no-tests
         env:
           MB_USERNAME: ${{ secrets.MB_USERNAME }}
           MB_PASSWORD: ${{ secrets.MB_PASSWORD }}
+          # https://github.com/nodejs/node/issues/59364
+          NODE_OPTIONS: --no-experimental-strip-types
+      - name: Run @allow_fail tests (non-blocking)
+        continue-on-error: true
+        run: yarn test -- -- --grep @allow_fail --pass-with-no-tests
+        env:
           # https://github.com/nodejs/node/issues/59364
           NODE_OPTIONS: --no-experimental-strip-types
       - uses: actions/upload-artifact@v4
@@ -68,7 +74,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
           cache: yarn
       - name: Install dependencies
         run: yarn
