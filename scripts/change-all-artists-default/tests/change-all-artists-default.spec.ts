@@ -49,7 +49,7 @@ test('persisted value survives reload', async ({userscriptPage, page}) => {
   await checkbox.check();
 
   // Reload and re-inject the userscript
-  await userscriptPage.goto(url);
+  await userscriptPage.reload();
 
   await expect(checkbox).toBeChecked();
 });
