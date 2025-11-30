@@ -4,6 +4,7 @@ export default defineConfig('single-language-tracklist', {
   name: 'Single Language Tracklist',
   description: 'Keeps one language of a double language tracklist (like often seen in Discogs)',
   version: '1.0.0-beta.2',
+  icon: 'https://raw.githubusercontent.com/dvirtz/musicbrainz-scripts/main/scripts/single-language-tracklist/assets/icon.png',
 
   match: [
     'http*://*.musicbrainz.org/release/*/edit',

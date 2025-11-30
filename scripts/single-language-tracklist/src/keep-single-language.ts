@@ -1,4 +1,7 @@
+import {asyncTap} from '@repo/rxjs-ext/async-tap';
+import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
+import {from, skip, take, tap} from 'rxjs';
 
 enum Side {
   Left,
@@ -28,20 +31,25 @@ async function keepArtistSide(side: Side) {
       console.error('Artist credit bubble not found');
       return;
     }
+    await new Promise(resolve => setTimeout(resolve, 1)); // Allow time for the dialog to populate
     const equalJoiner = Array.from(acBubble.querySelectorAll<HTMLInputElement>('input[id*="join-phrase"]')).findIndex(
       input => input.value.trim() === '='
     );
     if (equalJoiner !== -1) {
-      Array.from(acBubble.querySelectorAll<HTMLButtonElement>('button.remove-artist-credit'))
-        .slice(side === Side.Left ? equalJoiner + 1 : 0, side === Side.Left ? undefined : equalJoiner + 1)
-        .forEach(button => button.click());
-      await waitForElement(
-        (node): node is HTMLTableCellElement =>
-          node instanceof HTMLTableCellElement && node.classList.contains('removed-ac-name'),
-        undefined,
-        acBubble
+      await executePipeline(
+        from(acBubble.querySelectorAll<HTMLButtonElement>('button.remove-artist-credit')).pipe(
+          side === Side.Right ? take(equalJoiner + 1) : skip(equalJoiner + 1),
+          tap(button => button.click()),
+          asyncTap(async () => {
+            await waitForElement(
+              (node): node is HTMLTableCellElement =>
+                node instanceof HTMLTableCellElement && node.classList.contains('removed-ac-name'),
+              undefined,
+              acBubble
+            );
+          })
+        )
       );
-      await new Promise(resolve => setTimeout(resolve, 5)); // Allow time for the main page to update
     }
     const submitButton = acBubble.querySelector<HTMLButtonElement>('button[type="submit"]');
     submitButton?.click();

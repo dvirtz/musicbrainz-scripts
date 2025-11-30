@@ -12,11 +12,9 @@ import {test} from '@repo/test-support/musicbrainz-test';
       // cspell: disable
       'name': 'סודות גדולים = Big Secrets',
       'artist_credit.names.0.name': 'דויד ברוזה',
-      'artist_credit.names.0.artist.name': 'David Broza',
       'artist_credit.names.0.mbid': '2077bf4d-9bf2-43ac-8c9d-d3eec73e3b30',
       'artist_credit.names.0.join_phrase': ' = ',
       'artist_credit.names.1.name': 'David Broza',
-      'artist_credit.names.1.artist.name': 'David Broza',
       'artist_credit.names.1.mbid': '2077bf4d-9bf2-43ac-8c9d-d3eec73e3b30',
       'country': 'IL',
       'date.year': '1996',
@@ -31,6 +29,17 @@ import {test} from '@repo/test-support/musicbrainz-test';
       'mediums.0.track.1.length': '298000',
       'mediums.0.track.2.name': "את אישה = You're A Woman",
       'mediums.0.track.2.length': '214000',
+      'mediums.0.track.2.artist_credit.names.0.name': 'דויד ברוזה',
+      'mediums.0.track.2.artist_credit.names.0.mbid': '2077bf4d-9bf2-43ac-8c9d-d3eec73e3b30',
+      'mediums.0.track.2.artist_credit.names.0.join_phrase': ' ו',
+      'mediums.0.track.2.artist_credit.names.1.name': 'אברהם טל',
+      'mediums.0.track.2.artist_credit.names.1.mbid': '56700752-75da-4f2b-bf11-ff8823c7a911',
+      'mediums.0.track.2.artist_credit.names.1.join_phrase': ' = ',
+      'mediums.0.track.2.artist_credit.names.2.name': 'David Broza',
+      'mediums.0.track.2.artist_credit.names.2.mbid': '2077bf4d-9bf2-43ac-8c9d-d3eec73e3b30',
+      'mediums.0.track.2.artist_credit.names.2.join_phrase': ' & ',
+      'mediums.0.track.2.artist_credit.names.3.name': 'Avraham Tal',
+      'mediums.0.track.2.artist_credit.names.3.mbid': '56700752-75da-4f2b-bf11-ff8823c7a911',
       'mediums.0.track.3.name': 'החל רש = Hachel Rash',
       'mediums.0.track.3.length': '408000',
       'mediums.0.track.4.name': 'גלויה מצוירת = A Painted Postcard',
@@ -70,7 +79,13 @@ import {test} from '@repo/test-support/musicbrainz-test';
       await expect(trackInput).toHaveValue(expectedTrackName);
 
       const artistInput = page.locator(`.artist input`).nth(i);
-      await expect(artistInput).toHaveValue(formData[`artist_credit.names.${artistIndex}.name`]!.trim());
+      if (`mediums.0.track.${i}.artist_credit.names.0.name` in formData) {
+        await expect(artistInput).toHaveValue(
+          `${formData[`mediums.0.track.${i}.artist_credit.names.${artistIndex * 2}.name`]}${formData[`mediums.0.track.${i}.artist_credit.names.${artistIndex * 2}.join_phrase`]}${formData[`mediums.0.track.${i}.artist_credit.names.${artistIndex * 2 + 1}.name`]!}`
+        );
+      } else {
+        await expect(artistInput).toHaveValue(formData[`artist_credit.names.${artistIndex}.name`]!);
+      }
     }
   });
 });
