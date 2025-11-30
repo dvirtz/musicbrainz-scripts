@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.20.0-beta.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.20.0-beta.1...@dvirtz/acum-work-import-v1.20.0-beta.2) (2025-11-30)
+
+
+### Bug Fixes
+
+* only insert toolbox when it's created ([415c772](https://github.com/dvirtz/musicbrainz-scripts/commit/415c772c78d5b02ffd2afd338dad104c8d81864f))
+
 ## [@dvirtz/acum-work-import-v1.20.0-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.5...@dvirtz/acum-work-import-v1.20.0-beta.1) (2025-11-28)
 
 
