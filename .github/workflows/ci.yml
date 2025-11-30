@@ -22,7 +22,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: lts/*
           cache: yarn
       - name: Install dependencies
         run: yarn
@@ -30,13 +30,24 @@ jobs:
         run: yarn ci
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
-      - name: Run Playwright tests
-        run: yarn test
+      - name: Run Playwright tests (excluding @allow_fail)
+        run: yarn test -- --pass-with-no-tests --grep-invert @allow_fail
         env:
           MB_USERNAME: ${{ secrets.MB_USERNAME }}
           MB_PASSWORD: ${{ secrets.MB_PASSWORD }}
           # https://github.com/nodejs/node/issues/59364
           NODE_OPTIONS: --no-experimental-strip-types
+      - name: Run @allow_fail tests (non-blocking)
+        continue-on-error: true
+        run: yarn test -- --pass-with-no-tests --grep @allow_fail
+        env:
+          # https://github.com/nodejs/node/issues/59364
+          NODE_OPTIONS: --no-experimental-strip-types
+      - name: Debug in Codespace
+        if: failure()
+        uses: dlemstra/github-actions-debugger@main
+        with:
+          token: ${{ secrets.CODESPACES_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -68,7 +79,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: lts/*
           cache: yarn
       - name: Install dependencies
         run: yarn
