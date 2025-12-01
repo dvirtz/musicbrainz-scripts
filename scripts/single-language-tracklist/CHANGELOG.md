@@ -1,3 +1,10 @@
+## [@dvirtz/single-language-tracklist-v1.0.0-beta.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/single-language-tracklist-v1.0.0-beta.2...@dvirtz/single-language-tracklist-v1.0.0-beta.3) (2025-12-01)
+
+
+### Bug Fixes
+
+* move delay to before removing ([d21903b](https://github.com/dvirtz/musicbrainz-scripts/commit/d21903b24b85a0d7e484cf047ae623758d96b28b))
+
 ## [@dvirtz/single-language-tracklist-v1.0.0-beta.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/single-language-tracklist-v1.0.0-beta.1...@dvirtz/single-language-tracklist-v1.0.0-beta.2) (2025-11-30)
 
 
