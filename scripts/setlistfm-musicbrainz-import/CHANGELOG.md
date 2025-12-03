@@ -1,3 +1,15 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.6.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.6.2...@dvirtz/setlistfm-musicbrainz-import-v1.6.3) (2025-12-03)
+
+
+### Documentation
+
+* use reference-style links to shorten the badge urls ([8b9fa82](https://github.com/dvirtz/musicbrainz-scripts/commit/8b9fa82d4bf4226d264a40f3441f1f49355bfa11))
+
+
+### Build and continuous integration
+
+* allow setlist.fm tests to fail ([b46e8cb](https://github.com/dvirtz/musicbrainz-scripts/commit/b46e8cb33564322f711187e880845d698b48ba60))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.6.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.6.1...@dvirtz/setlistfm-musicbrainz-import-v1.6.2) (2025-11-22)
 
 
