@@ -1,3 +1,20 @@
+## [@dvirtz/acum-work-import-v1.20.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.5...@dvirtz/acum-work-import-v1.20.0) (2025-12-03)
+
+
+### Features
+
+* allow selecting more than one medium / recording ([7a2cd7a](https://github.com/dvirtz/musicbrainz-scripts/commit/7a2cd7a4f307aa6b6e4438bc74fd754fedcbac82))
+
+
+### Bug Fixes
+
+* only insert toolbox when it's created ([a59248c](https://github.com/dvirtz/musicbrainz-scripts/commit/a59248c22f6abeef253cb7b8d3248fb8cd27025f))
+
+
+### Documentation
+
+* use reference-style links to shorten the badge urls ([8b9fa82](https://github.com/dvirtz/musicbrainz-scripts/commit/8b9fa82d4bf4226d264a40f3441f1f49355bfa11))
+
 ## [@dvirtz/acum-work-import-v1.19.5](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.4...@dvirtz/acum-work-import-v1.19.5) (2025-11-23)
 
 
