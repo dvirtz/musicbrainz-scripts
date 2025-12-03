@@ -1,3 +1,26 @@
+## [@dvirtz/change-all-artists-default-v1.1.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/change-all-artists-default-v1.0.1...@dvirtz/change-all-artists-default-v1.1.0) (2025-12-03)
+
+
+### Features
+
+* enable waiting for element removal ([22315d7](https://github.com/dvirtz/musicbrainz-scripts/commit/22315d7adf7acea3c831208a4e5796728db3b305))
+
+
+### Bug Fixes
+
+* missing dependency warnings ([afbf2bf](https://github.com/dvirtz/musicbrainz-scripts/commit/afbf2bf7a4ee6383a4f478e04b3230d39b507d92))
+* only insert toolbox when it's created ([a59248c](https://github.com/dvirtz/musicbrainz-scripts/commit/a59248c22f6abeef253cb7b8d3248fb8cd27025f))
+
+
+### Documentation
+
+* use reference-style links to shorten the badge urls ([8b9fa82](https://github.com/dvirtz/musicbrainz-scripts/commit/8b9fa82d4bf4226d264a40f3441f1f49355bfa11))
+
+
+### Tests
+
+* make sure page loads succeed ([b164b67](https://github.com/dvirtz/musicbrainz-scripts/commit/b164b67e42c84f8e1f1fda58026e9bba28f2927f))
+
 ## [@dvirtz/change-all-artists-default-v1.0.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/change-all-artists-default-v1.0.0...@dvirtz/change-all-artists-default-v1.0.1) (2025-11-22)
 
 
