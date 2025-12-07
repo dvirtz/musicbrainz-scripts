@@ -17,6 +17,7 @@
   },
   "editor.formatOnSave": true,
   "conventionalCommits.scopes": [
-    "common-ui"
+    "common-ui",
+    "single-language-tracklist"
   ]
 }
