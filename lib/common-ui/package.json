@@ -6,7 +6,8 @@
   "type": "module",
   "exports": {
     "./settings": "./src/settings.tsx",
-    "./toolbox": "./src/toolbox.tsx"
+    "./toolbox": "./src/toolbox.tsx",
+    "./tool-line": "./src/tool-line.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
