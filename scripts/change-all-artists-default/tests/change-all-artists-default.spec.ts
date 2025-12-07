@@ -6,7 +6,7 @@ const url = 'release/148cc205-92b8-42e6-a3b8-9758503a48cd/edit#tracklist';
 test('change all artists default', async ({userscriptPage, page}) => {
   await userscriptPage.goto(url);
 
-  const checkbox = page.getByRole('checkbox', {name: '"Change all artists" default'});
+  const checkbox = page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'}).getByRole('checkbox');
   await expect(checkbox).not.toBeChecked();
   await checkbox.check();
 
@@ -45,7 +45,7 @@ test('prepopulated from storage: true', async ({userscriptPage, page}) => {
 test('persisted value survives reload', async ({userscriptPage, page}) => {
   await userscriptPage.goto(url);
 
-  const checkbox = page.getByRole('checkbox', {name: '"Change all artists" default'});
+  const checkbox = page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'}).getByRole('checkbox');
   await checkbox.check();
 
   // Reload and re-inject the userscript
