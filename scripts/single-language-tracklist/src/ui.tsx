@@ -3,9 +3,10 @@
 import {removeLHS, removeRHS} from '#keep-single-language.ts';
 import {Button} from '@kobalte/core/button';
 import {TextField} from '@kobalte/core/text-field';
+import {ToolLine} from '@repo/common-ui/tool-line';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
-import {createSignal} from 'solid-js';
+import {createSignal, For} from 'solid-js';
 import {render} from 'solid-js/web';
 
 function SingleLanguageTracklistUI(props: {separator: string}) {
@@ -17,33 +18,27 @@ function SingleLanguageTracklistUI(props: {separator: string}) {
   };
 
   return (
-    <div style={{display: 'flex', gap: '8px', 'align-items': 'center'}}>
-      <label>Keep single language</label>
+    <ToolLine title="Keep single language">
       <div class="buttons">
-        <Button
-          class="button"
-          onClick={() => {
-            removeLHS(separator()).catch(console.error);
-          }}
-          disabled={separator().length == 0}
-        >
-          Remove LHS
-        </Button>
-        <Button
-          class="button"
-          onClick={() => {
-            removeRHS(separator()).catch(console.error);
-          }}
-          disabled={separator().length == 0}
-        >
-          Remove RHS
-        </Button>
+        <For each={[[removeLHS, 'Remove LHS'] as const, [removeRHS, 'Remove RHS'] as const]}>
+          {([callback, text]) => (
+            <Button
+              class="button"
+              onClick={() => {
+                callback(separator()).catch(console.error);
+              }}
+              disabled={separator().length == 0}
+            >
+              {text}
+            </Button>
+          )}
+        </For>
       </div>
       <TextField value={separator()} onChange={onChange}>
         <TextField.Label style={{padding: '6px'}}>separator:</TextField.Label>
         <TextField.Input style={{width: '3em', 'text-align': 'center'}} />
       </TextField>
-    </div>
+    </ToolLine>
   );
 }
 

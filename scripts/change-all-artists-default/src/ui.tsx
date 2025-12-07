@@ -1,6 +1,7 @@
 // cspell: ignore guesscase
 
 import {Checkbox} from '@kobalte/core/checkbox';
+import {ToolLine} from '@repo/common-ui/tool-line';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import {createSignal} from 'solid-js';
@@ -15,12 +16,11 @@ function ChangeAllArtistsDefault(props: {initiallyChecked: boolean}) {
   };
 
   return (
-    <Checkbox>
-      <Checkbox.Label>
+    <ToolLine title="Change all artists default">
+      <Checkbox>
         <input type="checkbox" checked={checked()} onChange={e => onChange(e.currentTarget.checked)} />
-        "Change all artists" default
-      </Checkbox.Label>
-    </Checkbox>
+      </Checkbox>
+    </ToolLine>
   );
 }
 
