@@ -2,14 +2,16 @@
 
 import {removeLHS, removeRHS} from '#keep-single-language.ts';
 import {Button} from '@kobalte/core/button';
+import {TextField} from '@kobalte/core/text-field';
+import {ToolLine} from '@repo/common-ui/tool-line';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import {render} from 'solid-js/web';
 
 function SingleLanguageTracklistUI() {
   return (
-    <div class="buttons" style={{display: 'flex', gap: '8px', 'align-items': 'center'}}>
-      <label>Keep single language</label>
+    <ToolLine title="Keep single language">
+      <div class="buttons">
       <Button
         class="button"
         onClick={() => {
@@ -27,6 +29,7 @@ function SingleLanguageTracklistUI() {
         Remove RHS
       </Button>
     </div>
+    </ToolLine>
   );
 }
 

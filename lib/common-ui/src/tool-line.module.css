@@ -1,0 +1,5 @@
+.tool__line {
+  display: flex; 
+  gap: 8px; 
+  align-items: center;
+}
