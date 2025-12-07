@@ -1,3 +1,10 @@
+## [@dvirtz/change-all-artists-default-v1.1.1-beta.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/change-all-artists-default-v1.1.0...@dvirtz/change-all-artists-default-v1.1.1-beta.1) (2025-12-07)
+
+
+### Refactoring
+
+* **common-ui:** common tool-line UI ([cd22b5b](https://github.com/dvirtz/musicbrainz-scripts/commit/cd22b5b83793382544904baa2cb03a373dc28594))
+
 ## [@dvirtz/change-all-artists-default-v1.1.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/change-all-artists-default-v1.0.1...@dvirtz/change-all-artists-default-v1.1.0) (2025-12-03)
 
 
