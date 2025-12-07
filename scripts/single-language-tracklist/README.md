@@ -15,6 +15,8 @@ after clicking `Remove LHS`:
 
 ![after](assets/after.png)
 
+It's possible to customize the separator used between the two languages by modifying the `separator` text input. The value will be saved in local storage for future use.
+
 ## Development
 
 ```shell

@@ -4,10 +4,11 @@ import {test} from '@repo/test-support/musicbrainz-test';
 // Basic existence test, extend as needed
 
 [
-  {buttonName: 'Remove LHS', titleIndex: 1, artistIndex: 1},
-  {buttonName: 'Remove RHS', titleIndex: 0, artistIndex: 0},
-].forEach(({buttonName, titleIndex, artistIndex}) => {
-  test(buttonName, async ({page, baseURL, userscriptPage}) => {
+  {buttonName: 'Remove LHS', keptIndex: 1},
+  {buttonName: 'Remove RHS', keptIndex: 0},
+  {buttonName: 'Remove RHS', keptIndex: 0, separator: '-'},
+].forEach(({buttonName, keptIndex, separator}) => {
+  test(`${buttonName}${separator ? `, ${separator}` : ''}`, async ({page, baseURL, userscriptPage}) => {
     const formData: Record<string, string> = {
       // cspell: disable
       'name': 'סודות גדולים = Big Secrets',
@@ -58,34 +59,78 @@ import {test} from '@repo/test-support/musicbrainz-test';
       // cspell: enable
     };
 
-    await userscriptPage.submitForm(formData, `${baseURL}/release/add`);
+    const withSeparator = separator
+      ? Object.fromEntries(
+          Object.entries(formData).map(entry => {
+            const [key, value] = entry;
+            return [key.replace('=', separator), value.replace('=', separator)] as const;
+          })
+        )
+      : formData;
+
+    await userscriptPage.submitForm(withSeparator, `${baseURL}/release/add`);
 
     await page.getByRole('link', {name: 'Tracklist'}).click();
+
+    const separatorInput = page.getByRole('textbox', {name: 'separator:'});
+    if (separator) {
+      await separatorInput.fill(separator);
+    }
 
     const removeButton = page.getByRole('button', {name: buttonName});
     await removeButton.click();
 
+    const actualSeparator = separator || '=';
+
     // Verify that the track names have been updated correctly
     const title = page.locator('input[id="name"]');
-    await expect(title).toHaveValue(formData['name']!.split('=')[titleIndex]!.trim());
+    await expect(title).toHaveValue(withSeparator['name']!.split(actualSeparator)[keptIndex]!.trim());
 
     const releaseArtistInput = page.locator('.release-artist input');
-    await expect(releaseArtistInput).toHaveValue(formData[`artist_credit.names.${artistIndex}.name`]!.trim());
+    await expect(releaseArtistInput).toHaveValue(withSeparator[`artist_credit.names.${keptIndex}.name`]!.trim());
 
     for (let i = 0; i < 10; i++) {
       const trackInput = page.locator(`input.track-name`).nth(i);
-      const originalTrackName = formData[`mediums.0.track.${i}.name`]!;
-      const expectedTrackName = originalTrackName.split('=')[titleIndex]!.trim();
+      const originalTrackName = withSeparator[`mediums.0.track.${i}.name`]!;
+      const expectedTrackName = originalTrackName.split(actualSeparator)[keptIndex]!.trim();
       await expect(trackInput).toHaveValue(expectedTrackName);
 
       const artistInput = page.locator(`.artist input`).nth(i);
-      if (`mediums.0.track.${i}.artist_credit.names.0.name` in formData) {
+      if (`mediums.0.track.${i}.artist_credit.names.0.name` in withSeparator) {
         await expect(artistInput).toHaveValue(
-          `${formData[`mediums.0.track.${i}.artist_credit.names.${artistIndex * 2}.name`]}${formData[`mediums.0.track.${i}.artist_credit.names.${artistIndex * 2}.join_phrase`]}${formData[`mediums.0.track.${i}.artist_credit.names.${artistIndex * 2 + 1}.name`]!}`
+          `${withSeparator[`mediums.0.track.${i}.artist_credit.names.${keptIndex * 2}.name`]}${withSeparator[`mediums.0.track.${i}.artist_credit.names.${keptIndex * 2}.join_phrase`]}${withSeparator[`mediums.0.track.${i}.artist_credit.names.${keptIndex * 2 + 1}.name`]!}`
         );
       } else {
-        await expect(artistInput).toHaveValue(formData[`artist_credit.names.${artistIndex}.name`]!);
+        await expect(artistInput).toHaveValue(withSeparator[`artist_credit.names.${keptIndex}.name`]!);
       }
     }
   });
+});
+
+test('prepopulated from storage: true', async ({userscriptPage, page}) => {
+  // Seed localStorage before the userscript and page are initialized
+  await page.addInitScript(() => {
+    localStorage.setItem('separator', JSON.stringify('<=>'));
+  });
+
+  await userscriptPage.goto('/release/add');
+
+  await page.getByRole('link', {name: 'Tracklist'}).click();
+
+  const separatorInput = page.getByRole('textbox', {name: 'separator:'});
+  await expect(separatorInput).toHaveValue('<=>');
+});
+
+test('persisted value survives reload', async ({userscriptPage, page}) => {
+  await userscriptPage.goto('/release/add');
+  await page.getByRole('link', {name: 'Tracklist'}).click();
+
+  const separatorInput = page.getByRole('textbox', {name: 'separator:'});
+  await separatorInput.fill('~');
+
+  // Reload and re-inject the userscript
+  await userscriptPage.reload();
+  await page.getByRole('link', {name: 'Tracklist'}).click();
+
+  await expect(separatorInput).toHaveValue('~');
 });
