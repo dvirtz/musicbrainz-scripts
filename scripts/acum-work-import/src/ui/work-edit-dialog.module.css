@@ -1,0 +1,72 @@
+.replaced.pending {
+  display: none;
+}  
+
+.edit-work-button-container {
+  display: inline;
+  
+  .work-dialog {
+    display: none;
+    z-index: 50;
+    transform-origin: var(--kb-popover-content-transform-origin);
+    animation: contentHide 250ms ease-in forwards;
+
+    div.half-width {
+      width: 100%;
+
+      fieldset {
+        label.row {
+          width: 100%;
+        }
+
+        select {
+          width: 100%;
+        }
+
+        input {
+          width: 100%;
+        }
+
+        div.text-list-row,
+        div.select-list-row {
+          display: flex;
+        }
+
+        div.row {
+          display: flex;
+          margin: 6px;
+        }
+
+        div.form-row-add {
+          width: 100%;
+        }
+
+        div.form-row-select-list,
+        div.form-row-text-list {
+          margin-left: 0;
+          flex: 1;
+        }
+      }
+    }
+
+    table.row-form {
+      > tbody > tr,
+      > thead > tr {
+        > td:first-child,
+        > th:first-child {
+          padding: 0 6px;
+        }
+
+        > td,
+        > th {
+          background-color: unset;
+        }
+      }
+    }
+  }
+
+  .work-dialog[data-expanded] {
+    display: inherit;
+    animation: contentShow 250ms ease-out;
+  }
+}

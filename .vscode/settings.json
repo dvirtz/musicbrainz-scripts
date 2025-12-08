@@ -17,6 +17,8 @@
   },
   "editor.formatOnSave": true,
   "conventionalCommits.scopes": [
-    "common-ui"
-  ]
+    "common-ui",
+    "single-language-tracklist"
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

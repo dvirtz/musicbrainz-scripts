@@ -15,6 +15,7 @@ import {RepeatableFieldT} from '@repo/musicbrainz-ext/create-field';
 import {MaybeGroupedOptionsT} from '@repo/musicbrainz-ext/get-select-value';
 import {For, JSX, mergeProps} from 'solid-js';
 import {FieldT} from 'typedbrainz/types';
+import classes from './work-edit-dialog.module.css';
 
 export function FormRowSelectList<S extends {id: number}>(props: {
   addId: string;
@@ -34,10 +35,10 @@ export function FormRowSelectList<S extends {id: number}>(props: {
   return (
     <FormRow>
       <label>{props.label}</label>
-      <div class="form-row-select-list">
+      <div class={`form-row-select-list ${classes['form-row-select-list']}`}>
         <For each={props.repeatable.field}>
           {(subfield, index) => (
-            <div class="select-list-row">
+            <div class={`select-list-row ${classes['select-list-row']}`}>
               <SelectField
                 field={props.getSelectField(subfield)}
                 onChange={event => props.onEdit(index(), event.currentTarget.value)}
@@ -54,7 +55,7 @@ export function FormRowSelectList<S extends {id: number}>(props: {
           )}
         </For>
         {props.hideAddButton ? null : (
-          <div class="form-row-add">
+          <div class={`form-row-add ${classes['form-row-add']}`}>
             <button class="with-label add-item" id={props.addId} onClick={props.onAdd} type="button">
               {props.addLabel}
             </button>

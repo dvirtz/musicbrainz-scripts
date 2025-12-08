@@ -3,6 +3,14 @@
   "extends": "./base.json",
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules",
+        "options": {
+          "noUncheckedIndexedAccess": true
+        }
+      }
+    ]
   }
 }

@@ -12,8 +12,6 @@ import {first, from, tap} from 'rxjs';
 import {createSignal} from 'solid-js';
 import {render} from 'solid-js/web';
 import {ReleaseRelationshipEditor} from 'typedbrainz/types';
-import progressBarStyle from './progressbar.css?inline';
-import workEditDialogStyle from './work-edit-dialog.css?inline';
 
 function AcumImporter() {
   const {addWarning, clearWarnings} = useWarnings();
@@ -114,13 +112,10 @@ export async function createReleaseEditorUI() {
     return;
   }
 
-  await GM.addStyle(workEditDialogStyle);
-  await GM.addStyle(progressBarStyle);
-
-  const doRender = async () => {
+  const doRender = () => {
     console.debug('Creating release editor');
     const container = (<div id={releaseEditorContainerId}></div>) as HTMLDivElement;
-    const theToolbox = await toolbox(document, 'full-page', toolbox =>
+    const theToolbox = toolbox(document, 'full-page', toolbox =>
       document.querySelector('div.tabs')?.insertAdjacentElement('afterend', toolbox)
     );
     theToolbox.append(container);
@@ -141,6 +136,6 @@ export async function createReleaseEditorUI() {
       (node): node is HTMLButtonElement => node instanceof HTMLButtonElement && node.classList.contains('submit')
     ));
   if (submitButton) {
-    await doRender();
+    doRender();
   }
 }

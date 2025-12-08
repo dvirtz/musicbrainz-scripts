@@ -37,7 +37,7 @@ export async function createUI() {
         node instanceof HTMLDivElement && node.querySelector('fieldset.guesscase') !== null
     ));
 
-  const theToolbox = await toolbox(document, 'full-page', toolbox => {
+  const theToolbox = toolbox(document, 'full-page', toolbox => {
     guessCaseBox?.insertAdjacentElement('afterend', toolbox);
   });
 

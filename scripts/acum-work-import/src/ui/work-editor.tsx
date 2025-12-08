@@ -4,6 +4,7 @@ import {WorkStateWithEditDataT} from '#work-state.ts';
 import {createEffect, createSignal, Show} from 'solid-js';
 import {render} from 'solid-js/web';
 import {MediumRecordingStateT, RecordingT, WorkT} from 'typedbrainz/types';
+import classes from './work-edit-dialog.module.css';
 
 function isNewWork(work: WorkT) {
   return !work.gid;
@@ -28,8 +29,8 @@ function WorkEditor(props: {workState: WorkStateWithEditDataT; originalHeader: H
   });
 
   createEffect(() => {
-    props.originalHeader.querySelectorAll<HTMLElement>('.replaced').forEach(el => {
-      el.classList.toggle('pending', isPending());
+    props.originalHeader.querySelectorAll<HTMLElement>(`.${classes.replaced}`).forEach(el => {
+      el.classList.toggle(classes.pending!, isPending());
     });
   });
 
@@ -60,14 +61,14 @@ export function addWorkEditor(workState: WorkStateWithEditDataT, recordingState:
     `.works h3:has(a[href="${workLink(workState.work)}"]):not(:has(div.edit-work-button-container))`
   );
   if (header) {
-    const container = (<div class="edit-work-button-container"></div>) as HTMLDivElement;
+    const container = (<div class={classes['edit-work-button-container']}></div>) as HTMLDivElement;
     const removeButton = header.querySelector<HTMLButtonElement>('button.remove-item');
     removeButton?.insertAdjacentElement('afterend', container);
     removeButton?.addEventListener('click', () => {
       container.remove();
     });
-    header.querySelector<HTMLButtonElement>('button.edit-item')?.classList.add('replaced');
-    header.querySelector<HTMLAnchorElement>('a[href*="work"]')?.classList.add('replaced');
+    header.querySelector<HTMLButtonElement>('button.edit-item')?.classList.add(classes.replaced!);
+    header.querySelector<HTMLAnchorElement>('a[href*="work"]')?.classList.add(classes.replaced!);
     render(
       () => (
         <WorkEditDataProvider workState={workState}>
