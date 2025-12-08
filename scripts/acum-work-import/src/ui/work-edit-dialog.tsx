@@ -19,6 +19,7 @@ import {Popover} from '@kobalte/core/popover';
 import {buildOptionList} from '@repo/musicbrainz-ext/build-options-list';
 import {parseIntegerOrNull} from '@repo/musicbrainz-ext/parse-integer-or-null';
 import {createSignal, onCleanup} from 'solid-js';
+import classes from './work-edit-dialog.module.css';
 
 export function WorkEditDialog(props: {onSubmit: () => void}) {
   const {editData, setEditData, isModified, workName, submitUrl, saveEditData, restoreEditData, workId} =
@@ -41,7 +42,7 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
     <Popover open={open()} onOpenChange={setOpen} forceMount={true}>
       <Popover.Trigger class="icon edit-item" />
       <Popover.Content
-        class="dialog popover work-dialog"
+        class={`dialog popover work-dialog ${classes['work-dialog']}`}
         onEscapeKeyDown={ev => {
           ev.preventDefault();
         }}
@@ -55,7 +56,7 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
           onSubmit={props.onSubmit}
         >
           <h1>{'Edit work'}</h1>
-          <div class="half-width">
+          <div class={`half-width ${classes['half-width']}`}>
             <fieldset>
               <legend>Work details</legend>
               <FormRow>

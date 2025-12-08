@@ -9,6 +9,7 @@
  */
 
 import {mergeProps, ParentProps} from 'solid-js';
+import classes from './work-edit-dialog.module.css';
 
 export function FormRow(
   props: ParentProps & {
@@ -19,7 +20,15 @@ export function FormRow(
 ) {
   props = mergeProps({hasNoLabel: false, hasNoMarge: false}, props);
   return (
-    <div class={`row ${props.hasNoLabel ? 'no-label' : ''} ${props.hasNoMargin ? 'no-margin' : ''}`} ref={props.rowRef}>
+    <div
+      classList={{
+        row: true,
+        [classes.row!]: true,
+        'no-label': props.hasNoLabel,
+        'no-margin': props.hasNoMargin,
+      }}
+      ref={props.rowRef}
+    >
       {props.children}
     </div>
   );

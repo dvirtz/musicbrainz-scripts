@@ -1,7 +1,6 @@
 import classes from './toolbox.module.css';
-import style from './toolbox.module.css?inline';
 
-export async function toolbox(
+export function toolbox(
   doc: Document,
   className: 'full-page' | 'half-page' | 'iframe',
   inserter: (toolbox: HTMLDivElement) => void
@@ -11,8 +10,6 @@ export async function toolbox(
   if (existing) {
     return existing as HTMLDivElement;
   }
-
-  await GM.addStyle(style);
 
   const res = (
     <fieldset

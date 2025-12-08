@@ -25,7 +25,7 @@ function AcumImporter(props: {form: HTMLFormElement}) {
 const releaseEditorContainerId = 'acum-work-import-container';
 
 export async function createWorkEditorUI() {
-  const doRender = async (workForm: HTMLFormElement) => {
+  const doRender = (workForm: HTMLFormElement) => {
     if (workForm.querySelector(`#${releaseEditorContainerId}`)) {
       return;
     }
@@ -34,7 +34,7 @@ export async function createWorkEditorUI() {
 
     const container = (<div id={releaseEditorContainerId}></div>) as HTMLDivElement;
     const inIframe = location.pathname.startsWith('/dialog');
-    const theToolbox = await toolbox(workForm.ownerDocument, inIframe ? 'iframe' : 'half-page', toolbox =>
+    const theToolbox = toolbox(workForm.ownerDocument, inIframe ? 'iframe' : 'half-page', toolbox =>
       workForm.querySelector(inIframe ? '.half-width' : '.documentation')?.insertAdjacentElement('beforebegin', toolbox)
     );
     theToolbox.append(container);
@@ -55,6 +55,6 @@ export async function createWorkEditorUI() {
       (node): node is HTMLFormElement => node instanceof HTMLFormElement && node.classList.contains('edit-work')
     ));
   if (workForm) {
-    await doRender(workForm);
+    doRender(workForm);
   }
 }
