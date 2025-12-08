@@ -48,6 +48,7 @@
     "@babel/preset-typescript": "^7.27.0",
     "@commitlint/cli": "^19.4.1",
     "@commitlint/config-conventional": "^19.4.1",
+    "@commitlint/config-workspace-scopes": "^20.2.0",
     "@dvirtz/acum-work-import": "workspace:^",
     "@dvirtz/setlistfm-musicbrainz-import": "workspace:^",
     "@eslint/js": "^9.14.0",
@@ -123,7 +124,8 @@
   },
   "commitlint": {
     "extends": [
-      "@commitlint/config-conventional"
+      "@commitlint/config-conventional",
+      "@commitlint/config-workspace-scopes"
     ],
     "rules": {
       "body-max-line-length": [
