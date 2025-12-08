@@ -1,6 +1,7 @@
 import {WorkAttributeRow} from '#ui/work-attributes-row.tsx';
 import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
 import {For, Suspense} from 'solid-js';
+import classes from './work-edit-dialog.module.css';
 
 export function WorkAttributes() {
   const {editData, setEditData} = useWorkEditData();
@@ -8,7 +9,7 @@ export function WorkAttributes() {
   return (
     <fieldset>
       <legend>{'Work attributes'}</legend>
-      <table id="work-attributes" class="row-form" data-bind="delegatedHandler: 'click'">
+      <table id="work-attributes" class={`row-form ${classes['row-form']}`} data-bind="delegatedHandler: 'click'">
         <tbody>
           <For each={editData.attributes}>
             {(attribute, index) => (
