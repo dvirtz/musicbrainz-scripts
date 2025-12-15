@@ -1,3 +1,10 @@
+## [@dvirtz/acum-work-import-v1.20.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.20.0...@dvirtz/acum-work-import-v1.20.1) (2025-12-15)
+
+
+### Refactoring
+
+* **common-ui:** proper css module usage ([d83aec8](https://github.com/dvirtz/musicbrainz-scripts/commit/d83aec82f65e1defbcedb1f7dfe570a0819b5eef))
+
 ## [@dvirtz/acum-work-import-v1.20.0](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.19.5...@dvirtz/acum-work-import-v1.20.0) (2025-12-03)
 
 
