@@ -1,3 +1,4 @@
+import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {EDIT_WORK_CREATE, MBID_REGEXP, WS_EDIT_RESPONSE_OK} from '@repo/musicbrainz-ext/constants';
 import {editNote} from '@repo/musicbrainz-ext/edit-note';
@@ -23,7 +24,6 @@ import {
   zip,
 } from 'rxjs';
 import {Setter} from 'solid-js';
-import {isReleaseRelationshipEditor} from 'typedbrainz';
 import {
   MediumRecordingStateT,
   MediumWorkStateT,
@@ -72,9 +72,8 @@ function relatedWorkRelationship(work: MediumWorkStateT, recording: RecordingT):
 }
 
 export async function submitWorks(setProgress: Setter<readonly [number, string]>): Promise<void> {
-  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
-    return;
-  }
+  assertMBTree(MB?.tree);
+  assertReleaseRelationshipEditor(MB.relationshipEditor);
 
   setProgress([0, 'Submitting works']);
 

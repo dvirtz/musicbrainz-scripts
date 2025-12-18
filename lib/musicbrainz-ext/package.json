@@ -20,7 +20,8 @@
     "./subfield-errors": "./src/subfield-errors.ts",
     "./track-recording-state": "./src/track-recording-state.ts",
     "./type-group": "./src/type-group.ts",
-    "./type-info": "./src/type-info.ts"
+    "./type-info": "./src/type-info.ts",
+    "./asserts": "./src/asserts.ts"
   },
   "imports": {
     "#*": "./src/*"

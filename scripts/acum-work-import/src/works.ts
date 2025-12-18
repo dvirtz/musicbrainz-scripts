@@ -3,6 +3,7 @@ import {trackName, WorkBean, workISWCs, workType} from '#acum.ts';
 import {linkArtists} from '#artists.ts';
 import {addWriterRelationship, createRelationshipState} from '#relationships.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
+import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {
   COMPOSER_LINK_TYPE_ID,
@@ -18,7 +19,6 @@ import {formatISWC} from '@repo/musicbrainz-ext/format-iswc';
 import {IswcLookupResultsT, WorkLookupResultT, WorkSearchResultsT} from '@repo/musicbrainz-ext/search-results';
 import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {defaultIfEmpty, filter, firstValueFrom, from, mergeMap} from 'rxjs';
-import {isReleaseRelationshipEditor} from 'typedbrainz';
 import {ArtistT, LinkAttrT, MediumRecordingStateT, RelationshipTargetTypeGroupsT, WorkT} from 'typedbrainz/types';
 
 const workCache = new Map<string, WorkT>();
@@ -64,9 +64,8 @@ export async function createNewWork(
   track: WorkBean,
   recordingState: MediumRecordingStateT
 ): Promise<WorkT> {
-  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
-    throw new Error('MB or MB.tree is not defined or not a release relationship editor');
-  }
+  assertMBTree(MB?.tree);
+  assertReleaseRelationshipEditor(MB.relationshipEditor);
 
   const newWork = await (async () => {
     if (workCache.has(track.workId)) {
