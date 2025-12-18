@@ -43,7 +43,7 @@ export async function submitWork(form: HTMLFormElement): Promise<WorkT> {
   );
 }
 
-export function replaceSubmitButton(submitWorks: (originalSubmitButton: HTMLButtonElement) => Promise<boolean>) {
+export function replaceSubmitButton(submitWorks: (originalSubmitButton: HTMLButtonElement) => Promise<void>) {
   const originalSubmitButton = document.querySelector('button.submit') as HTMLButtonElement;
   if (originalSubmitButton && !originalSubmitButton.dataset.acumReplaced) {
     // Replace the original submit button with our custom one
@@ -53,11 +53,7 @@ export function replaceSubmitButton(submitWorks: (originalSubmitButton: HTMLButt
     newSubmitButton.type = 'button';
     newSubmitButton.dataset.acumReplaced = 'true';
 
-    newSubmitButton.onclick = async () => {
-      if (await submitWorks(originalSubmitButton)) {
-        originalSubmitButton.click();
-      }
-    };
+    newSubmitButton.onclick = () => submitWorks(originalSubmitButton).catch(console.error);
 
     // Hide the original button and insert our new one
     originalSubmitButton.style.display = 'none';
