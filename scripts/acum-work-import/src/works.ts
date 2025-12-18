@@ -3,6 +3,7 @@ import {trackName, WorkBean, workId, workISWCs, workType} from '#acum.ts';
 import {linkArtists} from '#artists.ts';
 import {addWriterRelationship} from '#relationships.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
+import {assertMB} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {
   COMPOSER_LINK_TYPE_ID,
@@ -56,9 +57,7 @@ export async function findWork(track: WorkBean) {
 }
 
 export async function createNewWork(track: WorkBean): Promise<WorkT> {
-  if (!MB) {
-    throw new Error('MB is not defined');
-  }
+  assertMB(MB);
 
   const newWork = await (async () => {
     const id = workId(track);
