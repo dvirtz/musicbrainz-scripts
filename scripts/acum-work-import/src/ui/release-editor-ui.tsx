@@ -5,13 +5,14 @@ import {ImportForm} from '#ui/import-form.tsx';
 import {ProgressBar} from '#ui/progressbar.tsx';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
 import {toolbox} from '@repo/common-ui/toolbox';
+import {assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import domMutations from 'dom-mutations';
 import {first, from, tap} from 'rxjs';
 import {createSignal} from 'solid-js';
 import {render} from 'solid-js/web';
-import {ReleaseRelationshipEditor} from 'typedbrainz/types';
+import {ReleaseRelationshipEditorActionT} from 'typedbrainz/types';
 
 function AcumImporter() {
   const {addWarning, clearWarnings} = useWarnings();
@@ -28,18 +29,7 @@ function AcumImporter() {
       newSubmitButton.type = 'button';
       newSubmitButton.dataset.acumReplaced = 'true';
 
-      newSubmitButton.onclick = async () => {
-        if (await submitWorks()) {
-          await executePipeline(
-            from(domMutations(originalSubmitButton, {attributeFilter: ['disabled']})).pipe(
-              tap(() => {
-                originalSubmitButton.click();
-              }),
-              first()
-            )
-          );
-        }
-      };
+      newSubmitButton.onclick = () => submitWorks(originalSubmitButton).catch(console.error);
 
       // Hide the original button and insert our new one
       originalSubmitButton.style.display = 'none';
@@ -59,25 +49,44 @@ function AcumImporter() {
     }
   }
 
-  async function submitWorks() {
+  async function submitWorks(originalSubmitButton: HTMLButtonElement) {
     const submitButton = document.querySelector<HTMLButtonElement>('button[data-acum-replaced]');
     if (submitButton) submitButton.disabled = true;
-    (MB?.relationshipEditor as ReleaseRelationshipEditor).dispatch?.({
-      type: 'start-submission',
-    });
+    const dispatch = (action: ReleaseRelationshipEditorActionT) => {
+      assertReleaseRelationshipEditor(MB?.relationshipEditor);
+      MB.relationshipEditor.dispatch(action);
+    };
     clearWarnings(/submission failed.*/);
-    try {
-      await trySubmitWorks(setProgress);
-      clearWarnings();
-      return true;
-    } catch (err) {
-      addWarning(`Submission failed: ${String(err)}`);
-      if (submitButton) submitButton.disabled = false;
-      return false;
-    } finally {
-      (MB?.relationshipEditor as ReleaseRelationshipEditor).dispatch?.({
-        type: 'stop-submission',
-      });
+    dispatch({type: 'start-submission'});
+    const worksSubmitted = await (async () => {
+      try {
+        return await trySubmitWorks(setProgress);
+      } catch (err) {
+        addWarning(`Submission failed: ${String(err)}`);
+        if (submitButton) submitButton.disabled = false;
+        return undefined;
+      } finally {
+        dispatch({
+          type: 'stop-submission',
+        });
+      }
+    })();
+    switch (worksSubmitted) {
+      case undefined:
+        return;
+      case 0:
+        originalSubmitButton.click();
+        break;
+      default:
+        // wait for original submit button to be enabled from stop-submission
+        await executePipeline(
+          from(domMutations(originalSubmitButton, {attributeFilter: ['disabled']})).pipe(
+            tap(() => {
+              originalSubmitButton.click();
+            }),
+            first()
+          )
+        );
     }
   }
 

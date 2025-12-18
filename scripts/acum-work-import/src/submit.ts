@@ -1,3 +1,4 @@
+import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {EDIT_WORK_CREATE, MBID_REGEXP, WS_EDIT_RESPONSE_OK} from '@repo/musicbrainz-ext/constants';
 import {editNote} from '@repo/musicbrainz-ext/edit-note';
@@ -18,12 +19,12 @@ import {
   pipe,
   repeat,
   scan,
+  startWith,
   tap,
   toArray,
   zip,
 } from 'rxjs';
 import {Setter} from 'solid-js';
-import {isReleaseRelationshipEditor} from 'typedbrainz';
 import {
   MediumRecordingStateT,
   MediumWorkStateT,
@@ -71,12 +72,9 @@ function relatedWorkRelationship(work: MediumWorkStateT, recording: RecordingT):
   }
 }
 
-export async function submitWorks(setProgress: Setter<readonly [number, string]>): Promise<void> {
-  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
-    return;
-  }
-
-  setProgress([0, 'Submitting works']);
+export async function submitWorks(setProgress: Setter<readonly [number, string]>): Promise<number> {
+  assertMBTree(MB?.tree);
+  assertReleaseRelationshipEditor(MB.relationshipEditor);
 
   const worksToSubmit = await firstValueFrom(
     from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(
@@ -103,6 +101,7 @@ export async function submitWorks(setProgress: Setter<readonly [number, string]>
       ' ',
     ] as const),
     map(([count, name]) => [count / worksToSubmit.length, `Submitted ${name}`] as const),
+    startWith([0, 'Submitting works'] as const),
     endWith([1, 'Done'] as const),
     tap(setProgress)
   );
@@ -146,4 +145,6 @@ export async function submitWorks(setProgress: Setter<readonly [number, string]>
       })),
     },
   });
+
+  return worksToSubmit.length;
 }

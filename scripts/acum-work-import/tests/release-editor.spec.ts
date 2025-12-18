@@ -1,5 +1,5 @@
 import {test as testRelease} from '#tests/fixtures/test-release.ts';
-import {expect, mergeTests, Route} from '@playwright/test';
+import {expect, mergeTests} from '@playwright/test';
 import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
 import {
   ARRANGER_LINK_TYPE_ID,
@@ -196,7 +196,7 @@ base.describe('release editor', () => {
     await expect(arrangerLabels).toHaveCount(0);
   });
 
-  base('retries fetching missing artists', async ({page, testRelease, musicbrainzPage}) => {
+  base('retries fetching missing artists', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
     await testRelease.editRelationships(musicbrainzPage);
 
     const work = testRelease.works()[0]!;
@@ -209,20 +209,14 @@ base.describe('release editor', () => {
     const checkBox = trackRow.getByRole('checkbox').first();
     await checkBox.check();
 
-    const reject = async (route: Route) => {
-      await route.fulfill({
-        status: 404,
-      });
-    };
-
     // make sure artist is not found
-    await page.route((url: URL) => {
+    await userscriptPage.rejectRoute((url: URL) => {
       if (url.pathname === '/ws/2/artist') {
         const query = url.searchParams.get('query');
         return query ? query.includes(work.lyricists[0]!) || query.includes('ipi:') : false;
       }
       return url.pathname === '/ws/2/url';
-    }, reject);
+    });
 
     await testRelease.importAlbum(page);
 
@@ -236,5 +230,48 @@ base.describe('release editor', () => {
 
     const lyricistLinks = trackRow.getByRole('link', {name: work.lyricists[0]!});
     await expect(lyricistLinks).toHaveCount(1);
+  });
+
+  base('submits after works removed', async ({page, testRelease, musicbrainzPage, baseURL}) => {
+    await testRelease.editRelationships(musicbrainzPage);
+
+    const work = testRelease.works()[4]!;
+
+    const input = page.getByPlaceholder('Album/Version/Work ID');
+
+    await input.fill(work.acumUrl);
+
+    const trackRow = page.getByRole('row', {name: work.title});
+    const checkBox = trackRow.getByRole('checkbox').first();
+    await checkBox.check();
+
+    // turn off existing work search
+    await page.evaluate(() => localStorage.setItem('searchWorks', 'false'));
+
+    await testRelease.importAlbum(page);
+
+    // remove imported work
+    const removeButton = page.getByRole('heading', {name: work.title}).getByRole('button').first();
+    await removeButton.click();
+
+    // add existing work instead
+    await page.getByRole('row', {name: work.title}).getByRole('button').nth(4).click();
+    await page
+      .getByRole('textbox', {name: 'Search for a work:'})
+      .fill(`${baseURL}/work/960c1321-e1c9-3a80-8b69-0205f556855a`);
+    await page.getByRole('button', {name: 'Done'}).click();
+
+    // submit page
+    await page.route('**/work/create', () => {
+      throw new Error('should not create any work');
+    });
+    await page.route('ws/js/edit/create', route => route.fulfill({json: {edits: []}}));
+
+    const enterEdit = page.getByRole('button', {name: 'Enter edit'});
+    await expect(enterEdit).toHaveAttribute('data-acum-replaced', 'true');
+
+    await enterEdit.click();
+
+    await expect(page).toHaveURL(`/release/${testRelease.gid}`);
   });
 });
