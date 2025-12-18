@@ -1,5 +1,5 @@
 import {invokeMenuCommand, mockUserscriptManager, waitForMenuCommand} from '#userscript-manager-mock.ts';
-import {expect, type Page, type Response} from '@playwright/test';
+import {expect, Page, Response} from '@playwright/test';
 
 export class UserscriptPage {
   windowOpenLog: URL[] = [];
@@ -132,5 +132,13 @@ export class UserscriptPage {
 
     // Re-inject userscript after navigation
     await this.injectUserScript();
+  }
+
+  public async rejectRoute(url: string | RegExp | ((url: URL) => boolean)) {
+    await this.page.route(url, route =>
+      route.fulfill({
+        status: 404,
+      })
+    );
   }
 }
