@@ -29,21 +29,19 @@ function AcumImporter(props: {form: HTMLFormElement}) {
     }
   }
 
-  async function submitWorks() {
+  replaceSubmitButton(async (originalSubmitButton: HTMLButtonElement) => {
     const submitButton = document.querySelector<HTMLButtonElement>('button[data-acum-replaced]');
     if (submitButton) submitButton.disabled = true;
     clearWarnings(/submission failed.*/);
     try {
       await doSubmitWorks(setProgress);
       clearWarnings();
-      return true;
+      originalSubmitButton.click();
     } catch (err) {
       addWarning(`Submission failed: ${String(err)}`);
       if (submitButton) submitButton.disabled = false;
-      return false;
     }
-  }
-  replaceSubmitButton(submitWorks);
+  });
 
   return (
     <>
