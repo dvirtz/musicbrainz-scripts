@@ -1,5 +1,5 @@
 import {test as testRelease} from '#tests/fixtures/test-release.ts';
-import {expect, mergeTests, Route} from '@playwright/test';
+import {expect, mergeTests} from '@playwright/test';
 import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
 import {
   ARRANGER_LINK_TYPE_ID,
@@ -159,7 +159,7 @@ base.describe('release editor', () => {
     await expect(arrangerLabels).toHaveCount(0);
   });
 
-  base('retries fetching missing artists', async ({page, testRelease, musicbrainzPage}) => {
+  base('retries fetching missing artists', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
     await testRelease.editRelationships(musicbrainzPage);
 
     const work = testRelease.works()[0]!;
@@ -172,20 +172,14 @@ base.describe('release editor', () => {
     const checkBox = trackRow.getByRole('checkbox').first();
     await checkBox.check();
 
-    const reject = async (route: Route) => {
-      await route.fulfill({
-        status: 404,
-      });
-    };
-
     // make sure artist is not found
-    await page.route((url: URL) => {
+    await userscriptPage.rejectRoute((url: URL) => {
       if (url.pathname === '/ws/2/artist') {
         const query = url.searchParams.get('query');
         return query ? query.includes(work.lyricists[0]!) || query.includes('ipi:') : false;
       }
       return url.pathname === '/ws/2/url';
-    }, reject);
+    });
 
     await testRelease.importAlbum(page);
 
