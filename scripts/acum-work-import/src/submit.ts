@@ -19,6 +19,7 @@ import {
   pipe,
   repeat,
   scan,
+  startWith,
   tap,
   toArray,
   zip,
@@ -71,11 +72,9 @@ function relatedWorkRelationship(work: MediumWorkStateT, recording: RecordingT):
   }
 }
 
-export async function submitWorks(setProgress: Setter<readonly [number, string]>): Promise<void> {
+export async function submitWorks(setProgress: Setter<readonly [number, string]>): Promise<number> {
   assertMBTree(MB?.tree);
   assertReleaseRelationshipEditor(MB.relationshipEditor);
-
-  setProgress([0, 'Submitting works']);
 
   const worksToSubmit = await firstValueFrom(
     from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(
@@ -102,6 +101,7 @@ export async function submitWorks(setProgress: Setter<readonly [number, string]>
       ' ',
     ] as const),
     map(([count, name]) => [count / worksToSubmit.length, `Submitted ${name}`] as const),
+    startWith([0, 'Submitting works'] as const),
     endWith([1, 'Done'] as const),
     tap(setProgress)
   );
@@ -145,4 +145,6 @@ export async function submitWorks(setProgress: Setter<readonly [number, string]>
       })),
     },
   });
+
+  return worksToSubmit.length;
 }
