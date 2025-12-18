@@ -154,4 +154,12 @@ export class UserscriptPage {
   public async setLocalStorage(key: string, value: string) {
     await this.page.evaluate(([key, value]) => localStorage.setItem(key, value), [key, value] as const);
   }
+
+  public async rejectRoute(url: string | RegExp | ((url: URL) => boolean)) {
+    await this.page.route(url, route =>
+      route.fulfill({
+        status: 404,
+      })
+    );
+  }
 }
