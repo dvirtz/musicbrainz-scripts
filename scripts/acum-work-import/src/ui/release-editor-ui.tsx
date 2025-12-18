@@ -5,6 +5,7 @@ import {ImportForm} from '#ui/import-form.tsx';
 import {ProgressBar} from '#ui/progressbar.tsx';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
 import {toolbox} from '@repo/common-ui/toolbox';
+import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {EDIT_WORK_CREATE, WS_EDIT_RESPONSE_OK} from '@repo/musicbrainz-ext/constants';
 import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
@@ -30,7 +31,6 @@ import {
 } from 'rxjs';
 import {createSignal, Setter} from 'solid-js';
 import {render} from 'solid-js/web';
-import {isReleaseRelationshipEditor} from 'typedbrainz';
 import {
   MediumRecordingStateT,
   MediumWorkStateT,
@@ -134,9 +134,8 @@ export async function createReleaseEditorUI() {
 }
 
 async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Promise<void> {
-  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
-    return;
-  }
+  assertMBTree(MB?.tree);
+  assertReleaseRelationshipEditor(MB.relationshipEditor);
 
   setProgress([0, 'Submitting works']);
 

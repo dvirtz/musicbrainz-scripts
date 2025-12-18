@@ -7,6 +7,7 @@ import {workEditData, workEditDataEqual} from '#work-edit-data.ts';
 import {WorkStateWithEditDataT} from '#work-state.ts';
 import {createNewWork, linkWriters, workLink} from '#works.ts';
 import {head} from '@repo/common/head';
+import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {
   compareInsensitive,
   compareNumbers,
@@ -45,7 +46,6 @@ import {
   zipWith,
 } from 'rxjs';
 import {Setter} from 'solid-js';
-import {isReleaseRelationshipEditor} from 'typedbrainz';
 import {
   ArtistT,
   LinkAttrT,
@@ -222,17 +222,15 @@ async function selectedRecordings(
 }
 
 function selectedMediums(entity: Entity, noSelection: boolean): SelectedMediums | undefined {
-  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
-    return;
-  }
+  assertMBTree(MB?.tree);
+  assertReleaseRelationshipEditor(MB.relationshipEditor);
 
+  const mediumsArray = MB.tree.toArray(MB.relationshipEditor.state.mediums);
   const selected = noSelection
-    ? MB.tree.toArray(MB.relationshipEditor.state.mediums)
-    : MB.tree
-        .toArray(MB.relationshipEditor.state.mediums)
-        .filter(([, recordingStateTree]) =>
-          MB?.tree?.iterate(recordingStateTree).some(recording => recording.isSelected)
-        );
+    ? mediumsArray
+    : mediumsArray.filter(([, recordingStateTree]) =>
+        MB?.tree?.iterate(recordingStateTree).some(recording => recording.isSelected)
+      );
 
   switch (selected.length) {
     case 0:
@@ -274,9 +272,7 @@ async function addWork(
   addWarning: AddWarning
 ): Promise<WorkStateWithEditDataT> {
   const workState = (await (async () => {
-    if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
-      throw new Error('MB or MB.tree is not defined or not a release relationship editor');
-    }
+    assertMBTree(MB?.tree);
 
     const existing = relatedWork(recordingState.relatedWorks);
     if (existing) {
@@ -318,9 +314,8 @@ function recordingLink(recording: RecordingT) {
 }
 
 function refreshRecordingState(recording: RecordingT): MediumRecordingStateT {
-  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
-    throw new Error('MB or MB.tree is not defined or not a release relationship editor');
-  }
+  assertMBTree(MB?.tree);
+  assertReleaseRelationshipEditor(MB.relationshipEditor);
 
   const mediumRecordingStates = MB.tree.find(
     MB.relationshipEditor.state.mediums,
@@ -339,9 +334,7 @@ function refreshRecordingState(recording: RecordingT): MediumRecordingStateT {
 }
 
 function relatedWork(relatedWorks: MediumWorkStateTreeT): MediumWorkStateT | undefined {
-  if (!MB?.tree) {
-    return;
-  }
+  assertMBTree(MB?.tree);
 
   const relatedWork = head(MB.tree.iterate(relatedWorks));
   if (relatedWork) {
@@ -357,9 +350,8 @@ function relatedWork(relatedWorks: MediumWorkStateTreeT): MediumWorkStateT | und
 }
 
 async function linkNewWork(index: number | undefined, work: WorkT, recordingState: MediumRecordingStateT) {
-  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
-    throw new Error('MB or MB.tree is not defined or not a release relationship editor');
-  }
+  assertMBTree(MB?.tree);
+  assertReleaseRelationshipEditor(MB.relationshipEditor);
 
   const medleyLinkType = MB.linkedEntities.link_attribute_type[MEDLEY_LINK_TYPE_ID]!;
 

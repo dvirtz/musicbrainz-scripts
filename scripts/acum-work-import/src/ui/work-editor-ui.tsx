@@ -5,13 +5,13 @@ import {replaceSubmitButton, submitWork} from '#submit.ts';
 import {ImportForm} from '#ui/import-form.tsx';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
 import {toolbox} from '@repo/common-ui/toolbox';
+import {assertMBTree, assertNonReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {REL_STATUS_EDIT} from '@repo/musicbrainz-ext/constants';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import {endWith, filter, from, map, mergeMap, scan, tap} from 'rxjs';
 import {createSignal, Setter} from 'solid-js';
 import {render} from 'solid-js/web';
-import {isNonReleaseRelationshipEditor} from 'typedbrainz';
 import {RelationshipStateT, WorkT} from 'typedbrainz/types';
 import {ProgressBar} from './progressbar.tsx';
 
@@ -92,9 +92,8 @@ export async function createWorkEditorUI() {
 }
 
 async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Promise<void> {
-  if (!MB || !MB.tree || !isNonReleaseRelationshipEditor(MB.relationshipEditor)) {
-    return;
-  }
+  assertMBTree(MB?.tree);
+  assertNonReleaseRelationshipEditor(MB.relationshipEditor);
 
   setProgress([0, 'Submitting works']);
 
