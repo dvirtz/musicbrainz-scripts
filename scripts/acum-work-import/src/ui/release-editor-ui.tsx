@@ -36,7 +36,7 @@ import {
   MediumWorkStateT,
   RecordingT,
   RelationshipStateT,
-  ReleaseRelationshipEditor,
+  ReleaseRelationshipEditorActionT,
   WorkLanguageT,
   WorkT,
 } from 'typedbrainz/types';
@@ -60,23 +60,35 @@ function AcumImporter() {
   async function submitWorks(originalSubmitButton: HTMLButtonElement) {
     const submitButton = document.querySelector<HTMLButtonElement>('button[data-acum-replaced]');
     if (submitButton) submitButton.disabled = true;
-    (MB?.relationshipEditor as ReleaseRelationshipEditor).dispatch?.({
-      type: 'start-submission',
-    });
+    const dispatch = (action: ReleaseRelationshipEditorActionT) => {
+      assertReleaseRelationshipEditor(MB?.relationshipEditor);
+      MB.relationshipEditor.dispatch(action);
+    };
     clearWarnings(/submission failed.*/);
-    try {
-      await doSubmitWorks(setProgress);
-      clearWarnings();
-      return true;
-    } catch (err) {
-      addWarning(`Submission failed: ${String(err)}`);
-      if (submitButton) submitButton.disabled = false;
-      return false;
-    } finally {
-      (MB?.relationshipEditor as ReleaseRelationshipEditor).dispatch?.({
-        type: 'stop-submission',
-      });
-      await waitForAttribute(originalSubmitButton, 'disabled');
+    dispatch({type: 'start-submission'});
+    const worksSubmitted = await (async () => {
+      try {
+        return await doSubmitWorks(setProgress);
+      } catch (err) {
+        addWarning(`Submission failed: ${String(err)}`);
+        if (submitButton) submitButton.disabled = false;
+        return undefined;
+      } finally {
+        dispatch({
+          type: 'stop-submission',
+        });
+      }
+    })();
+    switch (worksSubmitted) {
+      case undefined:
+        return;
+      case 0:
+        originalSubmitButton.click();
+        break;
+      default:
+        // wait for original submit button to be enabled from stop-submission
+        await waitForAttribute(originalSubmitButton, 'disabled');
+        originalSubmitButton.click();
     }
   }
 
@@ -133,7 +145,7 @@ export async function createReleaseEditorUI() {
   }
 }
 
-async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Promise<void> {
+async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Promise<number> {
   assertMBTree(MB?.tree);
   assertReleaseRelationshipEditor(MB.relationshipEditor);
 
@@ -216,4 +228,6 @@ async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Pr
       })),
     },
   });
+
+  return worksToSubmit.length;
 }
