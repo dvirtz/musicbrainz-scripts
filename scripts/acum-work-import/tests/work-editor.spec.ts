@@ -15,7 +15,7 @@ test.describe('work editor', () => {
     const workId = versionId.substring(0, versionId.length - 3);
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/version?workid=${workId}&versionid=${versionId}`;
 
-    const input = page.getByPlaceholder('Version/Work ID');
+    const input = page.getByPlaceholder('Work ID or URL');
     await input.fill(workUrl);
     await expect(input).toHaveValue(versionId);
 
@@ -58,7 +58,7 @@ test.describe('work editor', () => {
     const workId = versionId.substring(0, versionId.length - 3);
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${workId}`;
 
-    const input = page.getByPlaceholder('Version/Work ID');
+    const input = page.getByPlaceholder('Work ID or URL');
     await input.fill(workUrl);
     await expect(input).toHaveValue(workId);
 
@@ -98,7 +98,7 @@ test.describe('work editor', () => {
     await userscriptPage.goto('/work/85a460d6-0c92-4b5f-8fe2-7dfc639a6d56/edit');
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/version?workid=1010819&versionid=1010819002`;
 
-    const input = page.getByPlaceholder('Version/Work ID');
+    const input = page.getByPlaceholder('Work ID or URL');
     await input.fill(workUrl);
     await expect(input).toHaveValue('1010819002');
 

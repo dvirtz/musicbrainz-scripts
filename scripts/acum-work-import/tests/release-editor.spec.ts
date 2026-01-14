@@ -146,7 +146,7 @@ async function parseMultipartFormData(body: string, contentType: string) {
 test.describe('release editor', () => {
   test('can import album', async ({page, testRelease}) => {
     // fill in the album ID
-    const input = page.getByPlaceholder('Album/Version/Work ID');
+    const input = page.getByPlaceholder('Album ID or URL');
     await input.fill(testRelease.acumUrl());
     await expect(input).toHaveValue('006625');
 
@@ -155,7 +155,7 @@ test.describe('release editor', () => {
   });
 
   test('can import individual works', async ({page, testRelease}) => {
-    const input = page.getByPlaceholder('Album/Version/Work ID');
+    const input = page.getByPlaceholder('Album ID or URL');
 
     const tracks = testRelease.tracks();
     const works = testRelease.works();
@@ -182,7 +182,7 @@ base.describe('release editor', () => {
 
     const work = testRelease.works()[2]!;
 
-    const input = page.getByPlaceholder('Album/Version/Work ID');
+    const input = page.getByPlaceholder('Album ID or URL');
 
     await input.fill(work.acumUrl.replace(/version\?workid=(.*)&versionid=(.*)/, 'work?workid=$1'));
 
@@ -201,7 +201,7 @@ base.describe('release editor', () => {
 
     const work = testRelease.works()[0]!;
 
-    const input = page.getByPlaceholder('Album/Version/Work ID');
+    const input = page.getByPlaceholder('Album ID or URL');
 
     await input.fill(work.acumUrl);
 
