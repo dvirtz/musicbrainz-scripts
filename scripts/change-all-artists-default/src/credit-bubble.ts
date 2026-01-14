@@ -9,7 +9,7 @@ export async function modifyArtistCreditBubble(bubble: HTMLElement) {
     return;
   }
 
-  if (await GM.getValue('change-matching-artists', false)) {
+  if ((await GM.getValue('change-matching-artists', false)) && !changeMatching.checked) {
     changeMatching.click();
   }
 }
