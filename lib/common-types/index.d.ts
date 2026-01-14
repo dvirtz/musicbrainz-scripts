@@ -9,3 +9,5 @@ declare module '*.css?inline' {
   const content: string;
   export default content;
 }
+
+type NonEmptyArray<T> = [T, ...T[]] | [...T[], T];
