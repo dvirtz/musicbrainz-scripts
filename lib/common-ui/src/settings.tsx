@@ -11,7 +11,7 @@ export type SettingsDialogOptions = {
   defaultValue: boolean;
 };
 
-export function SettingsDialog(props: {mount: HTMLElement; options: SettingsDialogOptions[]}) {
+function SettingsDialog(props: {mount: HTMLElement; options: SettingsDialogOptions[]}) {
   const [open, setOpen] = createSignal(true);
   const resources = props.options.map(option => {
     const [value, {mutate}] = createResource(async () => GM.getValue(option.name, option.defaultValue));
@@ -64,7 +64,7 @@ export function SettingsDialog(props: {mount: HTMLElement; options: SettingsDial
   );
 }
 
-export function Checkbox(props: ComponentProps<typeof CheckboxRoot> & {label: string}) {
+function Checkbox(props: ComponentProps<typeof CheckboxRoot> & {label: string}) {
   const [other, rootProps] = splitProps(props, ['label']);
   return (
     <CheckboxRoot class={classes.checkbox} {...rootProps}>
