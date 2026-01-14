@@ -5,7 +5,7 @@ import {MusicbrainzPage} from '@repo/test-support/musicbrainz-page';
 import {test as base} from '@repo/test-support/userscript-test';
 import {EDIT_MEDIUM_CREATE_T, EDIT_RELEASE_CREATE_T, ReleaseT, WS_EDIT_RESPONSE_OK_T} from 'typedbrainz/types';
 
-export class TestRelease {
+class TestRelease {
   // cspell:disable
   private static readonly name = 'acum-work-import test: יש בי אהבה';
   private static readonly tracks = [

@@ -1,8 +1,5 @@
 // adapted from https://github.com/metabrainz/musicbrainz-server/blob/dccbf69fd541cceebdb5908f58589483cf1b98e3/root/static/scripts/common/utility/compare.js
-import {EMPTY_PARTIAL_DATE} from '#constants.ts';
 import {
-  LinkAttrT,
-  PartialDateT,
   RelatableEntityT,
   RelatableEntityTypeT,
   RelationshipSourceGroupT,
@@ -10,7 +7,7 @@ import {
   WorkT,
 } from 'typedbrainz/types';
 
-export function compareStrings(a: string, b: string): number {
+function compareStrings(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
 }
 
@@ -38,37 +35,6 @@ export function compareTargetTypeWithGroup(
   targetTypeGroup: RelationshipTargetTypeGroupT
 ): number {
   return compareStrings(targetType, targetTypeGroup[0]);
-}
-
-export function compareLinkAttributeRootIds(a: LinkAttrT, b: LinkAttrT): number {
-  const attributeTypeA = MB?.linkedEntities.link_attribute_type[a.typeID];
-  const attributeTypeB = MB?.linkedEntities.link_attribute_type[b.typeID];
-  return (attributeTypeA?.root_id ?? 0) - (attributeTypeB?.root_id ?? 0);
-}
-
-export function compareLinkAttributeIds(a: LinkAttrT, b: LinkAttrT): number {
-  return compareLinkAttributeRootIds(a, b) || a.typeID - b.typeID;
-}
-
-export function compareDates(a?: PartialDateT | null, b?: PartialDateT | null): number {
-  const aOrEmpty = a ?? EMPTY_PARTIAL_DATE;
-  const bOrEmpty = b ?? EMPTY_PARTIAL_DATE;
-
-  return (
-    compareNullableNumbers(aOrEmpty.year, bOrEmpty.year) ||
-    compareNullableNumbers(aOrEmpty.month, bOrEmpty.month) ||
-    compareNullableNumbers(aOrEmpty.day, bOrEmpty.day)
-  );
-}
-
-function compareNullableNumbers(a?: number | null, b?: number | null) {
-  // Sort null values first
-  if (a == null) {
-    return b == null ? 0 : -1;
-  } else if (b == null) {
-    return 1;
-  }
-  return a - b;
 }
 
 export function compareSourceWithSourceGroup(a: RelatableEntityT, [b]: RelationshipSourceGroupT): number {

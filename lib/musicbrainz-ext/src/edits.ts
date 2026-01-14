@@ -19,9 +19,3 @@ export async function fetchEditParams<T>(url: string) {
   }
   throw Error(`failed to find source_entity in ${url}`);
 }
-
-export function formatEdit(editType: string, info: object) {
-  return Object.entries(info)
-    .map(([prop, val]) => (val === null ? `${editType}.${prop}` : `${editType}.${prop}=${val}`))
-    .join('&');
-}

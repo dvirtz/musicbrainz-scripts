@@ -14,10 +14,6 @@ export async function fetchJSON<T>(url: string, options?: RequestInit) {
   return await rateLimited(RATE_LIMIT_INTERVAL, () => fetch.fetchJSON<T>(url, options));
 }
 
-export async function fetchText(url: string, options?: RequestInit) {
-  return await rateLimited(RATE_LIMIT_INTERVAL, () => fetch.fetchText(url, options));
-}
-
 export async function fetchResponse(url: string, options?: RequestInit) {
   return await rateLimited(RATE_LIMIT_INTERVAL, () => fetch.fetchResponse(url, options));
 }

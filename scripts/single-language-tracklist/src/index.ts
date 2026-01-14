@@ -3,7 +3,7 @@
 
 import {createUI} from '#ui.tsx';
 
-export async function main() {
+async function main() {
   await createUI();
 }
 
