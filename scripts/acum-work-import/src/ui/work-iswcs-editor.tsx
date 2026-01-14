@@ -5,13 +5,13 @@ import {For} from 'solid-js';
 import classes from './work-edit-dialog.module.css';
 
 export function WorkISWCsEditor() {
-  const {editData, setEditData} = useWorkEditData();
+  const {liveEditData, setEditData} = useWorkEditData();
 
   return (
     <FormRow>
       <label>ISWCs:</label>
       <div class={`form-row-text-list ${classes['form-row-text-list']}`}>
-        <For each={editData.iswcs}>
+        <For each={liveEditData.iswcs}>
           {(iswc, index) => (
             <div class={`text-list-row ${classes['text-list-row']}`}>
               <input
@@ -32,7 +32,7 @@ export function WorkISWCsEditor() {
         <div class={`form-row-add ${classes['form-row-add']}`}>
           <button
             class="add-item with-label"
-            onClick={() => setEditData('iswcs', editData.iswcs.length, '')}
+            onClick={() => setEditData('iswcs', liveEditData.iswcs.length, '')}
             type="button"
             title="Add ISWC"
           >

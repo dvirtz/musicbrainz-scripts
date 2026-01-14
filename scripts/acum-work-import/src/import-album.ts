@@ -1,11 +1,11 @@
 import {Creator, Creators, Entity, entityUrl, fetchWorks, IPBaseNumber, trackName, Version, WorkBean} from '#acum.ts';
 import {linkArtists} from '#artists.ts';
-import {addArrangerRelationship} from '#relationships.ts';
+import {addArrangerRelationship, createRelationshipState} from '#relationships.ts';
 import {AddWarning} from '#ui/warnings.tsx';
 import {addWorkEditor} from '#ui/work-editor.tsx';
 import {workEditData, workEditDataEqual} from '#work-edit-data.ts';
 import {WorkStateWithEditDataT} from '#work-state.ts';
-import {createNewWork, linkWriters} from '#works.ts';
+import {createNewWork, linkWriters, workLink} from '#works.ts';
 import {head} from '@repo/common/head';
 import {
   compareInsensitive,
@@ -13,11 +13,17 @@ import {
   compareTargetTypeWithGroup,
   compareWorks,
 } from '@repo/musicbrainz-ext/compare';
-import {REL_STATUS_REMOVE} from '@repo/musicbrainz-ext/constants';
+import {
+  MEDLEY_LINK_TYPE_ID,
+  RECORDING_OF_LINK_TYPE_ID,
+  REL_STATUS_ADD,
+  REL_STATUS_REMOVE,
+} from '@repo/musicbrainz-ext/constants';
 import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
 import {trackRecordingState} from '@repo/musicbrainz-ext/track-recording-state';
 import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {asyncTap} from '@repo/rxjs-ext/async-tap';
+import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import {
   connect,
   count,
@@ -42,6 +48,7 @@ import {Setter} from 'solid-js';
 import {isReleaseRelationshipEditor} from 'typedbrainz';
 import {
   ArtistT,
+  LinkAttrT,
   MediumRecordingStateT,
   MediumRecordingStateTreeT,
   MediumWithRecordingsT,
@@ -49,6 +56,7 @@ import {
   MediumWorkStateTreeT,
   RecordingT,
   ReleaseRelationshipEditorStateT,
+  WorkT,
 } from 'typedbrainz/types';
 
 type SelectedMediums = ReadonlyArray<[MediumWithRecordingsT, MediumRecordingStateTreeT]>;
@@ -275,7 +283,8 @@ async function addWork(
       return existing as WorkStateWithEditDataT;
     }
 
-    const newWork = await createNewWork(index, track, recordingState);
+    const newWork = await createNewWork(track);
+    await linkNewWork(index, newWork, recordingState);
 
     recordingState = refreshRecordingState(recordingState.recording);
 
@@ -288,8 +297,24 @@ async function addWork(
   })()) as WorkStateWithEditDataT;
 
   Object.assign(workState, await workEditData(workState.work, track, addWarning));
-  addWorkEditor(workState, recordingState);
+  const trackRow = document.querySelector(`.track:has(a[href="${recordingLink(recordingState.recording)}"])`);
+  const header = trackRow?.querySelector<HTMLHeadingElement>(
+    `.works h3:has(a[href="${workLink(workState.work)}"]):not(:has(div.edit-work-button-container))`
+  );
+  if (header) {
+    await addWorkEditor(
+      workState.work,
+      workState.editData,
+      workState.originalEditData,
+      header,
+      [header.querySelector('button.edit-item')].filter(x => x !== null)
+    );
+  }
   return workState;
+}
+
+function recordingLink(recording: RecordingT) {
+  return '/recording/' + recording.gid;
 }
 
 function refreshRecordingState(recording: RecordingT): MediumRecordingStateT {
@@ -329,4 +354,46 @@ function relatedWork(relatedWorks: MediumWorkStateTreeT): MediumWorkStateT | und
       }
     }
   }
+}
+
+async function linkNewWork(index: number | undefined, work: WorkT, recordingState: MediumRecordingStateT) {
+  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
+    throw new Error('MB or MB.tree is not defined or not a release relationship editor');
+  }
+
+  const medleyLinkType = MB.linkedEntities.link_attribute_type[MEDLEY_LINK_TYPE_ID]!;
+
+  MB.relationshipEditor.dispatch({
+    type: 'update-relationship-state',
+    sourceEntity: recordingState.recording,
+    batchSelectionCount: undefined,
+    creditsToChangeForSource: '',
+    creditsToChangeForTarget: '',
+    newRelationshipState: createRelationshipState({
+      _status: REL_STATUS_ADD,
+      entity0: recordingState.recording,
+      entity1: work,
+      linkTypeID: RECORDING_OF_LINK_TYPE_ID,
+      ...(index !== undefined
+        ? {
+            attributes: MB.tree.fromDistinctAscArray<LinkAttrT>([
+              {
+                typeID: medleyLinkType.id,
+                typeName: medleyLinkType.name,
+                type: {
+                  gid: medleyLinkType.gid,
+                },
+              },
+            ]),
+            linkOrder: index + 1,
+          }
+        : {}),
+    }),
+    oldRelationshipState: null,
+  });
+  // wait for the work link to be added
+  const href = workLink(work);
+  await waitForElement((node): node is HTMLAnchorElement => {
+    return node instanceof HTMLAnchorElement && node.getAttribute('href') === href;
+  });
 }
