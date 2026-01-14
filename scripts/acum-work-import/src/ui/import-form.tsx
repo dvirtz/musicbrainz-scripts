@@ -5,12 +5,12 @@ import {createEffect, createSignal, ParentProps} from 'solid-js';
 
 export function ImportForm<T extends EntityT>(
   props: ParentProps & {
-    entityTypes: readonly [T, ...T[]];
+    entityTypes: Readonly<NonEmptyArray<T>>;
     onSubmit: (entity: Entity<T>) => Promise<void>;
     idPattern: string;
   }
 ) {
-  const uniqueTypes = Array.from(new Set(props.entityTypes)) as [T, ...T[]];
+  const uniqueTypes = Array.from(new Set(props.entityTypes)) as NonEmptyArray<T>;
 
   const [entity, setEntity] = createSignal(new Entity<T>('', props.entityTypes[0]), {
     equals: (a, b) => a?.toString() === b?.toString(),
