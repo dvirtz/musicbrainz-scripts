@@ -64,7 +64,7 @@ export type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   workLanguage: string;
   workHebName: string;
   workEngName: string;
-  workId: string;
+  workId?: string;
   versionNumber: string;
   creators?: Creators;
   authors?: ReadonlyArray<Creator>;
@@ -72,8 +72,8 @@ export type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   arrangers?: ReadonlyArray<Creator>;
   translators?: ReadonlyArray<Creator>;
   composersAndAuthors?: ReadonlyArray<Creator>;
-  versionIswcNumber: string;
-  versionEssenceType: string;
+  versionIswcNumber?: string;
+  versionEssenceType?: string;
   versionId: string;
   isMedley: '0' | '1';
   list?: ReadonlyArray<MedleyVersionBean>;
@@ -171,7 +171,7 @@ async function fetchAlbum(albumId: string): Promise<AlbumBean> {
 export async function workISWCs(workID: string) {
   return (await fetchWork(workID))
     ?.map(albumVersion => albumVersion.versionIswcNumber)
-    .filter(iswc => iswc.length > 0)
+    .filter((iswc): iswc is string => iswc !== undefined && iswc.length > 0)
     .map(formatISWC);
 }
 
@@ -289,4 +289,8 @@ export function entityUrl(entity: Entity) {
 
 export function creatorUrl(creator: CreatorBase<string>) {
   return `${baseUrl}/results?creatorid=${creator.creatorIpBaseNumber}`;
+}
+
+export function workId(work: WorkBean) {
+  return work.workId || work.fullWorkId;
 }
