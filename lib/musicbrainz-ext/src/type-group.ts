@@ -21,17 +21,6 @@ export function* iterateRelationshipsInTargetTypeGroup(
   }
 }
 
-export function* iterateRelationshipsInTargetTypeGroups(
-  targetTypeGroups: RelationshipTargetTypeGroupsT
-): Generator<RelationshipStateT, void, undefined> {
-  if (!MB?.tree) {
-    return;
-  }
-  for (const targetTypeGroup of MB.tree.iterate(targetTypeGroups)) {
-    yield* iterateRelationshipsInTargetTypeGroup(targetTypeGroup);
-  }
-}
-
 export function findTargetTypeGroups(
   sourceGroups: RelationshipSourceGroupsT,
   source: RelatableEntityT
