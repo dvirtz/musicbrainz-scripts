@@ -67,7 +67,7 @@ export async function workEditData(
 ): Promise<{originalEditData: WorkEditData; editData: WorkEditData}> {
   const originalEditData = work.gid ? await fetchWorkEditParams(work.gid) : getWorkEditParams(work);
   const acumTypeId = await ACUM_TYPE_ID;
-  const acumWorkType = workType(track);
+  const acumWorkType = await workType(track);
   const workTypesValues = Object.values(await workTypes);
   const acumWorkId = workId(track);
   return {

@@ -1,5 +1,5 @@
 import {invokeMenuCommand, mockUserscriptManager, waitForMenuCommand} from '#userscript-manager-mock.ts';
-import {expect, type Page, type Response} from '@playwright/test';
+import {expect, Request, type Page, type Response} from '@playwright/test';
 
 export class UserscriptPage {
   windowOpenLog: URL[] = [];
@@ -132,5 +132,26 @@ export class UserscriptPage {
 
     // Re-inject userscript after navigation
     await this.injectUserScript();
+  }
+
+  public async postDataJSON(request: Request): Promise<{[k: string]: unknown}> {
+    const contentType = await request.headerValue('content-type');
+    if (contentType?.startsWith('multipart/form-data')) {
+      const formData = await new Response(request.postData(), {
+        headers: {
+          'Content-Type': contentType,
+        },
+      }).formData();
+
+      return Object.fromEntries(formData.entries());
+    }
+
+    const postData = (await request.postDataJSON()) as {[k: string]: unknown} | null;
+    expect(postData).not.toBeNull();
+    return postData!;
+  }
+
+  public async setLocalStorage(key: string, value: string) {
+    await this.page.evaluate(([key, value]) => localStorage.setItem(key, value), [key, value] as const);
   }
 }

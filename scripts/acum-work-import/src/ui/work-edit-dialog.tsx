@@ -22,7 +22,7 @@ import {createSignal, onCleanup} from 'solid-js';
 import classes from './work-edit-dialog.module.css';
 
 export function WorkEditDialog(props: {onSubmit: () => void}) {
-  const {editData, setEditData, isModified, workName, submitUrl, saveEditData, restoreEditData, workId} =
+  const {liveEditData, setEditData, isModified, workName, submitUrl, saveEditData, restoreEditData, workId, workTypes} =
     useWorkEditData();
   const isNameBlank = () => /^\s*$/.test(workName());
   const [open, setOpen] = createSignal(false);
@@ -68,7 +68,7 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
                   name="edit-work.name"
                   required={true}
                   type="text"
-                  value={editData.name}
+                  value={liveEditData.name}
                   onChange={ev => setEditData('name', ev.target.value)}
                 />
               </FormRow>
@@ -76,7 +76,7 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
                 <label for="id-edit-work.comment" id="label-id-edit-work.comment">
                   Disambiguation:
                 </label>
-                <input id="id-edit-work.comment" name="edit-work.comment" type="text" value={editData.comment} />
+                <input id="id-edit-work.comment" name="edit-work.comment" type="text" value={liveEditData.comment} />
               </FormRow>
               <FormRow>
                 <label class="" for="id-edit-work.type_id" id="label-id-edit-work.type_id">
@@ -86,8 +86,8 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
                 <SelectBox
                   id="id-edit-work.type_id"
                   name="edit-work.type_id"
-                  options={buildOptionList(Object.values(MB?.linkedEntities.work_type || {}))}
-                  value={editData.type_id || undefined}
+                  options={buildOptionList(workTypes())}
+                  value={liveEditData.type_id || undefined}
                   onChange={workType => setEditData('type_id', parseIntegerOrNull(workType))}
                 />
               </FormRow>

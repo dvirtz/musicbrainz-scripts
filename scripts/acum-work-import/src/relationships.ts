@@ -1,5 +1,10 @@
-import {ARRANGER_LINK_TYPE_ID, REL_STATUS_ADD, REL_STATUS_NOOP} from '@repo/musicbrainz-ext/constants';
-import {ArtistT, RecordingT, RelationshipStateT, WorkT} from 'typedbrainz/types';
+import {
+  ARRANGER_LINK_TYPE_ID,
+  MEDLEY_OF_LINK_TYPE_ID,
+  REL_STATUS_ADD,
+  REL_STATUS_NOOP,
+} from '@repo/musicbrainz-ext/constants';
+import {ArtistT, RecordingT, RelationshipEditStatusT, RelationshipStateT, WorkT} from 'typedbrainz/types';
 
 export function createRelationshipState<Fields extends Pick<RelationshipStateT, 'entity0' | 'entity1'>>(
   fields: Fields
@@ -56,6 +61,32 @@ export function addArrangerRelationship(recording: RecordingT, artist: ArtistT) 
         linkTypeID: ARRANGER_LINK_TYPE_ID,
       }),
       oldRelationshipState: null,
+    });
+  }
+}
+
+export function updateMedleyWorkRelationship(
+  status: RelationshipEditStatusT,
+  linkOrder: number,
+  work: WorkT,
+  medleyWork: WorkT,
+  oldRelationshipState: RelationshipStateT | null = null
+) {
+  if (MB?.relationshipEditor.dispatch) {
+    MB?.relationshipEditor.dispatch({
+      type: 'update-relationship-state',
+      sourceEntity: work,
+      batchSelectionCount: undefined,
+      creditsToChangeForSource: '',
+      creditsToChangeForTarget: '',
+      newRelationshipState: createRelationshipState({
+        _status: status,
+        entity0: work,
+        entity1: medleyWork,
+        linkTypeID: MEDLEY_OF_LINK_TYPE_ID,
+        linkOrder,
+      }),
+      oldRelationshipState,
     });
   }
 }

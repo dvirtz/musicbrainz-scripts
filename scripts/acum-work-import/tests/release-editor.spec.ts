@@ -13,11 +13,11 @@ import {WsJsEditRelationshipCreateT, WsJsRelationshipCommonT} from 'typedbrainz/
 const base = mergeTests(testRelease, musicbrainzTest);
 
 const test = base.extend({
-  testRelease: async ({page, musicbrainzPage, testRelease, baseURL}, use) => {
+  testRelease: async ({page, musicbrainzPage, userscriptPage, testRelease, baseURL}, use) => {
     await testRelease.editRelationships(musicbrainzPage);
 
     // turn off existing work search
-    await page.evaluate(() => localStorage.setItem('searchWorks', 'false'));
+    await userscriptPage.setLocalStorage('searchWorks', 'false');
 
     await use(testRelease);
 
@@ -28,38 +28,12 @@ const test = base.extend({
     await expect(arrangerLabels).toHaveCount(testRelease.tracks().length);
 
     await page.route('**/work/create', async (route, request) => {
-      const postData = await parseMultipartFormData(request.postData() || '', request.headers()['content-type'] || '');
-      const workName = postData['edit-work.name'] as string | undefined;
+      const postData = await userscriptPage.postDataJSON(request);
+      const workName = postData['edit-work.name'] as string;
       expect(workName).toBeDefined();
-      const work = testRelease.work(workName!)!;
+      const work = testRelease.work(workName)!;
       expect(work).toBeDefined(); // Show visible diff to debug whitespace/unicode differences
-      expect(postData).toMatchObject({
-        'edit-work.name': work.title,
-        'edit-work.comment': work.disambiguation,
-        'edit-work.type_id': work['type-id'],
-        'edit-work.edit_note': expect.stringMatching(
-          /Imported from .* using userscript version 1.0.0 from https:\/\/homepage.com./
-        ),
-      });
-      expect(work.iswcs.map((value, index) => postData[`edit-work.iswcs.${index}`]).sort()).toEqual(work.iswcs.sort());
-      expect(work.languages.map((value, index) => postData[`edit-work.languages.${index}`]).sort()).toEqual(
-        work.languages.sort()
-      );
-      expect(
-        work.attributes
-          .map((value, index) => ({
-            'type-id': postData[`edit-work.attributes.${index}.type_id`],
-            value: postData[`edit-work.attributes.${index}.value`],
-          }))
-          .sort()
-      ).toEqual(
-        work.attributes
-          .map(attr => ({
-            'type-id': attr['type-id'],
-            value: attr.value,
-          }))
-          .sort()
-      );
+      musicbrainzPage.expectWorkCreateToMatch(postData, work);
 
       await route.fulfill({
         status: 302,
@@ -78,7 +52,7 @@ const test = base.extend({
     }));
     const workIndex = (title: string) => workTitles.findIndex(v => compareInsensitive(v, title) === 0);
     await page.route('ws/js/edit/create', async (route, request) => {
-      const postData = request.postDataJSON() as Record<string, unknown>;
+      const postData = await userscriptPage.postDataJSON(request);
       if ('editNote' in postData) {
         // Show visible diff to debug whitespace/unicode differences
         expect(postData['editNote']).toMatch(
@@ -131,17 +105,6 @@ const test = base.extend({
     await page.unrouteAll();
   },
 });
-
-// Lightweight multipart/form-data parser for test assertions. It extracts simple text fields.
-async function parseMultipartFormData(body: string, contentType: string) {
-  const formData = await new Response(body, {
-    headers: {
-      'Content-Type': contentType,
-    },
-  }).formData();
-
-  return Object.fromEntries(formData.entries());
-}
 
 test.describe('release editor', () => {
   test('can import album', async ({page, testRelease}) => {

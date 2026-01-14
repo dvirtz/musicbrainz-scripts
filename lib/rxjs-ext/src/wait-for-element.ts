@@ -34,3 +34,7 @@ export async function waitForElement<T extends Element>(
 ): Promise<T | undefined> {
   return await executePipeline(newElements<T>(condition, options, target).pipe(first()));
 }
+
+export async function waitForAttribute(target: Node, attribute: string) {
+  return await executePipeline(from(domMutations(target, {attributeFilter: [attribute]})).pipe(first()));
+}
