@@ -1,7 +1,7 @@
 // adapted from https://github.dev/loujine/musicbrainz-scripts/blob/master/mbz-loujine-common.js
 
 import {AcumWorkType} from '#acum-work-type.ts';
-import {workType, trackName, WorkBean, workISWCs, workLanguage, WorkLanguage} from '#acum.ts';
+import {trackName, WorkBean, workId, workISWCs, workLanguage, WorkLanguage, workType} from '#acum.ts';
 import {shouldSetLanguage} from '#ui/settings.tsx';
 import {AddWarning} from '#ui/warnings.tsx';
 import {mergeArrays} from '@repo/common/merge-arrays';
@@ -65,13 +65,11 @@ export async function workEditData(
   track: WorkBean,
   addWarning: AddWarning
 ): Promise<{originalEditData: WorkEditData; editData: WorkEditData}> {
-  const originalEditData =
-    work.gid && unsafeWindow.location.pathname.startsWith('/release')
-      ? await fetchWorkEditParams(work.gid)
-      : getWorkEditParams(work);
+  const originalEditData = work.gid ? await fetchWorkEditParams(work.gid) : getWorkEditParams(work);
   const acumTypeId = await ACUM_TYPE_ID;
   const acumWorkType = workType(track);
   const workTypesValues = Object.values(await workTypes);
+  const acumWorkId = workId(track);
   return {
     originalEditData,
     editData: {
@@ -180,17 +178,17 @@ export async function workEditData(
             })()
           )
         : originalEditData.languages,
-      iswcs: mergeArrays(originalEditData.iswcs, (await workISWCs(track.workId)) ?? []),
+      iswcs: mergeArrays(originalEditData.iswcs, (await workISWCs(acumWorkId)) ?? []),
       // remove older longer ACUM ID attributes
       attributes: [
         ...originalEditData.attributes.filter(
           element =>
             element.type_id !== acumTypeId ||
-            (element.value !== track.workId && element.value.length == track.workId.length)
+            (element.value !== acumWorkId && element.value.length == acumWorkId.length)
         ),
         {
           type_id: acumTypeId,
-          value: track.workId,
+          value: acumWorkId,
         },
       ],
     },

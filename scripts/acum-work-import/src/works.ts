@@ -1,5 +1,5 @@
 import {AcumWorkType} from '#acum-work-type.ts';
-import {trackName, WorkBean, workISWCs, workType} from '#acum.ts';
+import {trackName, WorkBean, workId, workISWCs, workType} from '#acum.ts';
 import {linkArtists} from '#artists.ts';
 import {addWriterRelationship, createRelationshipState} from '#relationships.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
@@ -24,8 +24,8 @@ import {ArtistT, LinkAttrT, MediumRecordingStateT, RelationshipTargetTypeGroupsT
 const workCache = new Map<string, WorkT>();
 
 export async function findWork(track: WorkBean) {
-  const workId = await (async () => {
-    for (const iswc of await workISWCs(track.workId)) {
+  const workGid = await (async () => {
+    for (const iswc of await workISWCs(workId(track))) {
       const byIswc = await tryFetchJSON<IswcLookupResultsT>(`/ws/2/iswc/${formatISWC(iswc)}?fmt=json`);
       if (byIswc && byIswc['work-count'] > 0) {
         return byIswc.works[0]!.id;
@@ -50,9 +50,9 @@ export async function findWork(track: WorkBean) {
     }
   })();
 
-  if (workId) {
-    const work = await fetchJSON<WorkT>(`/ws/js/entity/${workId}`);
-    workCache.set(track.workId, work);
+  if (workGid) {
+    const work = await fetchJSON<WorkT>(`/ws/js/entity/${workGid}`);
+    workCache.set(workGid, work);
     return work;
   }
 
@@ -69,8 +69,9 @@ export async function createNewWork(
   }
 
   const newWork = await (async () => {
-    if (workCache.has(track.workId)) {
-      return workCache.get(track.workId)!;
+    const id = workId(track);
+    if (workCache.has(id)) {
+      return workCache.get(id)!;
     }
     if (await shouldSearchWorks()) {
       const existingWork = await findWork(track);
@@ -82,7 +83,7 @@ export async function createNewWork(
       _fromBatchCreateWorksDialog: true,
       name: trackName(track),
     });
-    workCache.set(track.workId, newWork);
+    workCache.set(id, newWork);
     return newWork;
   })();
   MB.linkedEntities.work[newWork.id] = newWork;
