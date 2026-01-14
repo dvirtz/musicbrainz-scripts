@@ -1,15 +1,12 @@
 import {AcumWorkType} from '#acum-work-type.ts';
 import {trackName, WorkBean, workId, workISWCs, workType} from '#acum.ts';
 import {linkArtists} from '#artists.ts';
-import {addWriterRelationship, createRelationshipState} from '#relationships.ts';
+import {addWriterRelationship} from '#relationships.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {
   COMPOSER_LINK_TYPE_ID,
   LYRICIST_LINK_TYPE_ID,
-  MEDLEY_LINK_TYPE_ID,
-  RECORDING_OF_LINK_TYPE_ID,
-  REL_STATUS_ADD,
   TRANSLATOR_LINK_TYPE_ID,
   WRITER_LINK_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
@@ -18,8 +15,7 @@ import {formatISWC} from '@repo/musicbrainz-ext/format-iswc';
 import {IswcLookupResultsT, WorkLookupResultT, WorkSearchResultsT} from '@repo/musicbrainz-ext/search-results';
 import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {defaultIfEmpty, filter, firstValueFrom, from, mergeMap} from 'rxjs';
-import {isReleaseRelationshipEditor} from 'typedbrainz';
-import {ArtistT, LinkAttrT, MediumRecordingStateT, RelationshipTargetTypeGroupsT, WorkT} from 'typedbrainz/types';
+import {ArtistT, RelationshipTargetTypeGroupsT, WorkT} from 'typedbrainz/types';
 
 const workCache = new Map<string, WorkT>();
 
@@ -59,13 +55,9 @@ export async function findWork(track: WorkBean) {
   return undefined;
 }
 
-export async function createNewWork(
-  index: number | undefined,
-  track: WorkBean,
-  recordingState: MediumRecordingStateT
-): Promise<WorkT> {
-  if (!MB || !MB.tree || !isReleaseRelationshipEditor(MB?.relationshipEditor)) {
-    throw new Error('MB or MB.tree is not defined or not a release relationship editor');
+export async function createNewWork(track: WorkBean): Promise<WorkT> {
+  if (!MB) {
+    throw new Error('MB is not defined');
   }
 
   const newWork = await (async () => {
@@ -87,52 +79,6 @@ export async function createNewWork(
     return newWork;
   })();
   MB.linkedEntities.work[newWork.id] = newWork;
-
-  const medleyLinkType = MB.linkedEntities.link_attribute_type[MEDLEY_LINK_TYPE_ID]!;
-
-  MB.relationshipEditor.dispatch({
-    type: 'update-relationship-state',
-    sourceEntity: recordingState.recording,
-    batchSelectionCount: undefined,
-    creditsToChangeForSource: '',
-    creditsToChangeForTarget: '',
-    newRelationshipState: createRelationshipState({
-      _status: REL_STATUS_ADD,
-      entity0: recordingState.recording,
-      entity1: newWork,
-      linkTypeID: RECORDING_OF_LINK_TYPE_ID,
-      ...(index !== undefined
-        ? {
-            attributes: MB.tree.fromDistinctAscArray<LinkAttrT>([
-              {
-                typeID: medleyLinkType.id,
-                typeName: medleyLinkType.name,
-                type: {
-                  gid: medleyLinkType.gid,
-                },
-              },
-            ]),
-            linkOrder: index + 1,
-          }
-        : {}),
-    }),
-    oldRelationshipState: null,
-  });
-  // wait for the work to be added
-  await new Promise<void>(resolve => {
-    new MutationObserver((_mutations, observer) => {
-      console.log('work added observer', newWork);
-      if (
-        document.querySelector(`.works a[href="${newWork.gid ? `/work/${newWork.gid}` : `#new-work-${newWork.id}`}"]`)
-      ) {
-        observer.disconnect();
-        resolve();
-      }
-    }).observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-  });
   return newWork;
 }
 
@@ -191,8 +137,8 @@ export async function linkWriters(
     addWriterRelationship(work, artist, linkTypeID);
   };
 
-  const authorLinkTypeId = (() => {
-    switch (workType(track)) {
+  const authorLinkTypeId = await (async () => {
+    switch (await workType(track)) {
       case AcumWorkType.PopularSong:
       case AcumWorkType.OriginalSongFor4PartChoir:
         return LYRICIST_LINK_TYPE_ID;
@@ -215,4 +161,12 @@ export async function linkWriters(
     addWarning
   );
   await linkArtists(artistCache, track.translators, track.creators, doLink(TRANSLATOR_LINK_TYPE_ID), addWarning);
+}
+
+export function isNewWork(work: WorkT) {
+  return !work.gid;
+}
+
+export function workLink(work: WorkT) {
+  return isNewWork(work) ? `#new-work-${work.id}` : `/work/${work.gid}`;
 }

@@ -1,30 +1,38 @@
-import {workEditDataEqual} from '#work-edit-data.ts';
-import {WorkStateWithEditDataT} from '#work-state.ts';
+import {WorkEditData, workEditDataEqual} from '#work-edit-data.ts';
 import {urlFromMbid} from '@repo/musicbrainz-ext/edits';
 import {createContext, ParentProps, useContext} from 'solid-js';
 import {createStore, unwrap} from 'solid-js/store';
+import {LanguageT, WorkT, WorkTypeT} from 'typedbrainz/types';
 
-const makeWorkEditDataContext = (workState: WorkStateWithEditDataT) => {
-  const [editData, setEditData] = createStore(structuredClone(workState.editData));
+const makeWorkEditDataContext = (
+  work: WorkT,
+  editData: WorkEditData,
+  originalEditData: WorkEditData,
+  workTypes: WorkTypeT[],
+  workLanguages: LanguageT[]
+) => {
+  const [liveEditData, setEditData] = createStore(structuredClone(editData));
   return {
-    editData,
+    liveEditData,
     setEditData,
-    isModified: () => !workEditDataEqual(workState.originalEditData, editData),
-    workName: () => editData.name,
-    submitUrl: () => (workState.work.gid ? urlFromMbid('work', workState.work.gid) : '/work/create'),
+    isModified: () => !workEditDataEqual(originalEditData, editData),
+    workName: () => liveEditData.name,
+    submitUrl: () => (work.gid ? urlFromMbid('work', work.gid) : '/work/create'),
     saveEditData: () => {
-      const unwrapped = unwrap(editData);
-      workState.editData.name = unwrapped.name;
-      workState.editData.comment = unwrapped.comment;
-      workState.editData.type_id = unwrapped.type_id;
-      workState.editData.languages = unwrapped.languages.filter(lang => Number.isNaN(lang) === false);
-      workState.editData.iswcs = unwrapped.iswcs.filter(iswc => iswc !== '');
-      workState.editData.attributes = unwrapped.attributes.filter(attr => attr.value !== '');
+      const unwrapped = unwrap(liveEditData);
+      editData.name = unwrapped.name;
+      editData.comment = unwrapped.comment;
+      editData.type_id = unwrapped.type_id;
+      editData.languages = unwrapped.languages.filter(lang => Number.isNaN(lang) === false);
+      editData.iswcs = unwrapped.iswcs.filter(iswc => iswc !== '');
+      editData.attributes = unwrapped.attributes.filter(attr => attr.value !== '');
     },
     restoreEditData: () => {
-      setEditData(structuredClone(workState.editData));
+      setEditData(structuredClone(editData));
     },
-    workId: () => workState.work.id,
+    workId: () => work.id,
+    workTypes: () => workTypes,
+    workLanguages: () => workLanguages,
   } as const;
 };
 
@@ -38,9 +46,25 @@ export function useWorkEditData() {
   return context;
 }
 
-export function WorkEditDataProvider(props: ParentProps & {workState: WorkStateWithEditDataT}) {
+export function WorkEditDataProvider(
+  props: ParentProps & {
+    work: WorkT;
+    editData: WorkEditData;
+    originalEditData: WorkEditData;
+    workTypes: WorkTypeT[];
+    workLanguages: LanguageT[];
+  }
+) {
   return (
-    <WorkEditDataContext.Provider value={makeWorkEditDataContext(props.workState)}>
+    <WorkEditDataContext.Provider
+      value={makeWorkEditDataContext(
+        props.work,
+        props.editData,
+        props.originalEditData,
+        props.workTypes,
+        props.workLanguages
+      )}
+    >
       {props.children}
     </WorkEditDataContext.Provider>
   );
