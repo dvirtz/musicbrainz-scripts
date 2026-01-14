@@ -10,9 +10,9 @@ export function ImportForm<T extends EntityT>(
     idPattern: string;
   }
 ) {
-  const uniqueTypes = Array.from(new Set(props.entityTypes)) as NonEmptyArray<T>;
+  const defaultEntityType = props.entityTypes[0];
 
-  const [entity, setEntity] = createSignal(new Entity<T>('', props.entityTypes[0]), {
+  const [entity, setEntity] = createSignal(new Entity<T>('', defaultEntityType), {
     equals: (a, b) => a?.toString() === b?.toString(),
   });
   const [importing, setImporting] = createSignal(false);
@@ -38,14 +38,14 @@ export function ImportForm<T extends EntityT>(
   const onPaste = (ev: ClipboardEvent) => {
     const pastedText = ev.clipboardData?.getData('text');
     if (pastedText) {
-      const newEntity = replaceUrlWith(uniqueTypes)(pastedText);
+      const newEntity = replaceUrlWith<T>(pastedText) ?? new Entity(pastedText, defaultEntityType);
       setEntity(newEntity);
       ev.preventDefault(); // Prevent the default paste behavior
     }
   };
 
   const onChange = (value: string) => {
-    const newEntity = replaceUrlWith(uniqueTypes)(value);
+    const newEntity = replaceUrlWith<T>(value) ?? new Entity(value, defaultEntityType);
     setEntity(newEntity);
   };
 
@@ -67,7 +67,7 @@ export function ImportForm<T extends EntityT>(
           onPaste={onPaste}
           style={{'margin': '0 7px 0 0'}}
         >
-          <TextField.Input pattern={props.idPattern} placeholder={`${uniqueTypes.join('/')} ID`} />
+          <TextField.Input pattern={props.idPattern} placeholder={`${defaultEntityType} ID or URL`} />
         </TextField>
         {props.children}
       </div>
