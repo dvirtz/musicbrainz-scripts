@@ -67,6 +67,13 @@
 			],
 			"label": "npm: check-types",
 			"detail": "turbo run check-types"
+		},
+		{
+			"type": "npm",
+			"script": "ci",
+			"problemMatcher": [],
+			"label": "npm: ci",
+			"detail": "yarn check-types && yarn build && yarn lint"
 		}
 	],
 	"inputs": [

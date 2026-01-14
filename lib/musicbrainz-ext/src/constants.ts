@@ -3,13 +3,8 @@
 import {
   EDIT_MEDIUM_CREATE_T,
   EDIT_RELATIONSHIP_CREATE_T,
-  EDIT_RELATIONSHIP_DELETE_T,
-  EDIT_RELATIONSHIP_EDIT_T,
-  EDIT_RELATIONSHIPS_REORDER_T,
   EDIT_RELEASE_CREATE_T,
   EDIT_WORK_CREATE_T,
-  EDIT_WORK_EDIT_T,
-  PartialDateT,
   RelationshipEditStatusT,
   WS_EDIT_RESPONSE_OK_T,
 } from 'typedbrainz/types';
@@ -32,28 +27,16 @@ export const WRITER_LINK_TYPE_ID = 167;
 export const MEDLEY_LINK_TYPE_ID = 750;
 export const REL_STATUS_NOOP = 0 as RelationshipEditStatusT;
 export const REL_STATUS_ADD = 1 as RelationshipEditStatusT;
-export const REL_STATUS_EDIT = 2 as RelationshipEditStatusT;
 export const REL_STATUS_REMOVE = 3 as RelationshipEditStatusT;
 export const LANGUAGE_MUL_ID = 284;
 export const LANGUAGE_ZXX_ID = 486;
 
 export const EDIT_RELEASE_CREATE: EDIT_RELEASE_CREATE_T = 31;
 export const EDIT_WORK_CREATE: EDIT_WORK_CREATE_T = 41;
-export const EDIT_WORK_EDIT: EDIT_WORK_EDIT_T = 42;
 export const EDIT_MEDIUM_CREATE: EDIT_MEDIUM_CREATE_T = 51;
 export const EDIT_RELATIONSHIP_CREATE: EDIT_RELATIONSHIP_CREATE_T = 90;
-export const EDIT_RELATIONSHIP_EDIT: EDIT_RELATIONSHIP_EDIT_T = 91;
-export const EDIT_RELATIONSHIP_DELETE: EDIT_RELATIONSHIP_DELETE_T = 92;
-export const EDIT_RELATIONSHIPS_REORDER: EDIT_RELATIONSHIPS_REORDER_T = 99;
 export const WS_EDIT_RESPONSE_OK: WS_EDIT_RESPONSE_OK_T = 1;
 
-export const EMPTY_PARTIAL_DATE: PartialDateT = Object.freeze({
-  day: null,
-  month: null,
-  year: null,
-});
-
-export const SERIES_ORDERING_TYPE_MANUAL = 2;
 export const MBID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[345][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i;
 
 // https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting

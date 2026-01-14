@@ -50,7 +50,7 @@ export async function fetchJSON<T = object>(url: string, options?: FetchRetryOpt
   return (await response.json()) as T;
 }
 
-export async function fetchText(url: string, options?: FetchRetryOptions): Promise<string> {
+async function fetchText(url: string, options?: FetchRetryOptions): Promise<string> {
   const response = await fetchResponse(url, options);
   return await response.text();
 }

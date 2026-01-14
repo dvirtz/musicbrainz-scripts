@@ -19,9 +19,7 @@
     "@repo/test-support": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/vite-config": "workspace:*",
-    "cross-env": "*",
     "eslint": "*",
-    "semantic-release": "*",
     "vite": "*"
   },
   "dependencies": {
@@ -29,8 +27,6 @@
     "@repo/common-types": "workspace:^",
     "@repo/common-ui": "workspace:^",
     "@repo/rxjs-ext": "workspace:*",
-    "dom-mutations": "*",
-    "rxjs": "*",
     "solid-js": "*"
   }
 }
