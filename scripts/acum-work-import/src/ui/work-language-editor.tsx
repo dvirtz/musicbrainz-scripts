@@ -4,6 +4,7 @@ import {removeAtIndex} from '@repo/common/remove-at-index';
 import {LANGUAGE_MUL_ID, LANGUAGE_ZXX_ID} from '@repo/musicbrainz-ext/constants';
 import {createField, createRepeatableField} from '@repo/musicbrainz-ext/create-field';
 import {MaybeGroupedOptionsT} from '@repo/musicbrainz-ext/get-select-value';
+import {workLanguages} from '@repo/musicbrainz-ext/type-info';
 import PLazy from 'p-lazy';
 import {identity} from 'rxjs';
 import {createResource} from 'solid-js';
@@ -13,8 +14,8 @@ const FREQUENT_LANGUAGE = 2;
 const NON_FREQUENT_LANGUAGE = 1;
 // 0 means skip
 
-const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(() => {
-  const languagesByFrequency = Map.groupBy(Object.values(MB?.linkedEntities.language ?? {}), language =>
+const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(async () => {
+  const languagesByFrequency = Map.groupBy(Object.values(await workLanguages), language =>
     language.id == LANGUAGE_ZXX_ID ? FREQUENT_LANGUAGE : language.frequency
   );
 
@@ -51,11 +52,11 @@ const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(() => {
 });
 
 export function WorkLanguageEditor() {
-  const {editData, setEditData} = useWorkEditData();
+  const {liveEditData, setEditData} = useWorkEditData();
   const languagesField = () =>
     createRepeatableField(
       'edit-work.languages',
-      editData.languages.map((language, index) => createField(`edit-work.languages.${index}`, String(language)))
+      liveEditData.languages.map((language, index) => createField(`edit-work.languages.${index}`, String(language)))
     );
 
   const [languageOptions] = createResource(async () => await lazyLanguageOptions, {
@@ -69,12 +70,12 @@ export function WorkLanguageEditor() {
         addLabel={'Add language'}
         getSelectField={identity}
         hideAddButton={
-          editData.languages.find(lang => lang === LANGUAGE_MUL_ID || lang === LANGUAGE_ZXX_ID) !== undefined
+          liveEditData.languages.find(lang => lang === LANGUAGE_MUL_ID || lang === LANGUAGE_ZXX_ID) !== undefined
         }
         label={'Lyrics languages:'}
-        onAdd={() => setEditData('languages', editData.languages.length, NaN)}
+        onAdd={() => setEditData('languages', liveEditData.languages.length, NaN)}
         onEdit={(index, value) => setEditData('languages', index, Number(value))}
-        onRemove={index => setEditData('languages', removeAtIndex(editData.languages, index))}
+        onRemove={index => setEditData('languages', removeAtIndex(liveEditData.languages, index))}
         options={languageOptions()}
         removeClassName="remove-language"
         removeLabel={'Remove language'}

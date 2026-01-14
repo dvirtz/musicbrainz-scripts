@@ -186,9 +186,19 @@ function stringToEnum<T>(value: string, enumType: {[s: string]: T}): T {
   return enumType.Unknown!;
 }
 
-export function workType(track: WorkBean): AcumWorkType {
-  const workType = track.original ? track.original.workType : track.workType;
-  return stringToEnum(`${workType}${track.versionEssenceType}`, AcumWorkType);
+export async function workType(track: WorkBean): Promise<AcumWorkType> {
+  if (track.isMedley == '1' && track.list && track.list[0]) {
+    const medleyVersion = track.list[0];
+    const medleyWorks = await fetchWorks(new Version(medleyVersion.id, medleyVersion.workId));
+    if (medleyWorks[0]) {
+      return await workType(medleyWorks[0]);
+    }
+
+    return AcumWorkType.Unknown;
+  }
+
+  const originalWorkType = track.original ? track.original.workType : track.workType;
+  return stringToEnum(`${originalWorkType}${track.versionEssenceType}`, AcumWorkType);
 }
 
 export enum WorkLanguage {
