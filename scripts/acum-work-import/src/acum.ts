@@ -225,30 +225,28 @@ export class Version<T extends EntityT = 'Version'> extends Entity<T> {
   }
 }
 
-export function replaceUrlWith<T extends EntityT>(entityTypes: [T, ...T[]]): (input: string) => Entity<T> {
-  return (input: string) => {
-    const defaultEntity = new Entity<T>(input, entityTypes[0]);
-    try {
-      const url = new URL(input);
-      if (url.hostname === 'nocs.acum.org.il') {
-        return (
-          entityTypes
-            .map(entityType => [entityType, url.searchParams.get(`${entityType.toLowerCase()}id`)] as const)
-            .filter((pair): pair is [T, string] => !!pair[1])
-            .map(([entityType, id]) => {
-              if (entityType === 'Version') {
-                return new Version<T>(id, url.searchParams.get('workid') ?? versionWorkId(id));
-              }
-              return new Entity<T>(id, entityType);
-            })
-            .at(0) ?? defaultEntity
-        );
+export function replaceUrlWith<T extends EntityT>(input: string): Entity<T> | undefined {
+  try {
+    const url = new URL(input);
+    if (url.hostname === 'nocs.acum.org.il') {
+      const versionId = url.searchParams.get('versionid');
+      if (versionId) {
+        return new Version<T>(versionId, url.searchParams.get('workid') ?? versionWorkId(versionId));
       }
-    } catch (e) {
-      console.debug('failed to parse URL', input, e);
+      return ['Album', 'Work']
+        .map(entityType => [entityType, url.searchParams.get(`${entityType.toLowerCase()}id`)] as const)
+        .filter((pair): pair is [T, string] => !!pair[1])
+        .map(([entityType, id]) => {
+          if (entityType === 'Version') {
+            return new Version<T>(id, url.searchParams.get('workid') ?? versionWorkId(id));
+          }
+          return new Entity<T>(id, entityType);
+        })
+        .at(0);
     }
-    return defaultEntity;
-  };
+  } catch (e) {
+    console.debug('failed to parse URL', input, e);
+  }
 }
 
 const entityCache = new Map<Entity, ReadonlyArray<WorkBean>>();
