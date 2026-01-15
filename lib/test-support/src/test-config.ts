@@ -1,7 +1,7 @@
+import {UserscriptTestOptions} from '#userscript-test.ts';
 import {defineConfig as defineTestConfig, devices, type PlaywrightTestConfig} from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
-import {UserscriptTestOptions} from '#userscript-test.ts';
 
 /**
  * Read environment variables from file.
@@ -23,7 +23,7 @@ export function defineConfig(baseURL: string, userscriptPath: string, options?: 
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : undefined,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-    reporter: 'html',
+    reporter: [['html', {open: process.env.CI ? 'never' : 'on-failure'}]],
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
       /* Base URL to use in actions like `await page.goto('/')`. */
