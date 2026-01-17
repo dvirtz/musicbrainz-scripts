@@ -43,11 +43,10 @@ jobs:
         env:
           # https://github.com/nodejs/node/issues/59364
           NODE_OPTIONS: --no-experimental-strip-types
-      - name: Debug in Codespace
-        if: failure()
-        uses: dlemstra/github-actions-debugger@main
-        with:
-          token: ${{ secrets.CODESPACES_TOKEN }}
+        timeout-minutes: 30
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
