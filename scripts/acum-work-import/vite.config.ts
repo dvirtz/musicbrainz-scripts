@@ -3,7 +3,7 @@ import defineConfig from '@repo/vite-config/userscript-config';
 export default defineConfig('acum-work-import', {
   name: 'ACUM work importer',
   description: 'imports MusicBrainz works from acum.org.il database',
-  version: '1.20.1',
+  version: '1.20.2-beta.1',
   icon: 'https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg',
   match: [
     'http*://*.musicbrainz.org/release/*/edit-relationships',
