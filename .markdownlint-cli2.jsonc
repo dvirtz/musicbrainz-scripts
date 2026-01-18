@@ -11,7 +11,9 @@
     "**/node_modules",
     "**/CHANGELOG.md",
     "LICENSE.md",
-    "scripts/_template/**"
+    "scripts/_template/**",
+    "**/playwright-report/**",
+    "**/test-results/**"
   ],
   "customRules": [
     "markdownlint-rule-relative-links"
