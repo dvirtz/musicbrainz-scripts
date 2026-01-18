@@ -1,3 +1,8 @@
+## @dvirtz/change-all-artists-default-v1.1.2-beta.1 (2026-01-18)
+
+* fix(rxjs-ext): include nested elements when observing mutations ([03d603b](https://github.com/dvirtz/musicbrainz-scripts/commit/03d603b))
+* ci: upgrade knip and fix issues ([b711c19](https://github.com/dvirtz/musicbrainz-scripts/commit/b711c19))
+
 ## [@dvirtz/change-all-artists-default-v1.1.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/change-all-artists-default-v1.1.0...@dvirtz/change-all-artists-default-v1.1.1) (2025-12-15)
 
 
