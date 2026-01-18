@@ -8,6 +8,8 @@ files:
 ignorePaths:
   - "**/*.d.ts"
   - "**/node_modules/**"
+  - "**/playwright-report/**"
+  - "**/test-results/**"
 words:
   - acum
   - discogs
