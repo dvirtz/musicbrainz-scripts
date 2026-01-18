@@ -1,3 +1,7 @@
+## @dvirtz/single-language-tracklist-v1.1.2-beta.1 (2026-01-18)
+
+* ci: upgrade knip and fix issues ([b711c19](https://github.com/dvirtz/musicbrainz-scripts/commit/b711c19))
+
 ## [@dvirtz/single-language-tracklist-v1.1.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/single-language-tracklist-v1.1.0...@dvirtz/single-language-tracklist-v1.1.1) (2025-12-15)
 
 
