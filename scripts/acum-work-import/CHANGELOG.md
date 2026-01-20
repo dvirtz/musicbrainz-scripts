@@ -1,3 +1,15 @@
+## [@dvirtz/acum-work-import-v1.20.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.20.1...@dvirtz/acum-work-import-v1.20.2) (2026-01-20)
+
+
+### Documentation
+
+* add beta-latest links to READMEs ([28e5d74](https://github.com/dvirtz/musicbrainz-scripts/commit/28e5d74800f5e0f226a53d20ab366c6c9f58b559))
+
+
+### Tests
+
+* add missing ISWCs ([f3db79d](https://github.com/dvirtz/musicbrainz-scripts/commit/f3db79d5e4bf4d60ed268bfb46acd8e91fb8c56f))
+
 ## [@dvirtz/acum-work-import-v1.20.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.20.0...@dvirtz/acum-work-import-v1.20.1) (2025-12-15)
 
 
