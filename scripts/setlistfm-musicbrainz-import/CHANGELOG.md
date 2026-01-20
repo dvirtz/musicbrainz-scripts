@@ -1,3 +1,10 @@
+## [@dvirtz/setlistfm-musicbrainz-import-v1.6.4](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.6.3...@dvirtz/setlistfm-musicbrainz-import-v1.6.4) (2026-01-20)
+
+
+### Documentation
+
+* add beta-latest links to READMEs ([28e5d74](https://github.com/dvirtz/musicbrainz-scripts/commit/28e5d74800f5e0f226a53d20ab366c6c9f58b559))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.6.3](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.6.2...@dvirtz/setlistfm-musicbrainz-import-v1.6.3) (2025-12-03)
 
 
