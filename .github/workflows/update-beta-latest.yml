@@ -1,0 +1,64 @@
+name: Update Beta Latest Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to use (e.g., v1.2.3-beta.1)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  update-beta-latest:
+    runs-on: ubuntu-latest
+    # Only run for pre-releases
+    if: github.event_name == 'workflow_dispatch' || github.event.release.prerelease == true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set release tag
+        id: set-tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.release_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p assets
+          cd assets
+          gh release download ${{ steps.set-tag.outputs.tag }}
+
+      - name: Delete existing beta-latest release if it exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view beta-latest > /dev/null 2>&1; then
+            gh release delete beta-latest -y
+          fi
+        continue-on-error: true
+
+      - name: Delete existing beta-latest tag if it exists
+        run: |
+          git push origin :refs/tags/beta-latest || true
+        continue-on-error: true
+
+      - name: Create/Update beta-latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create beta-latest \
+            --title "Latest Beta Release" \
+            --notes "This release always points to the latest beta version. Current version: ${{ steps.set-tag.outputs.tag }}" \
+            --prerelease \
+            assets/*
