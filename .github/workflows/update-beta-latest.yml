@@ -39,6 +39,13 @@ jobs:
           cd assets
           gh release download ${{ steps.set-tag.outputs.tag }}
 
+      - name: Rewrite downloadURL to beta-latest
+        run: |
+          shopt -s nullglob
+          for file in assets/*.user.js; do
+            sed -i 's|/releases/latest/download/|/releases/download/beta-latest/|g' "$file"
+          done
+
       - name: Delete existing beta-latest release if it exists
         env:
           GH_TOKEN: ${{ github.token }}
