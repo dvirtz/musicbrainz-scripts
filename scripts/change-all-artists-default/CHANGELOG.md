@@ -1,3 +1,10 @@
+## [@dvirtz/change-all-artists-default-v1.1.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/change-all-artists-default-v1.1.1...@dvirtz/change-all-artists-default-v1.1.2) (2026-01-20)
+
+
+### Documentation
+
+* add beta-latest links to READMEs ([28e5d74](https://github.com/dvirtz/musicbrainz-scripts/commit/28e5d74800f5e0f226a53d20ab366c6c9f58b559))
+
 ## [@dvirtz/change-all-artists-default-v1.1.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/change-all-artists-default-v1.1.0...@dvirtz/change-all-artists-default-v1.1.1) (2025-12-15)
 
 
