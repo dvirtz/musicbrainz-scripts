@@ -1,3 +1,11 @@
+## @dvirtz/acum-work-import-v1.20.3 (2026-01-21)
+
+* fix(acum-work-import): enable importing medley work from work editor ([0bb77d8](https://github.com/dvirtz/musicbrainz-scripts/commit/0bb77d8)), closes [#109](https://github.com/dvirtz/musicbrainz-scripts/issues/109)
+* refactor(acum-work-import): make form placeholder and URL parsing independent ([b97a1f3](https://github.com/dvirtz/musicbrainz-scripts/commit/b97a1f3))
+* refactor(acum-work-import): make more work properties optional ([2084cac](https://github.com/dvirtz/musicbrainz-scripts/commit/2084cac))
+* refactor(common-types): add a NonEmptyArray type alias ([fd26bdb](https://github.com/dvirtz/musicbrainz-scripts/commit/fd26bdb))
+* ci: upgrade knip and fix issues ([6008960](https://github.com/dvirtz/musicbrainz-scripts/commit/6008960))
+
 ## [@dvirtz/acum-work-import-v1.20.2](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/acum-work-import-v1.20.1...@dvirtz/acum-work-import-v1.20.2) (2026-01-20)
 
 
