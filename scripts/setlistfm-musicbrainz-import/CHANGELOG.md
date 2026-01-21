@@ -1,3 +1,7 @@
+## @dvirtz/setlistfm-musicbrainz-import-v1.6.5 (2026-01-21)
+
+* ci: upgrade knip and fix issues ([6008960](https://github.com/dvirtz/musicbrainz-scripts/commit/6008960))
+
 ## [@dvirtz/setlistfm-musicbrainz-import-v1.6.4](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/setlistfm-musicbrainz-import-v1.6.3...@dvirtz/setlistfm-musicbrainz-import-v1.6.4) (2026-01-20)
 
 
