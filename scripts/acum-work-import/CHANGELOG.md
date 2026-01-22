@@ -1,3 +1,9 @@
+## @dvirtz/acum-work-import-v1.20.4-beta.1 (2026-01-22)
+
+* fix(acum-work-import): directly submit relationships when no works were submitted ([5aaee9c](https://github.com/dvirtz/musicbrainz-scripts/commit/5aaee9c)), closes [#146](https://github.com/dvirtz/musicbrainz-scripts/issues/146)
+* refactor(acum-work-import): add rejectRoute method for handling 404 responses ([2a9cbac](https://github.com/dvirtz/musicbrainz-scripts/commit/2a9cbac))
+* refactor(acum-work-import): extract MB property asserts ([92b8d9d](https://github.com/dvirtz/musicbrainz-scripts/commit/92b8d9d))
+
 ## @dvirtz/acum-work-import-v1.20.3 (2026-01-21)
 
 * fix(acum-work-import): enable importing medley work from work editor ([0bb77d8](https://github.com/dvirtz/musicbrainz-scripts/commit/0bb77d8)), closes [#109](https://github.com/dvirtz/musicbrainz-scripts/issues/109)
