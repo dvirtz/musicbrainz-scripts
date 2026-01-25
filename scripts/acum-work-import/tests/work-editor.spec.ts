@@ -117,7 +117,7 @@ test.describe('work editor', () => {
 
     // cspell: disable-next-line
     await expect(page.getByRole('row', {name: 'lyricist'}).getByRole('link', {name: 'נתן אלתרמן'})).toHaveCount(0);
-    expect(consoleMessages.filter(msg => msg.includes('skipping existing author'))).toHaveLength(1);
+    expect(consoleMessages.filter(msg => msg.includes('skipping adding existing author'))).toHaveLength(1);
   });
 
   test('can import medley work', async ({page, userscriptPage, musicbrainzPage, baseURL}) => {
