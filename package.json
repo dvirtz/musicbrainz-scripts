@@ -26,7 +26,7 @@
   "scripts": {
     "build": "turbo run build",
     "watch": "turbo run build-watch",
-    "release": "yarn workspaces foreach --all --topological-dev --exclude 'lib/*' exec semantic-release",
+    "release": "yarn workspaces foreach --all --topological-dev --exclude '@dvirtz/musicbrainz-scripts' --exclude 'lib/*' exec semantic-release && semantic-release",
     "test": "turbo run test",
     "ci": "yarn check-types && yarn build && yarn lint",
     "lint:knip": "knip --tags=-knipignore",
