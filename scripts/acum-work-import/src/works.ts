@@ -130,7 +130,7 @@ export async function linkWriters(
       return;
     }
     if (authors.some(existing => existing.gid === artist.gid)) {
-      console.log(`skipping existing author ${artist.name} for work ${work.name}`);
+      console.log(`skipping adding existing author ${artist.name} to work ${work.name}`);
       return;
     }
     addWriterRelationship(work, artist, linkTypeID);

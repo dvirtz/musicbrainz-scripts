@@ -271,42 +271,35 @@ async function addWork(
   recordingState: MediumRecordingStateT,
   addWarning: AddWarning
 ): Promise<WorkStateWithEditDataT> {
-  const workState = (await (async () => {
+  const work = await (async () => {
     assertMBTree(MB?.tree);
 
     const existing = relatedWork(recordingState.relatedWorks);
     if (existing) {
-      return existing as WorkStateWithEditDataT;
+      return existing.work;
     }
 
     const newWork = await createNewWork(track);
     await linkNewWork(index, newWork, recordingState);
 
-    recordingState = refreshRecordingState(recordingState.recording);
+    return newWork;
+  })();
 
-    return MB.tree.find(
-      recordingState.relatedWorks,
-      newWork,
-      (work, relatedWork) => compareWorks(work, relatedWork.work),
-      null
-    )!;
-  })()) as WorkStateWithEditDataT;
-
-  Object.assign(workState, await workEditData(workState.work, track, addWarning));
+  const {editData, originalEditData} = await workEditData(work, track, addWarning);
   const trackRow = document.querySelector(`.track:has(a[href="${recordingLink(recordingState.recording)}"])`);
   const header = trackRow?.querySelector<HTMLHeadingElement>(
-    `.works h3:has(a[href="${workLink(workState.work)}"]):not(:has(div.edit-work-button-container))`
+    `.works h3:has(a[href="${workLink(work)}"]):not(:has(div.edit-work-button-container))`
   );
   if (header) {
     await addWorkEditor(
-      workState.work,
-      workState.editData,
-      workState.originalEditData,
+      work,
+      editData,
+      originalEditData,
       header,
       [header.querySelector('button.edit-item')].filter(x => x !== null)
     );
   }
-  return workState;
+  return Object.assign(refreshWorkState(recordingState.recording, work), {editData, originalEditData});
 }
 
 function recordingLink(recording: RecordingT) {
@@ -329,6 +322,19 @@ function refreshRecordingState(recording: RecordingT): MediumRecordingStateT {
     mediumRecordingStates,
     recording,
     (recording, recordingState) => compareNumbers(recording.id, recordingState.recording.id),
+    null
+  )!;
+}
+
+function refreshWorkState(recording: RecordingT, work: WorkT): MediumWorkStateT {
+  assertMBTree(MB?.tree);
+  assertReleaseRelationshipEditor(MB.relationshipEditor);
+
+  const recordingState = refreshRecordingState(recording);
+  return MB.tree.find(
+    recordingState.relatedWorks,
+    work,
+    (treeWork, relatedWork) => compareWorks(treeWork, relatedWork.work),
     null
   )!;
 }
