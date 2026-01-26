@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.20.5-beta.1 (2026-01-26)
+
+* fix(acum-work-import): existing artists are still added ([b0f87fb](https://github.com/dvirtz/musicbrainz-scripts/commit/b0f87fb)), closes [#159](https://github.com/dvirtz/musicbrainz-scripts/issues/159)
+
 ## @dvirtz/acum-work-import-v1.20.5-beta.1 (2026-01-25)
 
 * fix(acum-work-import): existing artists are still added ([da6fb97](https://github.com/dvirtz/musicbrainz-scripts/commit/da6fb97)), closes [#159](https://github.com/dvirtz/musicbrainz-scripts/issues/159)
