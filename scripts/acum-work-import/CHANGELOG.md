@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.20.5 (2026-01-28)
+
+* fix(acum-work-import): existing artists are still added ([d42e88b](https://github.com/dvirtz/musicbrainz-scripts/commit/d42e88b)), closes [#159](https://github.com/dvirtz/musicbrainz-scripts/issues/159)
+
 ## @dvirtz/acum-work-import-v1.20.4 (2026-01-24)
 
 * fix(acum-work-import): directly submit relationships when no works were submitted ([bcd26c5](https://github.com/dvirtz/musicbrainz-scripts/commit/bcd26c5)), closes [#146](https://github.com/dvirtz/musicbrainz-scripts/issues/146)
