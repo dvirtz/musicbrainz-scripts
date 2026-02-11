@@ -14,12 +14,7 @@ import {
   compareTargetTypeWithGroup,
   compareWorks,
 } from '@repo/musicbrainz-ext/compare';
-import {
-  MEDLEY_LINK_TYPE_ID,
-  RECORDING_OF_LINK_TYPE_ID,
-  REL_STATUS_ADD,
-  REL_STATUS_REMOVE,
-} from '@repo/musicbrainz-ext/constants';
+import {MEDLEY_LINK_TYPE_ID, REL_STATUS_ADD, REL_STATUS_REMOVE} from '@repo/musicbrainz-ext/constants';
 import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
 import {trackRecordingState} from '@repo/musicbrainz-ext/track-recording-state';
 import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
@@ -371,7 +366,7 @@ async function linkNewWork(index: number | undefined, work: WorkT, recordingStat
       _status: REL_STATUS_ADD,
       entity0: recordingState.recording,
       entity1: work,
-      linkTypeID: RECORDING_OF_LINK_TYPE_ID,
+      linkTypeID: MB.constants.RECORDING_OF_LINK_TYPE_ID,
       ...(index !== undefined
         ? {
             attributes: MB.tree.fromDistinctAscArray<LinkAttrT>([

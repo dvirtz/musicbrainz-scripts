@@ -7,7 +7,7 @@ import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
-import {EDIT_WORK_CREATE, WS_EDIT_RESPONSE_OK} from '@repo/musicbrainz-ext/constants';
+import {EDIT_WORK_CREATE} from '@repo/musicbrainz-ext/constants';
 import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {waitForAttribute, waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import {
@@ -224,7 +224,7 @@ async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Pr
       edits: addWorkRelationships.map(([, newWork]) => ({
         edit_type: EDIT_WORK_CREATE,
         entity: newWork,
-        response: WS_EDIT_RESPONSE_OK,
+        response: MB!.constants.WS_EDIT_RESPONSE_OK,
       })),
     },
   });
