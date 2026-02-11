@@ -5,6 +5,7 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
+    "./asserts": "./src/asserts.ts",
     "./build-options-list": "./src/build-options-list.ts",
     "./compare": "./src/compare.ts",
     "./constants": "./src/constants.ts",
@@ -14,14 +15,14 @@
     "./fetch": "./src/fetch.ts",
     "./format-iswc": "./src/format-iswc.ts",
     "./get-select-value": "./src/get-select-value.ts",
-    "./parse-integer": "./src/parse-integer.ts",
     "./parse-integer-or-null": "./src/parse-integer-or-null.ts",
+    "./parse-integer": "./src/parse-integer.ts",
     "./search-results": "./src/search-results.ts",
     "./subfield-errors": "./src/subfield-errors.ts",
     "./track-recording-state": "./src/track-recording-state.ts",
     "./type-group": "./src/type-group.ts",
     "./type-info": "./src/type-info.ts",
-    "./asserts": "./src/asserts.ts"
+    "./wait-for": "./src/wait-for.ts"
   },
   "imports": {
     "#*": "./src/*"
@@ -33,7 +34,8 @@
   "dependencies": {
     "@repo/fetch": "workspace:*",
     "dedent": "*",
-    "p-lazy": "*"
+    "p-lazy": "*",
+    "p-wait-for": "^6.0.0"
   },
   "devDependencies": {
     "@repo/common-types": "workspace:*",
