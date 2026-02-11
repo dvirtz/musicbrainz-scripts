@@ -1,7 +1,6 @@
 import {FormRowSelectList} from '#ui/form-row-select-list.tsx';
 import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
 import {removeAtIndex} from '@repo/common/remove-at-index';
-import {LANGUAGE_MUL_ID, LANGUAGE_ZXX_ID} from '@repo/musicbrainz-ext/constants';
 import {createField, createRepeatableField} from '@repo/musicbrainz-ext/create-field';
 import {MaybeGroupedOptionsT} from '@repo/musicbrainz-ext/get-select-value';
 import {workLanguages} from '@repo/musicbrainz-ext/type-info';
@@ -16,11 +15,12 @@ const NON_FREQUENT_LANGUAGE = 1;
 
 const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(async () => {
   const languagesByFrequency = Map.groupBy(Object.values(await workLanguages), language =>
-    language.id == LANGUAGE_ZXX_ID ? FREQUENT_LANGUAGE : language.frequency
+    language.id == MB?.constants.LANGUAGE_ZXX_ID ? FREQUENT_LANGUAGE : language.frequency
   );
 
   const compareLanguages = (a: LanguageT, b: LanguageT) =>
-    (a.id === LANGUAGE_ZXX_ID ? 0 : 1) - (b.id === LANGUAGE_ZXX_ID ? 0 : 1) || a.name.localeCompare(b.name);
+    (a.id === MB?.constants.LANGUAGE_ZXX_ID ? 0 : 1) - (b.id === MB?.constants.LANGUAGE_ZXX_ID ? 0 : 1) ||
+    a.name.localeCompare(b.name);
 
   return {
     grouped: true,
@@ -32,7 +32,7 @@ const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(async () => {
             .get(FREQUENT_LANGUAGE)
             ?.sort(compareLanguages)
             ?.map(lang => ({
-              label: lang.id == LANGUAGE_ZXX_ID ? '[No Lyrics]' : lang.name,
+              label: lang.id == MB?.constants.LANGUAGE_ZXX_ID ? '[No Lyrics]' : lang.name,
               value: lang.id,
             })) || [],
       },
@@ -70,7 +70,9 @@ export function WorkLanguageEditor() {
         addLabel={'Add language'}
         getSelectField={identity}
         hideAddButton={
-          liveEditData.languages.find(lang => lang === LANGUAGE_MUL_ID || lang === LANGUAGE_ZXX_ID) !== undefined
+          liveEditData.languages.find(
+            lang => lang === MB?.constants.LANGUAGE_MUL_ID || lang === MB?.constants.LANGUAGE_ZXX_ID
+          ) !== undefined
         }
         label={'Lyrics languages:'}
         onAdd={() => setEditData('languages', liveEditData.languages.length, NaN)}

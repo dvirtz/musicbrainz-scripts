@@ -6,7 +6,6 @@ import {
   EDIT_RELEASE_CREATE_T,
   EDIT_WORK_CREATE_T,
   RelationshipEditStatusT,
-  WS_EDIT_RESPONSE_OK_T,
 } from 'typedbrainz/types';
 
 /*
@@ -18,7 +17,6 @@ import {
  * later version: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-export const RECORDING_OF_LINK_TYPE_ID = 278;
 export const COMPOSER_LINK_TYPE_ID = 168;
 export const LYRICIST_LINK_TYPE_ID = 165;
 export const ARRANGER_LINK_TYPE_ID = 297;
@@ -30,15 +28,11 @@ export const REL_STATUS_NOOP = 0 as RelationshipEditStatusT;
 export const REL_STATUS_ADD = 1 as RelationshipEditStatusT;
 export const REL_STATUS_EDIT = 2 as RelationshipEditStatusT;
 export const REL_STATUS_REMOVE = 3 as RelationshipEditStatusT;
-export const LANGUAGE_MUL_ID = 284;
-export const LANGUAGE_ZXX_ID = 486;
 
 export const EDIT_RELEASE_CREATE: EDIT_RELEASE_CREATE_T = 31;
 export const EDIT_WORK_CREATE: EDIT_WORK_CREATE_T = 41;
 export const EDIT_MEDIUM_CREATE: EDIT_MEDIUM_CREATE_T = 51;
 export const EDIT_RELATIONSHIP_CREATE: EDIT_RELATIONSHIP_CREATE_T = 90;
-export const WS_EDIT_RESPONSE_OK: WS_EDIT_RESPONSE_OK_T = 1;
-
 export const MBID_REGEXP = /[0-9a-f]{8}-[0-9a-f]{4}-[345][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i;
 
 // https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting
