@@ -5,7 +5,6 @@ import {trackName, WorkBean, workId, workISWCs, workLanguage, WorkLanguage, work
 import {shouldSetLanguage} from '#ui/settings.tsx';
 import {AddWarning} from '#ui/warnings.tsx';
 import {mergeArrays} from '@repo/common/merge-arrays';
-import {LANGUAGE_ZXX_ID} from '@repo/musicbrainz-ext/constants';
 import {fetchEditParams, urlFromMbid} from '@repo/musicbrainz-ext/edits';
 import {workAttributeTypes, workLanguages, workTypes} from '@repo/musicbrainz-ext/type-info';
 import PLazy from 'p-lazy';
@@ -128,7 +127,7 @@ export async function workEditData(
                 case AcumWorkType.LibraryWork:
                 case AcumWorkType.Ringtone:
                 case AcumWorkType.InstrumentalMusicForDanceElectronMusic:
-                  return [LANGUAGE_ZXX_ID];
+                  return [MB!.constants.LANGUAGE_ZXX_ID];
                 case AcumWorkType.StoryForEducationalProgram:
                 case AcumWorkType.TvScriptForEducationalProgram:
                 case AcumWorkType.Jingle:

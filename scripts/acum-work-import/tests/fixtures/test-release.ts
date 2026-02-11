@@ -1,5 +1,5 @@
 import {expect, Page} from '@playwright/test';
-import {EDIT_MEDIUM_CREATE, EDIT_RELEASE_CREATE, WS_EDIT_RESPONSE_OK} from '@repo/musicbrainz-ext/constants';
+import {EDIT_MEDIUM_CREATE, EDIT_RELEASE_CREATE} from '@repo/musicbrainz-ext/constants';
 import {ReleaseSearchResultsT} from '@repo/musicbrainz-ext/search-results';
 import {MusicbrainzPage} from '@repo/test-support/musicbrainz-page';
 import {test as base} from '@repo/test-support/userscript-test';
@@ -644,7 +644,7 @@ class TestRelease {
       entity: {id: number; position: number};
       response: WS_EDIT_RESPONSE_OK_T;
     };
-    expect(responseEdit.response).toBe(WS_EDIT_RESPONSE_OK);
+    expect(responseEdit.response).toBe(MB?.constants.WS_EDIT_RESPONSE_OK);
     expect(responseEdit.edit_type).toBe(EDIT_MEDIUM_CREATE);
   }
 
