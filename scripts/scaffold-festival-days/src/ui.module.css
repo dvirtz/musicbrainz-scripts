@@ -1,0 +1,34 @@
+.placesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.placeSearchBox {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.placeSearchInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.searchResults {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.searchResultRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.placeOption {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}

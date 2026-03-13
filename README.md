@@ -56,6 +56,17 @@ Keeps one language of a double language tracklist (like often seen in Discogs).
 
 See the script [README](scripts/single-language-tracklist/README.md) for more information.
 
+### Scaffold festival days
+
+[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/scaffold-festival-days.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/scaffold-festival-days.user.js)
+[![source][badge-source]](scripts/scaffold-festival-days/src/index.ts)
+
+Scaffolds day, venue, and single-day place sub-events for festival event hierarchies.
+
+![toolbox](scripts/scaffold-festival-days/assets/toolbox.png)
+
+See the script [README](scripts/scaffold-festival-days/README.md) for more information.
+
 ## Development
 
 This is a TypeScript monorepo using Yarn workspaces and Turbo for build orchestration.
