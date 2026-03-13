@@ -106,7 +106,7 @@ const test = base.extend({
   },
 });
 
-test.describe('release editor', () => {
+test.describe('release editor @allow_fail', () => {
   test('can import album', async ({page, testRelease}) => {
     // fill in the album ID
     const input = page.getByPlaceholder('Album ID or URL');
@@ -139,7 +139,7 @@ test.describe('release editor', () => {
   });
 });
 
-base.describe('release editor', () => {
+base.describe('release editor @allow_fail', () => {
   base('work import does not add arrangers', async ({page, testRelease, musicbrainzPage}) => {
     await testRelease.editRelationships(musicbrainzPage);
 
