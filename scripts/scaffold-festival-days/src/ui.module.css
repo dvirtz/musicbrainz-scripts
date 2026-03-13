@@ -1,0 +1,98 @@
+/* ── shared base classes ─────────────────────────────────────── */
+
+/* vertical flex list */
+.columnList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* three-column place-row grid: name | credit | action */
+.placeRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 10em auto;
+  align-items: center;
+}
+
+/* vertical label + control stack */
+.columnControl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* ── component classes ───────────────────────────────────────── */
+
+.placesList {
+  composes: columnList;
+  gap: 0.25rem;
+}
+
+.placeSearchBox {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.placeSearchInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.searchResultRow {
+  composes: placeRow;
+  gap: 0.5rem;
+}
+
+.searchResultPlaceName {
+  min-width: 0;
+}
+
+.creditNameInput {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.addPlaceButton {
+  width: 4.5em;
+  margin-left: 0 !important;
+  justify-self: start;
+}
+
+.placeOptionContent {
+  grid-column: 1 / span 2;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.actionsRow {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.customEditNoteControl {
+  composes: columnControl;
+  flex: 1;
+  min-width: 16rem;
+}
+
+.customEditNoteInput {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.dayWordControl {
+  composes: columnControl;
+  align-items: flex-start;
+}
+
+.customDayWordInput {
+  width: 6em;
+}
+
+.actionsButtons {
+  margin-left: auto;
+  align-self: flex-end;
+}
