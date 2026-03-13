@@ -1114,6 +1114,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@dvirtz/scaffold-festival-days@workspace:scripts/scaffold-festival-days":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/scaffold-festival-days@workspace:scripts/scaffold-festival-days"
+  dependencies:
+    "@kobalte/core": "npm:*"
+    "@playwright/test": "npm:*"
+    "@repo/common-types": "workspace:*"
+    "@repo/common-ui": "workspace:*"
+    "@repo/fetch": "workspace:*"
+    "@repo/musicbrainz-ext": "workspace:*"
+    "@repo/rxjs-ext": "workspace:*"
+    "@repo/test-support": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
+    "@repo/vite-config": "workspace:*"
+    cross-env: "npm:*"
+    dom-mutations: "npm:*"
+    eslint: "npm:*"
+    rxjs: "npm:*"
+    semantic-release: "npm:*"
+    solid-js: "npm:*"
+    typescript: "npm:*"
+    vite: "npm:*"
+    vite-plugin-solid: "npm:*"
+  languageName: unknown
+  linkType: soft
+
 "@dvirtz/setlistfm-musicbrainz-import@workspace:scripts/setlistfm-musicbrainz-import":
   version: 0.0.0-use.local
   resolution: "@dvirtz/setlistfm-musicbrainz-import@workspace:scripts/setlistfm-musicbrainz-import"
@@ -1181,6 +1207,13 @@ __metadata:
   dependencies:
     tslib: "npm:^2.4.0"
   checksum: 10c0/e6d54bf2b1e64cdd83d2916411e44e579b6ae35d5def0dea61a3c452d9921373044dff32a8b8473ae60c80692bdc39323e98b96a3f3d87ba6886b24dd0ef7ca1
+  languageName: node
+  linkType: hard
+
+"@epic-web/invariant@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@epic-web/invariant@npm:1.0.0"
+  checksum: 10c0/72dbeb026e4e4eb3bc9c65739b91408ca77ab7d603a2494fa2eff3790ec22892c4caba751cffdf30f5ccf0e7ba79c1e9c96cf0a357404b9432bf1365baac23ca
   languageName: node
   linkType: hard
 
@@ -2478,6 +2511,7 @@ __metadata:
     dedent: "npm:*"
     eslint: "npm:*"
     p-lazy: "npm:*"
+    p-wait-for: "npm:^6.0.0"
     typescript: "npm:*"
   languageName: unknown
   linkType: soft
@@ -4170,6 +4204,19 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/1c1703be4f02a250b1d6ca3267e408ce16abfe8364193891afc94c2d5c060b69611fdc8d97af74b7e6d5d1aac0ab2fb94d6b079573146bc2d756c2484ce5f0ee
+  languageName: node
+  linkType: hard
+
+"cross-env@npm:*":
+  version: 10.1.0
+  resolution: "cross-env@npm:10.1.0"
+  dependencies:
+    "@epic-web/invariant": "npm:^1.0.0"
+    cross-spawn: "npm:^7.0.6"
+  bin:
+    cross-env: dist/bin/cross-env.js
+    cross-env-shell: dist/bin/cross-env-shell.js
+  checksum: 10c0/834a862db456ba1fedf6c6da43436b123ae38f514fa286d6f0937c14fa83f13469f77f70f2812db041ae2d84f82bac627040b8686030aca27fbdf113dfa38b63
   languageName: node
   linkType: hard
 
@@ -8472,6 +8519,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"p-wait-for@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "p-wait-for@npm:6.0.0"
+  checksum: 10c0/c3bb3c16e3bea6ee9764d8b62570ee6bfadc7b1b408bbdcdd1e6b9a7431d3596bd6463a179af85ad87bdaf1e6f1a385fb78fc865e92357023a8fc5fa57533d78
+  languageName: node
+  linkType: hard
+
 "package-json-from-dist@npm:^1.0.0":
   version: 1.0.0
   resolution: "package-json-from-dist@npm:1.0.0"
@@ -9437,6 +9491,44 @@ __metadata:
   peerDependencies:
     semantic-release: ">20"
   checksum: 10c0/21591f76f04fb42ae1d4b02eb9536f80a5c0b34994e2aeee3d13b2c9487e17944d475173399e15fae902064f41503c60be2c6c1f7dc5a982ae7385a6ba0e9078
+  languageName: node
+  linkType: hard
+
+"semantic-release@npm:*":
+  version: 25.0.3
+  resolution: "semantic-release@npm:25.0.3"
+  dependencies:
+    "@semantic-release/commit-analyzer": "npm:^13.0.1"
+    "@semantic-release/error": "npm:^4.0.0"
+    "@semantic-release/github": "npm:^12.0.0"
+    "@semantic-release/npm": "npm:^13.1.1"
+    "@semantic-release/release-notes-generator": "npm:^14.1.0"
+    aggregate-error: "npm:^5.0.0"
+    cosmiconfig: "npm:^9.0.0"
+    debug: "npm:^4.0.0"
+    env-ci: "npm:^11.0.0"
+    execa: "npm:^9.0.0"
+    figures: "npm:^6.0.0"
+    find-versions: "npm:^6.0.0"
+    get-stream: "npm:^6.0.0"
+    git-log-parser: "npm:^1.2.0"
+    hook-std: "npm:^4.0.0"
+    hosted-git-info: "npm:^9.0.0"
+    import-from-esm: "npm:^2.0.0"
+    lodash-es: "npm:^4.17.21"
+    marked: "npm:^15.0.0"
+    marked-terminal: "npm:^7.3.0"
+    micromatch: "npm:^4.0.2"
+    p-each-series: "npm:^3.0.0"
+    p-reduce: "npm:^3.0.0"
+    read-package-up: "npm:^12.0.0"
+    resolve-from: "npm:^5.0.0"
+    semver: "npm:^7.3.2"
+    signale: "npm:^1.2.1"
+    yargs: "npm:^18.0.0"
+  bin:
+    semantic-release: bin/semantic-release.js
+  checksum: 10c0/ca961722c61c44e90c419aa6ad812411203f6ff972947733febbc93433b91b526af2095051935816d70242ebc044efb70338f5f05b66bab4907c1be8b093ac12
   languageName: node
   linkType: hard
 
@@ -10695,6 +10787,27 @@ __metadata:
     vite:
       optional: true
   checksum: 10c0/e0f355941c8cd2e3eb6777420b8ca05380605d950537bba782ef5d92159cf45107eff1ff7fa3f6401f0108d5221b9dcc8c31e4416c350edcecf029ecedea7288
+  languageName: node
+  linkType: hard
+
+"vite-plugin-solid@npm:*":
+  version: 2.11.10
+  resolution: "vite-plugin-solid@npm:2.11.10"
+  dependencies:
+    "@babel/core": "npm:^7.23.3"
+    "@types/babel__core": "npm:^7.20.4"
+    babel-preset-solid: "npm:^1.8.4"
+    merge-anything: "npm:^5.1.7"
+    solid-refresh: "npm:^0.6.3"
+    vitefu: "npm:^1.0.4"
+  peerDependencies:
+    "@testing-library/jest-dom": ^5.16.6 || ^5.17.0 || ^6.*
+    solid-js: ^1.7.2
+    vite: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
+  peerDependenciesMeta:
+    "@testing-library/jest-dom":
+      optional: true
+  checksum: 10c0/c374633a5083283db45b35acda65f975e8758a47f97488ca1f48258211d22e43717da2aa4e66cb1588cba763088d795af03b792337079cbb14786ba0b8faff8e
   languageName: node
   linkType: hard
 
