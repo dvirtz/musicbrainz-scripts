@@ -1,0 +1,40 @@
+{
+  "name": "@dvirtz/scaffold-festival-days",
+  "type": "module",
+  "main": "./dist/scaffold-festival-days.user.js",
+  "imports": {
+    "#*": "./src/*",
+    "#tests/*": "./tests/*"
+  },
+  "scripts": {
+    "dev": "vite --configLoader runner",
+    "build": "vite --configLoader runner build",
+    "build-watch": "yarn run build --watch",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@kobalte/core": "*",
+    "@repo/common-types": "workspace:*",
+    "@repo/common-ui": "workspace:*",
+    "@repo/fetch": "workspace:*",
+    "@repo/musicbrainz-ext": "workspace:*",
+    "@repo/rxjs-ext": "workspace:*",
+    "dom-mutations": "*",
+    "rxjs": "*",
+    "solid-js": "*"
+  },
+  "devDependencies": {
+    "@playwright/test": "*",
+    "@repo/test-support": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/vite-config": "workspace:*",
+    "cross-env": "*",
+    "eslint": "*",
+    "semantic-release": "*",
+    "typescript": "*",
+    "vite": "*",
+    "vite-plugin-solid": "*"
+  }
+}

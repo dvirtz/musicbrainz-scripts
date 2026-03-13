@@ -8,3 +8,8 @@
     margin-bottom: 0.66em;
   }
 }
+
+.tool__line--vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
