@@ -88,3 +88,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: yarn release
+      - name: Reset beta to main
+        if: github.ref == 'refs/heads/main'
+        run: git push origin HEAD:refs/heads/beta --force
