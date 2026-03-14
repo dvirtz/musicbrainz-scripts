@@ -96,7 +96,7 @@ export async function scaffoldFestivalDays(params: {
     }
 
     for (const place of selectedPlaces) {
-      const venueName = `${event.name}: ${place.name}`;
+      const venueName = `${event.name}: ${place.creditName ?? place.name}`;
       const venueEventGid = await createSubEvent({
         name: venueName,
         begin: singleDate,
@@ -165,7 +165,7 @@ export async function scaffoldFestivalDays(params: {
           continue;
         }
 
-        const venueName = `${event.name}, ${dayWord} ${dayEvent.date.dayNumber}: ${place.name}`;
+        const venueName = `${event.name}, ${dayWord} ${dayEvent.date.dayNumber}: ${place.creditName ?? place.name}`;
         const venueEventGid = await createSubEvent({
           name: venueName,
           begin: dayEvent.date,

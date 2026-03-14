@@ -21,14 +21,44 @@
 }
 
 .searchResultRow {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 10em auto;
   align-items: center;
-  justify-content: space-between;
   gap: 0.5rem;
+}
+
+.searchResultPlaceName {
+  min-width: 0;
+}
+
+.creditNameInput {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.addPlaceButton {
+  width: 4.5em;
+  margin-left: 0 !important;
+  justify-self: start;
 }
 
 .placeOption {
   display: flex;
   align-items: center;
   gap: 0.35rem;
+}
+
+.actionsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dayWordControl {
+  display: flex;
+  align-items: center;
+}
+
+.actionsButtons {
+  margin-left: auto;
 }

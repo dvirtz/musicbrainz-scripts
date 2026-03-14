@@ -28,6 +28,7 @@ const CUSTOM_SENTINEL = '__custom__';
 function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: string}) {
   const [availablePlaces, setAvailablePlaces] = createSignal<MBPlace[]>(props.places);
   const [searchResults, setSearchResults] = createSignal<MBPlace[]>([]);
+  const [draftCreditNames, setDraftCreditNames] = createSignal<Record<string, string>>({});
   const [placeInput, setPlaceInput] = createSignal('');
   const [selectedPlaces, setSelectedPlaces] = createSignal<Set<string>>(new Set(props.places.map(place => place.gid)));
   const [isCreating, setIsCreating] = createSignal(false);
@@ -84,9 +85,8 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
     if (placeGid) {
       const place = await fetchPlaceByGid(placeGid);
       if (place) {
-        addAndSelectPlace(place);
-        setSearchResults([]);
-        setStatus({message: `Added place: ${place.name}`, kind: 'info'});
+        setSearchResults([place]);
+        setStatus({message: `Found: ${place.name}. Optionally set a credit name, then click Add.`, kind: 'info'});
       } else {
         setStatus({message: 'Could not load place from provided link/MBID.', kind: 'error'});
       }
@@ -157,47 +157,6 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
           ? 'Select places to create direct per-place sub-events for this single-day festival.'
           : 'Select places to also create per-venue sub-events (optional).'}
       </p>
-      <Show when={!singleDayMode()}>
-        <div>
-          <label>
-            {'Day word: '}
-            <select
-              value={isCustomDayWord() ? CUSTOM_SENTINEL : dayWord()}
-              onChange={e => {
-                const value = (e.target as HTMLSelectElement).value;
-                if (value === CUSTOM_SENTINEL) {
-                  setIsCustomDayWord(true);
-                  return;
-                }
-
-                setIsCustomDayWord(false);
-                setDayWord(value);
-                GM.setValue(DAY_WORD_STORAGE_KEY, value).catch(console.error);
-              }}
-              disabled={isCreating()}
-            >
-              <For each={DAY_WORD_PRESETS}>
-                {preset => <option value={preset.word}>{`${preset.language} (${preset.word})`}</option>}
-              </For>
-              <option value={CUSTOM_SENTINEL}>Custom…</option>
-            </select>
-          </label>
-          <Show when={isCustomDayWord()}>
-            <input
-              type="text"
-              value={dayWord()}
-              onInput={e => {
-                const value = (e.target as HTMLInputElement).value;
-                setIsCustomDayWord(true);
-                setDayWord(value);
-                GM.setValue(DAY_WORD_STORAGE_KEY, value).catch(console.error);
-              }}
-              disabled={isCreating()}
-              style={{'margin-left': '4px', width: '6em'}}
-            />
-          </Show>
-        </div>
-      </Show>
       <div class={classes.placeSearchBox}>
         <input
           class={classes.placeSearchInput}
@@ -220,13 +179,36 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
       <Show when={searchResults().length > 0}>
         <div class={classes.searchResults}>
           <For each={searchResults()}>
-            {place => (
+            {(place, index) => (
               <div class={classes.searchResultRow}>
-                <span>
-                  {place.name}
-                  <Show when={place.disambiguation}>{disambiguation => <span>{` (${disambiguation()})`}</span>}</Show>
+                <span class={classes.searchResultPlaceName}>
+                  <a href={`/place/${place.gid}`}>
+                    {place.name}
+                    <Show when={place.disambiguation}>{disambiguation => <span>{` (${disambiguation()})`}</span>}</Show>
+                  </a>
                 </span>
-                <Button class="button" onClick={() => addAndSelectPlace(place)} disabled={isCreating()}>
+                <input
+                  class={classes.creditNameInput}
+                  type="text"
+                  placeholder="Credited as"
+                  value={draftCreditNames()[place.gid] ?? ''}
+                  onInput={e => {
+                    const value = (e.currentTarget as HTMLInputElement).value;
+                    setDraftCreditNames(prev => ({...prev, [place.gid]: value}));
+                  }}
+                  disabled={isCreating()}
+                />
+                <Button
+                  class={`button ${classes.addPlaceButton}`}
+                  onClick={() => {
+                    const draft = draftCreditNames()[place.gid] ?? '';
+                    const creditName = draft.trim() || undefined;
+                    addAndSelectPlace({...place, creditName});
+                    setSearchResults(prev => prev.filter((_, i) => i !== index()));
+                    setStatus({message: `Added place: ${creditName ?? place.name}`, kind: 'info'});
+                  }}
+                  disabled={isCreating()}
+                >
                   Add
                 </Button>
               </div>
@@ -247,31 +229,75 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
         <div class={classes.placesList}>
           <For each={availablePlaces()}>
             {place => (
-              <label class={classes.placeOption}>
+              <div class={classes.placeOption}>
                 <input
                   type="checkbox"
+                  aria-label={place.creditName ?? place.name}
                   checked={selectedPlaces().has(place.gid)}
                   onChange={() => togglePlace(place.gid)}
                   disabled={isCreating()}
                 />
-                {place.name}
-              </label>
+                <a href={`/place/${place.gid}`}>{place.creditName ?? place.name}</a>
+              </div>
             )}
           </For>
         </div>
       </Show>
-      <div class="buttons">
-        <Button
-          class="button"
-          onClick={() => void handleScaffold()}
-          disabled={isCreating() || (singleDayMode() && selectedPlaceIds().length === 0)}
-        >
-          {isCreating()
-            ? 'Creating...'
-            : singleDayMode()
-              ? 'Create Festival Place Sub-events'
-              : 'Create Festival Day Sub-events'}
-        </Button>
+      <div class={classes.actionsRow}>
+        <Show when={!singleDayMode()}>
+          <div class={classes.dayWordControl}>
+            <label>
+              {'Day word: '}
+              <select
+                value={isCustomDayWord() ? CUSTOM_SENTINEL : dayWord()}
+                onChange={e => {
+                  const value = (e.target as HTMLSelectElement).value;
+                  if (value === CUSTOM_SENTINEL) {
+                    setIsCustomDayWord(true);
+                    return;
+                  }
+
+                  setIsCustomDayWord(false);
+                  setDayWord(value);
+                  GM.setValue(DAY_WORD_STORAGE_KEY, value).catch(console.error);
+                }}
+                disabled={isCreating()}
+              >
+                <For each={DAY_WORD_PRESETS}>
+                  {preset => <option value={preset.word}>{`${preset.language} (${preset.word})`}</option>}
+                </For>
+                <option value={CUSTOM_SENTINEL}>Custom…</option>
+              </select>
+            </label>
+            <Show when={isCustomDayWord()}>
+              <input
+                type="text"
+                value={dayWord()}
+                onInput={e => {
+                  const value = (e.target as HTMLInputElement).value;
+                  setIsCustomDayWord(true);
+                  setDayWord(value);
+                  GM.setValue(DAY_WORD_STORAGE_KEY, value).catch(console.error);
+                }}
+                disabled={isCreating()}
+                style={{'margin-left': '4px', width: '6em'}}
+              />
+            </Show>
+          </div>
+        </Show>
+        <div class={`buttons ${classes.actionsButtons}`}>
+          <Button
+            class="button"
+            onClick={() => void handleScaffold()}
+            disabled={isCreating() || (singleDayMode() && selectedPlaceIds().length === 0)}
+          >
+            {isCreating()
+              ? 'Creating...'
+              : singleDayMode()
+                ? 'Create Festival Place Sub-events'
+                : 'Create Festival Day Sub-events'}
+          </Button>
+        </div>
       </div>
       <MatrixDialog
         open={isMatrixDialogOpen()}

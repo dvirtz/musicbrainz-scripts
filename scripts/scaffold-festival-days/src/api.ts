@@ -46,6 +46,7 @@ export function getLinkedPlacesFromEvent(event: MBEvent): MBPlace[] {
       gid: placeGid,
       name: place.name,
       disambiguation: typeof place.disambiguation === 'string' ? place.disambiguation : undefined,
+      creditName: relation['target-credit'],
     });
   }
 

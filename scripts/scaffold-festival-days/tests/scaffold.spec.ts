@@ -686,4 +686,106 @@ test.describe('scaffold festival days', () => {
 
     await page.unrouteAll();
   });
+
+  test('uses place credit name when creating venue sub-events for multi-day festival', async ({
+    page,
+    userscriptPage,
+    musicbrainzPage,
+    testFestivalEvent,
+    testPlaces,
+  }) => {
+    const placeIds = testPlaces.getAll();
+    const placeCreditNames = ['Credit Name 1', 'Credit Name 2'] as const;
+    const routeState = await setupScaffoldRoutes({
+      page,
+      userscriptPage,
+      testFestivalEvent,
+      testPlaces,
+      relations: placeIds.map((id, index) => ({
+        'target-type': 'place',
+        'target-credit': placeCreditNames[index] ?? TEST_PLACE_NAMES[index],
+        place: {
+          id,
+          gid: id,
+          name: TEST_PLACE_NAMES[index],
+        },
+      })),
+    });
+    await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
+
+    await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
+
+    const checkboxes = page.getByRole('checkbox');
+    const count = await checkboxes.count();
+    for (let i = 0; i < count; i++) {
+      await checkboxes.nth(i).check();
+    }
+
+    await confirmScaffoldCreation(page);
+    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+
+    const dayCount = testFestivalEvent.getDates().length;
+    const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
+
+    expect(venueEvents).toHaveLength(dayCount * placeIds.length);
+
+    for (let dayNumber = 1; dayNumber <= dayCount; dayNumber += 1) {
+      for (let i = 0; i < placeIds.length; i++) {
+        const creditName = placeCreditNames[i]!;
+        const placeId = placeIds[i]!;
+        const expectedName = `${TEST_FESTIVAL_NAME}, Day ${dayNumber}: ${creditName}`;
+        const match = venueEvents.find(event => event.name === expectedName && event.placeId === placeId);
+        expect(match).toBeDefined();
+      }
+    }
+
+    await page.unrouteAll();
+  });
+
+  test('uses place credit name when creating per-place sub-events for single-day festival', async ({
+    page,
+    userscriptPage,
+    musicbrainzPage,
+    testFestivalEvent,
+    testPlaces,
+  }) => {
+    const placeIds = testPlaces.getAll();
+    const placeCreditNames = ['Credit Name 1', 'Credit Name 2'] as const;
+    const routeState = await setupScaffoldRoutes({
+      page,
+      userscriptPage,
+      testFestivalEvent,
+      testPlaces,
+      endDate: testFestivalEvent.getBeginDate(),
+      relations: placeIds.map((id, index) => ({
+        'target-type': 'place',
+        'target-credit': placeCreditNames[index] ?? TEST_PLACE_NAMES[index],
+        place: {
+          id,
+          gid: id,
+          name: TEST_PLACE_NAMES[index],
+        },
+      })),
+    });
+    await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
+
+    await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
+
+    await confirmScaffoldCreation(page, false);
+    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+
+    const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
+
+    expect(venueEvents).toHaveLength(placeIds.length);
+
+    for (let i = 0; i < placeIds.length; i++) {
+      const creditName = placeCreditNames[i]!;
+      const placeId = placeIds[i]!;
+      const expectedName = `${TEST_FESTIVAL_NAME}: ${creditName}`;
+      const match = venueEvents.find(event => event.name === expectedName && event.placeId === placeId);
+      expect(match).toBeDefined();
+    }
+
+    await page.unrouteAll();
+  });
 });

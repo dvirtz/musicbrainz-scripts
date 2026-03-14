@@ -42,6 +42,7 @@ export interface MBPlace {
   gid: string;
   name: string;
   disambiguation?: string;
+  creditName?: string;
 }
 
 export interface DateParts {
