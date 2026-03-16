@@ -1,3 +1,7 @@
+## @dvirtz/setlistfm-musicbrainz-import-v1.7.0-beta.1 (2026-03-16)
+
+* feat(add-sub-event): add sub-event userscript and extract shared event helpers ([2be1269](https://github.com/dvirtz/musicbrainz-scripts/commit/2be1269))
+
 ## @dvirtz/setlistfm-musicbrainz-import-v1.6.5 (2026-01-21)
 
 * ci: upgrade knip and fix issues ([6008960](https://github.com/dvirtz/musicbrainz-scripts/commit/6008960))
