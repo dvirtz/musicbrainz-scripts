@@ -5,7 +5,7 @@ import {
   EVENT_PART_OF_RELATIONSHIP_TYPE_ID as PART_OF_RELATIONSHIP_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
 
-type CreatedEvent = {name: string; placeId: string | null};
+type CreatedEvent = {name: string; placeId: string | null; placeCreditName: string | null};
 
 const TEST_FESTIVAL_NAME = 'scaffold-festival-days test: Test Festival';
 const TEST_PLACE_NAMES = ['scaffold-festival-days test: Place 1', 'scaffold-festival-days test: Place 2'] as const;
@@ -108,7 +108,7 @@ async function setupScaffoldRoutes(params: {
     const gid = makeFakeGid(gidCounter);
     gidCounter += 1;
 
-    createdEvents.push({name, placeId: null});
+    createdEvents.push({name, placeId: null, placeCreditName: null});
     eventIdsByName.set(name, gid);
     eventNamesById.set(gid, name);
 
@@ -121,6 +121,7 @@ async function setupScaffoldRoutes(params: {
       edit_type?: number;
       linkTypeID?: number;
       entities?: Array<{gid?: string; entityType?: string}>;
+      entity1_credit?: string;
     }>;
 
     for (const edit of edits) {
@@ -153,6 +154,7 @@ async function setupScaffoldRoutes(params: {
         const createdEvent = createdEvents.find(event => event.name === eventName);
         if (createdEvent) {
           createdEvent.placeId = second.gid;
+          createdEvent.placeCreditName = edit.entity1_credit ?? null;
         }
       }
     }
@@ -738,6 +740,7 @@ test.describe('scaffold festival days', () => {
         const expectedName = `${TEST_FESTIVAL_NAME}, Day ${dayNumber}: ${creditName}`;
         const match = venueEvents.find(event => event.name === expectedName && event.placeId === placeId);
         expect(match).toBeDefined();
+        expect(match?.placeCreditName).toBe(creditName);
       }
     }
 
@@ -786,6 +789,7 @@ test.describe('scaffold festival days', () => {
       const expectedName = `${TEST_FESTIVAL_NAME}: ${creditName}`;
       const match = venueEvents.find(event => event.name === expectedName && event.placeId === placeId);
       expect(match).toBeDefined();
+      expect(match?.placeCreditName).toBe(creditName);
     }
 
     await page.unrouteAll();

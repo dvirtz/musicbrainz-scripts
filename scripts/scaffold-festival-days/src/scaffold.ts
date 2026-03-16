@@ -113,6 +113,7 @@ export async function scaffoldFestivalDays(params: {
         childEventGid: venueEventGid,
         parentEventGid,
         placeGid: place.gid,
+        placeCreditName: place.creditName,
         editNote: `Scaffold festival days: linked place event ${venueEventGid} to festival ${parentEventGid} and place ${place.gid}`,
       });
       if (!venueRelationshipCreated) {
@@ -181,6 +182,7 @@ export async function scaffoldFestivalDays(params: {
           childEventGid: venueEventGid,
           parentEventGid: dayEvent.gid,
           placeGid: place.gid,
+          placeCreditName: place.creditName,
           editNote: `Scaffold festival days: linked venue event ${venueEventGid} to day ${dayEvent.gid} and place ${place.gid}`,
         });
         if (!venueRelationshipCreated) {
