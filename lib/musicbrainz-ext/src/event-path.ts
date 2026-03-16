@@ -1,4 +1,4 @@
-import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
+import {MBID_REGEXP} from '#constants.ts';
 
 const EVENT_GID_REGEXP = new RegExp(`/event/(${MBID_REGEXP.source})`, 'i');
 

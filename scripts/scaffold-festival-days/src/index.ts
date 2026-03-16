@@ -1,4 +1,4 @@
-import {getEventGid} from './event.ts';
+import {getEventGid} from '@repo/musicbrainz-ext/event-path';
 import {createUI} from './ui.tsx';
 
 try {
