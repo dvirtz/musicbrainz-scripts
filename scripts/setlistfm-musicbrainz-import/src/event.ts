@@ -3,8 +3,25 @@ import {findVenue} from '#place.ts';
 import {addCoverComment as addCoverCommentOption} from '#settings.tsx';
 import {createUI} from '#ui.tsx';
 import {tryFetchJSON, tryFetchText} from '@repo/fetch/fetch';
-import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
+import {
+  EVENT_GUEST_PERFORMER_RELATIONSHIP_TYPE_ID,
+  EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
+  EVENT_MAIN_PERFORMER_RELATIONSHIP_TYPE_ID,
+  EVENT_PERFORMANCE_TIME_RELATIONSHIP_ATTRIBUTE_TYPE_ID,
+  MBID_REGEXP,
+} from '@repo/musicbrainz-ext/constants';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
+import {
+  appendEventDates,
+  appendEventEditNote,
+  appendEventName,
+  appendEventSetlist,
+  appendEventTime,
+  appendEventTypeId,
+  appendEventUrlRelationship,
+  appendRelationship,
+  appendTextRelationshipAttribute,
+} from '@repo/musicbrainz-ext/event-form';
 import {UrlRelsSearchResultsT} from '@repo/musicbrainz-ext/search-results';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {
@@ -25,13 +42,6 @@ import {
   toArray,
   zip,
 } from 'rxjs';
-
-enum GUID {
-  MainPerformer = '936c7c95-3156-3889-a062-8a0cd57f8946',
-  GuestPerformer = '292df906-98a6-307e-86e8-df01a579a321',
-  HeldAt = 'e2c6f697-07dc-38b1-be0b-83d740165532',
-  PerformanceTime = 'ebd303c3-7f57-452a-aa3b-d780ebad868d',
-}
 
 enum TypeID {
   SetlistFmUrl = '811', // MB.linkedEntities.link_type['027fce0c-c621-4fd1-b728-1678ae08f280'].id
@@ -200,14 +210,14 @@ async function submitEvent(placeMBID: string, eventMBID?: string) {
   const tour = tourName();
   if (tour) {
     // use "Tour Name: City" style
-    searchParams.append('edit-event.name', `${tour}: ${unsafeWindow.sfmPageAttributes.venue.city}`);
+    appendEventName(searchParams, `${tour}: ${unsafeWindow.sfmPageAttributes.venue.city}`);
   } else {
     // use "Artist at Venue" style
-    searchParams.append('edit-event.name', `${artistName} at ${unsafeWindow.sfmPageAttributes.venue.name}`);
+    appendEventName(searchParams, `${artistName} at ${unsafeWindow.sfmPageAttributes.venue.name}`);
   }
 
   // type
-  searchParams.append('edit-event.type_id', '1'); // Concert
+  appendEventTypeId(searchParams, '1'); // Concert
 
   const addCoverComment = await addCoverCommentOption();
 
@@ -235,49 +245,55 @@ async function submitEvent(placeMBID: string, eventMBID?: string) {
       toArray()
     )
   );
-  searchParams.append('edit-event.setlist', setlist.join('\n'));
+  appendEventSetlist(searchParams, setlist.join('\n'));
 
   // date-time
   const dateBlock = document.querySelector('.dateBlock');
   const year = dateBlock?.querySelector('.year')?.textContent ?? '';
   const month = convertMonth(dateBlock?.querySelector('.month')?.textContent ?? '');
   const day = dateBlock?.querySelector('.day')?.textContent ?? '';
-  for (const period of ['begin', 'end']) {
-    searchParams.append(`edit-event.period.${period}_date.year`, year);
-    searchParams.append(`edit-event.period.${period}_date.month`, month?.toString() ?? '');
-    searchParams.append(`edit-event.period.${period}_date.day`, day);
-  }
+  appendEventDates(searchParams, {
+    begin: {year, month: month?.toString(), day},
+    end: {year, month: month?.toString(), day},
+  });
 
   const doorTime = parseTime('.door');
-  if (doorTime) {
-    searchParams.append('edit-event.time', doorTime);
-  }
+  appendEventTime(searchParams, doorTime);
 
-  searchParams.append('edit-event.edit_note', editNoteFormat(`Imported from ${document.location.href}`));
+  appendEventEditNote(searchParams, editNoteFormat(`Imported from ${document.location.href}`));
 
-  searchParams.append('edit-event.url.0.text', document.location.href);
-  searchParams.append('edit-event.url.0.link_type_id', TypeID.SetlistFmUrl);
+  appendEventUrlRelationship(searchParams, 0, {
+    url: document.location.href,
+    linkTypeId: TypeID.SetlistFmUrl,
+  });
 
-  searchParams.append('rels.0.type', GUID.MainPerformer);
-  searchParams.append('rels.0.target', artistMBID);
-  searchParams.append('rels.0.direction', 'backward');
+  appendRelationship(searchParams, 0, {
+    type: EVENT_MAIN_PERFORMER_RELATIONSHIP_TYPE_ID,
+    target: artistMBID,
+    direction: 'backward',
+  });
   const startTime = parseTime('.start');
   if (startTime) {
-    searchParams.append('rels.0.attributes.0.type', GUID.PerformanceTime);
-    searchParams.append('rels.0.attributes.0.text_value', startTime);
+    appendTextRelationshipAttribute(searchParams, 0, 0, {
+      type: EVENT_PERFORMANCE_TIME_RELATIONSHIP_ATTRIBUTE_TYPE_ID,
+      textValue: startTime,
+    });
   }
 
-  searchParams.append('rels.1.type', GUID.HeldAt);
-  searchParams.append('rels.1.target', placeMBID);
+  appendRelationship(searchParams, 1, {
+    type: EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
+    target: placeMBID,
+  });
 
   await executePipeline(
     zip(artistMBIDCache.values(), range(0, artistMBIDCache.size)).pipe(
       mergeMap(async ([mbidPromise, index]) => [await mbidPromise, index + 2] as const),
       filter((pair): pair is [string, number] => pair[0] !== undefined),
       tap(([mbid, index]) => {
-        searchParams.append(`rels.${index}.type`, GUID.GuestPerformer);
-        searchParams.append(`rels.${index}.target`, mbid);
-        searchParams.append(`rels.${index}.direction`, 'backward');
+        appendRelationship(searchParams, index, {
+          type: EVENT_GUEST_PERFORMER_RELATIONSHIP_TYPE_ID,
+          target: mbid,
+        });
       })
     )
   );

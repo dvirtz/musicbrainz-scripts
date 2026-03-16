@@ -67,6 +67,15 @@ Scaffolds day, venue, and single-day place sub-events for festival event hierarc
 
 See the script [README](scripts/scaffold-festival-days/README.md) for more information.
 
+### Add Sub-event
+
+[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/add-sub-event.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/add-sub-event.user.js)
+[![source][badge-source]](scripts/add-sub-event/src/index.ts)
+
+Adds an `Add sub-event` link on event pages and opens a prefilled sub-event create form.
+
+See the script [README](scripts/add-sub-event/README.md) for more information.
+
 ## Development
 
 This is a TypeScript monorepo using Yarn workspaces and Turbo for build orchestration.

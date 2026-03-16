@@ -1,12 +1,14 @@
 import {test} from '#tests/fixtures/test-festival-event.ts';
 import {expect, type Page, type Request} from '@playwright/test';
+import {
+  EDIT_RELATIONSHIP_CREATE,
+  EVENT_PART_OF_RELATIONSHIP_TYPE_ID as PART_OF_RELATIONSHIP_TYPE_ID,
+} from '@repo/musicbrainz-ext/constants';
 
 type CreatedEvent = {name: string; placeId: string | null};
 
 const TEST_FESTIVAL_NAME = 'scaffold-festival-days test: Test Festival';
 const TEST_PLACE_NAMES = ['scaffold-festival-days test: Place 1', 'scaffold-festival-days test: Place 2'] as const;
-const EDIT_RELATIONSHIP_CREATE = 90;
-const PART_OF_RELATIONSHIP_TYPE_ID = 818;
 
 type RelationshipEdit = {
   child: string;

@@ -1,10 +1,13 @@
 import {fetchResponse, tryFetchJSON} from '@repo/fetch/fetch';
-import {EDIT_RELATIONSHIP_CREATE, MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
+import {
+  EDIT_RELATIONSHIP_CREATE,
+  EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
+  EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
+  MBID_REGEXP,
+} from '@repo/musicbrainz-ext/constants';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
 import type {MBEvent, MBPlace} from './types.ts';
 
-const HELD_AT_RELATIONSHIP_TYPE_ID = 794;
-const PART_OF_RELATIONSHIP_TYPE_ID = 818;
 const PLACE_URL_REGEXP = new RegExp(`/place/(${MBID_REGEXP.source})`, 'i');
 
 type MBPlaceSearchResponse = {
@@ -171,7 +174,7 @@ export async function createEventRelationships(params: {
   if (parentEventGid) {
     edits.push({
       edit_type: EDIT_RELATIONSHIP_CREATE,
-      linkTypeID: PART_OF_RELATIONSHIP_TYPE_ID,
+      linkTypeID: EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
       entities: [
         {entityType: 'event', gid: parentEventGid, name: ''},
         {entityType: 'event', gid: childEventGid, name: ''},
@@ -186,7 +189,7 @@ export async function createEventRelationships(params: {
   if (placeGid) {
     edits.push({
       edit_type: EDIT_RELATIONSHIP_CREATE,
-      linkTypeID: HELD_AT_RELATIONSHIP_TYPE_ID,
+      linkTypeID: EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
       entities: [
         {entityType: 'event', gid: childEventGid, name: ''},
         {entityType: 'place', gid: placeGid, name: ''},
