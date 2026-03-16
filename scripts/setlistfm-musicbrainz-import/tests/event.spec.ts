@@ -72,12 +72,12 @@ test.describe('event page @allow_fail', () => {
       ],
       ['edit-event.url.0.text', `${baseURL}/setlist/elton-john/2022/enterprise-center-st-louis-mo-4389530f.html`],
       ['edit-event.url.0.link_type_id', '811'],
-      ['rels.0.type', '936c7c95-3156-3889-a062-8a0cd57f8946'],
+      ['rels.0.type', '798'],
       ['rels.0.target', 'b83bc61f-8451-4a5d-8b8e-7e9ed295e822'],
-      ['rels.0.direction', 'backward'],
-      ['rels.0.attributes.0.type', 'ebd303c3-7f57-452a-aa3b-d780ebad868d'],
+      ['rels.0.backward', '1'],
+      ['rels.0.attributes.0.type', '830'],
       ['rels.0.attributes.0.text_value', '20:00'],
-      ['rels.1.type', 'e2c6f697-07dc-38b1-be0b-83d740165532'],
+      ['rels.1.type', '794'],
       ['rels.1.target', '4bf41603-c878-412d-9806-65a12be6c1ab'],
     ];
 
@@ -131,10 +131,10 @@ test.describe('event page @allow_fail', () => {
         `${baseURL}/setlist/artificial-joy/1991/whisky-a-go-go-west-hollywood-ca-1b85add4.html`,
       ],
       ['edit-event.url.0.link_type_id', '811'],
-      ['rels.0.type', '936c7c95-3156-3889-a062-8a0cd57f8946'],
+      ['rels.0.type', '798'],
       ['rels.0.target', '37a715c9-b344-4850-b195-756e972d83bc'],
-      ['rels.0.direction', 'backward'],
-      ['rels.1.type', 'e2c6f697-07dc-38b1-be0b-83d740165532'],
+      ['rels.0.backward', '1'],
+      ['rels.1.type', '794'],
       ['rels.1.target', '414283ed-c2a6-4e27-93cb-3663ab2ac3e9'],
     ]);
   });
