@@ -44,12 +44,14 @@ export function getLinkedPlacesFromEvent(event: MBEvent): MBPlace[] {
     const placeGid = place.gid || place.id;
 
     // Deduplicate by gid in case the event has multiple relations to the same place.
+    const creditName = relation['target-credit']?.trim() || undefined;
+
     uniquePlaces.set(placeGid, {
       id: place.id,
       gid: placeGid,
       name: place.name,
       disambiguation: typeof place.disambiguation === 'string' ? place.disambiguation : undefined,
-      creditName: relation['target-credit'],
+      creditName: creditName,
     });
   }
 
