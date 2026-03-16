@@ -4,7 +4,7 @@ import {expect} from '@playwright/test';
 const PLACE_GID = '4bf41603-c878-412d-9806-65a12be6c1ab';
 
 test.describe('add-sub-event', () => {
-  test('adds link as first item and seeds date + place relationships', async ({
+  test('adds link as first item and seeds create-event form fields + relationships', async ({
     page,
     musicbrainzPage,
     testParentEvent,
@@ -51,38 +51,36 @@ test.describe('add-sub-event', () => {
     const seededUrl = new URL(href!, baseURL);
 
     expect(seededUrl.pathname).toBe('/event/create');
-    expect(seededUrl.searchParams.get('edit-event.edit_note')).toBe(
+
+    await addSubEventLink.click();
+    await expect(page).toHaveURL(/\/event\/create\?/);
+
+    await expect(page.getByRole('textbox', {name: 'Begin date:'})).toHaveValue(TestParentEvent.beginDate.year);
+    await expect(page.getByRole('textbox', {name: 'MM'}).first()).toHaveValue(TestParentEvent.beginDate.month);
+    await expect(page.getByRole('textbox', {name: 'DD'}).first()).toHaveValue(TestParentEvent.beginDate.day);
+    await expect(page.getByRole('textbox', {name: 'End date:'})).toHaveValue(TestParentEvent.endDate.year);
+    await expect(page.getByRole('textbox', {name: 'MM'}).nth(1)).toHaveValue(TestParentEvent.endDate.month);
+    await expect(page.getByRole('textbox', {name: 'DD'}).nth(1)).toHaveValue(TestParentEvent.endDate.day);
+
+    await expect(page.getByRole('textbox', {name: 'Edit note:'})).toHaveValue(
       `----\nCreated from ${baseURL}/event/${testParentEvent.gid} using userscript version 1.0.0 from https://homepage.com.`
     );
-    expect(seededUrl.searchParams.get('edit-event.period.begin_date.year')).toBe(TestParentEvent.beginDate.year);
-    expect(seededUrl.searchParams.get('edit-event.period.begin_date.month')).toBe(TestParentEvent.beginDate.month);
-    expect(seededUrl.searchParams.get('edit-event.period.begin_date.day')).toBe(TestParentEvent.beginDate.day);
-    expect(seededUrl.searchParams.get('edit-event.period.end_date.year')).toBe(TestParentEvent.endDate.year);
-    expect(seededUrl.searchParams.get('edit-event.period.end_date.month')).toBe(TestParentEvent.endDate.month);
-    expect(seededUrl.searchParams.get('edit-event.period.end_date.day')).toBe(TestParentEvent.endDate.day);
-    expect(seededUrl.searchParams.get('rels.0.type')).toBe('818');
-    expect(seededUrl.searchParams.get('rels.0.target')).toBe(testParentEvent.gid);
-    expect(seededUrl.searchParams.get('rels.0.backward')).toBe('1');
-    expect(seededUrl.searchParams.get('rels.1.type')).toBe('794');
-    expect(seededUrl.searchParams.get('rels.1.target')).toBe(PLACE_GID);
 
-    if (process.env.DOCS_SCREENSHOTS === '1') {
-      await page.screenshot({
-        path: 'assets/workflow-event-sidebar.png',
-        fullPage: true,
-      });
+    const partOfRow = page.getByRole('row', {name: /part of:/i});
+    await expect(partOfRow).toBeAttached();
+    await expect(partOfRow).toContainText('add-sub-event test: Parent Event');
+    await expect(partOfRow.getByRole('link')).toHaveAttribute('href', `/event/${testParentEvent.gid}`);
 
-      await addSubEventLink.click();
-      await expect(page).toHaveURL(/\/event\/create\?/);
-
-      await page.screenshot({
-        path: 'assets/workflow-event-create.png',
-        fullPage: true,
-      });
-    }
+    const heldAtRow = page.getByRole('row', {name: /held at:/i});
+    await expect(heldAtRow).toBeAttached();
+    await expect(heldAtRow.getByRole('link')).toHaveAttribute('href', `/place/${PLACE_GID}`);
   });
 
-  test('preserves place credit name from parent event', async ({page, musicbrainzPage, testParentEvent, baseURL}) => {
+  test('preserves place credit name in seeded create-event relationships', async ({
+    page,
+    musicbrainzPage,
+    testParentEvent,
+  }) => {
     const PLACE_CREDIT = 'The Venue (credited name)';
 
     await page.route(`**/ws/2/event/${testParentEvent.gid}?*`, async route => {
@@ -110,15 +108,15 @@ test.describe('add-sub-event', () => {
 
     await musicbrainzPage.userscriptPage.goto(`/event/${testParentEvent.gid}`);
 
-    const href = await page.locator('#add-sub-event-link').getAttribute('href');
-    expect(href).not.toBeNull();
-    const seededUrl = new URL(href!, baseURL);
+    await page.locator('#add-sub-event-link').click();
+    await expect(page).toHaveURL(/\/event\/create\?/);
 
-    expect(seededUrl.searchParams.get('rels.1.target')).toBe(PLACE_GID);
-    expect(seededUrl.searchParams.get('rels.1.targetCredit')).toBe(PLACE_CREDIT);
+    const heldAtRow = page.getByRole('row', {name: /held at:/i});
+    await expect(heldAtRow).toContainText(PLACE_CREDIT);
+    await expect(heldAtRow.getByRole('link')).toHaveAttribute('href', `/place/${PLACE_GID}`);
   });
 
-  test('seeds without held-at when parent has no places', async ({page, musicbrainzPage, testParentEvent, baseURL}) => {
+  test('seeds without held-at when parent has no places', async ({page, musicbrainzPage, testParentEvent}) => {
     await page.route(`**/ws/2/event/${testParentEvent.gid}?*`, async route => {
       await route.fulfill({
         json: {
@@ -135,12 +133,13 @@ test.describe('add-sub-event', () => {
 
     await musicbrainzPage.userscriptPage.goto(`/event/${testParentEvent.gid}`);
 
-    const href = await page.locator('#add-sub-event-link').getAttribute('href');
-    expect(href).not.toBeNull();
-    const seededUrl = new URL(href!, baseURL);
+    await page.locator('#add-sub-event-link').click();
+    await expect(page).toHaveURL(/\/event\/create\?/);
 
-    expect(seededUrl.searchParams.get('rels.0.target')).toBe(testParentEvent.gid);
-    expect(seededUrl.searchParams.get('rels.1.type')).toBeNull();
+    const partOfRow = page.getByRole('row', {name: /part of:/i});
+    await expect(partOfRow).toBeAttached();
+    await expect(partOfRow.getByRole('link')).toHaveAttribute('href', `/event/${testParentEvent.gid}`);
+    await expect(page.getByRole('row', {name: /held at:/i})).toHaveCount(0);
   });
 
   test('falls back to appending in editing links list when merge link is missing', async ({

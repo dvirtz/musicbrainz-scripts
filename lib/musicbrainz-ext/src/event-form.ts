@@ -70,7 +70,7 @@ export function appendRelationship(
   // event part-of rel direction is not seeded
   // https://tickets.metabrainz.org/browse/MBS-14299
   appendIfValue(searchParams, `${base}.backward`, relationship.direction === 'backward' ? '1' : undefined);
-  appendIfValue(searchParams, `${base}.targetCredit`, relationship.targetCredit);
+  appendIfValue(searchParams, `${base}.target_credit`, relationship.targetCredit);
 }
 
 export function appendTextRelationshipAttribute(

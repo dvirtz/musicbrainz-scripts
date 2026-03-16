@@ -159,9 +159,10 @@ export async function createEventRelationships(params: {
   childEventGid: string;
   parentEventGid?: string;
   placeGid?: string;
+  placeCreditName?: string;
   editNote: string;
 }): Promise<boolean> {
-  const {childEventGid, parentEventGid, placeGid, editNote} = params;
+  const {childEventGid, parentEventGid, placeGid, placeCreditName, editNote} = params;
 
   const edits: Array<{
     edit_type: number;
@@ -198,7 +199,7 @@ export async function createEventRelationships(params: {
       ],
       attributes: [],
       entity0_credit: '',
-      entity1_credit: '',
+      entity1_credit: placeCreditName ?? '',
       ended: false,
     });
   }
