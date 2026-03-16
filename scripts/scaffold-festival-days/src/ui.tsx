@@ -1,3 +1,5 @@
+// cspell:words returnto
+
 import {Button} from '@kobalte/core/button';
 import {ToolLine} from '@repo/common-ui/tool-line';
 import {toolbox} from '@repo/common-ui/toolbox';
@@ -21,6 +23,11 @@ const CONTAINER_ID = 'scaffold-festival-days-toolbox';
 
 function isUserLoggedIn(documentRef: Document = document): boolean {
   return Boolean(documentRef.querySelector('a[href="/logout"], a[href^="/logout?"]'));
+}
+
+function loginUrlWithReturnTo(locationRef: Location = window.location): string {
+  const returnTo = `${locationRef.pathname}${locationRef.search}${locationRef.hash}`;
+  return `/login?returnto=${encodeURIComponent(returnTo)}`;
 }
 
 const CUSTOM_SENTINEL = '__custom__';
@@ -139,6 +146,11 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
 
   const handleScaffold = () => {
     if (isCreating()) {
+      return;
+    }
+
+    if (!isUserLoggedIn(document)) {
+      window.location.assign(loginUrlWithReturnTo());
       return;
     }
 
@@ -330,7 +342,7 @@ export async function createUI(eventGid: string) {
 
   const event = await fetchEvent(eventGid);
 
-  if (!shouldShowScaffoldUI(event) || !isUserLoggedIn(document)) {
+  if (!shouldShowScaffoldUI(event)) {
     return;
   }
 
