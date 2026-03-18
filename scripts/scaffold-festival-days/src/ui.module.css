@@ -50,7 +50,7 @@
 
 .actionsRow {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   flex-wrap: wrap;
   gap: 0.75rem;
 }
@@ -75,6 +75,11 @@
   gap: 0.25rem;
 }
 
+.customDayWordInput {
+  width: 6em;
+}
+
 .actionsButtons {
   margin-left: auto;
+  align-self: flex-end;
 }

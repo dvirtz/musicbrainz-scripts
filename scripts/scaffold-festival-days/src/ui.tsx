@@ -265,7 +265,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
             class={classes.customEditNoteInput}
             value={customEditNote()}
             onInput={event => setCustomEditNote(event.currentTarget.value)}
-            rows={2}
+            rows={3}
             disabled={isCreating()}
           />
         </div>
@@ -293,20 +293,21 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
               </For>
               <option value={CUSTOM_SENTINEL}>Custom…</option>
             </select>
-            <Show when={isCustomDayWord()}>
-              <input
-                type="text"
-                value={dayWord()}
-                onInput={e => {
-                  const value = (e.target as HTMLInputElement).value;
-                  setIsCustomDayWord(true);
-                  setDayWord(value);
-                  GM.setValue(DAY_WORD_STORAGE_KEY, value).catch(console.error);
-                }}
-                disabled={isCreating()}
-                style={{'margin-left': '4px', width: '6em'}}
-              />
-            </Show>
+            <input
+              class={classes.customDayWordInput}
+              type="text"
+              value={dayWord()}
+              onInput={e => {
+                const value = (e.target as HTMLInputElement).value;
+                setIsCustomDayWord(true);
+                setDayWord(value);
+                GM.setValue(DAY_WORD_STORAGE_KEY, value).catch(console.error);
+              }}
+              disabled={isCreating() || !isCustomDayWord()}
+              style={{visibility: isCustomDayWord() ? 'visible' : 'hidden'}}
+              aria-hidden={!isCustomDayWord()}
+              tabindex={isCustomDayWord() ? 0 : -1}
+            />
           </div>
         </Show>
         <div class={`buttons ${classes.actionsButtons}`}>
