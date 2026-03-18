@@ -395,21 +395,20 @@ test.describe('scaffold festival days', () => {
     for (let dayNumber = 1; dayNumber <= dayCount; dayNumber += 1) {
       const dayName = `${festivalName}, Day ${dayNumber}`;
       const dayId = routeState.eventIdsByName.get(dayName) ?? '';
-      const hasFestivalLink = routeState.relationships.some(
-        rel =>
-          rel.child === dayId &&
-          rel.parent === expectedFestivalParentId &&
-          rel.linkTypeID === PART_OF_RELATIONSHIP_TYPE_ID
-      );
-      expect(hasFestivalLink).toBe(true);
+      expect(routeState.relationships).toContainEqual({
+        child: dayId,
+        parent: expectedFestivalParentId,
+        linkTypeID: PART_OF_RELATIONSHIP_TYPE_ID,
+      });
 
       for (const place of places) {
         const venueName = `${festivalName}, Day ${dayNumber}: ${place.name}`;
         const venueId = routeState.eventIdsByName.get(venueName) ?? '';
-        const hasDayLink = routeState.relationships.some(
-          rel => rel.child === venueId && rel.parent === dayId && rel.linkTypeID === PART_OF_RELATIONSHIP_TYPE_ID
-        );
-        expect(hasDayLink).toBe(true);
+        expect(routeState.relationships).toContainEqual({
+          child: venueId,
+          parent: dayId,
+          linkTypeID: PART_OF_RELATIONSHIP_TYPE_ID,
+        });
       }
     }
 
@@ -735,12 +734,12 @@ test.describe('scaffold festival days', () => {
 
     for (let dayNumber = 1; dayNumber <= dayCount; dayNumber += 1) {
       for (let i = 0; i < placeIds.length; i++) {
-        const creditName = placeCreditNames[i]!;
-        const placeId = placeIds[i]!;
-        const expectedName = `${TEST_FESTIVAL_NAME}, Day ${dayNumber}: ${creditName}`;
-        const match = venueEvents.find(event => event.name === expectedName && event.placeId === placeId);
-        expect(match).toBeDefined();
-        expect(match?.placeCreditName).toBe(creditName);
+        const placeCreditName = placeCreditNames[i];
+        expect(venueEvents).toContainEqual({
+          name: `${TEST_FESTIVAL_NAME}, Day ${dayNumber}: ${placeCreditName}`,
+          placeCreditName,
+          placeId: placeIds[i],
+        });
       }
     }
 
@@ -784,12 +783,12 @@ test.describe('scaffold festival days', () => {
     expect(venueEvents).toHaveLength(placeIds.length);
 
     for (let i = 0; i < placeIds.length; i++) {
-      const creditName = placeCreditNames[i]!;
-      const placeId = placeIds[i]!;
-      const expectedName = `${TEST_FESTIVAL_NAME}: ${creditName}`;
-      const match = venueEvents.find(event => event.name === expectedName && event.placeId === placeId);
-      expect(match).toBeDefined();
-      expect(match?.placeCreditName).toBe(creditName);
+      const placeCreditName = placeCreditNames[i];
+      expect(venueEvents).toContainEqual({
+        name: `${TEST_FESTIVAL_NAME}: ${placeCreditName}`,
+        placeCreditName,
+        placeId: placeIds[i],
+      });
     }
 
     await page.unrouteAll();

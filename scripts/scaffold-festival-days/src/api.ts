@@ -6,6 +6,15 @@ import {
   MBID_REGEXP,
 } from '@repo/musicbrainz-ext/constants';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
+import {
+  appendEventCancelled,
+  appendEventComment,
+  appendEventDates,
+  appendEventEditNote,
+  appendEventEnded,
+  appendEventName,
+  appendEventSetlist,
+} from '@repo/musicbrainz-ext/event-form';
 import type {MBEvent, MBPlace} from './types.ts';
 
 const PLACE_URL_REGEXP = new RegExp(`/place/(${MBID_REGEXP.source})`, 'i');
@@ -111,21 +120,19 @@ export async function createSubEvent(params: {
   end: {year: string; month: string; day: string};
   editNote: string;
 }): Promise<string | null> {
-  const {name, begin, end, editNote: editNoteMessage} = params;
+  const {name, begin, end, editNote} = params;
 
   const formData = new URLSearchParams();
-  formData.append('edit-event.name', name);
-  formData.append('edit-event.comment', '');
-  formData.append('edit-event.setlist', '');
-  formData.append('edit-event.period.begin_date.year', begin.year);
-  formData.append('edit-event.period.begin_date.month', begin.month);
-  formData.append('edit-event.period.begin_date.day', begin.day);
-  formData.append('edit-event.period.end_date.year', end.year);
-  formData.append('edit-event.period.end_date.month', end.month);
-  formData.append('edit-event.period.end_date.day', end.day);
-  formData.append('edit-event.period.ended', '0');
-  formData.append('edit-event.cancelled', '0');
-  formData.append('edit-event.edit_note', editNoteFormat(editNoteMessage));
+  appendEventName(formData, name);
+  appendEventComment(formData, '');
+  appendEventSetlist(formData, '');
+  appendEventDates(formData, {
+    begin,
+    end,
+  });
+  appendEventEnded(formData, end !== undefined);
+  appendEventCancelled(formData, false);
+  appendEventEditNote(formData, editNoteFormat(editNote));
 
   try {
     const response = await fetchResponse('/event/create', {

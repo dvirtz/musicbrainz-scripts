@@ -8,12 +8,24 @@ export function appendEventName(searchParams: URLSearchParams, name: string) {
   searchParams.append('edit-event.name', name);
 }
 
+export function appendEventComment(searchParams: URLSearchParams, comment: string) {
+  searchParams.append('edit-event.comment', comment);
+}
+
 export function appendEventTypeId(searchParams: URLSearchParams, typeId: string | number) {
   searchParams.append('edit-event.type_id', String(typeId));
 }
 
 export function appendEventSetlist(searchParams: URLSearchParams, setlist: string) {
   searchParams.append('edit-event.setlist', setlist);
+}
+
+export function appendEventEnded(searchParams: URLSearchParams, ended: boolean) {
+  searchParams.append('edit-event.period.ended', ended ? '1' : '0');
+}
+
+export function appendEventCancelled(searchParams: URLSearchParams, cancelled: boolean) {
+  searchParams.append('edit-event.cancelled', cancelled ? '1' : '0');
 }
 
 export function appendEventTime(searchParams: URLSearchParams, time: string | undefined) {
