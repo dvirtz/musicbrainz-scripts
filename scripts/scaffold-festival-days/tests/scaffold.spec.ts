@@ -2,6 +2,7 @@ import {test} from '#tests/fixtures/test-festival-event.ts';
 import {expect, type Page, type Request} from '@playwright/test';
 import {
   EDIT_RELATIONSHIP_CREATE,
+  EVENT_HELD_AT_RELATIONSHIP_TYPE_ID as HELD_AT_RELATIONSHIP_TYPE_ID,
   EVENT_PART_OF_RELATIONSHIP_TYPE_ID as PART_OF_RELATIONSHIP_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
 
@@ -16,9 +17,17 @@ type RelationshipEdit = {
   linkTypeID: number;
 };
 
+type PlaceRelationshipEdit = {
+  event: string;
+  place: string;
+  linkTypeID: number;
+  placeCreditName: string | null;
+};
+
 type ScaffoldRouteState = {
   createdEvents: CreatedEvent[];
   relationships: RelationshipEdit[];
+  placeRelationships: PlaceRelationshipEdit[];
   eventIdsByName: Map<string, string>;
   eventNamesById: Map<string, string>;
 };
@@ -60,6 +69,7 @@ async function setupScaffoldRoutes(params: {
     params;
   const createdEvents: CreatedEvent[] = [];
   const relationships: RelationshipEdit[] = [];
+  const placeRelationships: PlaceRelationshipEdit[] = [];
   const eventIdsByName = new Map<string, string>();
   const eventNamesById = new Map<string, string>();
   let gidCounter = 1;
@@ -145,7 +155,18 @@ async function setupScaffoldRoutes(params: {
         continue;
       }
 
-      if (first.entityType === 'event' && second.entityType === 'place') {
+      if (
+        edit.linkTypeID === HELD_AT_RELATIONSHIP_TYPE_ID &&
+        first.entityType === 'event' &&
+        second.entityType === 'place'
+      ) {
+        placeRelationships.push({
+          event: first.gid,
+          place: second.gid,
+          linkTypeID: edit.linkTypeID,
+          placeCreditName: edit.entity1_credit || null,
+        });
+
         const eventName = eventNamesById.get(first.gid);
         if (!eventName) {
           continue;
@@ -162,7 +183,7 @@ async function setupScaffoldRoutes(params: {
     await route.fulfill({json: {edits: []}});
   });
 
-  return {createdEvents, relationships, eventIdsByName, eventNamesById};
+  return {createdEvents, relationships, placeRelationships, eventIdsByName, eventNamesById};
 }
 
 test.describe('scaffold festival days', () => {
@@ -729,16 +750,28 @@ test.describe('scaffold festival days', () => {
 
     const dayCount = testFestivalEvent.getDates().length;
     const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
+    const expectedVenueRelationshipCount = dayCount * placeIds.length;
 
-    expect(venueEvents).toHaveLength(dayCount * placeIds.length);
+    expect(venueEvents).toHaveLength(expectedVenueRelationshipCount);
+    expect(routeState.placeRelationships).toHaveLength(expectedVenueRelationshipCount);
 
     for (let dayNumber = 1; dayNumber <= dayCount; dayNumber += 1) {
       for (let i = 0; i < placeIds.length; i++) {
         const placeCreditName = placeCreditNames[i];
+        const venueName = `${TEST_FESTIVAL_NAME}, Day ${dayNumber}: ${placeCreditName}`;
+        const venueId = routeState.eventIdsByName.get(venueName) ?? '';
+
         expect(venueEvents).toContainEqual({
-          name: `${TEST_FESTIVAL_NAME}, Day ${dayNumber}: ${placeCreditName}`,
+          name: venueName,
           placeCreditName,
           placeId: placeIds[i],
+        });
+
+        expect(routeState.placeRelationships).toContainEqual({
+          event: venueId,
+          place: placeIds[i],
+          linkTypeID: HELD_AT_RELATIONSHIP_TYPE_ID,
+          placeCreditName,
         });
       }
     }
@@ -781,13 +814,24 @@ test.describe('scaffold festival days', () => {
     const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
 
     expect(venueEvents).toHaveLength(placeIds.length);
+    expect(routeState.placeRelationships).toHaveLength(placeIds.length);
 
     for (let i = 0; i < placeIds.length; i++) {
       const placeCreditName = placeCreditNames[i];
+      const venueName = `${TEST_FESTIVAL_NAME}: ${placeCreditName}`;
+      const venueId = routeState.eventIdsByName.get(venueName) ?? '';
+
       expect(venueEvents).toContainEqual({
-        name: `${TEST_FESTIVAL_NAME}: ${placeCreditName}`,
+        name: venueName,
         placeCreditName,
         placeId: placeIds[i],
+      });
+
+      expect(routeState.placeRelationships).toContainEqual({
+        event: venueId,
+        place: placeIds[i],
+        linkTypeID: HELD_AT_RELATIONSHIP_TYPE_ID,
+        placeCreditName,
       });
     }
 
