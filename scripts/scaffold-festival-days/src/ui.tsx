@@ -44,6 +44,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
   const [status, setStatus] = createSignal<StatusMessage | null>(null);
   const [dayWord, setDayWord] = createSignal(props.dayWord);
   const [isCustomDayWord, setIsCustomDayWord] = createSignal(!DAY_WORD_PRESETS.some(p => p.word === props.dayWord));
+  const [customEditNote, setCustomEditNote] = createSignal('');
 
   const selectedPlaceIds = createMemo(() => Array.from(selectedPlaces()));
   const eventDates = createMemo<DateParts[]>(() => deriveDates(props.event));
@@ -130,6 +131,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
       selectedDayPlaceKeys,
       onStatus: setStatus,
       dayWord: dayWord(),
+      customEditNote: customEditNote(),
     });
 
     setIsCreating(false);
@@ -256,31 +258,41 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
         </div>
       </Show>
       <div class={classes.actionsRow}>
+        <div class={classes.customEditNoteControl}>
+          <label for="scaffold-festival-days-custom-edit-note">Edit note (optional):</label>
+          <textarea
+            id="scaffold-festival-days-custom-edit-note"
+            class={classes.customEditNoteInput}
+            value={customEditNote()}
+            onInput={event => setCustomEditNote(event.currentTarget.value)}
+            rows={2}
+            disabled={isCreating()}
+          />
+        </div>
         <Show when={!singleDayMode()}>
           <div class={classes.dayWordControl}>
-            <label>
-              {'Day word: '}
-              <select
-                value={isCustomDayWord() ? CUSTOM_SENTINEL : dayWord()}
-                onChange={e => {
-                  const value = (e.target as HTMLSelectElement).value;
-                  if (value === CUSTOM_SENTINEL) {
-                    setIsCustomDayWord(true);
-                    return;
-                  }
+            <label for="scaffold-festival-days-day-word">Day word:</label>
+            <select
+              id="scaffold-festival-days-day-word"
+              value={isCustomDayWord() ? CUSTOM_SENTINEL : dayWord()}
+              onChange={e => {
+                const value = (e.target as HTMLSelectElement).value;
+                if (value === CUSTOM_SENTINEL) {
+                  setIsCustomDayWord(true);
+                  return;
+                }
 
-                  setIsCustomDayWord(false);
-                  setDayWord(value);
-                  GM.setValue(DAY_WORD_STORAGE_KEY, value).catch(console.error);
-                }}
-                disabled={isCreating()}
-              >
-                <For each={DAY_WORD_PRESETS}>
-                  {preset => <option value={preset.word}>{`${preset.language} (${preset.word})`}</option>}
-                </For>
-                <option value={CUSTOM_SENTINEL}>Custom…</option>
-              </select>
-            </label>
+                setIsCustomDayWord(false);
+                setDayWord(value);
+                GM.setValue(DAY_WORD_STORAGE_KEY, value).catch(console.error);
+              }}
+              disabled={isCreating()}
+            >
+              <For each={DAY_WORD_PRESETS}>
+                {preset => <option value={preset.word}>{`${preset.language} (${preset.word})`}</option>}
+              </For>
+              <option value={CUSTOM_SENTINEL}>Custom…</option>
+            </select>
             <Show when={isCustomDayWord()}>
               <input
                 type="text"

@@ -1,3 +1,4 @@
+import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
 import {createEventRelationships, createPartOfRelationship, createSubEvent} from './api.ts';
 import type {DateParts, MBEvent, MBPlace} from './types.ts';
 
@@ -66,8 +67,18 @@ export async function scaffoldFestivalDays(params: {
   selectedDayPlaceKeys?: string[];
   onStatus: (status: StatusMessage) => void;
   dayWord?: string;
+  customEditNote?: string;
 }): Promise<boolean> {
-  const {event, places, selectedPlaceIds, selectedDayPlaceKeys, onStatus, dayWord = 'Day'} = params;
+  const {event, places, selectedPlaceIds, selectedDayPlaceKeys, onStatus, dayWord = 'Day', customEditNote} = params;
+  const buildEditNote = (generatedScriptNote: string) => {
+    const formattedGeneratedScriptNote = editNoteFormat(generatedScriptNote);
+    const trimmedCustomEditNote = customEditNote?.trim();
+    if (!trimmedCustomEditNote) {
+      return formattedGeneratedScriptNote;
+    }
+
+    return `${trimmedCustomEditNote}\n\n${formattedGeneratedScriptNote}`;
+  };
   const parentEventGid = event.gid || event.id;
   const dates = deriveDates(event);
   const allowedDayPlaceKeys = selectedDayPlaceKeys ? new Set(selectedDayPlaceKeys) : null;
@@ -101,7 +112,9 @@ export async function scaffoldFestivalDays(params: {
         name: venueName,
         begin: singleDate,
         end: singleDate,
-        editNote: `Scaffold festival days: created place event for single-day festival (${parentEventGid})`,
+        editNote: buildEditNote(
+          `Scaffold festival days: created place event for single-day festival (${parentEventGid})`
+        ),
       });
 
       if (!venueEventGid) {
@@ -114,7 +127,9 @@ export async function scaffoldFestivalDays(params: {
         parentEventGid,
         placeGid: place.gid,
         placeCreditName: place.creditName,
-        editNote: `Scaffold festival days: linked place event ${venueEventGid} to festival ${parentEventGid} and place ${place.gid}`,
+        editNote: buildEditNote(
+          `Scaffold festival days: linked place event ${venueEventGid} to festival ${parentEventGid} and place ${place.gid}`
+        ),
       });
       if (!venueRelationshipCreated) {
         onStatus({message: `Failed to create relationships for ${venueName}.`, kind: 'error'});
@@ -136,7 +151,7 @@ export async function scaffoldFestivalDays(params: {
       name: dayName,
       begin: date,
       end: date,
-      editNote: `Scaffold festival days: created day for festival (${parentEventGid})`,
+      editNote: buildEditNote(`Scaffold festival days: created day for festival (${parentEventGid})`),
     });
 
     if (!dayEventGid) {
@@ -147,7 +162,7 @@ export async function scaffoldFestivalDays(params: {
     const dayRelationshipCreated = await createPartOfRelationship({
       childEventGid: dayEventGid,
       parentEventGid,
-      editNote: `Scaffold festival days: linked day ${dayEventGid} to festival ${parentEventGid}`,
+      editNote: buildEditNote(`Scaffold festival days: linked day ${dayEventGid} to festival ${parentEventGid}`),
     });
     if (!dayRelationshipCreated) {
       onStatus({message: `Failed to create part-of relationship for ${dayName}.`, kind: 'error'});
@@ -171,7 +186,7 @@ export async function scaffoldFestivalDays(params: {
           name: venueName,
           begin: dayEvent.date,
           end: dayEvent.date,
-          editNote: `Scaffold festival days: created venue day for ${dayEvent.gid}`,
+          editNote: buildEditNote(`Scaffold festival days: created venue day for ${dayEvent.gid}`),
         });
 
         if (!venueEventGid) {
@@ -183,7 +198,9 @@ export async function scaffoldFestivalDays(params: {
           parentEventGid: dayEvent.gid,
           placeGid: place.gid,
           placeCreditName: place.creditName,
-          editNote: `Scaffold festival days: linked venue event ${venueEventGid} to day ${dayEvent.gid} and place ${place.gid}`,
+          editNote: buildEditNote(
+            `Scaffold festival days: linked venue event ${venueEventGid} to day ${dayEvent.gid} and place ${place.gid}`
+          ),
         });
         if (!venueRelationshipCreated) {
           onStatus({message: `Failed to create relationships for ${venueName}.`, kind: 'error'});

@@ -30,6 +30,8 @@ type ScaffoldRouteState = {
   placeRelationships: PlaceRelationshipEdit[];
   eventIdsByName: Map<string, string>;
   eventNamesById: Map<string, string>;
+  createEventEditNotes: string[];
+  createRelationshipEditNotes: string[];
 };
 
 type TestEventDate = {year: string; month: string; day: string};
@@ -72,6 +74,8 @@ async function setupScaffoldRoutes(params: {
   const placeRelationships: PlaceRelationshipEdit[] = [];
   const eventIdsByName = new Map<string, string>();
   const eventNamesById = new Map<string, string>();
+  const createEventEditNotes: string[] = [];
+  const createRelationshipEditNotes: string[] = [];
   let gidCounter = 1;
 
   const formatDate = (date: {year: string; month: string; day: string}) => `${date.year}-${date.month}-${date.day}`;
@@ -115,6 +119,7 @@ async function setupScaffoldRoutes(params: {
   await page.route('**/event/create', async (route, request) => {
     const postData = await userscriptPage.postDataJSON(request);
     const name = String(postData['edit-event.name'] ?? '');
+    createEventEditNotes.push(String(postData['edit-event.edit_note'] ?? ''));
     const gid = makeFakeGid(gidCounter);
     gidCounter += 1;
 
@@ -127,6 +132,7 @@ async function setupScaffoldRoutes(params: {
 
   await page.route('**/ws/js/edit/create', async (route, request) => {
     const postData = await userscriptPage.postDataJSON(request);
+    createRelationshipEditNotes.push(String(postData['editNote'] ?? ''));
     const edits = (postData['edits'] ?? []) as Array<{
       edit_type?: number;
       linkTypeID?: number;
@@ -183,7 +189,15 @@ async function setupScaffoldRoutes(params: {
     await route.fulfill({json: {edits: []}});
   });
 
-  return {createdEvents, relationships, placeRelationships, eventIdsByName, eventNamesById};
+  return {
+    createdEvents,
+    relationships,
+    placeRelationships,
+    eventIdsByName,
+    eventNamesById,
+    createEventEditNotes,
+    createRelationshipEditNotes,
+  };
 }
 
 test.describe('scaffold festival days', () => {
@@ -707,6 +721,43 @@ test.describe('scaffold festival days', () => {
 
     const stored = await page.evaluate(() => localStorage.getItem('day-word'));
     expect(stored).toBe(JSON.stringify('Jour'));
+
+    await page.unrouteAll();
+  });
+
+  test('prepends custom edit note text to generated edit notes', async ({
+    page,
+    userscriptPage,
+    musicbrainzPage,
+    testFestivalEvent,
+    testPlaces,
+  }) => {
+    const routeState = await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
+
+    await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
+
+    await page
+      .getByLabel('Edit note (optional):')
+      .fill('Reviewed source schedule and linked all generated sub-events.');
+
+    await confirmScaffoldCreation(page);
+    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+
+    expect(routeState.createEventEditNotes.length).toBeGreaterThan(0);
+    expect(routeState.createRelationshipEditNotes.length).toBeGreaterThan(0);
+
+    for (const editNote of routeState.createEventEditNotes) {
+      expect(editNote).toContain(
+        'Reviewed source schedule and linked all generated sub-events.\n\n----\nScaffold festival days:'
+      );
+    }
+
+    for (const editNote of routeState.createRelationshipEditNotes) {
+      expect(editNote).toContain(
+        'Reviewed source schedule and linked all generated sub-events.\n\n----\nScaffold festival days:'
+      );
+    }
 
     await page.unrouteAll();
   });

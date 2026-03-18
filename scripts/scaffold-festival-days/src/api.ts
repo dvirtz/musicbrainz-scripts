@@ -5,7 +5,6 @@ import {
   EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
   MBID_REGEXP,
 } from '@repo/musicbrainz-ext/constants';
-import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
 import {
   appendEventCancelled,
   appendEventComment,
@@ -132,7 +131,7 @@ export async function createSubEvent(params: {
   });
   appendEventEnded(formData, end !== undefined);
   appendEventCancelled(formData, false);
-  appendEventEditNote(formData, editNoteFormat(editNote));
+  appendEventEditNote(formData, editNote);
 
   try {
     const response = await fetchResponse('/event/create', {
@@ -218,7 +217,7 @@ export async function createEventRelationships(params: {
   const payload = {
     edits,
     makeVotable: false,
-    editNote: editNoteFormat(editNote),
+    editNote,
   };
 
   try {
