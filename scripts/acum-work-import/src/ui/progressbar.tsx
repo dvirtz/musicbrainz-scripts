@@ -1,6 +1,6 @@
+import classes from '#ui/progressbar.module.css';
 import {Progress} from '@kobalte/core/progress';
 import {ComponentProps, Show, splitProps} from 'solid-js';
-import classes from './progressbar.module.css';
 
 export function ProgressBar(props: ComponentProps<typeof Progress> & {label: string}) {
   const [local, root] = splitProps(props, ['label']);
