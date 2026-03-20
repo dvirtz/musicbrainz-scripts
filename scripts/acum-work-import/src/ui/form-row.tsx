@@ -8,8 +8,8 @@
  * later version: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
+import classes from '#ui/work-edit-dialog.module.css';
 import {mergeProps, ParentProps} from 'solid-js';
-import classes from './work-edit-dialog.module.css';
 
 export function FormRow(
   props: ParentProps & {

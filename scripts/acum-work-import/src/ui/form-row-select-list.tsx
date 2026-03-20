@@ -11,11 +11,11 @@
 import {FieldErrors} from '#ui/field-errors.tsx';
 import {FormRow} from '#ui/form-row.tsx';
 import {SelectField} from '#ui/select-field.tsx';
+import classes from '#ui/work-edit-dialog.module.css';
 import {RepeatableFieldT} from '@repo/musicbrainz-ext/create-field';
 import {MaybeGroupedOptionsT} from '@repo/musicbrainz-ext/get-select-value';
 import {For, JSX, mergeProps} from 'solid-js';
 import {FieldT} from 'typedbrainz/types';
-import classes from './work-edit-dialog.module.css';
 
 export function FormRowSelectList<S extends {id: number}>(props: {
   addId: string;

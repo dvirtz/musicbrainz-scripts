@@ -3,6 +3,7 @@ import {medleyWorkRelationships, importWork as tryImportWork} from '#import-work
 import {updateMedleyWorkRelationship} from '#relationships.ts';
 import {replaceSubmitButton, submitWork} from '#submit.ts';
 import {ImportForm} from '#ui/import-form.tsx';
+import {ProgressBar} from '#ui/progressbar.tsx';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {assertMBTree, assertNonReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
@@ -13,7 +14,6 @@ import {endWith, filter, from, map, mergeMap, scan, tap} from 'rxjs';
 import {createSignal, Setter} from 'solid-js';
 import {render} from 'solid-js/web';
 import {RelationshipStateT, WorkT} from 'typedbrainz/types';
-import {ProgressBar} from './progressbar.tsx';
 
 function AcumImporter(props: {form: HTMLFormElement}) {
   const {addWarning, clearWarnings} = useWarnings();
