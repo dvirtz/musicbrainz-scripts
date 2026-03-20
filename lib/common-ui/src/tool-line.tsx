@@ -1,5 +1,5 @@
+import classes from '#tool-line.module.css';
 import {ParentProps} from 'solid-js';
-import classes from './tool-line.module.css';
 
 export function ToolLine(props: ParentProps<{title: string; direction?: 'horizontal' | 'vertical'}>) {
   const className =

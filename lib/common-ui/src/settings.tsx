@@ -1,9 +1,9 @@
+import classes from '#settings.module.css';
+import style from '#settings.module.css?inline';
 import {Checkbox as CheckboxRoot} from '@kobalte/core/checkbox';
 import {Dialog} from '@kobalte/core/dialog';
 import {ComponentProps, createResource, createSignal, For, splitProps} from 'solid-js';
 import {render} from 'solid-js/web';
-import classes from './settings.module.css';
-import style from './settings.module.css?inline';
 
 export type SettingsDialogOptions = {
   name: string;

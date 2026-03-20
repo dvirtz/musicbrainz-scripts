@@ -13,13 +13,13 @@ import {FormRow} from '#ui/form-row.tsx';
 import {SelectBox} from '#ui/select-box.tsx';
 import {WorkAttributes} from '#ui/work-attributes.tsx';
 import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
+import classes from '#ui/work-edit-dialog.module.css';
 import {WorkISWCsEditor} from '#ui/work-iswcs-editor.tsx';
 import {WorkLanguageEditor} from '#ui/work-language-editor.tsx';
 import {Popover} from '@kobalte/core/popover';
 import {buildOptionList} from '@repo/musicbrainz-ext/build-options-list';
 import {parseIntegerOrNull} from '@repo/musicbrainz-ext/parse-integer-or-null';
 import {createSignal, onCleanup} from 'solid-js';
-import classes from './work-edit-dialog.module.css';
 
 export function WorkEditDialog(props: {onSubmit: () => void}) {
   const {liveEditData, setEditData, isModified, workName, submitUrl, saveEditData, restoreEditData, workId, workTypes} =

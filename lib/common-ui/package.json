@@ -4,6 +4,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "imports": {
+    "#*": "./src/*"
+  },
   "exports": {
     "./settings": "./src/settings.tsx",
     "./toolbox": "./src/toolbox.tsx",

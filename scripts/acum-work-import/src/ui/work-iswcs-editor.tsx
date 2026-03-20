@@ -1,8 +1,8 @@
 import {FormRow} from '#ui/form-row.tsx';
 import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
+import classes from '#ui/work-edit-dialog.module.css';
 import {removeAtIndex} from '@repo/common/remove-at-index';
 import {For} from 'solid-js';
-import classes from './work-edit-dialog.module.css';
 
 export function WorkISWCsEditor() {
   const {liveEditData, setEditData} = useWorkEditData();
