@@ -1,4 +1,5 @@
 import {useWorkEditData, WorkEditDataProvider} from '#ui/work-edit-data-provider.tsx';
+import classes from '#ui/work-edit-dialog.module.css';
 import {WorkEditDialog} from '#ui/work-edit-dialog.tsx';
 import {WorkEditData} from '#work-edit-data.ts';
 import {isNewWork, workLink} from '#works.ts';
@@ -6,7 +7,6 @@ import {workLanguages, workTypes} from '@repo/musicbrainz-ext/type-info';
 import {createEffect, createSignal, Show} from 'solid-js';
 import {render} from 'solid-js/web';
 import {WorkT} from 'typedbrainz/types';
-import classes from './work-edit-dialog.module.css';
 
 function WorkEditor(props: {work: WorkT; parent: Element}) {
   const isNew = isNewWork(props.work);

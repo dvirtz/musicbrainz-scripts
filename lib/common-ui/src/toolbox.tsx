@@ -1,4 +1,4 @@
-import classes from './toolbox.module.css';
+import classes from '#toolbox.module.css';
 
 export function toolbox(
   doc: Document,

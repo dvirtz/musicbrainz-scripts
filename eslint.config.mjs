@@ -1,4 +1,5 @@
 import {default as eslint, default as pluginJs} from '@eslint/js';
+import eslintPluginNoRelativeImportPaths from 'eslint-plugin-no-relative-import-paths';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
 import tsEslint from 'typescript-eslint';
@@ -42,6 +43,20 @@ export default tsEslint.config(
     extends: [tsEslint.configs.disableTypeChecked],
     languageOptions: {
       sourceType: 'module',
+    },
+  },
+  {
+    plugins: {
+      'no-relative-import-paths': eslintPluginNoRelativeImportPaths,
+    },
+    rules: {
+      'no-relative-import-paths/no-relative-import-paths': ['error', {allowSameFolder: false}],
+    },
+  },
+  {
+    files: ['**/*config*.ts', '**/*config*.mjs'],
+    rules: {
+      'no-relative-import-paths/no-relative-import-paths': 'off',
     },
   }
 );
