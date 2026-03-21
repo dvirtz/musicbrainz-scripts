@@ -24,4 +24,8 @@
   "css.lint.validProperties": [
     "composes"
   ],
+  // https://github.com/DavidAnson/vscode-markdownlint/issues/422
+  "json.schemaDownload.trustedDomains": {
+    "https://raw.githubusercontent.com/DavidAnson/markdownlint/": true
+  },
 }
