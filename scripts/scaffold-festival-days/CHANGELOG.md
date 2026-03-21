@@ -1,3 +1,8 @@
+## @dvirtz/scaffold-festival-days-v1.0.0-beta.5 (2026-03-21)
+
+* fix(scaffold-festival-days): relative imports ([d7ee3bd](https://github.com/dvirtz/musicbrainz-scripts/commit/d7ee3bd))
+* feat(scaffold-festival-days): update UI layout and screenshots ([fd6865c](https://github.com/dvirtz/musicbrainz-scripts/commit/fd6865c))
+
 ## @dvirtz/scaffold-festival-days-v1.0.0-beta.4 (2026-03-18)
 
 * feat(scaffold-festival-days): add custom edit note functionality and improve UI layout ([128422f](https://github.com/dvirtz/musicbrainz-scripts/commit/128422f))
