@@ -1,0 +1,51 @@
+.detailsWrapper {
+  margin-top: 0.25em;
+
+  .detailsTable {
+    margin-top: 0.5em;
+    margin-left: 1em;
+    width: calc(100% - 1em);
+    box-sizing: border-box;
+    table-layout: fixed;
+
+    col:first-child {
+      width: auto;
+    }
+
+    col.typeColumn {
+      width: 80px;
+    }
+
+    col.dateColumn {
+      width: 100px;
+    }
+
+    col.spacerColumn {
+      width: 20px;
+    }
+
+    .detailsCell {
+      padding: 0;
+    }
+
+    .quickLinksCell {
+      padding: 0.75em 0;
+    }
+
+    .errorCell {
+      color: #f00;
+    }
+
+  }
+}
+
+.toggleButton {
+  cursor: pointer;
+  margin-right: 4px;
+  color: #777;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font-size: 1em;
+  line-height: 1;
+}
