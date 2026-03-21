@@ -1,5 +1,5 @@
 import {getEventGid} from '@repo/musicbrainz-ext/event-path';
-import {createUI} from './ui.tsx';
+import {createUI} from '#ui.tsx';
 
 try {
   const eventGid = getEventGid();

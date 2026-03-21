@@ -6,18 +6,18 @@ import {toolbox} from '@repo/common-ui/toolbox';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import {createMemo, createSignal, For, Show} from 'solid-js';
 import {render} from 'solid-js/web';
-import {extractPlaceGid, fetchEvent, fetchPlaceByGid, getLinkedPlacesFromEvent, searchPlaces} from './api.ts';
-import {DAY_WORD_PRESETS, DAY_WORD_STORAGE_KEY, DEFAULT_DAY_WORD} from './day-word.ts';
-import {MatrixDialog} from './matrix-dialog.tsx';
+import {extractPlaceGid, fetchEvent, fetchPlaceByGid, getLinkedPlacesFromEvent, searchPlaces} from '#api.ts';
+import {DAY_WORD_PRESETS, DAY_WORD_STORAGE_KEY, DEFAULT_DAY_WORD} from '#day-word.ts';
+import {MatrixDialog} from '#matrix-dialog.tsx';
 import {
   deriveDates,
   isSingleDayFestival,
   scaffoldFestivalDays,
   shouldShowScaffoldUI,
   type StatusMessage,
-} from './scaffold.ts';
-import type {DateParts, MBEvent, MBPlace} from './types.ts';
-import classes from './ui.module.css';
+} from '#scaffold.ts';
+import type {DateParts, MBEvent, MBPlace} from '#types.ts';
+import classes from '#ui.module.css';
 
 const CONTAINER_ID = 'scaffold-festival-days-toolbox';
 

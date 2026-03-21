@@ -1,6 +1,6 @@
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
-import {createEventRelationships, createPartOfRelationship, createSubEvent} from './api.ts';
-import type {DateParts, MBEvent, MBPlace} from './types.ts';
+import {createEventRelationships, createPartOfRelationship, createSubEvent} from '#api.ts';
+import type {DateParts, MBEvent, MBPlace} from '#types.ts';
 
 export interface StatusMessage {
   message: string;
