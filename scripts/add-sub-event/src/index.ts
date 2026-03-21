@@ -1,7 +1,6 @@
+import {injectAddSubEventLink} from '#sidebar-link.ts';
 import {getEventGid} from '@repo/musicbrainz-ext/event-path';
-import {fetchParentEventSeedData} from './event.ts';
-import {seedEvent} from './seed-event.ts';
-import {injectAddSubEventLink} from './sidebar-link.ts';
+import {fetchParentEventSeedData, seedEvent} from '@repo/musicbrainz-ext/event-seed';
 
 async function main() {
   const eventGid = getEventGid();

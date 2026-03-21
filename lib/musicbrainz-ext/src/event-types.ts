@@ -33,6 +33,10 @@ export interface MBEvent {
       name?: string;
       type?: string;
       'type-id'?: string;
+      'life-span'?: {
+        begin?: string;
+        end?: string;
+      };
     };
   }>;
 }
