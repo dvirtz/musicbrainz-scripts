@@ -1,7 +1,7 @@
 import {Button} from '@kobalte/core/button';
 import {createEffect, createSignal, For, Show} from 'solid-js';
-import classes from './matrix-dialog.module.css';
-import type {DateParts, MBPlace} from './types.ts';
+import classes from '#matrix-dialog.module.css';
+import type {DateParts, MBPlace} from '#types.ts';
 
 export function MatrixDialog(props: {
   open: boolean;

@@ -14,7 +14,7 @@ import {
   appendEventName,
   appendEventSetlist,
 } from '@repo/musicbrainz-ext/event-form';
-import type {MBEvent, MBPlace} from './types.ts';
+import type {MBEvent, MBPlace} from '#types.ts';
 
 const PLACE_URL_REGEXP = new RegExp(`/place/(${MBID_REGEXP.source})`, 'i');
 
