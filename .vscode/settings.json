@@ -20,5 +20,9 @@
     "common-ui",
     "single-language-tracklist"
   ],
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  // https://github.com/DavidAnson/vscode-markdownlint/issues/422
+  "json.schemaDownload.trustedDomains": {
+    "https://raw.githubusercontent.com/DavidAnson/markdownlint/": true
+  },
 }
