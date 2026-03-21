@@ -76,6 +76,17 @@ Adds an `Add sub-event` link on event pages and opens a prefilled sub-event crea
 
 See the script [README](scripts/add-sub-event/README.md) for more information.
 
+### Expand events
+
+[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/expand-events.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/expand-events.user.js)
+[![source][badge-source]](scripts/expand-events/src/index.ts)
+
+Expands and collapses child sub-events inline on event pages, with recursive details and global controls.
+
+![expand events](scripts/expand-events/assets/expand-events-expanded.png)
+
+See the script [README](scripts/expand-events/README.md) for more information.
+
 ## Development
 
 This is a TypeScript monorepo using Yarn workspaces and Turbo for build orchestration.
