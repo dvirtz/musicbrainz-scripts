@@ -1,3 +1,8 @@
+## @dvirtz/add-sub-event-v1.0.0-beta.2 (2026-03-21)
+
+* feat(expand-events): add userscript to expand sub-events ([b01d267](https://github.com/dvirtz/musicbrainz-scripts/commit/b01d267))
+* fix(add-sub-event,scaffold-festival-days): pass place credit ([3c101b7](https://github.com/dvirtz/musicbrainz-scripts/commit/3c101b7))
+
 ## @dvirtz/add-sub-event-v1.0.0-beta.1 (2026-03-16)
 
 * feat(add-sub-event): add sub-event userscript and extract shared event helpers ([2be1269](https://github.com/dvirtz/musicbrainz-scripts/commit/2be1269))
