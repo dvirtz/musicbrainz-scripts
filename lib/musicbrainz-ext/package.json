@@ -14,6 +14,7 @@
     "./edits": "./src/edits.ts",
     "./event-form": "./src/event-form.ts",
     "./event-path": "./src/event-path.ts",
+    "./event-seed": "./src/event-seed.ts",
     "./event-types": "./src/event-types.ts",
     "./fetch": "./src/fetch.ts",
     "./format-iswc": "./src/format-iswc.ts",
