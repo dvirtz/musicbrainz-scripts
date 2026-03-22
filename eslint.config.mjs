@@ -54,7 +54,7 @@ export default tsEslint.config(
     },
   },
   {
-    files: ['**/*config*.ts', '**/*config*.js'],
+    files: ['**/*config*.ts', '**/*config*.mjs'],
     rules: {
       'no-relative-import-paths/no-relative-import-paths': 'off',
     },
