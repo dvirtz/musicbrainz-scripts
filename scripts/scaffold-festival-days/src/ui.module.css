@@ -1,6 +1,30 @@
-.placesList {
+/* ── shared base classes ─────────────────────────────────────── */
+
+/* vertical flex list */
+.columnList {
   display: flex;
   flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* three-column place-row grid: name | credit | action */
+.placeRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 10em auto;
+  align-items: center;
+}
+
+/* vertical label + control stack */
+.columnControl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* ── component classes ───────────────────────────────────────── */
+
+.placesList {
+  composes: columnList;
   gap: 0.25rem;
 }
 
@@ -14,16 +38,8 @@
   min-width: 0;
 }
 
-.searchResults {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
 .searchResultRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 10em auto;
-  align-items: center;
+  composes: placeRow;
   gap: 0.5rem;
 }
 
@@ -42,7 +58,8 @@
   justify-self: start;
 }
 
-.placeOption {
+.placeOptionContent {
+  grid-column: 1 / span 2;
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -56,9 +73,7 @@
 }
 
 .customEditNoteControl {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  composes: columnControl;
   flex: 1;
   min-width: 16rem;
 }
@@ -69,10 +84,8 @@
 }
 
 .dayWordControl {
-  display: flex;
-  flex-direction: column;
+  composes: columnControl;
   align-items: flex-start;
-  gap: 0.25rem;
 }
 
 .customDayWordInput {

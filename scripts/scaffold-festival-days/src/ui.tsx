@@ -1,11 +1,5 @@
 // cspell:words returnto
 
-import {Button} from '@kobalte/core/button';
-import {ToolLine} from '@repo/common-ui/tool-line';
-import {toolbox} from '@repo/common-ui/toolbox';
-import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
-import {createMemo, createSignal, For, Show} from 'solid-js';
-import {render} from 'solid-js/web';
 import {extractPlaceGid, fetchEvent, fetchPlaceByGid, getLinkedPlacesFromEvent, searchPlaces} from '#api.ts';
 import {DAY_WORD_PRESETS, DAY_WORD_STORAGE_KEY, DEFAULT_DAY_WORD} from '#day-word.ts';
 import {MatrixDialog} from '#matrix-dialog.tsx';
@@ -18,6 +12,12 @@ import {
 } from '#scaffold.ts';
 import type {DateParts, MBEvent, MBPlace} from '#types.ts';
 import classes from '#ui.module.css';
+import {Button} from '@kobalte/core/button';
+import {ToolLine} from '@repo/common-ui/tool-line';
+import {toolbox} from '@repo/common-ui/toolbox';
+import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
+import {createMemo, createSignal, For, Show} from 'solid-js';
+import {render} from 'solid-js/web';
 
 const CONTAINER_ID = 'scaffold-festival-days-toolbox';
 
@@ -79,6 +79,17 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
     const nextSelected = new Set(selectedPlaces());
     nextSelected.add(place.gid);
     setSelectedPlaces(nextSelected);
+  };
+
+  const removePlace = (placeGid: string) => {
+    const place = availablePlaces().find(p => p.gid === placeGid);
+    setAvailablePlaces(prev => prev.filter(p => p.gid !== placeGid));
+    const next = new Set(selectedPlaces());
+    next.delete(placeGid);
+    setSelectedPlaces(next);
+    if (place && !searchResults().some(r => r.gid === placeGid)) {
+      setSearchResults(prev => [...prev, place]);
+    }
   };
 
   const handleFindPlace = async () => {
@@ -191,7 +202,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
         </Button>
       </div>
       <Show when={searchResults().length > 0}>
-        <div class={classes.searchResults}>
+        <div class={classes.columnList}>
           <For each={searchResults()}>
             {(place, index) => (
               <div class={classes.searchResultRow}>
@@ -212,8 +223,9 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
                   }}
                   disabled={isCreating()}
                 />
-                <Button
-                  class={`button ${classes.addPlaceButton}`}
+                <button
+                  class={'icon add-item'}
+                  title={'Add'}
                   onClick={() => {
                     const draft = draftCreditNames()[place.gid] ?? '';
                     const creditName = draft.trim() || undefined;
@@ -222,9 +234,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
                     setStatus({message: `Added place: ${creditName ?? place.name}`, kind: 'info'});
                   }}
                   disabled={isCreating()}
-                >
-                  Add
-                </Button>
+                />
               </div>
             )}
           </For>
@@ -243,26 +253,34 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
         <div class={classes.placesList}>
           <For each={availablePlaces()}>
             {place => (
-              <div class={classes.placeOption}>
-                <input
-                  type="checkbox"
-                  aria-label={place.creditName ?? place.name}
-                  checked={selectedPlaces().has(place.gid)}
-                  onChange={() => togglePlace(place.gid)}
+              <div class={classes.placeRow}>
+                <span class={classes.placeOptionContent}>
+                  <input
+                    type="checkbox"
+                    aria-label={place.creditName ?? place.name}
+                    checked={selectedPlaces().has(place.gid)}
+                    onChange={() => togglePlace(place.gid)}
+                    disabled={isCreating()}
+                  />
+                  <a href={`/place/${place.gid}`}>{place.creditName ?? place.name}</a>
+                </span>
+                <button
+                  class={`nobutton icon remove-item`}
+                  onClick={() => removePlace(place.gid)}
                   disabled={isCreating()}
+                  aria-label={`Remove ${place.creditName ?? place.name}`}
                 />
-                <a href={`/place/${place.gid}`}>{place.creditName ?? place.name}</a>
               </div>
             )}
           </For>
         </div>
       </Show>
       <div class={classes.actionsRow}>
-        <div class={classes.customEditNoteControl}>
+        <div class={`${classes.customEditNoteControl}`}>
           <label for="scaffold-festival-days-custom-edit-note">Edit note (optional):</label>
           <textarea
             id="scaffold-festival-days-custom-edit-note"
-            class={classes.customEditNoteInput}
+            class={`edit-note ${classes.customEditNoteInput}`}
             value={customEditNote()}
             onInput={event => setCustomEditNote(event.currentTarget.value)}
             rows={3}

@@ -25,4 +25,7 @@
   "json.schemaDownload.trustedDomains": {
     "https://raw.githubusercontent.com/DavidAnson/markdownlint/": true
   },
+  "css.lint.validProperties": [
+    "composes"
+  ],
 }
