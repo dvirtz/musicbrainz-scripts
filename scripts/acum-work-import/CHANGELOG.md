@@ -1,3 +1,10 @@
+## @dvirtz/acum-work-import-v1.20.6 (2026-03-22)
+
+* chore: enforce no relative imports ([b6adfe9](https://github.com/dvirtz/musicbrainz-scripts/commit/b6adfe9))
+* ci: allow ACUM tests to fail ([ce9bfba](https://github.com/dvirtz/musicbrainz-scripts/commit/ce9bfba))
+* refactor(acum-work-import): use constants available in typedbrainz ([a5ec077](https://github.com/dvirtz/musicbrainz-scripts/commit/a5ec077))
+* refactor(musicbrainz-ext): move waiting for editor state to library ([5280567](https://github.com/dvirtz/musicbrainz-scripts/commit/5280567))
+
 ## @dvirtz/acum-work-import-v1.20.5 (2026-01-28)
 
 * fix(acum-work-import): existing artists are still added ([d42e88b](https://github.com/dvirtz/musicbrainz-scripts/commit/d42e88b)), closes [#159](https://github.com/dvirtz/musicbrainz-scripts/issues/159)
