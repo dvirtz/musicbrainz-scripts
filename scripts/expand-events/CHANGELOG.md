@@ -1,3 +1,7 @@
+## @dvirtz/expand-events-v1.0.0 (2026-03-22)
+
+* feat(expand-events): add userscript to expand sub-events ([6b6da70](https://github.com/dvirtz/musicbrainz-scripts/commit/6b6da70))
+
 # Changelog
 
 All notable changes to `@dvirtz/expand-events` will be documented in this file.
