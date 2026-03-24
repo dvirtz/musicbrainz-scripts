@@ -340,8 +340,11 @@ test.describe('scaffold festival days', () => {
     }
 
     // Click the scaffold button
+    const refreshDialogPromise = page.waitForEvent('dialog');
     await confirmScaffoldCreation(page);
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    const refreshDialog = await refreshDialogPromise;
+    expect(refreshDialog.message()).toContain('Refresh the page now');
+    await refreshDialog.dismiss();
 
     const festivalName = TEST_FESTIVAL_NAME;
     const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
