@@ -8,20 +8,14 @@
     box-sizing: border-box;
     table-layout: fixed;
 
-    col:first-child {
-      width: auto;
+    td:first-child {
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
     }
 
-    col.typeColumn {
-      width: 80px;
-    }
-
-    col.dateColumn {
-      width: 100px;
-    }
-
-    col.spacerColumn {
-      width: 20px;
+    td:last-child {
+      width: 8em;
     }
 
     .detailsCell {

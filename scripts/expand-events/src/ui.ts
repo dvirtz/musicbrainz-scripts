@@ -84,6 +84,10 @@ function createTextCell(text: string) {
   return cell;
 }
 
+function createOptionalTextCell(text: string | undefined) {
+  return createTextCell(text ?? '');
+}
+
 function formatDateRange(beginDate?: string, endDate?: string): string {
   if (beginDate && endDate) {
     return beginDate === endDate ? beginDate : `${beginDate} → ${endDate}`;
@@ -95,18 +99,6 @@ function formatDateRange(beginDate?: string, endDate?: string): string {
 function createIndentedTable() {
   const table = document.createElement('table');
   table.className = `tbl ${classes.detailsTable}`;
-
-  const colgroup = document.createElement('colgroup');
-  const columnClasses = ['', classes.typeColumn, classes.dateColumn, classes.spacerColumn];
-  columnClasses.forEach(columnClass => {
-    const col = document.createElement('col');
-    if (columnClass) {
-      col.className = columnClass;
-    }
-    colgroup.appendChild(col);
-  });
-  table.appendChild(colgroup);
-
   return table;
 }
 
@@ -291,7 +283,7 @@ class EventToggle implements ToggleController {
       table.appendChild(this.renderLeafSummaryRow(details));
     }
 
-    table.appendChild(createQuickLinksRow(details, this.context, 4));
+    table.appendChild(createQuickLinksRow(details, this.context, 2));
     return table;
   }
 
@@ -306,9 +298,8 @@ class EventToggle implements ToggleController {
       const link = createLink(`/event/${childEvent.gid}`, childEvent.name);
       titleCell.appendChild(link);
       row.appendChild(titleCell);
-      row.appendChild(createTextCell(childEvent.type!));
-      row.appendChild(createTextCell(formatDateRange(childEvent.beginDate, childEvent.endDate)));
-      row.appendChild(createTextCell(''));
+      const timeOrDate = childEvent.time || formatDateRange(childEvent.beginDate, childEvent.endDate);
+      row.appendChild(createTextCell(timeOrDate));
       table.appendChild(row);
 
       const controller = new EventToggle({
@@ -338,9 +329,7 @@ class EventToggle implements ToggleController {
   private renderLeafSummaryRow(details: EventDetails) {
     const row = document.createElement('tr');
     row.appendChild(createTextCell(details.places.join(', ')));
-    row.appendChild(createTextCell(details.type!));
-    row.appendChild(createTextCell(formatDateRange(details.beginDate, details.endDate)));
-    row.appendChild(createTextCell(''));
+    row.appendChild(createOptionalTextCell(details.type));
     return row;
   }
 }
