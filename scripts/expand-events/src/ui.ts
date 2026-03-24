@@ -320,6 +320,19 @@ class EventToggle implements ToggleController {
       this.childControllers.push(controller);
       this.context.allControllers.add(controller);
     }
+
+    // Pre-fetch event details for all child events to improve responsiveness
+    this.prefetchChildDetails(childEvents);
+  }
+
+  private prefetchChildDetails(childEvents: ChildEventSummary[]) {
+    for (const childEvent of childEvents) {
+      const existing = this.context.detailsCache.get(childEvent.gid);
+      if (!existing) {
+        const request = fetchEventDetails(childEvent.gid);
+        this.context.detailsCache.set(childEvent.gid, request);
+      }
+    }
   }
 
   private renderLeafSummaryRow(details: EventDetails) {

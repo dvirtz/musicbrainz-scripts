@@ -18,7 +18,8 @@
   "editor.formatOnSave": true,
   "conventionalCommits.scopes": [
     "common-ui",
-    "single-language-tracklist"
+    "single-language-tracklist",
+    "expand-events"
   ],
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "css.lint.validProperties": [
