@@ -27,7 +27,7 @@ function hasChildSubEvents(event: MBEvent): boolean {
 }
 
 export function shouldShowScaffoldUI(event: MBEvent | null): event is MBEvent {
-  return event != null && event.type === 'Festival' && deriveDates(event).length > 0 && !hasChildSubEvents(event);
+  return event != null && deriveDates(event).length > 0 && !hasChildSubEvents(event);
 }
 
 export function isSingleDayFestival(event: MBEvent): boolean {
