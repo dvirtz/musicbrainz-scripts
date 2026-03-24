@@ -1,3 +1,8 @@
+## @dvirtz/expand-events-v1.1.0-beta.1 (2026-03-24)
+
+* perf(expand-events): prefetch child events ([e9af9f7](https://github.com/dvirtz/musicbrainz-scripts/commit/e9af9f7))
+* feat(expand-events): add time column and sort by it ([82348aa](https://github.com/dvirtz/musicbrainz-scripts/commit/82348aa))
+
 ## @dvirtz/expand-events-v1.0.0 (2026-03-22)
 
 * feat(expand-events): add userscript to expand sub-events ([6b6da70](https://github.com/dvirtz/musicbrainz-scripts/commit/6b6da70))
