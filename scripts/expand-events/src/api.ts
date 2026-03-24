@@ -10,6 +10,7 @@ export type ChildEventSummary = {
   type?: string;
   beginDate?: string;
   endDate?: string;
+  time?: string;
 };
 
 export type EventDetails = {
@@ -19,6 +20,7 @@ export type EventDetails = {
   status?: string;
   beginDate?: string;
   endDate?: string;
+  time?: string;
   places: string[];
   seedData: ParentEventSeedData;
   childEvents: ChildEventSummary[];
@@ -46,6 +48,24 @@ function formatStatus(event: MBEvent): string | undefined {
   }
 
   return undefined;
+}
+
+function normalizeTime(value?: string): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
+}
+
+function compareOptionalStrings(a?: string, b?: string): number {
+  if (!a && !b) {
+    return 0;
+  }
+  if (!a) {
+    return 1;
+  }
+  if (!b) {
+    return -1;
+  }
+  return a.localeCompare(b, undefined, {sensitivity: 'base'});
 }
 
 function normalizePlaceLabel(relation: MBEventRelation): string | null {
@@ -84,10 +104,23 @@ function parseChildEvents(relations: ReadonlyArray<MBEventRelation>): ChildEvent
       type: relation.event?.type,
       beginDate: relation.event?.['life-span']?.begin,
       endDate: relation.event?.['life-span']?.end,
+      time: normalizeTime(relation.event?.time),
     });
   }
 
-  return children;
+  return children.sort((a, b) => {
+    const byDate = compareOptionalStrings(a.beginDate, b.beginDate);
+    if (byDate !== 0) {
+      return byDate;
+    }
+
+    const byTime = compareOptionalStrings(a.time, b.time);
+    if (byTime !== 0) {
+      return byTime;
+    }
+
+    return a.name.localeCompare(b.name, undefined, {sensitivity: 'base'});
+  });
 }
 
 export async function fetchEventDetails(eventGid: string): Promise<EventDetails | null> {
@@ -117,6 +150,7 @@ export async function fetchEventDetails(eventGid: string): Promise<EventDetails 
     status: formatStatus(event),
     beginDate: event['life-span']?.begin,
     endDate: event['life-span']?.end,
+    time: normalizeTime(event.time),
     places: Array.from(places),
     seedData,
     childEvents: parseChildEvents(event.relations ?? []),

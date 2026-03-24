@@ -4,6 +4,7 @@ export interface MBEvent {
   name: string;
   type?: string;
   'type-id'?: string;
+  time?: string;
   cancelled?: boolean;
   'life-span'?: {
     begin?: string;
@@ -33,6 +34,7 @@ export interface MBEvent {
       name?: string;
       type?: string;
       'type-id'?: string;
+      time?: string;
       'life-span'?: {
         begin?: string;
         end?: string;
