@@ -61,7 +61,7 @@ See the script [README](scripts/single-language-tracklist/README.md) for more in
 [![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/scaffold-festival-days.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/scaffold-festival-days.user.js)
 [![source][badge-source]](scripts/scaffold-festival-days/src/index.ts)
 
-Scaffolds day, venue, and single-day place sub-events for festival event hierarchies.
+Scaffolds and stage sub-events for festival event hierarchies.
 
 ![toolbox](scripts/scaffold-festival-days/assets/toolbox.png)
 
@@ -72,7 +72,7 @@ See the script [README](scripts/scaffold-festival-days/README.md) for more infor
 [![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/add-sub-event.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/add-sub-event.user.js)
 [![source][badge-source]](scripts/add-sub-event/src/index.ts)
 
-Adds an `Add sub-event` link on event pages and opens a prefilled sub-event create form.
+Adds an `Add sub-event` link on event pages and seeds an event page with parent event details and relationships.
 
 See the script [README](scripts/add-sub-event/README.md) for more information.
 
