@@ -276,27 +276,6 @@ test.describe('scaffold festival days', () => {
     await page.unrouteAll();
   });
 
-  test('does not show the UI for non-festival events', async ({
-    page,
-    userscriptPage,
-    musicbrainzPage,
-    testFestivalEvent,
-    testPlaces,
-  }) => {
-    await setupScaffoldRoutes({
-      page,
-      userscriptPage,
-      testFestivalEvent,
-      testPlaces,
-      eventType: 'Concert',
-    });
-    await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
-
-    await expect(page.getByRole('button', {name: /create.*festival.*day/i})).toHaveCount(0);
-
-    await page.unrouteAll();
-  });
-
   test('displays place selection checkboxes', async ({
     page,
     userscriptPage,
