@@ -84,6 +84,10 @@ function createTextCell(text: string) {
   return cell;
 }
 
+function createOptionalTextCell(text: string | undefined) {
+  return createTextCell(text ?? '');
+}
+
 function formatDateRange(beginDate?: string, endDate?: string): string {
   if (beginDate && endDate) {
     return beginDate === endDate ? beginDate : `${beginDate} → ${endDate}`;
@@ -97,7 +101,7 @@ function createIndentedTable() {
   table.className = `tbl ${classes.detailsTable}`;
 
   const colgroup = document.createElement('colgroup');
-  const columnClasses = ['', classes.typeColumn, classes.dateColumn, classes.spacerColumn];
+  const columnClasses = ['', classes.typeColumn, classes.dateColumn, classes.timeColumn, classes.spacerColumn];
   columnClasses.forEach(columnClass => {
     const col = document.createElement('col');
     if (columnClass) {
@@ -291,7 +295,7 @@ class EventToggle implements ToggleController {
       table.appendChild(this.renderLeafSummaryRow(details));
     }
 
-    table.appendChild(createQuickLinksRow(details, this.context, 4));
+    table.appendChild(createQuickLinksRow(details, this.context, 5));
     return table;
   }
 
@@ -306,8 +310,9 @@ class EventToggle implements ToggleController {
       const link = createLink(`/event/${childEvent.gid}`, childEvent.name);
       titleCell.appendChild(link);
       row.appendChild(titleCell);
-      row.appendChild(createTextCell(childEvent.type!));
+      row.appendChild(createTextCell(''));
       row.appendChild(createTextCell(formatDateRange(childEvent.beginDate, childEvent.endDate)));
+      row.appendChild(createOptionalTextCell(childEvent.time));
       row.appendChild(createTextCell(''));
       table.appendChild(row);
 
@@ -325,8 +330,10 @@ class EventToggle implements ToggleController {
   private renderLeafSummaryRow(details: EventDetails) {
     const row = document.createElement('tr');
     row.appendChild(createTextCell(details.places.join(', ')));
-    row.appendChild(createTextCell(details.type!));
-    row.appendChild(createTextCell(formatDateRange(details.beginDate, details.endDate)));
+    row.appendChild(createTextCell(''));
+    const typeCell = createOptionalTextCell(details.type);
+    typeCell.colSpan = 2;
+    row.appendChild(typeCell);
     row.appendChild(createTextCell(''));
     return row;
   }

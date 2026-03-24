@@ -20,6 +20,10 @@
       width: 100px;
     }
 
+    col.timeColumn {
+      width: 60px;
+    }
+
     col.spacerColumn {
       width: 20px;
     }
