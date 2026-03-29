@@ -8,12 +8,5 @@
     "plugin-release-config.mjs",
     "scripts/create-script.mts"
   ],
-  "workspaces": {
-    "lib/test-support": {
-      "entry": [
-        "src/index.ts",
-        "src/userscript-manager.ts"
-      ]
-    }
-  }
+  "workspaces": {}
 }
