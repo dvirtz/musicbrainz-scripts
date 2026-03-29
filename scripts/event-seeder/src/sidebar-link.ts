@@ -1,11 +1,12 @@
 const ADD_SUB_EVENT_LINK_ID = 'add-sub-event-link';
+const DUPLICATE_EVENT_LINK_ID = 'duplicate-event-link';
 
-function createAddSubEventListItem(documentRef: Document, url: string): HTMLLIElement {
+function createListItem(documentRef: Document, id: string, href: string, text: string): HTMLLIElement {
   const listItem = documentRef.createElement('li');
   const link = documentRef.createElement('a');
-  link.id = ADD_SUB_EVENT_LINK_ID;
-  link.href = url;
-  link.textContent = 'Add sub-event';
+  link.id = id;
+  link.href = href;
+  link.textContent = text;
   listItem.appendChild(link);
   return listItem;
 }
@@ -17,7 +18,11 @@ function createSeparator(documentRef: Document) {
   return listItem;
 }
 
-export function injectAddSubEventLink(url: string, documentRef: Document = document): boolean {
+export function injectEventSidebarLinks(
+  addSubEventUrl: string,
+  duplicateEventUrl: string,
+  documentRef: Document = document
+): boolean {
   if (documentRef.getElementById(ADD_SUB_EVENT_LINK_ID)) {
     return true;
   }
@@ -31,7 +36,15 @@ export function injectAddSubEventLink(url: string, documentRef: Document = docum
     return false;
   }
 
-  sidebarLinks.insertBefore(createAddSubEventListItem(documentRef, url), firstListItem);
+  // Insert order: [add-sub-event] [duplicate-event] [separator] ... existing items
+  sidebarLinks.insertBefore(
+    createListItem(documentRef, ADD_SUB_EVENT_LINK_ID, addSubEventUrl, 'Add sub-event'),
+    firstListItem
+  );
+  sidebarLinks.insertBefore(
+    createListItem(documentRef, DUPLICATE_EVENT_LINK_ID, duplicateEventUrl, 'Duplicate event'),
+    firstListItem
+  );
   sidebarLinks.insertBefore(createSeparator(documentRef), firstListItem);
 
   return true;

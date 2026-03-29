@@ -11,17 +11,7 @@ import {
   MBID_REGEXP,
 } from '@repo/musicbrainz-ext/constants';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
-import {
-  appendEventDates,
-  appendEventEditNote,
-  appendEventName,
-  appendEventSetlist,
-  appendEventTime,
-  appendEventTypeId,
-  appendEventUrlRelationship,
-  appendRelationship,
-  appendTextRelationshipAttribute,
-} from '@repo/musicbrainz-ext/event-form';
+import {EventForm} from '@repo/musicbrainz-ext/event-form';
 import {UrlRelsSearchResultsT} from '@repo/musicbrainz-ext/search-results';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {
@@ -201,7 +191,7 @@ function toSetlist(section: Section) {
 }
 
 async function submitEvent(placeMBID: string, eventMBID?: string) {
-  const searchParams = new URLSearchParams();
+  const eventForm = new EventForm();
 
   const artistMBID = unsafeWindow.sfmPageAttributes.artist.mbid;
   const artistName = unsafeWindow.sfmPageAttributes.artist.name;
@@ -210,14 +200,14 @@ async function submitEvent(placeMBID: string, eventMBID?: string) {
   const tour = tourName();
   if (tour) {
     // use "Tour Name: City" style
-    appendEventName(searchParams, `${tour}: ${unsafeWindow.sfmPageAttributes.venue.city}`);
+    eventForm.name(`${tour}: ${unsafeWindow.sfmPageAttributes.venue.city}`);
   } else {
     // use "Artist at Venue" style
-    appendEventName(searchParams, `${artistName} at ${unsafeWindow.sfmPageAttributes.venue.name}`);
+    eventForm.name(`${artistName} at ${unsafeWindow.sfmPageAttributes.venue.name}`);
   }
 
   // type
-  appendEventTypeId(searchParams, '1'); // Concert
+  eventForm.typeId('1'); // Concert
 
   const addCoverComment = await addCoverCommentOption();
 
@@ -245,42 +235,42 @@ async function submitEvent(placeMBID: string, eventMBID?: string) {
       toArray()
     )
   );
-  appendEventSetlist(searchParams, setlist.join('\n'));
+  eventForm.setlist(setlist.join('\n'));
 
   // date-time
   const dateBlock = document.querySelector('.dateBlock');
   const year = dateBlock?.querySelector('.year')?.textContent ?? '';
   const month = convertMonth(dateBlock?.querySelector('.month')?.textContent ?? '');
   const day = dateBlock?.querySelector('.day')?.textContent ?? '';
-  appendEventDates(searchParams, {
+  eventForm.dates({
     begin: {year, month: month?.toString(), day},
     end: {year, month: month?.toString(), day},
   });
 
   const doorTime = parseTime('.door');
-  appendEventTime(searchParams, doorTime);
+  eventForm.time(doorTime);
 
-  appendEventEditNote(searchParams, editNoteFormat(`Imported from ${document.location.href}`));
+  eventForm.editNote(editNoteFormat(`Imported from ${document.location.href}`));
 
-  appendEventUrlRelationship(searchParams, 0, {
+  eventForm.urlRelationship(0, {
     url: document.location.href,
     linkTypeId: TypeID.SetlistFmUrl,
   });
 
-  appendRelationship(searchParams, 0, {
+  eventForm.relationship(0, {
     type: EVENT_MAIN_PERFORMER_RELATIONSHIP_TYPE_ID,
     target: artistMBID,
     direction: 'backward',
   });
   const startTime = parseTime('.start');
   if (startTime) {
-    appendTextRelationshipAttribute(searchParams, 0, 0, {
+    eventForm.relationshipAttribute(0, 0, {
       type: EVENT_PERFORMANCE_TIME_RELATIONSHIP_ATTRIBUTE_TYPE_ID,
       textValue: startTime,
     });
   }
 
-  appendRelationship(searchParams, 1, {
+  eventForm.relationship(1, {
     type: EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
     target: placeMBID,
   });
@@ -290,7 +280,7 @@ async function submitEvent(placeMBID: string, eventMBID?: string) {
       mergeMap(async ([mbidPromise, index]) => [await mbidPromise, index + 2] as const),
       filter((pair): pair is [string, number] => pair[0] !== undefined),
       tap(([mbid, index]) => {
-        appendRelationship(searchParams, index, {
+        eventForm.relationship(index, {
           type: EVENT_GUEST_PERFORMER_RELATIONSHIP_TYPE_ID,
           target: mbid,
         });
@@ -299,6 +289,7 @@ async function submitEvent(placeMBID: string, eventMBID?: string) {
   );
 
   // navigate to the event creation page
+  const searchParams = eventForm.build();
   if (eventMBID) {
     unsafeWindow.open(`https://musicbrainz.org/event/${eventMBID}/edit?` + searchParams.toString());
   } else {

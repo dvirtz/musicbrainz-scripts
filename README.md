@@ -67,14 +67,16 @@ Scaffolds and stage sub-events for festival event hierarchies.
 
 See the script [README](scripts/scaffold-festival-days/README.md) for more information.
 
-### Add Sub-event
+### Event Seeder
 
-[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/add-sub-event.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/add-sub-event.user.js)
-[![source][badge-source]](scripts/add-sub-event/src/index.ts)
+[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/event-seeder.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/event-seeder.user.js)
+[![source][badge-source]](scripts/event-seeder/src/index.ts)
 
-Adds an `Add sub-event` link on event pages and seeds an event page with parent event details and relationships.
+Adds `Add sub-event` and `Duplicate event` links on event pages and seeds the event editor from the current event.
 
-See the script [README](scripts/add-sub-event/README.md) for more information.
+![event seeder duplicate event](scripts/event-seeder/assets/workflow-duplicate-event.png)
+
+See the script [README](scripts/event-seeder/README.md) for more information.
 
 ### Expand events
 
