@@ -14,7 +14,7 @@ See what's inside sub-events without having to follow their URL. Also adds conve
 - Shows quick links for each expanded event:
   - `edit`
   - `editing history`
-  - `add sub-event` (when the `add-sub-event` userscript link is present)
+  - `add sub-event` (when the Event Seeder userscript link is present)
 
 ## Screenshots
 

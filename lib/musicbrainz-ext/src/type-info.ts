@@ -16,7 +16,7 @@ function fetchOrGetFromCache<K extends keyof LinkedEntitiesT, T extends LinkedEn
   cacheKey?: K
 ) {
   return PLazy.from(async () =>
-    MB && cacheKey && Object.keys(MB.linkedEntities[cacheKey]).length > 0
+    typeof MB !== 'undefined' && cacheKey && Object.keys(MB.linkedEntities[cacheKey]).length > 0
       ? MB.linkedEntities[cacheKey]
       : fetchTypeInfo<T>(url, key)
   );
@@ -41,3 +41,5 @@ export const workAttributeAllowedValues = fetchTypeInfo<WorkAttributeTypeAllowed
 export const workTypes = fetchOrGetFromCache('/ws/js/type-info/work_type', 'work_type_list', 'work_type');
 
 export const workLanguages = fetchOrGetFromCache('/ws/js/type-info/language', 'language_list', 'language');
+
+export const urlTypes = fetchOrGetFromCache('/ws/js/type-info/link_type', 'link_type_list', 'link_type');
