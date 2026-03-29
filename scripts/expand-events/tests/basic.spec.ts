@@ -103,7 +103,7 @@ test.describe('expand-events', () => {
     await expect(quickLinks).not.toContainText('edit relationships');
   });
 
-  test('shows add sub-event quick link when add-sub-event script is present', async ({userscriptPage, page}) => {
+  test('shows add sub-event quick link when event-seeder script is present', async ({userscriptPage, page}) => {
     await gotoLiveEvent(userscriptPage);
 
     await page.addScriptTag({

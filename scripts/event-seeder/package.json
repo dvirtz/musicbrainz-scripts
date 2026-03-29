@@ -1,7 +1,7 @@
 {
-  "name": "@dvirtz/add-sub-event",
+  "name": "@dvirtz/event-seeder",
   "type": "module",
-  "main": "./dist/add-sub-event.user.js",
+  "main": "./dist/event-seeder.user.js",
   "imports": {
     "#*": "./src/*",
     "#tests/*": "./tests/*"

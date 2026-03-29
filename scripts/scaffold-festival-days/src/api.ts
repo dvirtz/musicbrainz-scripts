@@ -6,15 +6,7 @@ import {
   EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
   MBID_REGEXP,
 } from '@repo/musicbrainz-ext/constants';
-import {
-  appendEventCancelled,
-  appendEventComment,
-  appendEventDates,
-  appendEventEditNote,
-  appendEventEnded,
-  appendEventName,
-  appendEventSetlist,
-} from '@repo/musicbrainz-ext/event-form';
+import {EventForm} from '@repo/musicbrainz-ext/event-form';
 
 const PLACE_URL_REGEXP = new RegExp(`/place/(${MBID_REGEXP.source})`, 'i');
 
@@ -49,14 +41,12 @@ export function getLinkedPlacesFromEvent(event: MBEvent): MBPlace[] {
       continue;
     }
 
-    const placeGid = place.gid || place.id;
-
     // Deduplicate by gid in case the event has multiple relations to the same place.
     const creditName = relation['target-credit']?.trim() || undefined;
 
-    uniquePlaces.set(placeGid, {
+    uniquePlaces.set(place.id, {
       id: place.id,
-      gid: placeGid,
+      gid: place.id,
       name: place.name,
       disambiguation: typeof place.disambiguation === 'string' ? place.disambiguation : undefined,
       creditName: creditName,
@@ -121,17 +111,18 @@ export async function createSubEvent(params: {
 }): Promise<string | null> {
   const {name, begin, end, editNote} = params;
 
-  const formData = new URLSearchParams();
-  appendEventName(formData, name);
-  appendEventComment(formData, '');
-  appendEventSetlist(formData, '');
-  appendEventDates(formData, {
-    begin,
-    end,
-  });
-  appendEventEnded(formData, end !== undefined);
-  appendEventCancelled(formData, false);
-  appendEventEditNote(formData, editNote);
+  const formData = new EventForm()
+    .name(name)
+    .comment('')
+    .setlist('')
+    .dates({
+      begin,
+      end,
+    })
+    .ended(end !== undefined)
+    .cancelled(false)
+    .editNote(editNote)
+    .build();
 
   try {
     const response = await fetchResponse('/event/create', {
