@@ -1057,9 +1057,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dvirtz/add-sub-event@workspace:scripts/add-sub-event":
+"@dvirtz/change-all-artists-default@workspace:scripts/change-all-artists-default":
   version: 0.0.0-use.local
-  resolution: "@dvirtz/add-sub-event@workspace:scripts/add-sub-event"
+  resolution: "@dvirtz/change-all-artists-default@workspace:scripts/change-all-artists-default"
+  dependencies:
+    "@kobalte/core": "npm:*"
+    "@playwright/test": "npm:*"
+    "@repo/common-types": "workspace:^"
+    "@repo/common-ui": "workspace:^"
+    "@repo/rxjs-ext": "workspace:*"
+    "@repo/test-support": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
+    "@repo/vite-config": "workspace:*"
+    eslint: "npm:*"
+    solid-js: "npm:*"
+    vite: "npm:*"
+  languageName: unknown
+  linkType: soft
+
+"@dvirtz/event-seeder@workspace:scripts/event-seeder":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/event-seeder@workspace:scripts/event-seeder"
   dependencies:
     "@playwright/test": "npm:*"
     "@repo/common-types": "workspace:*"
@@ -1075,24 +1093,6 @@ __metadata:
     rxjs: "npm:*"
     semantic-release: "npm:*"
     typescript: "npm:*"
-    vite: "npm:*"
-  languageName: unknown
-  linkType: soft
-
-"@dvirtz/change-all-artists-default@workspace:scripts/change-all-artists-default":
-  version: 0.0.0-use.local
-  resolution: "@dvirtz/change-all-artists-default@workspace:scripts/change-all-artists-default"
-  dependencies:
-    "@kobalte/core": "npm:*"
-    "@playwright/test": "npm:*"
-    "@repo/common-types": "workspace:^"
-    "@repo/common-ui": "workspace:^"
-    "@repo/rxjs-ext": "workspace:*"
-    "@repo/test-support": "workspace:*"
-    "@repo/typescript-config": "workspace:*"
-    "@repo/vite-config": "workspace:*"
-    eslint: "npm:*"
-    solid-js: "npm:*"
     vite: "npm:*"
   languageName: unknown
   linkType: soft
