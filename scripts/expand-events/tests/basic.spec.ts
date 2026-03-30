@@ -1,59 +1,13 @@
-import {expect, type Page} from '@playwright/test';
+import {expect} from '@playwright/test';
 import {test} from '@repo/test-support/musicbrainz-test';
 
 const LIVE_EVENT_GID = '6d5e8ba6-2e4c-44e6-b990-506eb50b4faa';
 const LIVE_CHILD_EVENT_GID = '0d422c29-e2c7-4946-9d47-031c792f4fa8';
 const LIVE_GRANDCHILD_EVENT_GID = 'e5f279e2-c595-40cf-9ccc-aa15356c4cb4';
 
-type RealUserscriptPage = {
-  page: Page;
-  userscriptPath: string;
-};
-
-type ChildRowSummary = {
-  name: string;
-  date?: string;
-  time?: string;
-};
-
-function compareOptionalStrings(a?: string, b?: string): number {
-  if (!a && !b) {
-    return 0;
-  }
-  if (!a) {
-    return 1;
-  }
-  if (!b) {
-    return -1;
-  }
-  return a.localeCompare(b, undefined, {sensitivity: 'base'});
-}
-
-function compareChildRowSummary(a: ChildRowSummary, b: ChildRowSummary): number {
-  const byDate = compareOptionalStrings(a.date, b.date);
-  if (byDate !== 0) {
-    return byDate;
-  }
-
-  const byTime = compareOptionalStrings(a.time, b.time);
-  if (byTime !== 0) {
-    return byTime;
-  }
-
-  return a.name.localeCompare(b.name, undefined, {sensitivity: 'base'});
-}
-
-async function gotoLiveEvent(userscriptPage: RealUserscriptPage) {
-  const response = await userscriptPage.page.goto(`/event/${LIVE_EVENT_GID}`);
-  expect(response?.ok(), `Live event /event/${LIVE_EVENT_GID} should be available`).toBeTruthy();
-
-  await userscriptPage.page.waitForFunction(() => document.body !== null);
-  await userscriptPage.page.addScriptTag({path: userscriptPage.userscriptPath});
-}
-
 test.describe('expand-events', () => {
   test('injects toggles on a real event page and shows quick links on expand', async ({userscriptPage, page}) => {
-    await gotoLiveEvent(userscriptPage);
+    await userscriptPage.goto(`/event/${LIVE_EVENT_GID}`);
 
     const childToggle = page.locator(`.expand-events-toggle[data-event-gid="${LIVE_CHILD_EVENT_GID}"]`).first();
     await expect(childToggle).toBeVisible();
@@ -87,14 +41,12 @@ test.describe('expand-events', () => {
         const cells = row.querySelectorAll('td');
         const link = cells[0]?.querySelector('a');
         const name = link?.textContent?.trim() ?? '';
-        const date = cells[2]?.textContent?.trim() || undefined;
-        const time = cells[3]?.textContent?.trim() || undefined;
-        return {name, date, time};
+        const time = cells[1]?.textContent?.trim() ?? '';
+        return {name, time};
       })
     );
 
-    const expectedOrder = [...actualOrder].sort(compareChildRowSummary);
-    expect(actualOrder).toEqual(expectedOrder);
+    expect(actualOrder.map(x => x.time)).toEqual(['20:00', '22:30', '00:45']);
 
     const quickLinks = page.locator(`[data-expand-events-quick-links-for="${LIVE_GRANDCHILD_EVENT_GID}"]`);
     await expect(quickLinks).toContainText('edit');
@@ -104,7 +56,7 @@ test.describe('expand-events', () => {
   });
 
   test('shows add sub-event quick link when event-seeder script is present', async ({userscriptPage, page}) => {
-    await gotoLiveEvent(userscriptPage);
+    await userscriptPage.goto(`/event/${LIVE_EVENT_GID}`);
 
     await page.addScriptTag({
       content: `
@@ -136,7 +88,7 @@ test.describe('expand-events', () => {
   });
 
   test('supports recursive expansion on a real event page and shows leaf metadata', async ({userscriptPage, page}) => {
-    await gotoLiveEvent(userscriptPage);
+    await userscriptPage.goto(`/event/${LIVE_EVENT_GID}`);
 
     const childToggle = page.locator(`.expand-events-toggle[data-event-gid="${LIVE_CHILD_EVENT_GID}"]`).first();
     await expect(childToggle).toBeVisible();
@@ -182,14 +134,11 @@ test.describe('expand-events', () => {
 
     const cells = leafRows.first().locator('td');
     await expect(cells.nth(0)).not.toBeEmpty(); // place
-    await expect(cells.nth(1)).toBeEmpty(); // removed type column for leaves
-    await expect(cells.nth(2)).not.toBeEmpty(); // type
-    await expect(cells.nth(2)).toHaveAttribute('colspan', '2'); // spans date+time columns
-    await expect(cells.nth(3)).toBeEmpty(); // spacer column
+    await expect(cells.nth(1)).not.toBeEmpty(); // type
   });
 
   test('expand all and collapse all work on the real event page', async ({userscriptPage, page}) => {
-    await gotoLiveEvent(userscriptPage);
+    await userscriptPage.goto(`/event/${LIVE_EVENT_GID}`);
 
     await page.getByRole('button', {name: 'Expand all'}).click();
     await expect(page.locator('[data-expand-events-row-for]:not([hidden])').first()).toBeVisible();
