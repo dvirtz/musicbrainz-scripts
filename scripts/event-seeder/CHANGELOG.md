@@ -1,3 +1,8 @@
+## @dvirtz/event-seeder-v1.0.0-beta.1 (2026-03-30)
+
+* chore: rename duplicate to clone ([bd8ca6e](https://github.com/dvirtz/musicbrainz-scripts/commit/bd8ca6e))
+* feat(event-seeder): duplicate an event ([095694c](https://github.com/dvirtz/musicbrainz-scripts/commit/095694c))
+
 ## @dvirtz/event-seeder-v1.0.0 (2026-03-22)
 
 * feat(add-sub-event): add sub-event userscript and extract shared event helpers ([29cab50](https://github.com/dvirtz/musicbrainz-scripts/commit/29cab50))
