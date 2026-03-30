@@ -1,10 +1,10 @@
 import {injectEventSidebarLinks} from '#sidebar-link.ts';
 import {getEventGid} from '@repo/musicbrainz-ext/event-path';
 import {
-  extractDuplicateEventSeedData,
+  extractCloneEventSeedData,
   extractParentEventSeedData,
   fetchEventWithRelations,
-  seedDuplicateEvent,
+  seedCloneEvent,
   seedEvent,
 } from '@repo/musicbrainz-ext/event-seed';
 
@@ -25,8 +25,8 @@ async function main() {
   }
 
   const addSubEventUrl = seedEvent(parentSeedData);
-  const duplicateUrl = await seedDuplicateEvent(extractDuplicateEventSeedData(event));
-  injectEventSidebarLinks(addSubEventUrl, duplicateUrl);
+  const cloneUrl = await seedCloneEvent(extractCloneEventSeedData(event));
+  injectEventSidebarLinks(addSubEventUrl, cloneUrl);
 }
 
 void main().catch(error => {
