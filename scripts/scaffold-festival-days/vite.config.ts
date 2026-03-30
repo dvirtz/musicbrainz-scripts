@@ -6,5 +6,6 @@ export default defineConfig('scaffold-festival-days', {
   version: '1.1.0-beta.1',
 
   match: ['http*://*.musicbrainz.org/event/*'],
+  'exclude-match': ['http*://*.musicbrainz.org/event/*/*', 'http*://*.musicbrainz.org/event/create'],
   'run-at': 'document-end',
 });
