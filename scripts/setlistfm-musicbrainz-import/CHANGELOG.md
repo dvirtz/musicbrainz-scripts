@@ -1,3 +1,7 @@
+## @dvirtz/setlistfm-musicbrainz-import-v1.8.0-beta.1 (2026-03-30)
+
+* feat(event-seeder): duplicate an event ([095694c](https://github.com/dvirtz/musicbrainz-scripts/commit/095694c))
+
 ## @dvirtz/setlistfm-musicbrainz-import-v1.7.0 (2026-03-22)
 
 * feat(add-sub-event): add sub-event userscript and extract shared event helpers ([29cab50](https://github.com/dvirtz/musicbrainz-scripts/commit/29cab50))
