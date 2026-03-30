@@ -6,6 +6,8 @@ const LIVE_CHILD_EVENT_GID = '0d422c29-e2c7-4946-9d47-031c792f4fa8';
 const LIVE_GRANDCHILD_EVENT_GID = 'e5f279e2-c595-40cf-9ccc-aa15356c4cb4';
 
 test.describe('expand-events', () => {
+  test.describe.configure({mode: 'serial'});
+
   test('injects toggles on a real event page and shows quick links on expand', async ({userscriptPage, page}) => {
     await userscriptPage.goto(`/event/${LIVE_EVENT_GID}`);
 
