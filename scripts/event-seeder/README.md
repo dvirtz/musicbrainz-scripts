@@ -2,19 +2,19 @@
 
 [![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/event-seeder.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/event-seeder.user.js) [![source][badge-source]](src/index.ts)
 
-Seeds a child event from its parent or duplicates the current event into a new event editor.
+Seeds a child event from its parent or clones the current event into a new event editor.
 
-![Event Seeder links in sidebar](assets/workflow-event-sidebar.png)
+![Event Seeder links in sidebar](assets/event-sidebar.png)
 
 ## What it does
 
 - Runs on MusicBrainz event pages (`/event/*`).
-- Adds `Add sub-event` and `Duplicate event` links in the Editing sidebar.
+- Adds `Add sub-event` and `Clone event` links in the Editing sidebar.
 - `Add sub-event` opens `event/create` with fields prefilled from the current event as a parent:
   - Begin/end dates
   - `part of` relationship to the parent event
   - `held at` relationships for linked places on the parent event
-- `Duplicate event` opens `event/create` with the current event's editable fields prefilled:
+- `Clone event` opens `event/create` with the current event's editable fields prefilled:
   - Name, dates, time, setlist, and disambiguation
   - Entity and URL relationships copied from the current event
   - A generated edit note that links back to the source event
@@ -23,18 +23,18 @@ Seeds a child event from its parent or duplicates the current event into a new e
 
 - If no linked places are found, only dates and the parent relationship are seeded.
 - If a date is partial, only available date components are seeded.
-- Duplicate seeding intentionally preserves existing event data instead of creating a parent/child relationship.
+- Clone seeding intentionally preserves existing event data instead of creating a parent/child relationship.
 
 ## Workflow
 
 1. Open an event page.
 2. Click `Add sub-event` to seed a child event with dates and place from the current event.
 
-    ![Seeded add sub-event form](assets/workflow-event-create.png)
+    ![Seeded add sub-event form](assets/event-create.png)
 
-3. Click `Duplicate event` to open a fully seeded copy of the current event in `event/create`.
+3. Click `Clone event` to open a fully seeded copy of the current event in `event/create`.
 
-    ![Duplicated event form](assets/workflow-duplicate-event.png)
+    ![Cloned event form](assets/clone-event.png)
 
 ## Release Notes
 

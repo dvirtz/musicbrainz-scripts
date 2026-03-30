@@ -20,14 +20,14 @@ async function expectSeededUrlRelationships(page: Page) {
   }
 }
 
-test.describe('event-seeder:duplicate-event', () => {
+test.describe('event-seeder:clone-event', () => {
   test('adds link to sidebar', async ({page, musicbrainzPage, testEvent}) => {
     await musicbrainzPage.userscriptPage.goto(`/event/${testEvent.gid}`);
 
-    const duplicateEventLink = page.locator('#duplicate-event-link');
+    const cloneEventLink = page.locator('#clone-event-link');
 
-    await expect(duplicateEventLink).toBeAttached();
-    await expect(duplicateEventLink).toHaveText('Duplicate event');
+    await expect(cloneEventLink).toBeAttached();
+    await expect(cloneEventLink).toHaveText('Clone event');
   });
 
   test('link seeds from real event and carries real relationships', async ({
@@ -38,8 +38,8 @@ test.describe('event-seeder:duplicate-event', () => {
   }) => {
     await musicbrainzPage.userscriptPage.goto(`/event/${testEvent.gid}`);
 
-    const duplicateEventLink = page.locator('#duplicate-event-link');
-    await duplicateEventLink.click();
+    const cloneEventLink = page.locator('#clone-event-link');
+    await cloneEventLink.click();
     await expect(page).toHaveURL(/\/event\/create\?/);
 
     // Wait for the form edit section to be visible to ensure form has loaded
@@ -57,7 +57,7 @@ test.describe('event-seeder:duplicate-event', () => {
     await expect(page.locator('input[name="edit-event.comment"]')).toHaveValue(TestEvent.disambiguation);
     await expect(page.locator('input[name="edit-event.cancelled"]')).not.toBeChecked();
     await expect(page.getByRole('textbox', {name: 'Edit note:'})).toHaveValue(
-      `----\nDuplicated from ${baseURL}/event/${testEvent.gid} using userscript version 1.0.0 from https://homepage.com.`
+      `----\nCloned from ${baseURL}/event/${testEvent.gid} using userscript version 1.0.0 from https://homepage.com.`
     );
 
     await expectSeededEntityRelationships(page);

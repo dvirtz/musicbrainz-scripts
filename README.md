@@ -72,9 +72,9 @@ See the script [README](scripts/scaffold-festival-days/README.md) for more infor
 [![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/event-seeder.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/event-seeder.user.js)
 [![source][badge-source]](scripts/event-seeder/src/index.ts)
 
-Adds `Add sub-event` and `Duplicate event` links on event pages and seeds the event editor from the current event.
+Adds `Add sub-event` and `Clone event` links on event pages and seeds the event editor from the current event.
 
-![event seeder duplicate event](scripts/event-seeder/assets/workflow-duplicate-event.png)
+![Cloned event links](scripts/event-seeder/assets/event-sidebar.png)
 
 See the script [README](scripts/event-seeder/README.md) for more information.
 

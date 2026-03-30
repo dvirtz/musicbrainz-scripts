@@ -108,19 +108,19 @@ export function seedEvent(seedData: ParentEventSeedData): string {
   return `/event/create?${eventForm.build().toString()}`;
 }
 
-type DuplicateEventRelationshipAttribute = {
+type CloneEventRelationshipAttribute = {
   type: string;
   textValue?: string;
 };
 
-export type DuplicateEventRelationship =
+export type CloneEventRelationship =
   | {
       kind: 'entity';
       typeId: string;
       target: string;
       direction?: 'backward';
       targetCredit?: string;
-      attributes?: DuplicateEventRelationshipAttribute[];
+      attributes?: CloneEventRelationshipAttribute[];
     }
   | {
       kind: 'url';
@@ -128,7 +128,7 @@ export type DuplicateEventRelationship =
       url: string;
     };
 
-export type DuplicateEventSeedData = {
+export type CloneEventSeedData = {
   name: string;
   typeName?: string;
   time?: string;
@@ -137,7 +137,7 @@ export type DuplicateEventSeedData = {
   cancelled?: boolean;
   beginDate?: EventDateParts;
   endDate?: EventDateParts;
-  relationships: DuplicateEventRelationship[];
+  relationships: CloneEventRelationship[];
 };
 
 function normalizeTargetType(targetType: string | undefined): string | undefined {
@@ -171,8 +171,8 @@ function extractEntityTarget(relation: MBEventRelation, targetType: string): str
   }
 }
 
-function extractRelationshipAttributes(relation: MBEventRelation): DuplicateEventRelationshipAttribute[] | undefined {
-  const attributesByType = new Map<string, DuplicateEventRelationshipAttribute>();
+function extractRelationshipAttributes(relation: MBEventRelation): CloneEventRelationshipAttribute[] | undefined {
+  const attributesByType = new Map<string, CloneEventRelationshipAttribute>();
   const attributeIds = relation['attribute-ids'] ?? {};
   const attributeValues = relation['attribute-values'];
 
@@ -197,7 +197,7 @@ function extractRelationshipAttributes(relation: MBEventRelation): DuplicateEven
   return attributes.length > 0 ? attributes : undefined;
 }
 
-function extractDuplicateRelationship(relation: MBEventRelation): DuplicateEventRelationship | null {
+function extractCloneRelationship(relation: MBEventRelation): CloneEventRelationship | null {
   const typeId = relation['type-id'];
   if (!typeId) {
     return null;
@@ -228,10 +228,10 @@ function extractDuplicateRelationship(relation: MBEventRelation): DuplicateEvent
   };
 }
 
-export function extractDuplicateEventSeedData(event: MBEvent): DuplicateEventSeedData {
+export function extractCloneEventSeedData(event: MBEvent): CloneEventSeedData {
   const relationships = (event.relations ?? [])
-    .map(extractDuplicateRelationship)
-    .filter((relationship): relationship is DuplicateEventRelationship => relationship != null);
+    .map(extractCloneRelationship)
+    .filter((relationship): relationship is CloneEventRelationship => relationship != null);
 
   return {
     name: event.name,
@@ -252,7 +252,7 @@ export async function fetchEventWithRelations(eventGid: string): Promise<MBEvent
   );
 }
 
-export async function seedDuplicateEvent(seedData: DuplicateEventSeedData): Promise<string> {
+export async function seedCloneEvent(seedData: CloneEventSeedData): Promise<string> {
   const eventForm = new EventForm();
 
   eventForm.name(seedData.name);
@@ -279,7 +279,7 @@ export async function seedDuplicateEvent(seedData: DuplicateEventSeedData): Prom
     end: seedData.endDate,
   });
 
-  eventForm.editNote(editNoteFormat(`Duplicated from ${document.location.href}`));
+  eventForm.editNote(editNoteFormat(`Cloned from ${document.location.href}`));
 
   let relationshipIndex = 0;
   let urlRelationshipIndex = 0;

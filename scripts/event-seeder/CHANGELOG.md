@@ -9,6 +9,6 @@ All notable changes to `@dvirtz/event-seeder` will be documented in this file.
 
 ## 1.0.0 (INITIAL)
 
-- Add `Add sub-event` and `Duplicate event` actions on event pages in Editing sidebar.
-- Seed `/event/create` either as a child event or as a duplicate of the current event.
+- Add `Add sub-event` and `Clone event` actions on event pages in Editing sidebar.
+- Seed `/event/create` either as a child event or as a clone of the current event.
 - Seed dates, relationships, and linked places from the source event where applicable.
