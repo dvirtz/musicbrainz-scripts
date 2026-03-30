@@ -1,3 +1,8 @@
+## @dvirtz/scaffold-festival-days-v1.1.0-beta.2 (2026-03-30)
+
+* fix(scaffold-festival-days): enable only on main event page ([c18700d](https://github.com/dvirtz/musicbrainz-scripts/commit/c18700d))
+* feat(event-seeder): duplicate an event ([095694c](https://github.com/dvirtz/musicbrainz-scripts/commit/095694c))
+
 ## @dvirtz/scaffold-festival-days-v1.1.0-beta.1 (2026-03-24)
 
 * feat(scaffold-festival-days): allow scaffolding non-festival events ([2d75d6d](https://github.com/dvirtz/musicbrainz-scripts/commit/2d75d6d))
