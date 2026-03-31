@@ -1,3 +1,7 @@
+## @dvirtz/event-seeder-v1.0.0 (2026-03-31)
+
+* feat(event-seeder): clone an event ([6f72397](https://github.com/dvirtz/musicbrainz-scripts/commit/6f72397))
+
 ## @dvirtz/event-seeder-v1.0.0 (2026-03-22)
 
 * feat(add-sub-event): add sub-event userscript and extract shared event helpers ([29cab50](https://github.com/dvirtz/musicbrainz-scripts/commit/29cab50))
