@@ -4,6 +4,7 @@ import {
   NonReleaseRelationshipEditor,
   ReleaseRelationshipEditor,
 } from 'typedbrainz/types';
+import {MBReleaseEditor} from '#release-editor.ts';
 
 class AssertionError extends Error {
   constructor(message: string) {
@@ -15,6 +16,15 @@ class AssertionError extends Error {
 export function assertMB(mb: typeof MB): asserts mb is NonNullable<typeof MB> {
   if (!mb) {
     throw new AssertionError('no MB');
+  }
+}
+
+export function assertMBReleaseEditor(
+  mb: typeof MB
+): asserts mb is NonNullable<typeof MB> & {releaseEditor: MBReleaseEditor} {
+  assertMB(mb);
+  if (!('releaseEditor' in mb) || !mb.releaseEditor) {
+    throw new AssertionError('no MB.releaseEditor');
   }
 }
 

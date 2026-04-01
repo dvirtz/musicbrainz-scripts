@@ -26,7 +26,8 @@
     "./track-recording-state": "./src/track-recording-state.ts",
     "./type-group": "./src/type-group.ts",
     "./type-info": "./src/type-info.ts",
-    "./wait-for": "./src/wait-for.ts"
+    "./wait-for": "./src/wait-for.ts",
+    "./release-editor": "./src/release-editor.ts"
   },
   "imports": {
     "#*": "./src/*"

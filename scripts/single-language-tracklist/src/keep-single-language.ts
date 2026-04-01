@@ -1,67 +1,93 @@
-import {asyncTap} from '@repo/rxjs-ext/async-tap';
-import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
-import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
-import {from, skip, take, tap} from 'rxjs';
+/**
+ * Keeps the specified side of a separator in track titles and artist credits
+ * by directly modifying the page observables instead of manipulating the DOM
+ */
 
-enum Side {
-  Left,
-  Right,
+import {assertMBReleaseEditor} from '@repo/musicbrainz-ext/asserts';
+import {ArtistCreditT} from 'typedbrainz/types';
+
+type Side = 'left' | 'right';
+
+function keepArtistCreditSide(artistCredit: ArtistCreditT, side: Side, sep: string): ArtistCreditT | undefined {
+  if (!artistCredit?.names?.length) {
+    return undefined;
+  }
+
+  const separatorIndex = artistCredit.names.findIndex(name => name.joinPhrase?.trim() === sep);
+  if (separatorIndex === -1) {
+    return undefined;
+  }
+
+  const keptNames =
+    side === 'left' ? artistCredit.names.slice(0, separatorIndex + 1) : artistCredit.names.slice(separatorIndex + 1);
+  if (keptNames.length === 0) {
+    return undefined;
+  }
+
+  const normalizedNames = [
+    ...keptNames.slice(0, keptNames.length - 1),
+    {...keptNames[keptNames.length - 1]!, joinPhrase: ''},
+  ];
+
+  return {
+    ...artistCredit,
+    names: normalizedNames,
+  };
+}
+
+function getRelease() {
+  assertMBReleaseEditor(window.MB);
+  const release = window.MB.releaseEditor.rootField.release();
+  if (!release) {
+    throw new Error('Release data not available');
+  }
+
+  return release;
 }
 
 function keepTitleSide(side: Side, sep: string) {
-  const titleFields = document.querySelectorAll<HTMLInputElement>('input[id="name"], input.track-name');
-  const index = side === Side.Left ? 0 : 1;
-  for (const title of titleFields) {
-    const parts = title.value.split(sep);
-    if (parts.length > 1 && index < parts.length) {
-      title.value = parts[index]!.trim();
-      title.dispatchEvent(new Event('input', {bubbles: true}));
+  const release = getRelease();
+  const index = side === 'left' ? 0 : 1;
+
+  const releaseNameParts = release.name().split(sep);
+  if (releaseNameParts.length > 1 && index < releaseNameParts.length) {
+    release.name(releaseNameParts[index]!.trim());
+  }
+
+  for (const track of release.allTracks()) {
+    const currentName = track.name();
+    const parts = currentName.split(sep);
+
+    if (parts.length > 1) {
+      if (index < parts.length) {
+        track.name(parts[index]!.trim());
+      }
     }
   }
 }
 
-async function keepArtistSide(side: Side, sep: string) {
-  const artistCreditButtons = document.querySelectorAll<HTMLButtonElement>('button.open-ac');
-  for (const button of Array.from(artistCreditButtons)) {
-    button.click();
-    const acBubble = await waitForElement(
-      (node): node is HTMLDivElement => node instanceof HTMLDivElement && node.id === 'artist-credit-bubble'
-    );
-    if (!acBubble) {
-      console.error('Artist credit bubble not found');
-      return;
+function keepArtistSide(side: Side, sep: string) {
+  const release = getRelease();
+
+  const releaseArtistCredit = keepArtistCreditSide(release.artistCredit(), side, sep);
+  if (releaseArtistCredit) {
+    release.artistCredit(releaseArtistCredit);
+  }
+
+  for (const track of release.allTracks()) {
+    const trackArtistCredit = keepArtistCreditSide(track.artistCredit(), side, sep);
+    if (trackArtistCredit) {
+      track.artistCredit(trackArtistCredit);
     }
-    await new Promise(resolve => setTimeout(resolve, 1)); // Allow time for the dialog to populate
-    const equalJoiner = Array.from(acBubble.querySelectorAll<HTMLInputElement>('input[id*="join-phrase"]')).findIndex(
-      input => input.value.trim() === sep
-    );
-    if (equalJoiner !== -1) {
-      await executePipeline(
-        from(acBubble.querySelectorAll<HTMLButtonElement>('button.remove-artist-credit')).pipe(
-          side === Side.Right ? take(equalJoiner + 1) : skip(equalJoiner + 1),
-          tap(button => button.click()),
-          asyncTap(async () => {
-            await waitForElement(
-              (node): node is HTMLTableCellElement =>
-                node instanceof HTMLTableCellElement && node.classList.contains('removed-ac-name'),
-              undefined,
-              acBubble
-            );
-          })
-        )
-      );
-    }
-    const submitButton = acBubble.querySelector<HTMLButtonElement>('button[type="submit"]');
-    submitButton?.click();
   }
 }
 
-export async function removeRHS(sep: string) {
-  keepTitleSide(Side.Left, sep);
-  await keepArtistSide(Side.Left, sep);
+export function removeRHS(sep: string) {
+  keepTitleSide('left', sep);
+  keepArtistSide('left', sep);
 }
 
-export async function removeLHS(sep: string) {
-  keepTitleSide(Side.Right, sep);
-  await keepArtistSide(Side.Right, sep);
+export function removeLHS(sep: string) {
+  keepTitleSide('right', sep);
+  keepArtistSide('right', sep);
 }
