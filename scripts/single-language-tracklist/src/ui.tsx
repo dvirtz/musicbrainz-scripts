@@ -22,13 +22,7 @@ function SingleLanguageTracklistUI(props: {separator: string}) {
       <div class="buttons">
         <For each={[[removeLHS, 'Remove LHS'] as const, [removeRHS, 'Remove RHS'] as const]}>
           {([callback, text]) => (
-            <Button
-              class="button"
-              onClick={() => {
-                callback(separator()).catch(console.error);
-              }}
-              disabled={separator().length == 0}
-            >
+            <Button class="button" onClick={() => callback(separator())} disabled={separator().length == 0}>
               {text}
             </Button>
           )}

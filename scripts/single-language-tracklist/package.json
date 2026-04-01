@@ -18,6 +18,7 @@
     "@kobalte/core": "*",
     "@repo/common-types": "workspace:*",
     "@repo/common-ui": "workspace:*",
+    "@repo/musicbrainz-ext": "workspace:*",
     "@repo/rxjs-ext": "workspace:*",
     "rxjs": "*",
     "solid-js": "*"
