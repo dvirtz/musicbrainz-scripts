@@ -516,6 +516,50 @@ test.describe('scaffold festival days', () => {
     await page.unrouteAll();
   });
 
+  test('skips day event when all places are deselected for that day in matrix', async ({
+    page,
+    userscriptPage,
+    musicbrainzPage,
+    testFestivalEvent,
+    testPlaces,
+  }) => {
+    const routeState = await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
+
+    await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
+
+    const checkboxes = page.getByRole('checkbox');
+    const count = await checkboxes.count();
+    for (let i = 0; i < count; i++) {
+      await checkboxes.nth(i).check();
+    }
+
+    const scaffoldButton = page.getByRole('button', {name: /create.*festival.*day/i});
+    await scaffoldButton.click();
+
+    const dialog = page.getByRole('dialog', {name: /scaffold sub-events matrix/i});
+    await expect(dialog).toBeAttached();
+    // Uncheck the row header for Day 1, deselecting all places for that day
+    const firstRowHeaderCheckbox = dialog.locator('tbody tr').first().locator('th input[type="checkbox"]');
+    await firstRowHeaderCheckbox.uncheck();
+    await dialog.getByRole('button', {name: /confirm and create/i}).click();
+
+    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+
+    const festivalName = TEST_FESTIVAL_NAME;
+    const dayCount = testFestivalEvent.getDates().length;
+    const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
+
+    // Day 1 should be skipped; remaining days should be created
+    expect(dayEvents).toHaveLength(dayCount - 1);
+    expect(dayEvents.some(event => event.name === `${festivalName}, Day 1`)).toBe(false);
+    for (let d = 2; d <= dayCount; d++) {
+      expect(dayEvents.some(event => event.name === `${festivalName}, Day ${d}`)).toBe(true);
+    }
+
+    await page.unrouteAll();
+  });
+
   test('creates day sub-events when no places are linked', async ({
     page,
     userscriptPage,

@@ -1214,6 +1214,7 @@ __metadata:
     "@playwright/test": "npm:*"
     "@repo/common-types": "workspace:*"
     "@repo/common-ui": "workspace:*"
+    "@repo/musicbrainz-ext": "workspace:*"
     "@repo/rxjs-ext": "workspace:*"
     "@repo/test-support": "workspace:*"
     "@repo/typescript-config": "workspace:*"
