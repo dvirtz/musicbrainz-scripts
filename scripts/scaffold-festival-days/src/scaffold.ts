@@ -143,9 +143,16 @@ export async function scaffoldFestivalDays(params: {
     return true;
   }
 
-  const createdDayEvents: Array<{gid: string; date: DateParts}> = [];
-
   for (const date of dates) {
+    const dayPlaces = selectedPlaces.filter(place => {
+      const dayPlaceKey = `${date.dayNumber}|${place.gid}`;
+      return !allowedDayPlaceKeys || allowedDayPlaceKeys.has(dayPlaceKey);
+    });
+
+    if (selectedPlaces.length > 0 && dayPlaces.length === 0) {
+      continue;
+    }
+
     const dayName = `${event.name}, ${dayWord} ${date.dayNumber}`;
     const dayEventGid = await createSubEvent({
       name: dayName,
@@ -169,46 +176,36 @@ export async function scaffoldFestivalDays(params: {
       return false;
     }
 
-    createdDayEvents.push({gid: dayEventGid, date});
     onStatus({message: `Created: ${dayName}`, kind: 'info'});
-  }
 
-  if (selectedPlaces.length > 0) {
-    for (const dayEvent of createdDayEvents) {
-      for (const place of selectedPlaces) {
-        const dayPlaceKey = `${dayEvent.date.dayNumber}|${place.gid}`;
-        if (allowedDayPlaceKeys && !allowedDayPlaceKeys.has(dayPlaceKey)) {
-          continue;
-        }
+    for (const place of dayPlaces) {
+      const venueName = `${event.name}, ${dayWord} ${date.dayNumber}: ${place.creditName ?? place.name}`;
+      const venueEventGid = await createSubEvent({
+        name: venueName,
+        begin: date,
+        end: date,
+        editNote: buildEditNote(`Scaffold festival days: created venue day for ${dayEventGid}`),
+      });
 
-        const venueName = `${event.name}, ${dayWord} ${dayEvent.date.dayNumber}: ${place.creditName ?? place.name}`;
-        const venueEventGid = await createSubEvent({
-          name: venueName,
-          begin: dayEvent.date,
-          end: dayEvent.date,
-          editNote: buildEditNote(`Scaffold festival days: created venue day for ${dayEvent.gid}`),
-        });
-
-        if (!venueEventGid) {
-          onStatus({message: `Failed to create ${venueName}.`, kind: 'error'});
-          return false;
-        }
-        const venueRelationshipCreated = await createEventRelationships({
-          childEventGid: venueEventGid,
-          parentEventGid: dayEvent.gid,
-          placeGid: place.gid,
-          placeCreditName: place.creditName,
-          editNote: buildEditNote(
-            `Scaffold festival days: linked venue event ${venueEventGid} to day ${dayEvent.gid} and place ${place.gid}`
-          ),
-        });
-        if (!venueRelationshipCreated) {
-          onStatus({message: `Failed to create relationships for ${venueName}.`, kind: 'error'});
-          return false;
-        }
-
-        onStatus({message: `Created: ${venueName}`, kind: 'info'});
+      if (!venueEventGid) {
+        onStatus({message: `Failed to create ${venueName}.`, kind: 'error'});
+        return false;
       }
+      const venueRelationshipCreated = await createEventRelationships({
+        childEventGid: venueEventGid,
+        parentEventGid: dayEventGid,
+        placeGid: place.gid,
+        placeCreditName: place.creditName,
+        editNote: buildEditNote(
+          `Scaffold festival days: linked venue event ${venueEventGid} to day ${dayEventGid} and place ${place.gid}`
+        ),
+      });
+      if (!venueRelationshipCreated) {
+        onStatus({message: `Failed to create relationships for ${venueName}.`, kind: 'error'});
+        return false;
+      }
+
+      onStatus({message: `Created: ${venueName}`, kind: 'info'});
     }
   }
 
