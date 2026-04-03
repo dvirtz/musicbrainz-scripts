@@ -47,7 +47,7 @@ jobs:
           NODE_OPTIONS: --no-experimental-strip-types
         timeout-minutes: 30
       - name: Setup tmate session
-        if: ${{ failure() }}
+        if: ${{ failure() && runner.debug == '1' }}
         uses: mxschmitt/action-tmate@v3
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
