@@ -16,8 +16,6 @@ permissions:
 jobs:
   update-beta-latest:
     runs-on: ubuntu-latest
-    # Only run for pre-releases
-    if: github.event_name == 'workflow_dispatch' || github.event.release.prerelease == true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
