@@ -1,3 +1,7 @@
+## @dvirtz/scaffold-festival-days-v1.1.1 (2026-04-03)
+
+* fix(scaffold-festival-days): avoid creating empty day events ([1b24f73](https://github.com/dvirtz/musicbrainz-scripts/commit/1b24f73))
+
 ## @dvirtz/scaffold-festival-days-v1.1.0 (2026-03-31)
 
 * feat(event-seeder): clone an event ([6f72397](https://github.com/dvirtz/musicbrainz-scripts/commit/6f72397))
