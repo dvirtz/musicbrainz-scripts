@@ -1,3 +1,7 @@
+## @dvirtz/single-language-tracklist-v1.2.0 (2026-04-03)
+
+* feat(single-language-tracklist): use page observables instead of direct dom mutation ([658a9f7](https://github.com/dvirtz/musicbrainz-scripts/commit/658a9f7))
+
 ## @dvirtz/single-language-tracklist-v1.1.3 (2026-01-21)
 
 * ci: upgrade knip and fix issues ([6008960](https://github.com/dvirtz/musicbrainz-scripts/commit/6008960))
