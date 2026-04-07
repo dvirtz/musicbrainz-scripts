@@ -322,4 +322,61 @@ test.describe('work editor @allow_fail', () => {
 
     await page.unrouteAll();
   });
+
+  test('can import translated work', async ({page, userscriptPage}) => {
+    // turn off existing work search
+    await userscriptPage.setLocalStorage('searchWorks', 'false');
+
+    await userscriptPage.goto('/work/create');
+
+    // spell: disable
+    const work = {
+      title: 'מגדל השירים',
+      disambiguation: '',
+      workId: '1129800',
+      'type-id': '17',
+      iswcs: [],
+      languages: ['167'],
+      attributes: [
+        {
+          type: 'ACUM ID',
+          value: '2023875005',
+          'type-id': '141',
+        },
+      ],
+      lyricist: 'Leonard Cohen',
+      composer: 'Leonard Cohen',
+      translator: 'אריאל הורוביץ',
+    } as const;
+    // spell: enable
+
+    const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${work.workId}&versionid=${work.attributes[0].value}`;
+    const input = page.getByPlaceholder('Work ID or URL');
+    await input.fill(workUrl);
+    await expect(input).toHaveValue(work.attributes[0].value);
+
+    const importButton = page.getByRole('button', {name: 'Import work from ACUM'});
+    await importButton.click();
+
+    const name = page.getByRole('textbox', {name: 'Name'});
+    await expect(name).toHaveValue(work.title);
+
+    const typeText = await selectBoxText(page.getByRole('combobox', {name: 'Type'}));
+    expect(typeText).toBe('Song');
+
+    const language = page.locator('[id="id-edit-work.languages.0"]');
+    await expect(language).toHaveValue(work.languages[0]);
+
+    const attributeType = await selectBoxText(page.locator('select[name="edit-work.attributes.0.type_id"]'));
+    expect(attributeType).toMatch(new RegExp(`\\s+${work.attributes[0].type}`));
+
+    const attributeValue = page.locator('input[name="edit-work.attributes.0.value"]');
+    await expect(attributeValue).toHaveValue(work.attributes[0].value);
+
+    for (const role of ['composer', 'lyricist', 'translator'] as const) {
+      const roleRow = page.getByRole('row', {name: role});
+      const links = roleRow.getByRole('link');
+      await expect(links).toHaveText(work[role]);
+    }
+  });
 });
