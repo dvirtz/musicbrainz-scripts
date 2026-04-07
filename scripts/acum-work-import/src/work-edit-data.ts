@@ -177,7 +177,7 @@ export async function workEditData(
             })()
           )
         : originalEditData.languages,
-      iswcs: mergeArrays(originalEditData.iswcs, (await workISWCs(acumWorkId)) ?? []),
+      iswcs: mergeArrays(originalEditData.iswcs, (await workISWCs(track)) ?? []),
       // remove older longer ACUM ID attributes
       attributes: [
         ...originalEditData.attributes.filter(
