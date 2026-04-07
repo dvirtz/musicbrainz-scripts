@@ -57,6 +57,8 @@ type WorkVersion = WorkBean & {
   albumTrackNumber: string;
 };
 
+type Flag = '0' | '1';
+
 export type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   work_id: string;
   fullWorkId: string;
@@ -75,7 +77,8 @@ export type WorkBean = Bean<'org.acum.site.searchdb.dto.bean.WorkBean'> & {
   versionIswcNumber?: string;
   versionEssenceType?: string;
   versionId: string;
-  isMedley: '0' | '1';
+  isMedley: Flag;
+  isTranslated: Flag;
   list?: ReadonlyArray<MedleyVersionBean>;
   original?: TranslatedOriginalVersion;
   workType?: string;
@@ -168,8 +171,8 @@ async function fetchAlbum(albumId: string): Promise<AlbumBean> {
   throw new Error(`failed to fetch album ${albumId}`);
 }
 
-export async function workISWCs(workID: string) {
-  return (await fetchWork(workID))
+export async function workISWCs(work: WorkBean) {
+  return (work.isTranslated === '1' ? [] : await fetchWork(workId(work)))
     ?.map(albumVersion => albumVersion.versionIswcNumber)
     .filter((iswc): iswc is string => iswc !== undefined && iswc.length > 0)
     .map(formatISWC);
@@ -302,5 +305,5 @@ export function creatorUrl(creator: CreatorBase<string>) {
 }
 
 export function workId(work: WorkBean) {
-  return work.workId || work.fullWorkId;
+  return work.isTranslated === '1' ? work.versionId : work.workId || work.fullWorkId;
 }

@@ -22,7 +22,7 @@ const workCache = new Map<string, WorkT>();
 
 export async function findWork(track: WorkBean) {
   const workGid = await (async () => {
-    for (const iswc of await workISWCs(workId(track))) {
+    for (const iswc of await workISWCs(track)) {
       const byIswc = await tryFetchJSON<IswcLookupResultsT>(`/ws/2/iswc/${formatISWC(iswc)}?fmt=json`);
       if (byIswc && byIswc['work-count'] > 0) {
         return byIswc.works[0]!.id;
@@ -35,10 +35,7 @@ export async function findWork(track: WorkBean) {
         from(byName.works).pipe(
           mergeMap(async work => await fetchJSON<WorkLookupResultT>(`/ws/2/work/${work.id}`)),
           filter(
-            work =>
-              work.attributes.find(
-                attr => attr.type === 'ACUM ID' && (attr.value === track.workId || attr.value === track.fullWorkId)
-              ) !== undefined
+            work => work.attributes.find(attr => attr.type === 'ACUM ID' && attr.value === workId(track)) !== undefined
           ),
           defaultIfEmpty(undefined)
         )
