@@ -1,4 +1,4 @@
-import {expect} from '@playwright/test';
+import {expect, type Page} from '@playwright/test';
 import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
 import {EventForm} from '@repo/musicbrainz-ext/event-form';
 import {MusicbrainzPage} from '@repo/test-support/musicbrainz-page';
@@ -129,6 +129,23 @@ export class TestEvent {
     return new TestEvent(eventGid);
   }
 
+  private static async expectSeededRelationships(page: Page): Promise<void> {
+    const relEditorRows = page.locator('table.rel-editor-table').locator('tr');
+    for (const [index, relationship] of this.entityRelationships.entries()) {
+      const row = relEditorRows.nth(index);
+      await expect(row.locator('th.link-phrase')).toHaveText(`${relationship.phrase}:`);
+      await expect(row.locator('td.relationship-list')).toContainText(relationship.targetText);
+    }
+
+    const externalLinksRows = page.locator('#external-links-editor').locator('tr');
+    for (const [index, relationship] of this.urlRelationships.entries()) {
+      const linkRow = externalLinksRows.nth(index * 2);
+      await expect(linkRow.locator('input')).toHaveValue(relationship.url);
+      const typeRow = externalLinksRows.nth(index * 2 + 1);
+      await expect(typeRow.locator('label.relationship-name')).toContainText(relationship.linkTypeName);
+    }
+  }
+
   private static async createEvent(musicbrainzPage: MusicbrainzPage): Promise<string> {
     const existingEvent = await musicbrainzPage.page.request.get('/ws/2/event', {
       params: {
@@ -164,6 +181,8 @@ export class TestEvent {
 
     await musicbrainzPage.userscriptPage.goto(`/event/create?${searchParams.toString()}`);
     const page = musicbrainzPage.page;
+
+    await this.expectSeededRelationships(page);
 
     await page.getByRole('textbox', {name: 'Edit note:'}).fill('test');
     await page.getByRole('button', {name: 'Enter edit'}).click();
