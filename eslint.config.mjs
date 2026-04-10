@@ -58,5 +58,18 @@ export default tsEslint.config(
     rules: {
       'no-relative-import-paths/no-relative-import-paths': 'off',
     },
+  },
+  {
+    files: ['scripts/single-language-tracklist/src/**/*.ts', 'scripts/single-language-tracklist/src/**/*.tsx'],
+    rules: {
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'window',
+          property: 'MB',
+          message: 'Use global MB instead of window.MB for mobile userscript compatibility.',
+        },
+      ],
+    },
   }
 );
