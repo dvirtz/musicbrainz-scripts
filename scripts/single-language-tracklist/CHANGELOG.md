@@ -1,3 +1,7 @@
+## @dvirtz/single-language-tracklist-v1.2.1 (2026-04-10)
+
+* fix(single-language-tracklist): avoid window.MB access ([0066be4](https://github.com/dvirtz/musicbrainz-scripts/commit/0066be4)), closes [#178](https://github.com/dvirtz/musicbrainz-scripts/issues/178)
+
 ## @dvirtz/single-language-tracklist-v1.2.0 (2026-04-03)
 
 * feat(single-language-tracklist): use page observables instead of direct dom mutation ([658a9f7](https://github.com/dvirtz/musicbrainz-scripts/commit/658a9f7))
