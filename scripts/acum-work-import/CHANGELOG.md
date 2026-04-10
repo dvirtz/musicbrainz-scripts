@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.20.7-beta.1 (2026-04-10)
+
+* fix(acum-work-import): use version number as ACUM ID for translated works ([957b750](https://github.com/dvirtz/musicbrainz-scripts/commit/957b750)), closes [#163](https://github.com/dvirtz/musicbrainz-scripts/issues/163)
+
 ## @dvirtz/acum-work-import-v1.20.6 (2026-03-22)
 
 * chore: enforce no relative imports ([b6adfe9](https://github.com/dvirtz/musicbrainz-scripts/commit/b6adfe9))
