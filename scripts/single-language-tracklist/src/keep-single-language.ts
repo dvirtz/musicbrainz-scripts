@@ -36,8 +36,8 @@ function keepArtistCreditSide(artistCredit: ArtistCreditT, side: Side, sep: stri
 }
 
 function getRelease() {
-  assertMBReleaseEditor(window.MB);
-  const release = window.MB.releaseEditor.rootField.release();
+  assertMBReleaseEditor(MB);
+  const release = MB.releaseEditor.rootField.release();
   if (!release) {
     throw new Error('Release data not available');
   }
