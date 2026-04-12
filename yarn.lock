@@ -1057,24 +1057,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dvirtz/change-all-artists-default@workspace:scripts/change-all-artists-default":
-  version: 0.0.0-use.local
-  resolution: "@dvirtz/change-all-artists-default@workspace:scripts/change-all-artists-default"
-  dependencies:
-    "@kobalte/core": "npm:*"
-    "@playwright/test": "npm:*"
-    "@repo/common-types": "workspace:^"
-    "@repo/common-ui": "workspace:^"
-    "@repo/rxjs-ext": "workspace:*"
-    "@repo/test-support": "workspace:*"
-    "@repo/typescript-config": "workspace:*"
-    "@repo/vite-config": "workspace:*"
-    eslint: "npm:*"
-    solid-js: "npm:*"
-    vite: "npm:*"
-  languageName: unknown
-  linkType: soft
-
 "@dvirtz/event-seeder@workspace:scripts/event-seeder":
   version: 0.0.0-use.local
   resolution: "@dvirtz/event-seeder@workspace:scripts/event-seeder"
@@ -1155,6 +1137,25 @@ __metadata:
     vite: "npm:^6.2.6"
     vite-plugin-monkey: "npm:^5.0.8"
     vite-plugin-solid: "npm:^2.11.6"
+  languageName: unknown
+  linkType: soft
+
+"@dvirtz/release-artist-toolkit@workspace:scripts/release-artist-toolkit":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/release-artist-toolkit@workspace:scripts/release-artist-toolkit"
+  dependencies:
+    "@kobalte/core": "npm:*"
+    "@playwright/test": "npm:*"
+    "@repo/common-types": "workspace:^"
+    "@repo/common-ui": "workspace:^"
+    "@repo/musicbrainz-ext": "workspace:*"
+    "@repo/rxjs-ext": "workspace:*"
+    "@repo/test-support": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
+    "@repo/vite-config": "workspace:*"
+    eslint: "npm:*"
+    solid-js: "npm:*"
+    vite: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -3790,9 +3791,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001688":
-  version: 1.0.30001743
-  resolution: "caniuse-lite@npm:1.0.30001743"
-  checksum: 10c0/1bd730ca10d881a1ca9f55ce864d34c3b18501718c03976e0d3419f4694b715159e13fdef6d58ad47b6d2445d315940f3a01266658876828c820a3331aac021d
+  version: 1.0.30001787
+  resolution: "caniuse-lite@npm:1.0.30001787"
+  checksum: 10c0/93a6975afbf07f49c9077b348948bbc25b6a82596ccd07b4b6503e48f6f968e1a1e057cc25004db8a2d1d4f35f0c792739e33634edfcefc88ff184c9a2f7a036
   languageName: node
   linkType: hard
 

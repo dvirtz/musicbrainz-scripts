@@ -34,16 +34,16 @@ This scripts allows you to import works from the database of the Israeli rights 
 
 See the script [README](scripts/acum-work-import/README.md) for more information.
 
-### Change All Artists Default
+### Release Artist Toolkit
 
-[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/change-all-artists-default.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/change-all-artists-default.user.js)
-[![source][badge-source]](scripts/change-all-artists-default/src/index.ts)
+[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/release-artist-toolkit.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/release-artist-toolkit.user.js)
+[![source][badge-source]](scripts/release-artist-toolkit/src/index.ts)
 
-Sets the default value of "Change all artists" check box in the track list edit page.
+Toolkit for release editor artist credits: sets the default value of "Change all artists" check box in the track list edit page, propagate partially matching credits by artist ID, reset artist credits, and copy release artist credit from release group.
 
-![change all artists](scripts/change-all-artists-default/assets/change-all-artists.png)
+![release artist toolkit controls](scripts/release-artist-toolkit/assets/toolkit-controls.png)
 
-See the script [README](scripts/change-all-artists-default/README.md) for more information.
+See the script [README](scripts/release-artist-toolkit/README.md) for more information.
 
 ## Single Language Tracklist
 
