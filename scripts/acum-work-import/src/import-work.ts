@@ -75,7 +75,8 @@ export async function importWork(
   }
 
   const {editData} = await workEditData(
-    Object.assign(work, {
+    {
+      ...work,
       // the attributes are rendered in a different order
       attributes: await lastValueFrom(
         zip(
@@ -93,7 +94,7 @@ export async function importWork(
           toArray()
         )
       ),
-    }),
+    },
     version,
     addWarning
   );
