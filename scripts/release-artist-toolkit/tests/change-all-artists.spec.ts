@@ -1,0 +1,61 @@
+import {expect} from '@playwright/test';
+import {test} from '@repo/test-support/musicbrainz-test';
+
+const release = '148cc205-92b8-42e6-a3b8-9758503a48cd';
+
+test('change all artists default', async ({musicbrainzPage, page}) => {
+  await musicbrainzPage.editTracklist(release);
+
+  const checkbox = page
+    .getByRole('group', {name: 'dvirtz MusicBrainz scripts'})
+    .locator('#checkbox-cl-0-control > input');
+  await expect(checkbox).not.toBeChecked();
+  await checkbox.check();
+
+  await page.locator('#open-ac-5628185').click();
+  const changeAllArtistsCheckbox = page.getByRole('checkbox', {name: 'Change all artists on this'});
+  await expect(changeAllArtistsCheckbox).toBeChecked();
+
+  // rename artist
+  // cspell: disable
+  const oldArtistName = 'אריק איינשטיין';
+  const newArtistName = 'Arik Einstein';
+  const trackName = 'אחינעם לא יודעת';
+  // cspell: enable
+  const artistNameInput = page.getByRole('cell', {name: oldArtistName, exact: true}).getByRole('textbox');
+  await artistNameInput.fill(newArtistName);
+  await page.getByRole('button', {name: 'Done'}).click();
+
+  // cspell: disable-next-line
+  const artistName = page.getByRole('row', {name: trackName}).getByPlaceholder('Type to search, or paste an');
+  await expect(artistName).toHaveValue(newArtistName);
+});
+
+test('prepopulated from storage: true', async ({musicbrainzPage, page}) => {
+  // Seed localStorage before the userscript and page are initialized
+  await page.addInitScript(() => {
+    localStorage.setItem('change-matching-artists', JSON.stringify(true));
+  });
+
+  await musicbrainzPage.editTracklist(release);
+
+  await page.locator('#open-ac-5628185').click();
+  const checkbox = page.getByRole('checkbox', {name: 'Change all artists on this'});
+  await expect(checkbox).toBeChecked();
+});
+
+test('persisted value survives reload', async ({musicbrainzPage, userscriptPage, page}) => {
+  await musicbrainzPage.editTracklist(release);
+
+  const checkbox = page
+    .getByRole('group', {name: 'dvirtz MusicBrainz scripts'})
+    .locator('#checkbox-cl-0-control > input');
+  await checkbox.check();
+
+  // Reload and re-inject the userscript
+  await userscriptPage.reload();
+
+  await musicbrainzPage.editTracklist(release);
+
+  await expect(checkbox).toBeChecked();
+});
