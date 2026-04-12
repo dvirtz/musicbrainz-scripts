@@ -1,0 +1,34 @@
+{
+  "name": "@dvirtz/release-artist-toolkit",
+  "type": "module",
+  "main": "./dist/release-artist-toolkit.user.js",
+  "imports": {
+    "#*": "./src/*",
+    "#tests/*": "./tests/*"
+  },
+  "scripts": {
+    "dev": "vite --configLoader runner",
+    "build": "vite --configLoader runner build",
+    "build-watch": "yarn run build --watch",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "playwright test --project=chromium",
+    "record:har": "playwright test --max-failures=0 --project=chromium-har"
+  },
+  "devDependencies": {
+    "@playwright/test": "*",
+    "@repo/test-support": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/vite-config": "workspace:*",
+    "eslint": "*",
+    "vite": "*"
+  },
+  "dependencies": {
+    "@kobalte/core": "*",
+    "@repo/common-types": "workspace:^",
+    "@repo/common-ui": "workspace:^",
+    "@repo/musicbrainz-ext": "workspace:*",
+    "@repo/rxjs-ext": "workspace:*",
+    "solid-js": "*"
+  }
+}

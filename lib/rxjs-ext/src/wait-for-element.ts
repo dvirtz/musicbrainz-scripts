@@ -1,6 +1,5 @@
-import {executePipeline} from '#execute-pipeline.ts';
 import domMutations from 'dom-mutations';
-import {filter, first, from, mergeMap, Observable, startWith} from 'rxjs';
+import {filter, firstValueFrom, from, mergeMap, Observable, startWith} from 'rxjs';
 
 // Internal helper to build an element stream from mutations.
 function mutationElementStream<T extends Element>(
@@ -32,9 +31,17 @@ export async function waitForElement<T extends Element>(
   options?: MutationObserverInit,
   target?: Node
 ): Promise<T | undefined> {
-  return await executePipeline(newElements<T>(condition, options, target).pipe(first()));
+  return await firstValueFrom(newElements<T>(condition, options, target));
 }
 
 export async function waitForAttribute(target: Node, attribute: string) {
-  return await executePipeline(from(domMutations(target, {attributeFilter: [attribute]})).pipe(first()));
+  return await firstValueFrom(from(domMutations(target, {attributeFilter: [attribute]})));
+}
+
+export async function waitForMutation(
+  target: Node,
+  predicate: (mutation: MutationRecord) => boolean,
+  options: MutationObserverInit = {subtree: true, childList: true}
+) {
+  return await firstValueFrom(from(domMutations(target, options)).pipe(filter(predicate)));
 }

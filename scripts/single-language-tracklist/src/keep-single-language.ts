@@ -3,7 +3,7 @@
  * by directly modifying the page observables instead of manipulating the DOM
  */
 
-import {assertMBReleaseEditor} from '@repo/musicbrainz-ext/asserts';
+import {getRelease} from '@repo/musicbrainz-ext/release-editor';
 import {ArtistCreditT} from 'typedbrainz/types';
 
 type Side = 'left' | 'right';
@@ -33,16 +33,6 @@ function keepArtistCreditSide(artistCredit: ArtistCreditT, side: Side, sep: stri
     ...artistCredit,
     names: normalizedNames,
   };
-}
-
-function getRelease() {
-  assertMBReleaseEditor(MB);
-  const release = MB.releaseEditor.rootField.release();
-  if (!release) {
-    throw new Error('Release data not available');
-  }
-
-  return release;
 }
 
 function keepTitleSide(side: Side, sep: string) {
