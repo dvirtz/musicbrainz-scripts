@@ -1,11 +1,28 @@
-# Change All Artists Default
+# Release Artist Toolkit
 
-[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/change-all-artists-default.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/change-all-artists-default.user.js)
+[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/release-artist-toolkit.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/release-artist-toolkit.user.js)
 [![source][badge-source]](src/index.ts)
 
-Sets the default value of "Change all artists" check box in the track list edit page.
+Toolkit for release editor artist credits.
 
-![change all artists](assets/change-all-artists.png)
+- Sets the default value of "Change all artists" check box in the track list edit page.
+- Adds a "Change partially matching credits" mode that propagates edited artist names by artist ID,
+  even when full credits are not identical.
+- Resets edited artist credit names back to canonical artist names on the release and tracks.
+- Adds a "Copy from RG" button in the release artist bubble to copy the release group artist credit.
+
+![release artist toolkit controls](assets/toolkit-controls.png)
+
+![release credit bubble](assets/release-credit-bubble.png)
+
+## Usage
+
+1. Open a release edit page.
+2. In the "Release artist toolkit" box:
+3. Enable "Change all artists default" to pre-check the bubble option.
+4. Enable "Change partially matching credits" to propagate by artist ID across different credits.
+5. Click "Reset artist names" to restore canonical names for release and tracks.
+6. In the release artist bubble, click "Copy from RG" to copy the release group credit.
 
 ## Release Notes
 

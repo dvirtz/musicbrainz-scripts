@@ -1,11 +1,16 @@
 .tool__line {
-  display: flex; 
-  gap: 8px; 
+  display: flex;
+  gap: 8px;
   align-items: center;
 
-  h4 {    
+  h4 {
     margin-top: 0.66em;
     margin-bottom: 0.66em;
+  }
+
+  div {
+    display: flex;
+    align-items: center;
   }
 }
 

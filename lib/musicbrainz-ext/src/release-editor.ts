@@ -5,6 +5,7 @@
  * Based on knockout observables exposed in the MB.releaseEditor context
  */
 
+import {assertMBReleaseEditor} from '#asserts.ts';
 import {ArtistCreditT, MediumT, TrackT} from 'typedbrainz/types';
 
 // Knockout observable shape used by MusicBrainz release editor
@@ -59,6 +60,11 @@ declare class EditorReleaseEvent {
   hasInvalidDate: Computed<boolean>;
 }
 
+type EditorReleaseGroup = {
+  artistCredit: ArtistCreditT;
+  [key: string]: unknown;
+};
+
 export declare class EditorRelease {
   name: Observable<string>;
   statusID: Observable<string>;
@@ -69,7 +75,7 @@ export declare class EditorRelease {
   events: ObservableArray<EditorReleaseEvent>;
   barcode: EditorBarcode;
   artistCredit: Observable<ArtistCreditT>;
-  releaseGroup: Observable<ArtistCreditT>;
+  releaseGroup: Observable<EditorReleaseGroup>;
   mediums: ObservableArray<EditorMedium>;
   allTracks(): Iterable<EditorTrack>;
 }
@@ -107,4 +113,14 @@ export interface MBReleaseEditor {
   nextMedium(): void;
   checkFormatAndShowWarning(): void;
   _mediaSelectable(): boolean;
+}
+
+export function getRelease() {
+  assertMBReleaseEditor(MB);
+  const release = MB.releaseEditor.rootField.release();
+  if (!release) {
+    throw new Error('Release data not available');
+  }
+
+  return release;
 }

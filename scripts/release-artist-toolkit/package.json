@@ -1,7 +1,7 @@
 {
-  "name": "@dvirtz/change-all-artists-default",
+  "name": "@dvirtz/release-artist-toolkit",
   "type": "module",
-  "main": "./dist/change-all-artists-default.user.js",
+  "main": "./dist/release-artist-toolkit.user.js",
   "imports": {
     "#*": "./src/*",
     "#tests/*": "./tests/*"
@@ -26,6 +26,7 @@
     "@kobalte/core": "*",
     "@repo/common-types": "workspace:^",
     "@repo/common-ui": "workspace:^",
+    "@repo/musicbrainz-ext": "workspace:*",
     "@repo/rxjs-ext": "workspace:*",
     "solid-js": "*"
   }
