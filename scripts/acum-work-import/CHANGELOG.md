@@ -1,3 +1,8 @@
+## @dvirtz/acum-work-import-v1.20.7 (2026-04-13)
+
+* fix(acum-work-import): can't assign const property ([ab9f19a](https://github.com/dvirtz/musicbrainz-scripts/commit/ab9f19a))
+* fix(acum-work-import): use version number as ACUM ID for translated works ([8d5e304](https://github.com/dvirtz/musicbrainz-scripts/commit/8d5e304)), closes [#163](https://github.com/dvirtz/musicbrainz-scripts/issues/163)
+
 ## @dvirtz/acum-work-import-v1.20.6 (2026-03-22)
 
 * chore: enforce no relative imports ([b6adfe9](https://github.com/dvirtz/musicbrainz-scripts/commit/b6adfe9))
