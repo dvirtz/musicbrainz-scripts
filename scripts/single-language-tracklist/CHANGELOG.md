@@ -1,3 +1,7 @@
+## @dvirtz/single-language-tracklist-v1.3.0-beta.1 (2026-04-13)
+
+* feat(release-artist-toolkit): rename and enhance release editor artist credit tools ([c8331a7](https://github.com/dvirtz/musicbrainz-scripts/commit/c8331a7))
+
 ## @dvirtz/single-language-tracklist-v1.2.1 (2026-04-10)
 
 * fix(single-language-tracklist): avoid window.MB access ([0066be4](https://github.com/dvirtz/musicbrainz-scripts/commit/0066be4)), closes [#178](https://github.com/dvirtz/musicbrainz-scripts/issues/178)
