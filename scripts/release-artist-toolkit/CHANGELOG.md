@@ -1,3 +1,7 @@
+## @dvirtz/release-artist-toolkit-v1.0.0-beta.1 (2026-04-13)
+
+* feat(release-artist-toolkit): rename and enhance release editor artist credit tools ([c8331a7](https://github.com/dvirtz/musicbrainz-scripts/commit/c8331a7))
+
 ## @dvirtz/change-all-artists-default-v1.1.3 (2026-01-21)
 
 * fix(rxjs-ext): include nested elements when observing mutations ([c39ea41](https://github.com/dvirtz/musicbrainz-scripts/commit/c39ea41))
