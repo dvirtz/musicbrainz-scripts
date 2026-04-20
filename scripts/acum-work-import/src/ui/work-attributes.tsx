@@ -1,30 +1,28 @@
 import {WorkAttributeRow} from '#ui/work-attributes-row.tsx';
-import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
 import classes from '#ui/work-edit-dialog.module.css';
+import {WorkEditAttribute} from '#work-edit-data.ts';
 import {For} from 'solid-js';
+import {createStore} from 'solid-js/store';
 
-export function WorkAttributes() {
-  const {liveEditData, setEditData} = useWorkEditData();
+export function WorkAttributes(props: {attributes: WorkEditAttribute[]}) {
+  const [attributes, setAttributes] = createStore(props.attributes);
 
   return (
     <fieldset>
       <legend>{'Work attributes'}</legend>
       <table id="work-attributes" class={`row-form ${classes['row-form']}`} data-bind="delegatedHandler: 'click'">
         <tbody>
-          <For each={liveEditData.attributes}>
-            {(attribute, index) => <WorkAttributeRow attribute={attribute} index={index} setEditData={setEditData} />}
+          <For each={attributes}>
+            {(attribute, index) => (
+              <WorkAttributeRow attribute={attribute} index={index} setAttributes={setAttributes} />
+            )}
           </For>
           <tr>
             <td />
             <td class="add-item" colSpan={2}>
               <button
                 class="with-label add-item"
-                onClick={() =>
-                  setEditData('attributes', liveEditData.attributes.length, {
-                    type_id: 0,
-                    value: '',
-                  })
-                }
+                onClick={() => setAttributes(attributes.length, {type_id: 0, value: '', value_id: null})}
                 type="button"
                 title="Add work attribute"
               >

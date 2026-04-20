@@ -18,7 +18,7 @@ export type SelectBoxStateT = {
   label?: string;
   options: OptionListT;
   value?: string | number;
-  onChange: (_: number) => void;
+  onChange?: (_: number) => void;
 };
 
 export function SelectBox(props: SelectBoxStateT) {
@@ -38,7 +38,10 @@ export function SelectBox(props: SelectBoxStateT) {
 function StrippedSelectBox(props: Omit<SelectBoxStateT, 'label'>) {
   const [local, selectProps] = splitProps(props, ['options', 'onChange']);
   return (
-    <select onChange={ev => local.onChange(parseInteger(ev.target.value))} {...selectProps}>
+    <select
+      onChange={local.onChange ? ev => local.onChange!(parseInteger(ev.target.value)) : undefined}
+      {...selectProps}
+    >
       <option value="">{'\xA0'}</option>
       <For each={local.options}>
         {option => (

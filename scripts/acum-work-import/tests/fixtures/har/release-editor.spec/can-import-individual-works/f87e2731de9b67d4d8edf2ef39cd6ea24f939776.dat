@@ -1,0 +1,34 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/ui/form-row.tsx");import { template as _$template } from "/node_modules/.vite/deps/solid-js_web.js?v=7b6e5c47";
+import { classList as _$classList } from "/node_modules/.vite/deps/solid-js_web.js?v=7b6e5c47";
+import { effect as _$effect } from "/node_modules/.vite/deps/solid-js_web.js?v=7b6e5c47";
+import { insert as _$insert } from "/node_modules/.vite/deps/solid-js_web.js?v=7b6e5c47";
+import { $$registry as _$$registry, $$refresh as _$$refresh, $$component as _$$component } from "/@solid-refresh";
+const _REGISTRY = _$$registry();
+var _tmpl$ = /* @__PURE__ */ _$template(`<div>`);
+import classes from "/src/ui/work-edit-dialog.module.css";
+import { mergeProps } from "/node_modules/.vite/deps/solid-js.js?v=7b6e5c47";
+export const FormRow = _$$component(_REGISTRY, "FormRow", function FormRow2(props) {
+  props = mergeProps({
+    hasNoLabel: false,
+    hasNoMarge: false
+  }, props);
+  return (() => {
+    var _el$ = _tmpl$();
+    _$insert(_el$, () => props.children);
+    _$effect((_$p) => _$classList(_el$, {
+      row: true,
+      [classes.row]: true,
+      "no-label": props.hasNoLabel,
+      "no-margin": props.hasNoMargin
+    }, _$p));
+    return _el$;
+  })();
+}, {
+  location: "src\\ui\\form-row.tsx:14:7"
+});
+if (import.meta.hot) {
+  _$$refresh("vite", import.meta.hot, _REGISTRY);
+  import.meta.hot.accept();
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6Ijs7Ozs7OztBQVVBLE9BQU9BLGFBQWE7QUFDcEIsU0FBUUMsa0JBQThCO0FBRXRDLGFBQWdCQyxVQUFPQyxhQUFBQyxXQUFBLG9CQUFQRixTQUNkRyxPQUlBO0FBQ0FBLFVBQVFKLFdBQVc7QUFBQSxJQUFDSyxZQUFZO0FBQUEsSUFBT0MsWUFBWTtBQUFBLEVBQUssR0FBR0YsS0FBSztBQUNoRTtBQUFBLFFBQUFHLE9BQUFDLE9BQUE7QUFBQUMsYUFBQUYsTUFBQSxNQVNLSCxNQUFNTSxRQUFRO0FBQUFDLGFBQUFDLFNBQUFDLFlBQUFOLE1BUEo7QUFBQSxNQUNUTyxLQUFLO0FBQUEsTUFDTCxDQUFDZixRQUFRZSxHQUFJLEdBQUc7QUFBQSxNQUNoQixZQUFZVixNQUFNQztBQUFBQSxNQUNsQixhQUFhRCxNQUFNVztBQUFBQSxJQUNyQixHQUFDSCxHQUFBO0FBQUEsV0FBQUw7QUFBQUEsRUFBQTtBQUtQLEdBQUM7QUFBQSxFQUFBUyxVQUFBO0FBQUE7QUFBQSxJQUFBQyxZQUFBQyxLQUFBO0FBQUFDLGFBQUEsUUFBQUYsWUFBQUMsS0FBQWYsU0FBQTtBQUFBYyxjQUFBQyxJQUFBRSxPQUFBO0FBQUEiLCJuYW1lcyI6WyJjbGFzc2VzIiwibWVyZ2VQcm9wcyIsIkZvcm1Sb3ciLCJfJCRjb21wb25lbnQiLCJfUkVHSVNUUlkiLCJwcm9wcyIsImhhc05vTGFiZWwiLCJoYXNOb01hcmdlIiwiX2VsJCIsIl90bXBsJCIsIl8kaW5zZXJ0IiwiY2hpbGRyZW4iLCJfJGVmZmVjdCIsIl8kcCIsIl8kY2xhc3NMaXN0Iiwicm93IiwiaGFzTm9NYXJnaW4iLCJsb2NhdGlvbiIsImltcG9ydCIsImhvdCIsIl8kJHJlZnJlc2giLCJhY2NlcHQiXSwiaWdub3JlTGlzdCI6W10sInNvdXJjZXMiOlsiZm9ybS1yb3cudHN4Il0sInNvdXJjZXNDb250ZW50IjpbIi8vIGFkYXB0ZWQgZnJvbSBodHRwczovL2dpdGh1Yi5jb20vbWV0YWJyYWluei9tdXNpY2JyYWluei1zZXJ2ZXIvYmxvYi85ZDY2MzFhYzZkNGVhY2IyY2FlNGZlNTFkZDI4OGZhZTU2NDIwYjVmL3Jvb3Qvc3RhdGljL3NjcmlwdHMvZWRpdC9jb21wb25lbnRzL0Zvcm1Sb3cuanNcclxuXHJcbi8qXHJcbiAqIENvcHlyaWdodCAoQykgMjAxNyBNZXRhQnJhaW56IEZvdW5kYXRpb25cclxuICpcclxuICogVGhpcyBmaWxlIGlzIHBhcnQgb2YgTXVzaWNCcmFpbnosIHRoZSBvcGVuIGludGVybmV0IG11c2ljIGRhdGFiYXNlLFxyXG4gKiBhbmQgaXMgbGljZW5zZWQgdW5kZXIgdGhlIEdQTCB2ZXJzaW9uIDIsIG9yIChhdCB5b3VyIG9wdGlvbikgYW55XHJcbiAqIGxhdGVyIHZlcnNpb246IGh0dHA6Ly93d3cuZ251Lm9yZy9saWNlbnNlcy9ncGwtMi4wLnR4dFxyXG4gKi9cclxuXHJcbmltcG9ydCBjbGFzc2VzIGZyb20gJyN1aS93b3JrLWVkaXQtZGlhbG9nLm1vZHVsZS5jc3MnO1xyXG5pbXBvcnQge21lcmdlUHJvcHMsIFBhcmVudFByb3BzfSBmcm9tICdzb2xpZC1qcyc7XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gRm9ybVJvdyhcclxuICBwcm9wczogUGFyZW50UHJvcHMgJiB7XHJcbiAgICBoYXNOb0xhYmVsPzogYm9vbGVhbjtcclxuICAgIGhhc05vTWFyZ2luPzogYm9vbGVhbjtcclxuICB9XHJcbikge1xyXG4gIHByb3BzID0gbWVyZ2VQcm9wcyh7aGFzTm9MYWJlbDogZmFsc2UsIGhhc05vTWFyZ2U6IGZhbHNlfSwgcHJvcHMpO1xyXG4gIHJldHVybiAoXHJcbiAgICA8ZGl2XHJcbiAgICAgIGNsYXNzTGlzdD17e1xyXG4gICAgICAgIHJvdzogdHJ1ZSxcclxuICAgICAgICBbY2xhc3Nlcy5yb3chXTogdHJ1ZSxcclxuICAgICAgICAnbm8tbGFiZWwnOiBwcm9wcy5oYXNOb0xhYmVsLFxyXG4gICAgICAgICduby1tYXJnaW4nOiBwcm9wcy5oYXNOb01hcmdpbixcclxuICAgICAgfX1cclxuICAgID5cclxuICAgICAge3Byb3BzLmNoaWxkcmVufVxyXG4gICAgPC9kaXY+XHJcbiAgKTtcclxufVxyXG4iXSwiZmlsZSI6IkM6L1VzZXJzL2R5aXR6Y2hha2kvR2l0SHViL21ldGFicmFpbnovbXVzaWNicmFpbnotc2NyaXB0cy9zY3JpcHRzL2FjdW0td29yay1pbXBvcnQvc3JjL3VpL2Zvcm0tcm93LnRzeCJ9

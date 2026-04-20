@@ -5,7 +5,8 @@
   "exports": {
     "./head": "./src/head.ts",
     "./merge-arrays": "./src/merge-arrays.ts",
-    "./remove-at-index": "./src/remove-at-index.ts"
+    "./remove-at-index": "./src/remove-at-index.ts",
+    "./parition": "./src/partition.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

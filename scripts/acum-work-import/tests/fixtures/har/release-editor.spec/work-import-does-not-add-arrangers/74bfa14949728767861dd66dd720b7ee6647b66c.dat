@@ -1,0 +1,12 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/common-ui/src/toolbox.module.css");import { updateStyle as __vite__updateStyle, removeStyle as __vite__removeStyle } from "/@vite/client"
+const __vite__id = "C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/common-ui/src/toolbox.module.css"
+const __vite__css = "#_dvirtz-toolbox_1xw83_1 {\r\n  padding: 12px;\r\n  margin-top: 0;\r\n  border: 1px solid #ddd;\r\n  border-radius: 6px;\r\n}\r\n\r\n#_dvirtz-toolbox_1xw83_1._half-page_1xw83_15 {\r\n  margin: 0px -6px 6px 550px;\r\n}\r\n\r\n#_dvirtz-toolbox_1xw83_1._iframe_1xw83_23 {\r\n  margin: 0px -6px 6px 0px;\r\n}\r\n"
+__vite__updateStyle(__vite__id, __vite__css)
+export const iframe = "_iframe_1xw83_23";
+export default {
+	"dvirtz-toolbox": "_dvirtz-toolbox_1xw83_1",
+	"half-page": "_half-page_1xw83_15",
+	iframe: iframe
+};
+
+import.meta.hot.prune(() => __vite__removeStyle(__vite__id))

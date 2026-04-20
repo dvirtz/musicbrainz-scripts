@@ -1,0 +1,81 @@
+import {
+  ARRANGER_LINK_TYPE_ID,
+  MEDLEY_OF_LINK_TYPE_ID,
+  REL_STATUS_ADD,
+  REL_STATUS_NOOP
+} from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/musicbrainz-ext/src/constants.ts";
+export function createRelationshipState(fields) {
+  return {
+    _lineage: [],
+    _original: null,
+    _status: REL_STATUS_NOOP,
+    attributes: null,
+    begin_date: null,
+    editsPending: false,
+    end_date: null,
+    ended: false,
+    entity0_credit: "",
+    entity1_credit: "",
+    linkOrder: 0,
+    linkTypeID: null,
+    ...fields,
+    id: MB?.relationshipEditor.getRelationshipStateId(null) || -1
+  };
+}
+export function addWriterRelationship(work, artist, linkTypeID) {
+  if (MB?.relationshipEditor.dispatch) {
+    MB.relationshipEditor.dispatch({
+      type: "update-relationship-state",
+      sourceEntity: work,
+      batchSelectionCount: void 0,
+      creditsToChangeForSource: "",
+      creditsToChangeForTarget: "",
+      newRelationshipState: createRelationshipState({
+        _status: REL_STATUS_ADD,
+        entity0: artist,
+        entity1: work,
+        linkTypeID
+      }),
+      oldRelationshipState: null
+    });
+  }
+}
+export function addArrangerRelationship(recording, artist) {
+  if (MB?.relationshipEditor.dispatch) {
+    MB.relationshipEditor.dispatch({
+      type: "update-relationship-state",
+      sourceEntity: recording,
+      batchSelectionCount: void 0,
+      creditsToChangeForSource: "",
+      creditsToChangeForTarget: "",
+      newRelationshipState: createRelationshipState({
+        _status: REL_STATUS_ADD,
+        entity0: artist,
+        entity1: recording,
+        linkTypeID: ARRANGER_LINK_TYPE_ID
+      }),
+      oldRelationshipState: null
+    });
+  }
+}
+export function updateMedleyWorkRelationship(status, linkOrder, work, medleyWork, oldRelationshipState = null) {
+  if (MB?.relationshipEditor.dispatch) {
+    MB?.relationshipEditor.dispatch({
+      type: "update-relationship-state",
+      sourceEntity: work,
+      batchSelectionCount: void 0,
+      creditsToChangeForSource: "",
+      creditsToChangeForTarget: "",
+      newRelationshipState: createRelationshipState({
+        _status: status,
+        entity0: work,
+        entity1: medleyWork,
+        linkTypeID: MEDLEY_OF_LINK_TYPE_ID,
+        linkOrder
+      }),
+      oldRelationshipState
+    });
+  }
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInJlbGF0aW9uc2hpcHMudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtcclxuICBBUlJBTkdFUl9MSU5LX1RZUEVfSUQsXHJcbiAgTUVETEVZX09GX0xJTktfVFlQRV9JRCxcclxuICBSRUxfU1RBVFVTX0FERCxcclxuICBSRUxfU1RBVFVTX05PT1AsXHJcbn0gZnJvbSAnQHJlcG8vbXVzaWNicmFpbnotZXh0L2NvbnN0YW50cyc7XHJcbmltcG9ydCB7QXJ0aXN0VCwgUmVjb3JkaW5nVCwgUmVsYXRpb25zaGlwRWRpdFN0YXR1c1QsIFJlbGF0aW9uc2hpcFN0YXRlVCwgV29ya1R9IGZyb20gJ3R5cGVkYnJhaW56L3R5cGVzJztcclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBjcmVhdGVSZWxhdGlvbnNoaXBTdGF0ZTxGaWVsZHMgZXh0ZW5kcyBQaWNrPFJlbGF0aW9uc2hpcFN0YXRlVCwgJ2VudGl0eTAnIHwgJ2VudGl0eTEnPj4oXHJcbiAgZmllbGRzOiBGaWVsZHNcclxuKTogUmVsYXRpb25zaGlwU3RhdGVUIHtcclxuICByZXR1cm4ge1xyXG4gICAgX2xpbmVhZ2U6IFtdLFxyXG4gICAgX29yaWdpbmFsOiBudWxsLFxyXG4gICAgX3N0YXR1czogUkVMX1NUQVRVU19OT09QLFxyXG4gICAgYXR0cmlidXRlczogbnVsbCxcclxuICAgIGJlZ2luX2RhdGU6IG51bGwsXHJcbiAgICBlZGl0c1BlbmRpbmc6IGZhbHNlLFxyXG4gICAgZW5kX2RhdGU6IG51bGwsXHJcbiAgICBlbmRlZDogZmFsc2UsXHJcbiAgICBlbnRpdHkwX2NyZWRpdDogJycsXHJcbiAgICBlbnRpdHkxX2NyZWRpdDogJycsXHJcbiAgICBsaW5rT3JkZXI6IDAsXHJcbiAgICBsaW5rVHlwZUlEOiBudWxsLFxyXG4gICAgLi4uZmllbGRzLFxyXG4gICAgaWQ6IE1CPy5yZWxhdGlvbnNoaXBFZGl0b3IuZ2V0UmVsYXRpb25zaGlwU3RhdGVJZChudWxsKSB8fCAtMSxcclxuICB9O1xyXG59XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gYWRkV3JpdGVyUmVsYXRpb25zaGlwKHdvcms6IFdvcmtULCBhcnRpc3Q6IEFydGlzdFQsIGxpbmtUeXBlSUQ6IG51bWJlcikge1xyXG4gIGlmIChNQj8ucmVsYXRpb25zaGlwRWRpdG9yLmRpc3BhdGNoKSB7XHJcbiAgICBNQi5yZWxhdGlvbnNoaXBFZGl0b3IuZGlzcGF0Y2goe1xyXG4gICAgICB0eXBlOiAndXBkYXRlLXJlbGF0aW9uc2hpcC1zdGF0ZScsXHJcbiAgICAgIHNvdXJjZUVudGl0eTogd29yayxcclxuICAgICAgYmF0Y2hTZWxlY3Rpb25Db3VudDogdW5kZWZpbmVkLFxyXG4gICAgICBjcmVkaXRzVG9DaGFuZ2VGb3JTb3VyY2U6ICcnLFxyXG4gICAgICBjcmVkaXRzVG9DaGFuZ2VGb3JUYXJnZXQ6ICcnLFxyXG4gICAgICBuZXdSZWxhdGlvbnNoaXBTdGF0ZTogY3JlYXRlUmVsYXRpb25zaGlwU3RhdGUoe1xyXG4gICAgICAgIF9zdGF0dXM6IFJFTF9TVEFUVVNfQURELFxyXG4gICAgICAgIGVudGl0eTA6IGFydGlzdCxcclxuICAgICAgICBlbnRpdHkxOiB3b3JrLFxyXG4gICAgICAgIGxpbmtUeXBlSUQ6IGxpbmtUeXBlSUQsXHJcbiAgICAgIH0pLFxyXG4gICAgICBvbGRSZWxhdGlvbnNoaXBTdGF0ZTogbnVsbCxcclxuICAgIH0pO1xyXG4gIH1cclxufVxyXG5cclxuZXhwb3J0IGZ1bmN0aW9uIGFkZEFycmFuZ2VyUmVsYXRpb25zaGlwKHJlY29yZGluZzogUmVjb3JkaW5nVCwgYXJ0aXN0OiBBcnRpc3RUKSB7XHJcbiAgaWYgKE1CPy5yZWxhdGlvbnNoaXBFZGl0b3IuZGlzcGF0Y2gpIHtcclxuICAgIE1CLnJlbGF0aW9uc2hpcEVkaXRvci5kaXNwYXRjaCh7XHJcbiAgICAgIHR5cGU6ICd1cGRhdGUtcmVsYXRpb25zaGlwLXN0YXRlJyxcclxuICAgICAgc291cmNlRW50aXR5OiByZWNvcmRpbmcsXHJcbiAgICAgIGJhdGNoU2VsZWN0aW9uQ291bnQ6IHVuZGVmaW5lZCxcclxuICAgICAgY3JlZGl0c1RvQ2hhbmdlRm9yU291cmNlOiAnJyxcclxuICAgICAgY3JlZGl0c1RvQ2hhbmdlRm9yVGFyZ2V0OiAnJyxcclxuICAgICAgbmV3UmVsYXRpb25zaGlwU3RhdGU6IGNyZWF0ZVJlbGF0aW9uc2hpcFN0YXRlKHtcclxuICAgICAgICBfc3RhdHVzOiBSRUxfU1RBVFVTX0FERCxcclxuICAgICAgICBlbnRpdHkwOiBhcnRpc3QsXHJcbiAgICAgICAgZW50aXR5MTogcmVjb3JkaW5nLFxyXG4gICAgICAgIGxpbmtUeXBlSUQ6IEFSUkFOR0VSX0xJTktfVFlQRV9JRCxcclxuICAgICAgfSksXHJcbiAgICAgIG9sZFJlbGF0aW9uc2hpcFN0YXRlOiBudWxsLFxyXG4gICAgfSk7XHJcbiAgfVxyXG59XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gdXBkYXRlTWVkbGV5V29ya1JlbGF0aW9uc2hpcChcclxuICBzdGF0dXM6IFJlbGF0aW9uc2hpcEVkaXRTdGF0dXNULFxyXG4gIGxpbmtPcmRlcjogbnVtYmVyLFxyXG4gIHdvcms6IFdvcmtULFxyXG4gIG1lZGxleVdvcms6IFdvcmtULFxyXG4gIG9sZFJlbGF0aW9uc2hpcFN0YXRlOiBSZWxhdGlvbnNoaXBTdGF0ZVQgfCBudWxsID0gbnVsbFxyXG4pIHtcclxuICBpZiAoTUI/LnJlbGF0aW9uc2hpcEVkaXRvci5kaXNwYXRjaCkge1xyXG4gICAgTUI/LnJlbGF0aW9uc2hpcEVkaXRvci5kaXNwYXRjaCh7XHJcbiAgICAgIHR5cGU6ICd1cGRhdGUtcmVsYXRpb25zaGlwLXN0YXRlJyxcclxuICAgICAgc291cmNlRW50aXR5OiB3b3JrLFxyXG4gICAgICBiYXRjaFNlbGVjdGlvbkNvdW50OiB1bmRlZmluZWQsXHJcbiAgICAgIGNyZWRpdHNUb0NoYW5nZUZvclNvdXJjZTogJycsXHJcbiAgICAgIGNyZWRpdHNUb0NoYW5nZUZvclRhcmdldDogJycsXHJcbiAgICAgIG5ld1JlbGF0aW9uc2hpcFN0YXRlOiBjcmVhdGVSZWxhdGlvbnNoaXBTdGF0ZSh7XHJcbiAgICAgICAgX3N0YXR1czogc3RhdHVzLFxyXG4gICAgICAgIGVudGl0eTA6IHdvcmssXHJcbiAgICAgICAgZW50aXR5MTogbWVkbGV5V29yayxcclxuICAgICAgICBsaW5rVHlwZUlEOiBNRURMRVlfT0ZfTElOS19UWVBFX0lELFxyXG4gICAgICAgIGxpbmtPcmRlcixcclxuICAgICAgfSksXHJcbiAgICAgIG9sZFJlbGF0aW9uc2hpcFN0YXRlLFxyXG4gICAgfSk7XHJcbiAgfVxyXG59XHJcbiJdLCJtYXBwaW5ncyI6IkFBQUE7QUFBQSxFQUNFO0FBQUEsRUFDQTtBQUFBLEVBQ0E7QUFBQSxFQUNBO0FBQUEsT0FDSztBQUdBLGdCQUFTLHdCQUNkLFFBQ29CO0FBQ3BCLFNBQU87QUFBQSxJQUNMLFVBQVUsQ0FBQztBQUFBLElBQ1gsV0FBVztBQUFBLElBQ1gsU0FBUztBQUFBLElBQ1QsWUFBWTtBQUFBLElBQ1osWUFBWTtBQUFBLElBQ1osY0FBYztBQUFBLElBQ2QsVUFBVTtBQUFBLElBQ1YsT0FBTztBQUFBLElBQ1AsZ0JBQWdCO0FBQUEsSUFDaEIsZ0JBQWdCO0FBQUEsSUFDaEIsV0FBVztBQUFBLElBQ1gsWUFBWTtBQUFBLElBQ1osR0FBRztBQUFBLElBQ0gsSUFBSSxJQUFJLG1CQUFtQix1QkFBdUIsSUFBSSxLQUFLO0FBQUEsRUFDN0Q7QUFDRjtBQUVPLGdCQUFTLHNCQUFzQixNQUFhLFFBQWlCLFlBQW9CO0FBQ3RGLE1BQUksSUFBSSxtQkFBbUIsVUFBVTtBQUNuQyxPQUFHLG1CQUFtQixTQUFTO0FBQUEsTUFDN0IsTUFBTTtBQUFBLE1BQ04sY0FBYztBQUFBLE1BQ2QscUJBQXFCO0FBQUEsTUFDckIsMEJBQTBCO0FBQUEsTUFDMUIsMEJBQTBCO0FBQUEsTUFDMUIsc0JBQXNCLHdCQUF3QjtBQUFBLFFBQzVDLFNBQVM7QUFBQSxRQUNULFNBQVM7QUFBQSxRQUNULFNBQVM7QUFBQSxRQUNUO0FBQUEsTUFDRixDQUFDO0FBQUEsTUFDRCxzQkFBc0I7QUFBQSxJQUN4QixDQUFDO0FBQUEsRUFDSDtBQUNGO0FBRU8sZ0JBQVMsd0JBQXdCLFdBQXVCLFFBQWlCO0FBQzlFLE1BQUksSUFBSSxtQkFBbUIsVUFBVTtBQUNuQyxPQUFHLG1CQUFtQixTQUFTO0FBQUEsTUFDN0IsTUFBTTtBQUFBLE1BQ04sY0FBYztBQUFBLE1BQ2QscUJBQXFCO0FBQUEsTUFDckIsMEJBQTBCO0FBQUEsTUFDMUIsMEJBQTBCO0FBQUEsTUFDMUIsc0JBQXNCLHdCQUF3QjtBQUFBLFFBQzVDLFNBQVM7QUFBQSxRQUNULFNBQVM7QUFBQSxRQUNULFNBQVM7QUFBQSxRQUNULFlBQVk7QUFBQSxNQUNkLENBQUM7QUFBQSxNQUNELHNCQUFzQjtBQUFBLElBQ3hCLENBQUM7QUFBQSxFQUNIO0FBQ0Y7QUFFTyxnQkFBUyw2QkFDZCxRQUNBLFdBQ0EsTUFDQSxZQUNBLHVCQUFrRCxNQUNsRDtBQUNBLE1BQUksSUFBSSxtQkFBbUIsVUFBVTtBQUNuQyxRQUFJLG1CQUFtQixTQUFTO0FBQUEsTUFDOUIsTUFBTTtBQUFBLE1BQ04sY0FBYztBQUFBLE1BQ2QscUJBQXFCO0FBQUEsTUFDckIsMEJBQTBCO0FBQUEsTUFDMUIsMEJBQTBCO0FBQUEsTUFDMUIsc0JBQXNCLHdCQUF3QjtBQUFBLFFBQzVDLFNBQVM7QUFBQSxRQUNULFNBQVM7QUFBQSxRQUNULFNBQVM7QUFBQSxRQUNULFlBQVk7QUFBQSxRQUNaO0FBQUEsTUFDRixDQUFDO0FBQUEsTUFDRDtBQUFBLElBQ0YsQ0FBQztBQUFBLEVBQ0g7QUFDRjsiLCJuYW1lcyI6W119

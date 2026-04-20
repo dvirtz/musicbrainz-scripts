@@ -1,10 +1,10 @@
+import {MBReleaseEditor} from '#release-editor.ts';
 import {isNonReleaseRelationshipEditor, isReleaseRelationshipEditor} from 'typedbrainz';
 import {
   MaybeReleaseRelationshipEditor,
   NonReleaseRelationshipEditor,
   ReleaseRelationshipEditor,
 } from 'typedbrainz/types';
-import {MBReleaseEditor} from '#release-editor.ts';
 
 class AssertionError extends Error {
   constructor(message: string) {
@@ -37,20 +37,22 @@ export function assertMBTree(tree: unknown): asserts tree is NonNullable<NonNull
 type RequiredNonNullable<T> = {
   [K in keyof T]-?: NonNullable<T[K]>;
 };
-export type ReleaseRelationshipEditorAsserted = RequiredNonNullable<ReleaseRelationshipEditor>;
 
 export function assertReleaseRelationshipEditor(
   relationshipEditor: MaybeReleaseRelationshipEditor | undefined
-): asserts relationshipEditor is ReleaseRelationshipEditorAsserted {
+): asserts relationshipEditor is RequiredNonNullable<ReleaseRelationshipEditor> {
   if (!relationshipEditor || !isReleaseRelationshipEditor(relationshipEditor)) {
     throw new AssertionError('not a release relationship editor');
   }
 }
 
-export function assertNonReleaseRelationshipEditor(
+export function assertRelationshipEditor(
   relationshipEditor: MaybeReleaseRelationshipEditor | undefined
-): asserts relationshipEditor is NonReleaseRelationshipEditor {
-  if (!relationshipEditor || !isNonReleaseRelationshipEditor(relationshipEditor)) {
-    throw new AssertionError('not a release relationship editor');
+): asserts relationshipEditor is RequiredNonNullable<NonReleaseRelationshipEditor> {
+  if (
+    !relationshipEditor ||
+    (!isReleaseRelationshipEditor(relationshipEditor) && !isNonReleaseRelationshipEditor(relationshipEditor))
+  ) {
+    throw new AssertionError('not a relationship editor');
   }
 }
