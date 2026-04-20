@@ -193,15 +193,15 @@ base.describe('release editor', () => {
 
     await testRelease.importAlbum(page);
 
-    const failedToFindWarning = page.getByText('failed to find');
-    await expect(failedToFindWarning).toContainText(`Track 1: failed to find lyricist ${work.lyricists[0]}`);
+    const failedToFindWarning = page.getByText('Failed to find');
+    await expect(failedToFindWarning).toContainText(`Failed to find lyricist ${work.lyricists[0]}`);
 
     // enable artist fetching again without removing HAR replay routes
     await unrouteRejectMissingArtistRequests();
 
     await testRelease.importAlbum(page);
 
-    const lyricistLinks = trackRow.getByRole('link', {name: work.lyricists[0]!});
+    const lyricistLinks = trackRow.getByRole('table').getByRole('link', {name: work.lyricists[0]});
     await expect(lyricistLinks).toHaveCount(1);
   });
 

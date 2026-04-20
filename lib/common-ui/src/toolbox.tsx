@@ -25,7 +25,3 @@ export function toolbox(
   inserter(res);
   return res;
 }
-
-export function warning(message: string) {
-  return (<p class={'error'}>{message}</p>) as HTMLParagraphElement;
-}
