@@ -1,9 +1,10 @@
 import {Entity, loadLatestEntityData} from '#acum.ts';
 import {importAlbum as tryImportWorks} from '#import-album.ts';
-import {replaceSubmitButton, submitWork} from '#submit.ts';
+import {replaceSubmitButton} from '#submit.ts';
 import {ImportForm} from '#ui/import-form.tsx';
 import {ProgressBar} from '#ui/progressbar.tsx';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
+import {requestWorkSubmission} from '#ui/work-editor.tsx';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
@@ -69,7 +70,7 @@ function AcumImporter() {
       assertReleaseRelationshipEditor(MB?.relationshipEditor);
       MB.relationshipEditor.dispatch(action);
     };
-    clearWarnings(/submission failed.*/);
+    clearWarnings();
     dispatch({type: 'start-submission'});
     const worksSubmitted = await (async () => {
       try {
@@ -196,7 +197,7 @@ async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Pr
 
   const addWorkRelationships = await firstValueFrom(
     from(worksToSubmit).pipe(
-      mergeMap(async ([relationship, form]) => [relationship, await submitWork(form)] as const),
+      mergeMap(async ([relationship, form]) => [relationship, await requestWorkSubmission(form)] as const),
       connect(shared =>
         merge(
           shared.pipe(toArray()),

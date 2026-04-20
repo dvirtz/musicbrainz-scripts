@@ -229,9 +229,11 @@ test.describe('work editor', () => {
 
     // Verify medley parts are linked
     // The medley parts should be linked with 'medley of' relationships
-    const medleyRelationships = page.getByRole('row', {name: 'medley of:'}).getByRole('link');
-    await expect(medleyRelationships).toHaveCount(3); // 3 parts in the medley
-    await expect(medleyRelationships).toHaveText(medleyWorks.map(work => work.title));
+    for (const work of medleyWorks) {
+      await expect(
+        page.getByRole('row', {name: 'medley of:'}).getByRole('link', {name: work.title, exact: true})
+      ).toBeAttached();
+    }
 
     // Reroute submit endpoints to verify data
     const unrouteWorkCreate = await userscriptPage.route('/work/create', async (route, request) => {

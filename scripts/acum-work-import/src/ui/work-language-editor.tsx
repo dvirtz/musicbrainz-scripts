@@ -52,7 +52,7 @@ const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(async () => {
 });
 
 export function WorkLanguageEditor() {
-  const {liveEditData, setEditData} = useWorkEditData();
+  const {liveEditData, setLiveEditData} = useWorkEditData();
   const languagesField = () =>
     createRepeatableField(
       'edit-work.languages',
@@ -75,9 +75,9 @@ export function WorkLanguageEditor() {
           ) !== undefined
         }
         label={'Lyrics languages:'}
-        onAdd={() => setEditData('languages', liveEditData.languages.length, NaN)}
-        onEdit={(index, value) => setEditData('languages', index, Number(value))}
-        onRemove={index => setEditData('languages', removeAtIndex(liveEditData.languages, index))}
+        onAdd={() => setLiveEditData('languages', liveEditData.languages.length, NaN)}
+        onEdit={(index, value) => setLiveEditData('languages', index, Number(value))}
+        onRemove={index => setLiveEditData('languages', removeAtIndex(liveEditData.languages, index))}
         options={languageOptions()}
         removeClassName="remove-language"
         removeLabel={'Remove language'}

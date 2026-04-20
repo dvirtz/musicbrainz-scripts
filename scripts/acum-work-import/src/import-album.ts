@@ -1,19 +1,12 @@
-import {Creator, Creators, Entity, entityUrl, fetchWorks, IPBaseNumber, trackName, Version, WorkBean} from '#acum.ts';
-import {linkArtists} from '#artists.ts';
-import {addArrangerRelationship, createRelationshipState} from '#relationships.ts';
+import {Entity, entityUrl, fetchWorks, trackName, Version, WorkBean} from '#acum.ts';
+import {ArtistLookupCache} from '#artists.ts';
+import {createRelationshipState} from '#relationships.ts';
 import {AddWarning} from '#ui/warnings.tsx';
-import {addWorkEditor} from '#ui/work-editor.tsx';
-import {workEditData, workEditDataEqual} from '#work-edit-data.ts';
-import {WorkStateWithEditDataT} from '#work-state.ts';
-import {createNewWork, linkWriters, workLink} from '#works.ts';
+import {addWorkEditor, hasChanges} from '#ui/work-editor.tsx';
+import {createNewWork, workLink} from '#works.ts';
 import {head} from '@repo/common/head';
 import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
-import {
-  compareInsensitive,
-  compareNumbers,
-  compareTargetTypeWithGroup,
-  compareWorks,
-} from '@repo/musicbrainz-ext/compare';
+import {compareInsensitive, compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {MEDLEY_LINK_TYPE_ID, REL_STATUS_ADD, REL_STATUS_REMOVE} from '@repo/musicbrainz-ext/constants';
 import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
 import {trackRecordingState} from '@repo/musicbrainz-ext/track-recording-state';
@@ -42,7 +35,6 @@ import {
 } from 'rxjs';
 import {Setter} from 'solid-js';
 import {
-  ArtistT,
   LinkAttrT,
   MediumRecordingStateT,
   MediumRecordingStateTreeT,
@@ -62,8 +54,6 @@ type SelectedRecording = {
   readonly recordingState: MediumRecordingStateT;
 };
 type SelectedRecordings = ReadonlyArray<SelectedRecording>;
-// map of promises so that we don't fetch the same artist multiple times
-type ArtistCache = Map<IPBaseNumber, Promise<ArtistT | null>>;
 type SetProgress = Setter<readonly [number, string]>;
 
 export async function importAlbum(entity: Entity, addWarning: AddWarning, setProgress: SetProgress): Promise<boolean> {
@@ -77,47 +67,83 @@ export async function importAlbum(entity: Entity, addWarning: AddWarning, setPro
   return await importSelectedWorks(entity, recordings, addWarning, setProgress);
 }
 
+const artistCache: ArtistLookupCache = new Map();
+
 async function importSelectedWorks(
   entity: Entity,
   selectedRecordings: SelectedRecordings,
   addWarning: AddWarning,
   setProgress: SetProgress
 ) {
-  const artistCache: ArtistCache = new Map();
+  artistCache.clear();
 
-  const addTrackWarning = (position: number) => (warning: string) => addWarning(`Track ${position}: ${warning}`);
+  const getOrCreateWork = async ({index, workBean, recordingState}: SelectedRecording) => {
+    assertMBTree(MB?.tree);
+
+    const existing = relatedWork(recordingState.relatedWorks);
+    if (existing) {
+      return {work: existing.work, workBean, recordingState} as const;
+    }
+
+    const newWork = await createNewWork(workBean);
+    await linkNewWork(index, newWork, recordingState);
+
+    return {work: newWork, workBean, recordingState} as const;
+  };
+
+  const addReleaseWorkEditor = async ({
+    work,
+    track,
+    recordingState,
+    trackRow,
+  }: {
+    work: WorkT;
+    track: WorkBean;
+    recordingState: MediumRecordingStateT;
+    trackRow: Element;
+  }) => {
+    const header = trackRow?.querySelector<HTMLHeadingElement>(
+      `.works h3:has(a[href="${workLink(work)}"]):not(:has(div.edit-work-button-container))`
+    );
+    if (header) {
+      await addWorkEditor(
+        header,
+        {
+          work,
+          track,
+          recording: recordingState.recording,
+          artistCache,
+          shouldLinkArrangers: entity.entityType !== 'Work',
+        },
+        [header.querySelector('button.edit-item')].filter(x => x !== null)
+      );
+    }
+  };
 
   return await lastValueFrom(
     iif(
       () => selectedRecordings.length > 0,
       from(selectedRecordings).pipe(
-        map(selectedRecording => [selectedRecording, addTrackWarning(selectedRecording.position)] as const),
-        tap(([{workBean, recordingState}, addWarning]) => {
+        tap(({workBean, recordingState}) => {
           const recording = recordingState.recording;
           if (trackName(workBean) != recording.name) {
             if (compareInsensitive(trackName(workBean), recording.name) === 0) {
               workBean.workEngName = workBean.workHebName = recording.name;
-            } else {
-              addWarning(`Work name of ${recording.name} is different from recording name, please verify`);
             }
           }
         }),
-        mergeMap(
-          async ([{index, workBean, recordingState}, addWarning]) =>
-            [
-              workBean,
-              recordingState.recording,
-              await addWork(index, workBean, recordingState, addWarning),
-              addWarning,
-            ] as const
+        mergeMap(getOrCreateWork),
+        map(
+          ({work, workBean, recordingState}) =>
+            ({
+              work,
+              track: workBean,
+              recordingState,
+              trackRow: document.querySelector(`.track:has(a[href="${recordingLink(recordingState.recording)}"])`)!,
+            }) as const
         ),
-        asyncTap(async ([workBean, recording, workState, addWarning]) => {
-          await linkWriters(artistCache, workBean, workState.work, workState.targetTypeGroups, addWarning);
-          if (entity.entityType !== 'Work') {
-            await linkArrangers(artistCache, recording, workBean.arrangers, workBean.creators, addWarning);
-          }
-        }),
-        map(([, , workState]) => workState),
+        asyncTap(addReleaseWorkEditor),
+        mergeMap(({trackRow}) => hasChanges(trackRow)),
         connect(shared =>
           merge(
             shared.pipe(maybeSetEditNote(entity, addWarning)),
@@ -141,7 +167,7 @@ function updateProgress(selectedRecordings: SelectedRecordings, setProgress: Set
 
 function maybeSetEditNote(entity: Entity, addWarning: AddWarning) {
   return pipe(
-    count((workState: WorkStateWithEditDataT) => !workEditDataEqual(workState.editData, workState.originalEditData)),
+    count((pendingEdits: boolean) => pendingEdits),
     map(editedCount => editedCount > 0),
     tap(hasEdits => {
       if (hasEdits) {
@@ -150,22 +176,6 @@ function maybeSetEditNote(entity: Entity, addWarning: AddWarning) {
         addWarning('All works are up to date');
       }
     })
-  );
-}
-
-async function linkArrangers(
-  artistCache: ArtistCache,
-  recording: RecordingT,
-  arrangers: ReadonlyArray<Creator> | undefined,
-  creators: Creators | undefined,
-  addWarning: AddWarning
-) {
-  await linkArtists(
-    artistCache,
-    arrangers,
-    creators,
-    (artist: ArtistT) => addArrangerRelationship(recording, artist),
-    addWarning
   );
 }
 
@@ -260,80 +270,6 @@ function selectedMediums(entity: Entity, noSelection: boolean): SelectedMediums 
   return selected;
 }
 
-async function addWork(
-  index: number | undefined,
-  track: WorkBean,
-  recordingState: MediumRecordingStateT,
-  addWarning: AddWarning
-): Promise<WorkStateWithEditDataT> {
-  const work = await (async () => {
-    assertMBTree(MB?.tree);
-
-    const existing = relatedWork(recordingState.relatedWorks);
-    if (existing) {
-      return existing.work;
-    }
-
-    const newWork = await createNewWork(track);
-    await linkNewWork(index, newWork, recordingState);
-
-    return newWork;
-  })();
-
-  const {editData, originalEditData} = await workEditData(work, track, addWarning);
-  const trackRow = document.querySelector(`.track:has(a[href="${recordingLink(recordingState.recording)}"])`);
-  const header = trackRow?.querySelector<HTMLHeadingElement>(
-    `.works h3:has(a[href="${workLink(work)}"]):not(:has(div.edit-work-button-container))`
-  );
-  if (header) {
-    await addWorkEditor(
-      work,
-      editData,
-      originalEditData,
-      header,
-      [header.querySelector('button.edit-item')].filter(x => x !== null)
-    );
-  }
-  return Object.assign(refreshWorkState(recordingState.recording, work), {editData, originalEditData});
-}
-
-function recordingLink(recording: RecordingT) {
-  return '/recording/' + recording.gid;
-}
-
-function refreshRecordingState(recording: RecordingT): MediumRecordingStateT {
-  assertMBTree(MB?.tree);
-  assertReleaseRelationshipEditor(MB.relationshipEditor);
-
-  const mediumRecordingStates = MB.tree.find(
-    MB.relationshipEditor.state.mediums,
-    MB.relationshipEditor.state.mediumsByRecordingId.get(recording.id)![0]!,
-    (mediumKey, [mediumVal]) => {
-      return compareNumbers(mediumKey.position, mediumVal.position);
-    },
-    null
-  )![1];
-  return MB.tree.find(
-    mediumRecordingStates,
-    recording,
-    (recording, recordingState) => compareNumbers(recording.id, recordingState.recording.id),
-    null
-  )!;
-}
-
-function refreshWorkState(recording: RecordingT, work: WorkT): MediumWorkStateT {
-  assertMBTree(MB?.tree);
-  assertReleaseRelationshipEditor(MB.relationshipEditor);
-
-  const recordingState = refreshRecordingState(recording);
-  return MB.tree.find(
-    recordingState.relatedWorks,
-    work,
-    (treeWork, relatedWork) => compareWorks(treeWork, relatedWork.work),
-    null
-  )!;
-}
-
 function relatedWork(relatedWorks: MediumWorkStateTreeT): MediumWorkStateT | undefined {
   assertMBTree(MB?.tree);
 
@@ -389,4 +325,8 @@ async function linkNewWork(index: number | undefined, work: WorkT, recordingStat
   await waitForElement((node): node is HTMLAnchorElement => {
     return node instanceof HTMLAnchorElement && node.getAttribute('href') === href;
   });
+}
+
+function recordingLink(recording: RecordingT) {
+  return '/recording/' + recording.gid;
 }

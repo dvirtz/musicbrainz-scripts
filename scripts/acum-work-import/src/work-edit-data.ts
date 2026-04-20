@@ -3,7 +3,6 @@
 import {AcumWorkType} from '#acum-work-type.ts';
 import {trackName, WorkBean, workId, workISWCs, workLanguage, WorkLanguage, workType} from '#acum.ts';
 import {shouldSetLanguage} from '#ui/settings.tsx';
-import {AddWarning} from '#ui/warnings.tsx';
 import {mergeArrays} from '@repo/common/merge-arrays';
 import {fetchEditParams, urlFromMbid} from '@repo/musicbrainz-ext/edits';
 import {workAttributeTypes, workLanguages, workTypes} from '@repo/musicbrainz-ext/type-info';
@@ -22,6 +21,10 @@ export type WorkEditData = {
   iswcs: Array<string>;
   attributes: Array<{type_id: number; value: string}>;
 };
+
+export type WorkEditDataWarning =
+  | {type: 'unknown-language'; workLanguage: string}
+  | {type: 'unknown-work-type'; workType: string; versionEssenceType: string};
 
 function getWorkEditParams(work: WorkT): WorkEditData {
   return {
@@ -61,14 +64,14 @@ export function workEditDataEqual(lhs: WorkEditData, rhs: WorkEditData) {
 
 export async function workEditData(
   work: WorkT,
-  track: WorkBean,
-  addWarning: AddWarning
-): Promise<{originalEditData: WorkEditData; editData: WorkEditData}> {
+  track: WorkBean
+): Promise<{originalEditData: WorkEditData; editData: WorkEditData; warnings: WorkEditDataWarning[]}> {
   const originalEditData = work.gid ? await fetchWorkEditParams(work.gid) : getWorkEditParams(work);
   const acumTypeId = await ACUM_TYPE_ID;
   const acumWorkType = await workType(track);
   const workTypesValues = Object.values(await workTypes);
   const acumWorkId = workId(track);
+  const warnings: WorkEditDataWarning[] = [];
   return {
     originalEditData,
     editData: {
@@ -166,12 +169,16 @@ export async function workEditData(
                       case WorkLanguage.Foreign:
                         return [];
                       default:
-                        addWarning(`Unknown language ${track.workLanguage}`);
+                        warnings.push({type: 'unknown-language', workLanguage: String(track.workLanguage)});
                         return [];
                     }
                   })();
                 default:
-                  addWarning(`Unknown work type ${track.workType}${track.versionEssenceType}`);
+                  warnings.push({
+                    type: 'unknown-work-type',
+                    workType: String(track.workType),
+                    versionEssenceType: String(track.versionEssenceType),
+                  });
                   return originalEditData.languages;
               }
             })()
@@ -191,5 +198,6 @@ export async function workEditData(
         },
       ],
     },
+    warnings,
   };
 }

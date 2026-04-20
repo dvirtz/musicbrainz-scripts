@@ -15,7 +15,6 @@ export function FormRow(
   props: ParentProps & {
     hasNoLabel?: boolean;
     hasNoMargin?: boolean;
-    rowRef?: HTMLDivElement;
   }
 ) {
   props = mergeProps({hasNoLabel: false, hasNoMarge: false}, props);
@@ -27,7 +26,6 @@ export function FormRow(
         'no-label': props.hasNoLabel,
         'no-margin': props.hasNoMargin,
       }}
-      ref={props.rowRef}
     >
       {props.children}
     </div>

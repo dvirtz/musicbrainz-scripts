@@ -439,8 +439,8 @@ export function entityUrl(entity: Entity) {
   }
 }
 
-export function creatorUrl(creator: CreatorBase<string>) {
-  return `${baseUrl}/results?creatorid=${creator.creatorIpBaseNumber}`;
+export function creatorUrl(ipBaseNumber: string) {
+  return `${baseUrl}/results?creatorid=${ipBaseNumber}`;
 }
 
 export function workId(work: WorkBean) {

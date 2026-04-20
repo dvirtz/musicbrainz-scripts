@@ -4,7 +4,7 @@ import classes from '#ui/work-edit-dialog.module.css';
 import {For} from 'solid-js';
 
 export function WorkAttributes() {
-  const {liveEditData, setEditData} = useWorkEditData();
+  const {liveEditData, setLiveEditData} = useWorkEditData();
 
   return (
     <fieldset>
@@ -12,7 +12,9 @@ export function WorkAttributes() {
       <table id="work-attributes" class={`row-form ${classes['row-form']}`} data-bind="delegatedHandler: 'click'">
         <tbody>
           <For each={liveEditData.attributes}>
-            {(attribute, index) => <WorkAttributeRow attribute={attribute} index={index} setEditData={setEditData} />}
+            {(attribute, index) => (
+              <WorkAttributeRow attribute={attribute} index={index} setEditData={setLiveEditData} />
+            )}
           </For>
           <tr>
             <td />
@@ -20,7 +22,7 @@ export function WorkAttributes() {
               <button
                 class="with-label add-item"
                 onClick={() =>
-                  setEditData('attributes', liveEditData.attributes.length, {
+                  setLiveEditData('attributes', liveEditData.attributes.length, {
                     type_id: 0,
                     value: '',
                   })
