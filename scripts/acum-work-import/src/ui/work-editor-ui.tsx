@@ -42,7 +42,7 @@ function AcumImporter(props: {form: HTMLFormElement}) {
   replaceSubmitButton(async (originalSubmitButton: HTMLButtonElement) => {
     const submitButton = document.querySelector<HTMLButtonElement>('button[data-acum-replaced]');
     if (submitButton) submitButton.disabled = true;
-    clearWarnings(/submission failed.*/);
+    clearWarnings();
     try {
       await doSubmitWorks(setProgress);
       clearWarnings();

@@ -5,7 +5,7 @@ import {removeAtIndex} from '@repo/common/remove-at-index';
 import {For} from 'solid-js';
 
 export function WorkISWCsEditor() {
-  const {liveEditData, setEditData} = useWorkEditData();
+  const {liveEditData, setLiveEditData} = useWorkEditData();
 
   return (
     <FormRow>
@@ -17,13 +17,13 @@ export function WorkISWCsEditor() {
               <input
                 name={`edit-work.iswcs.${index()}`}
                 class="value with-button"
-                onChange={event => setEditData('iswcs', index(), event.currentTarget.value)}
+                onChange={event => setLiveEditData('iswcs', index(), event.currentTarget.value)}
                 type="text"
                 value={iswc}
               />
               <button
                 class="nobutton icon remove-item"
-                onClick={() => setEditData('iswcs', iswcs => removeAtIndex(iswcs, index()))}
+                onClick={() => setLiveEditData('iswcs', iswcs => removeAtIndex(iswcs, index()))}
                 title="Remove ISWC"
               />
             </div>
@@ -32,7 +32,7 @@ export function WorkISWCsEditor() {
         <div class={`form-row-add ${classes['form-row-add']}`}>
           <button
             class="add-item with-label"
-            onClick={() => setEditData('iswcs', liveEditData.iswcs.length, '')}
+            onClick={() => setLiveEditData('iswcs', liveEditData.iswcs.length, '')}
             type="button"
             title="Add ISWC"
           >

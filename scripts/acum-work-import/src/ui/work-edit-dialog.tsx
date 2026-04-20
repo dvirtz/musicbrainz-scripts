@@ -21,9 +21,18 @@ import {buildOptionList} from '@repo/musicbrainz-ext/build-options-list';
 import {parseIntegerOrNull} from '@repo/musicbrainz-ext/parse-integer-or-null';
 import {createSignal, onCleanup} from 'solid-js';
 
-export function WorkEditDialog(props: {onSubmit: () => void}) {
-  const {liveEditData, setEditData, isModified, workName, submitUrl, saveEditData, restoreEditData, workId, workTypes} =
-    useWorkEditData();
+export function WorkEditDialog(props: {onSubmit: () => void; setSubmitForm: (form: HTMLFormElement) => void}) {
+  const {
+    liveEditData,
+    setLiveEditData,
+    isModified,
+    workName,
+    submitUrl,
+    saveEditData,
+    restoreEditData,
+    workId,
+    workTypes,
+  } = useWorkEditData();
   const isNameBlank = () => /^\s*$/.test(workName());
   const [open, setOpen] = createSignal(false);
 
@@ -54,6 +63,7 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
           method="post"
           classList={{'modified': isModified()}}
           onSubmit={props.onSubmit}
+          ref={props.setSubmitForm}
         >
           <h1>{'Edit work'}</h1>
           <div class={`half-width ${classes['half-width']}`}>
@@ -69,7 +79,7 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
                   required={true}
                   type="text"
                   value={liveEditData.name}
-                  onChange={ev => setEditData('name', ev.target.value)}
+                  onChange={ev => setLiveEditData('name', ev.target.value)}
                 />
               </FormRow>
               <FormRow>
@@ -88,7 +98,7 @@ export function WorkEditDialog(props: {onSubmit: () => void}) {
                   name="edit-work.type_id"
                   options={buildOptionList(workTypes())}
                   value={liveEditData.type_id || undefined}
-                  onChange={workType => setEditData('type_id', parseIntegerOrNull(workType))}
+                  onChange={workType => setLiveEditData('type_id', parseIntegerOrNull(workType))}
                 />
               </FormRow>
               <WorkLanguageEditor />
