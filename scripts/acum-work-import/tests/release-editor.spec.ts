@@ -158,12 +158,42 @@ base.describe('release editor', () => {
     await expect(arrangerLabels).toHaveCount(0);
   });
 
+  base('re-adds work editor after rename', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
+    await testRelease.editRelationships(musicbrainzPage);
+
+    const work = testRelease.works()[2]!;
+    const workUrl = work.acumUrl.replace(/version\?workid=(.*)&versionid=(.*)/, 'work?workid=$1');
+
+    await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', workUrl);
+
+    const trackRow = page.getByRole('row', {name: work.title});
+    const checkBox = trackRow.getByRole('checkbox').first();
+    await checkBox.check();
+
+    await testRelease.importAlbum(page);
+
+    const container = trackRow.locator('[class*="edit-work-button-container"]');
+    await container.locator('button.edit-item').click();
+
+    const newName = 'Renamed Work';
+    const nameInput = page.locator('#id-edit-work\\.name');
+    await nameInput.fill(newName);
+
+    await page.getByRole('dialog').getByRole('button', {name: 'Done'}).click();
+
+    // the editor should re-appear near the new work's anchor
+    await expect(container).toBeVisible();
+    await expect(container.getByRole('link', {name: 'Renamed Work'})).toBeVisible();
+  });
+
   base('retries fetching missing artists', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
     await testRelease.editRelationships(musicbrainzPage);
 
     const work = testRelease.works()[0]!;
 
     await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', work.acumUrl);
+
+    const artist = testRelease.artist(work.lyricists[0]!)!;
 
     const trackRow = page.getByRole('row', {name: work.title});
     const checkBox = trackRow.getByRole('checkbox').first();
@@ -173,7 +203,7 @@ base.describe('release editor', () => {
     const rejectMissingArtistRequests = (url: URL) => {
       if (url.pathname === '/ws/2/artist') {
         const query = url.searchParams.get('query');
-        return query ? query.includes(work.lyricists[0]!) || query.includes('ipi:') : false;
+        return query ? query.includes(artist.hebName) || query.includes('ipi:') : false;
       }
       return url.pathname === '/ws/2/url';
     };
@@ -181,15 +211,37 @@ base.describe('release editor', () => {
 
     await testRelease.importAlbum(page);
 
-    const failedToFindWarning = page.getByText('failed to find');
-    await expect(failedToFindWarning).toContainText(`Track 1: failed to find lyricist ${work.lyricists[0]}`);
+    const failedToFindWarning = page.getByText('Failed to find');
+    await expect(failedToFindWarning).toContainText(`Failed to find lyricist ${artist.hebName}`);
 
-    // enable artist fetching again without removing HAR replay routes
+    // test searching for missing artist
+    await page.getByRole('button', {name: 'search'}).nth(1).click();
+    const searchBox = page.getByRole('textbox', {name: 'Search for an artist:'});
+    await expect(searchBox).toHaveValue(artist.hebName);
+    await searchBox.press('Escape');
+    await expect(searchBox).not.toBeAttached();
+
+    // enable artist fetching again
     await unrouteRejectMissingArtistRequests();
+
+    // test creating missing artist
+    await page.getByRole('button', {name: 'create'}).first().click();
+    const dialogFrame = page.frameLocator('[src^="/dialog"]');
+    await expect(dialogFrame.getByRole('textbox', {name: 'Name:', exact: true})).toHaveValue(artist.hebName);
+    await expect(dialogFrame.getByRole('textbox', {name: 'Sort name:'})).toHaveValue(
+      artist.engName.split(' ').reverse().join(', ')
+    );
+    await expect(dialogFrame.locator('input[name="edit-artist.ipi_codes.0"]')).toHaveValue(artist.ipi);
+    const editNoteValue = await dialogFrame.getByRole('textbox', {name: 'Edit note:'}).inputValue();
+    expect(editNoteValue).toContain(`matched from ${work.acumUrl}`);
+    await dialogFrame.owner().press('Escape');
+    await expect(dialogFrame.owner()).not.toBeAttached();
+    await searchBox.press('Escape');
+    await expect(searchBox).not.toBeAttached();
 
     await testRelease.importAlbum(page);
 
-    const lyricistLinks = trackRow.getByRole('link', {name: work.lyricists[0]!});
+    const lyricistLinks = trackRow.getByRole('table').getByRole('link', {name: work.lyricists[0]});
     await expect(lyricistLinks).toHaveCount(1);
   });
 

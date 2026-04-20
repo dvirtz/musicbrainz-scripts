@@ -1,14 +1,12 @@
-import {warning} from '@repo/common-ui/toolbox';
-import {createContext, createSignal, FlowProps, For, useContext} from 'solid-js';
+import {createContext, FlowProps, For, JSX, useContext} from 'solid-js';
+import {createStore} from 'solid-js/store';
 
 const makeWarningContext = () => {
-  const [state, setState] = createSignal(new Set<string>());
+  const [state, setState] = createStore<JSX.Element[]>([]);
   return {
     state,
-    addWarning: (message: string) => setState(new Set<string>([...state(), message])),
-    clearWarnings: (pattern: RegExp = /.*/) => {
-      setState(new Set<string>([...state()].filter(warning => !warning.match(pattern))));
-    },
+    addWarning: (warning: JSX.Element) => setState(state.length, warning),
+    clearWarnings: () => setState([]),
   };
 };
 
@@ -36,5 +34,5 @@ export type AddWarning = ReturnType<typeof useWarnings>['addWarning'];
 
 function Warnings() {
   const {state} = useWarnings();
-  return <For each={[...state()]}>{warning}</For>;
+  return <For each={state}>{warning => <p class={'error'}>{warning}</p>}</For>;
 }

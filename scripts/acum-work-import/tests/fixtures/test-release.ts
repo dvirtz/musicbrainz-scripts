@@ -548,6 +548,13 @@ class TestRelease {
     },
   ];
   private static readonly acumUrl = 'https://nocs.acum.org.il/acumsitesearchdb/album?albumid=006625';
+  private static readonly artists = {
+    'אריק איינשטיין': {
+      hebName: 'אריק איינשטיין',
+      engName: 'Arik Einstein',
+      ipi: '00041693779',
+    },
+  };
 
   // cspell:enable
   private constructor(public readonly gid: string) {}
@@ -679,6 +686,10 @@ class TestRelease {
 
   works() {
     return TestRelease.works;
+  }
+
+  artist(name: string) {
+    return Object.entries(TestRelease.artists).find(([key]) => key === name)?.[1];
   }
 
   async importAlbum(page: Page) {

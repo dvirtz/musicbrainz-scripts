@@ -1,46 +1,22 @@
+import {editDataToFormData, WorkEditData} from '#work-edit-data.ts';
 import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
 import {editNote} from '@repo/musicbrainz-ext/edit-note';
 import {fetchJSON, fetchResponse} from '@repo/musicbrainz-ext/fetch';
-import {firstValueFrom, map, mergeMap, of, tap} from 'rxjs';
 import {WorkT} from 'typedbrainz/types';
 
-export async function submitWork(form: HTMLFormElement): Promise<WorkT> {
-  const withEditNote = (form: HTMLFormElement) => {
-    const formData = new FormData(form);
-    formData.append('edit-work.edit_note', editNote() ?? '');
-    return formData;
-  };
-  return await firstValueFrom(
-    of(form).pipe(
-      map(form => [form.action, withEditNote(form)] as const),
-      mergeMap(([action, body]) =>
-        fetchResponse(action, {
-          method: 'POST',
-          body,
-        })
-      ),
-      mergeMap(async response => {
-        const url = form.action.endsWith('/edit') ? form.action : response.url;
-        const m = url.match(MBID_REGEXP);
-        if (m) {
-          return m[0];
-        }
-        // for test to avoid redirection
-        const json = (await response.json()) as {'mbid': string};
-        if ('mbid' in json) {
-          return json['mbid'];
-        }
+export async function submitWork(action: string, editData: WorkEditData): Promise<WorkT> {
+  const body = editDataToFormData(editData);
+  body.append('edit-work.edit_note', editNote() ?? '');
 
-        throw new Error(`url does not include MBID: ${response.url}`);
-      }),
-      mergeMap(async mbid => await fetchJSON<WorkT>(`/ws/js/entity/${mbid}`)),
-      tap(work => {
-        if (work) {
-          form.dispatchEvent(new Event('submit'));
-        }
-      })
-    )
-  );
+  const response = await fetchResponse(action, {method: 'POST', body});
+  const url = action.endsWith('/edit') ? action : response.url;
+  // tests return the mbid in json to avoid redirection
+  const mbid = url.match(MBID_REGEXP)?.[0] ?? ((await response.json()) as {mbid?: string}).mbid;
+  if (!mbid) {
+    throw new Error(`url does not include MBID: ${response.url}`);
+  }
+
+  return await fetchJSON<WorkT>(`/ws/js/entity/${mbid}`);
 }
 
 export function replaceSubmitButton(submitWorks: (originalSubmitButton: HTMLButtonElement) => Promise<void>) {

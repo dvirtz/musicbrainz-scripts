@@ -1,0 +1,5 @@
+export function removeAtIndex(array, index) {
+  return [...array.slice(0, index), ...array.slice(index + 1)];
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInJlbW92ZS1hdC1pbmRleC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZnVuY3Rpb24gcmVtb3ZlQXRJbmRleDxUPihhcnJheTogcmVhZG9ubHkgVFtdLCBpbmRleDogbnVtYmVyKTogVFtdIHtcclxuICByZXR1cm4gWy4uLmFycmF5LnNsaWNlKDAsIGluZGV4KSwgLi4uYXJyYXkuc2xpY2UoaW5kZXggKyAxKV07XHJcbn1cclxuIl0sIm1hcHBpbmdzIjoiQUFBTyxnQkFBUyxjQUFpQixPQUFxQixPQUFvQjtBQUN4RSxTQUFPLENBQUMsR0FBRyxNQUFNLE1BQU0sR0FBRyxLQUFLLEdBQUcsR0FBRyxNQUFNLE1BQU0sUUFBUSxDQUFDLENBQUM7QUFDN0Q7IiwibmFtZXMiOltdfQ==

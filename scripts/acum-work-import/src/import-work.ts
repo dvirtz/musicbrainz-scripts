@@ -1,20 +1,22 @@
-import {Entity, entityUrl, fetchWorks, IPBaseNumber, Version, WorkBean} from '#acum.ts';
+import {Entity, entityUrl, fetchWorks, Version, WorkBean} from '#acum.ts';
+import {ArtistLookupCache, linkWriters} from '#link-artists.ts';
 import {updateMedleyWorkRelationship} from '#relationships.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
 import {AddWarning} from '#ui/warnings.tsx';
 import {addWorkEditor} from '#ui/work-editor.tsx';
-import {workEditData} from '#work-edit-data.ts';
-import {createNewWork, createWork, findWork, linkWriters, workLink} from '#works.ts';
+import {renderWarning} from '#ui/work-warnings.tsx';
+import {workEditData, workFormAttributes} from '#work-edit-data.ts';
+import {createNewWork, createWork, findWork} from '#works.ts';
 import {compareInsensitive, compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {MEDLEY_OF_LINK_TYPE_ID, REL_STATUS_ADD} from '@repo/musicbrainz-ext/constants';
 import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
 import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
-import {filter, from, lastValueFrom, map, mergeMap, scan, tap, toArray, zip} from 'rxjs';
+import {filter, from, map, mergeMap, scan, tap} from 'rxjs';
 import {Setter} from 'solid-js';
 import {isNonReleaseRelationshipEditor} from 'typedbrainz';
-import {ArtistT, RelationshipStateT, WorkAttributeT, WorkT} from 'typedbrainz/types';
+import {RelationshipStateT, WorkAttributeT, WorkT} from 'typedbrainz/types';
 
 export async function importWork(
   entity: Entity<'Work' | 'Version'>,
@@ -25,7 +27,7 @@ export async function importWork(
   setProgress([0, 'Importing work']);
 
   // map of promises so that we don't fetch the same artist multiple times
-  const artistCache = new Map<IPBaseNumber, Promise<ArtistT | null>>();
+  const artistCache: ArtistLookupCache = new Map();
   const work =
     MB?.relationshipEditor.state?.entity.entityType == 'work'
       ? MB.relationshipEditor.state.entity
@@ -54,30 +56,17 @@ export async function importWork(
 
   // needs to be before medley works are added
   // otherwise the attribute selectors will match the medley attributes
-  const {editData} = await workEditData(
+  const {editData, warnings: editDataWarnings} = await workEditData(
     {
       ...work,
       // the attributes are rendered in a different order
-      attributes: await lastValueFrom(
-        zip(
-          from(form.querySelectorAll<HTMLInputElement>('[name^="edit-work.attributes."][name$=type_id]')),
-          from(form.querySelectorAll<HTMLInputElement>('[name^="edit-work.attributes."][name$=value]'))
-        ).pipe(
-          filter(([type, value]) => type.value.length > 0 && value.value.length > 0),
-          map(
-            ([type, value]) =>
-              ({
-                typeID: Number(type.value),
-                value: value.value,
-              }) as WorkAttributeT
-          ),
-          toArray()
-        )
+      attributes: workFormAttributes(form).map(
+        attr => ({typeID: attr.type_id, value: attr.value, value_id: attr.value_id}) as WorkAttributeT
       ),
     },
-    version,
-    addWarning
+    version
   );
+  editDataWarnings.forEach(warning => addWarning(renderWarning(warning, version, work)));
 
   if (version.isMedley === '1') {
     const workCount = version.list!.length + 1;
@@ -92,7 +81,7 @@ export async function importWork(
               work,
               medleyWork,
               version.list!.findIndex(version => version.workId == medleyWork.workId) + 1,
-              addWarning
+              artistCache
             )
         ),
         scan(accumulator => accumulator + 1, 0),
@@ -127,16 +116,16 @@ export async function importWork(
   );
   editData.attributes.forEach((attr, index) => {
     setInput(form, `attributes.${index}.type_id`, String(attr.type_id), addWarning);
-    setInput(form, `attributes.${index}.value`, attr.value, addWarning);
+    setInput(
+      form,
+      `attributes.${index}.value`,
+      attr.value_id === null ? attr.value : String(attr.value_id),
+      addWarning
+    );
   });
 
-  await linkWriters(
-    artistCache,
-    version,
-    work,
-    findTargetTypeGroups(MB?.relationshipEditor.state?.existingRelationshipsBySource ?? null, work),
-    addWarning
-  );
+  const writerWarnings = await linkWriters(artistCache, version, work);
+  writerWarnings.forEach(warning => addWarning(renderWarning(warning, version, work)));
 
   setProgress([1, 'Done']);
   addEditNote(`Imported from ${entityUrl(entity)}`, form.ownerDocument);
@@ -177,14 +166,8 @@ async function ensureRowCount(parent: HTMLElement, rowSelector: string, count: n
   await observer;
 }
 
-async function linkMedleyWork(work: WorkT, medleyWork: WorkT, linkOrder: number) {
+function linkMedleyWork(work: WorkT, medleyWork: WorkT, linkOrder: number) {
   updateMedleyWorkRelationship(REL_STATUS_ADD, linkOrder, work, medleyWork);
-
-  // wait for the work link to be added
-  const href = workLink(medleyWork);
-  await waitForElement((node): node is HTMLAnchorElement => {
-    return node instanceof HTMLAnchorElement && node.getAttribute('href') === href;
-  });
 }
 
 export function medleyWorkRelationships(): RelationshipStateT[] | undefined {
@@ -204,19 +187,29 @@ export function medleyWorkRelationships(): RelationshipStateT[] | undefined {
   }
 }
 
-async function addMedleyWork(work: WorkT, medleyWork: WorkBean, linkOrder: number, addWarning: AddWarning) {
+async function addMedleyWork(work: WorkT, medleyWork: WorkBean, linkOrder: number, artistCache: ArtistLookupCache) {
   const newWork = await (async () => {
     const linkedWork = medleyWorkRelationships()?.find(rel => rel.linkOrder == linkOrder);
     if (linkedWork) {
       return linkedWork.entity1 as WorkT;
     }
     const newWork = await createNewWork(medleyWork);
-    await linkMedleyWork(work, newWork, linkOrder);
+    linkMedleyWork(work, newWork, linkOrder);
     return newWork;
   })();
-  const {editData, originalEditData} = await workEditData(newWork, medleyWork, addWarning);
-  const parent = document.querySelector(`.medley-of .relationship-item:nth-child(${linkOrder})`);
-  if (parent) {
-    await addWorkEditor(newWork, editData, originalEditData, parent);
-  }
+  await addWorkEditor({
+    getParent: async (href: string) => {
+      const anchor =
+        document.querySelector<HTMLAnchorElement>(`a[href="${href}"]`) ??
+        (await waitForElement(
+          (node): node is HTMLAnchorElement => node instanceof HTMLAnchorElement && node.getAttribute('href') === href
+        ));
+      return anchor!.closest('.relationship-item')!;
+    },
+    getElementsToReplace: () => [],
+    work: newWork,
+    track: medleyWork,
+    artistCache,
+    shouldLinkArrangers: false,
+  });
 }

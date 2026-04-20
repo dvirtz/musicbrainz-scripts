@@ -1,7 +1,9 @@
-import {useWorkEditData, WorkEditDataProvider} from '#ui/work-edit-data-provider.tsx';
+import {submitWork} from '#submit.ts';
+import {useWorkEditData, WorkEditDataProvider, WorkEditDataProviderProps} from '#ui/work-edit-data-provider.tsx';
 import classes from '#ui/work-edit-dialog.module.css';
 import {WorkEditDialog} from '#ui/work-edit-dialog.tsx';
-import {WorkEditData} from '#work-edit-data.ts';
+import {WorkWarnings} from '#ui/work-warnings.tsx';
+import {registerWorkSubmitter} from '#work-submitters.ts';
 import {isNewWork, workLink} from '#works.ts';
 import {
   workAttributeAllowedValues,
@@ -9,55 +11,111 @@ import {
   workLanguages,
   workTypes,
 } from '@repo/musicbrainz-ext/type-info';
-import {createEffect, createSignal, Show} from 'solid-js';
+import {waitForElement, waitForMutation} from '@repo/rxjs-ext/wait-for-element';
+import {createEffect, createSignal, onCleanup, Show} from 'solid-js';
 import {render} from 'solid-js/web';
-import {WorkT} from 'typedbrainz/types';
 
-function WorkEditor(props: {work: WorkT; parent: Element}) {
-  const isNew = isNewWork(props.work);
-  const {isModified, workName} = useWorkEditData();
-  const [isPending, setIsPending] = createSignal(isModified());
+const workReadyEventName = 'acum:work-ready';
+const refetchWorkEventName = 'acum:refetch-work';
 
-  createEffect(() => {
-    const workLinkElement = props.parent.querySelector<HTMLAnchorElement>('a[href^="/work/"]');
-    workLinkElement?.classList.toggle('rel-edit', isModified() && isPending());
+export async function hasChanges(trackRaw: Element) {
+  return await new Promise<boolean>(resolve => {
+    trackRaw.addEventListener(workReadyEventName, () => {
+      resolve(trackRaw?.querySelector('.rel-add, .rel-edit') !== null);
+    });
   });
+}
 
-  createEffect(() => {
-    props.parent.querySelectorAll<HTMLElement>(`.${classes.replaced}`).forEach(el => {
-      el.classList.toggle(classes.pending!, isPending());
+type AddWorkEditorOptions = Omit<WorkEditDataProviderProps, 'typeInfo'> & {
+  getParent: (href: string) => Promise<Element>;
+  getElementsToReplace: (parent: Element) => Element[];
+};
+
+function WorkEditor(props: AddWorkEditorOptions & {parent: Element}) {
+  const isNew = isNewWork(props.work);
+  const {isLoading, isModified, warnings, refetch, replacedWork, captureState, savedEditData, submitUrl} =
+    useWorkEditData();
+  const [isSubmitting, setIsSubmitting] = createSignal(false);
+
+  const {parent, ...editorProps} = props;
+
+  parent.addEventListener(refetchWorkEventName, refetch);
+  onCleanup(() => parent.removeEventListener(refetchWorkEventName, refetch));
+
+  onCleanup(() => {
+    const newWork = replacedWork();
+    if (!newWork) return;
+    void addWorkEditor({
+      ...editorProps,
+      work: newWork,
+      initialState: captureState(),
     });
   });
 
-  document.getElementById('acum-work-cancel')?.addEventListener('click', () => {
-    setIsPending(false);
+  createEffect(() => {
+    if (!isModified()) return;
+    const unregister = registerWorkSubmitter(props.work.id, async () => {
+      setIsSubmitting(true);
+      try {
+        return await submitWork(submitUrl(), savedEditData());
+      } finally {
+        setIsSubmitting(false);
+      }
+    });
+    onCleanup(unregister);
+  });
+
+  createEffect(() => {
+    const workLinkElement = parent.querySelector<HTMLAnchorElement>('a[href^="/work/"]');
+    workLinkElement?.classList.toggle('rel-edit', isModified());
+  });
+
+  createEffect(() => {
+    parent.querySelectorAll<HTMLElement>(`.${classes.replaced}`).forEach(el => {
+      el.classList.toggle(classes.pending!, isLoading() || isModified());
+    });
+  });
+
+  createEffect(() => {
+    if (!isLoading()) {
+      parent.dispatchEvent(new CustomEvent(workReadyEventName, {bubbles: true}));
+    }
   });
 
   return (
-    <Show when={isPending()}>
-      <WorkEditDialog onSubmit={() => setIsPending(false)} />{' '}
-      <a
-        href={workLink(props.work)}
-        classList={{
-          'wrap-anywhere': true,
-          'rel-add': isNew,
-          'rel-edit': !isNew,
-        }}
-      >
-        {workName()}
-      </a>
-    </Show>
+    <>
+      <Show when={isModified()}>
+        <WorkEditDialog />{' '}
+        <a
+          href={workLink(props.work)}
+          classList={{
+            'wrap-anywhere': true,
+            'rel-add': isNew,
+            'rel-edit': !isNew,
+          }}
+        >
+          {props.work.name}
+        </a>
+      </Show>
+
+      <Show when={isLoading() || isSubmitting()}>
+        <span class={classes['loading-message']}>
+          {isLoading() ? 'Importing' : 'Submitting'}
+          <span class={classes['loading-dots']} aria-hidden="true"></span>
+        </span>
+      </Show>
+
+      <WorkWarnings track={props.track} warnings={warnings()} work={props.work} recording={props.recording} />
+    </>
   );
 }
 
-export async function addWorkEditor(
-  work: WorkT,
-  editData: WorkEditData,
-  originalEditData: WorkEditData,
-  parent: Element,
-  elementsToReplace?: Element[]
-) {
+export async function addWorkEditor(props: AddWorkEditorOptions) {
+  const href = workLink(props.work);
+  const parent = await props.getParent(href);
+
   if (parent.querySelector(`div.${classes['edit-work-button-container']}`)) {
+    parent.dispatchEvent(new CustomEvent(refetchWorkEventName, {bubbles: false}));
     return;
   }
 
@@ -66,28 +124,34 @@ export async function addWorkEditor(
   removeButton?.addEventListener('click', () => {
     container.remove();
   });
-  elementsToReplace?.forEach(element => element.classList.add(classes.replaced!));
-  const anchor = parent.querySelector<HTMLAnchorElement>('a[href*="work"]');
+  props.getElementsToReplace(parent).forEach(element => element.classList.add(classes.replaced!));
+  const anchor =
+    parent.querySelector<HTMLAnchorElement>(`a[href="${href}"]`) ??
+    (await waitForElement(
+      (element): element is HTMLAnchorElement =>
+        element instanceof HTMLAnchorElement && element.getAttribute('href') === href,
+      undefined,
+      parent
+    ));
   anchor?.classList.add(classes.replaced!);
   anchor?.insertAdjacentElement('afterend', container);
-  const allowedTypes = Object.values(await workTypes);
-  const allowedLanguages = Object.values(await workLanguages);
-  const allowedAttributeTypes = Object.values(await workAttributeTypes);
-  const allowedAttributeValues = Object.values(await workAttributeAllowedValues);
-  render(
+  const workTypeInfo = {
+    workTypes: Object.values(await workTypes),
+    workLanguages: Object.values(await workLanguages),
+    workAttributeTypes: Object.values(await workAttributeTypes),
+    workAttributeAllowedValues: Object.values(await workAttributeAllowedValues),
+  };
+  const dispose = render(
     () => (
-      <WorkEditDataProvider
-        work={work}
-        editData={editData}
-        originalEditData={originalEditData}
-        workTypes={allowedTypes}
-        workLanguages={allowedLanguages}
-        workAttributeTypes={allowedAttributeTypes}
-        workAttributeAllowedValues={allowedAttributeValues}
-      >
-        <WorkEditor work={work} parent={parent} />
+      <WorkEditDataProvider typeInfo={workTypeInfo} {...props}>
+        <WorkEditor {...props} parent={parent} />
       </WorkEditDataProvider>
     ),
     container
   );
+
+  // SolidJS doesn't know when React removes the container — dispose explicitly to trigger onCleanup
+  waitForMutation(document.body, () => !container.isConnected)
+    .then(dispose)
+    .catch(console.error);
 }
