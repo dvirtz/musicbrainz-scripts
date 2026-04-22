@@ -1,6 +1,13 @@
 // spell:words domcontentloaded
 import {invokeMenuCommand, mockUserscriptManager, waitForMenuCommand} from '#userscript-manager-mock.ts';
 import {expect, Request, type Page, type Response, type Route} from '@playwright/test';
+import {readFile} from 'fs/promises';
+import {pathToFileURL} from 'url';
+
+const DEV_SERVER_ORIGIN = 'http://127.0.0.1:5173';
+const DEV_SERVER_ENTRY_PATH = '/__vite-plugin-monkey.entry.js';
+const DEV_SERVER_INSTALL_PATH = '/__vite-plugin-monkey.install.user.js';
+const USERSCRIPT_NAME_REGEXP = /^\/\/\s*@name\s+(.+)$/m;
 
 type UserscriptRequestParams = Readonly<Record<string, boolean | number | string>>;
 
@@ -21,7 +28,13 @@ type UserscriptResponse = Readonly<{
   statusText: string;
 }>;
 
+function normalizeUserscriptName(name: string) {
+  return name.replace(/^server:/, '').trim();
+}
+
 export class UserscriptPage {
+  private static readonly devServerOriginCache = new Map<string, Promise<null | string>>();
+
   windowOpenLog: URL[] = [];
 
   static async create(
@@ -62,9 +75,76 @@ export class UserscriptPage {
     // Wait for document.body to exist, simulating @run-at document-end
     await this.page.waitForFunction(() => document.body !== null);
 
+    const devServerOrigin = await this.getDevServerOrigin();
+    if (devServerOrigin) {
+      // In dev-server mode the entry URL is served by vite-plugin-monkey's dev middleware.
+      // It returns a list of ES module imports (including the actual TypeScript source),
+      // all served by Vite with sourcemaps — enabling TypeScript breakpoints.
+      // The GM-API mount in the entry silently no-ops because serverInjectFn never ran,
+      // so the test's mockUserscriptManager() mock remains intact.
+      await this.page.addScriptTag({
+        type: 'module',
+        url: new URL(DEV_SERVER_ENTRY_PATH, devServerOrigin).toString(),
+      });
+      return;
+    }
+
+    const userscript = await readFile(this.userscriptPath, 'utf8');
     await this.page.addScriptTag({
-      path: this.userscriptPath,
+      // Attach sourceURL so the injected script has a stable debuggable identity.
+      content: `${userscript}\n//# sourceURL=${pathToFileURL(this.userscriptPath).toString()}`,
     });
+  }
+
+  private async getDevServerOrigin() {
+    let cachedOrigin = UserscriptPage.devServerOriginCache.get(this.userscriptPath);
+    if (!cachedOrigin) {
+      cachedOrigin = this.detectDevServerOrigin();
+      UserscriptPage.devServerOriginCache.set(this.userscriptPath, cachedOrigin);
+    }
+
+    return await cachedOrigin;
+  }
+
+  private async detectDevServerOrigin(): Promise<null | string> {
+    const expectedName = await this.readUserscriptName();
+    if (!expectedName) {
+      return null;
+    }
+
+    const installScript = await this.fetchWithTimeout(new URL(DEV_SERVER_INSTALL_PATH, DEV_SERVER_ORIGIN));
+    if (!installScript) {
+      return null;
+    }
+
+    const devServerName = this.extractUserscriptName(installScript);
+    if (devServerName && normalizeUserscriptName(devServerName) === normalizeUserscriptName(expectedName)) {
+      return DEV_SERVER_ORIGIN;
+    }
+
+    return null;
+  }
+
+  private extractUserscriptName(script: string) {
+    return USERSCRIPT_NAME_REGEXP.exec(script)?.[1]?.trim() ?? null;
+  }
+
+  private async fetchWithTimeout(url: string | URL): Promise<null | string> {
+    const timeout = AbortSignal.timeout(250);
+
+    try {
+      const res = await fetch(url, {signal: timeout});
+      if (!res.ok) {
+        return null;
+      }
+      return await res.text();
+    } catch {
+      return null;
+    }
+  }
+
+  private async readUserscriptName() {
+    return this.extractUserscriptName(await readFile(this.userscriptPath, 'utf8'));
   }
 
   private async mockWindowOpen() {
