@@ -15,6 +15,15 @@
       },
       "preLaunchTask": "npm: dev"
     },
+    {
+      "type": "chrome",
+      "request": "attach",
+      "name": "Attach Playwright Chromium",
+      "port": 9222,
+      "pathMapping": {
+        "/src": "${workspaceFolder}/scripts/${input:workspace}/src"
+      }
+    },
   ],
   "inputs": [
     {

@@ -33,6 +33,14 @@ export function defineConfig(baseURL: string, userscriptPath: string, options?: 
       baseURL,
 
       userscriptPath,
+
+      ...(process.env.PWDEBUG
+        ? {
+            launchOptions: {
+              args: ['--remote-debugging-port=9222'],
+            },
+          }
+        : {}),
     },
     ...options,
     projects: [
