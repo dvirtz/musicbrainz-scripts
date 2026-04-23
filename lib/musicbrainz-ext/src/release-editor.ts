@@ -31,6 +31,7 @@ declare class EditorMedium {
 }
 
 declare class EditorTrack {
+  uniqueID: number | string;
   name: Observable<string>;
   medium: EditorMedium;
   /// milliseconds
@@ -66,6 +67,7 @@ type EditorReleaseGroup = {
 };
 
 export declare class EditorRelease {
+  uniqueID: number | string;
   name: Observable<string>;
   statusID: Observable<string>;
   languageID: Observable<string>;
