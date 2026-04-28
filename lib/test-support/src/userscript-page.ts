@@ -1,3 +1,4 @@
+// spell:words domcontentloaded
 import {invokeMenuCommand, mockUserscriptManager, waitForMenuCommand} from '#userscript-manager-mock.ts';
 import {expect, Request, type Page, type Response} from '@playwright/test';
 
@@ -5,11 +6,12 @@ export class UserscriptPage {
   windowOpenLog: URL[] = [];
 
   static async create(
-    this: new (page: Page, userscriptPath: string) => UserscriptPage,
+    this: new (page: Page, userscriptPath: string, isHarReplay: boolean) => UserscriptPage,
     page: Page,
-    userscriptPath: string
+    userscriptPath: string,
+    isHarReplay = false
   ) {
-    const userscriptPage = new this(page, userscriptPath);
+    const userscriptPage = new this(page, userscriptPath, isHarReplay);
     await userscriptPage.mockWindowOpen();
     await userscriptPage.mockUserscriptManager();
     return userscriptPage;
@@ -17,18 +19,21 @@ export class UserscriptPage {
 
   public constructor(
     public readonly page: Page,
-    readonly userscriptPath: string
+    readonly userscriptPath: string,
+    public readonly isHarReplay = false
   ) {}
 
   public async goto(url: string): Promise<null | Response> {
-    const res = await this.page.goto(url);
+    // In HAR replay mode, third-party assets may be intentionally missing and can block the load event.
+    // Wait for DOM readiness instead, which matches userscript @run-at document-end behavior.
+    const res = await this.page.goto(url, {waitUntil: 'domcontentloaded'});
     expect(res?.ok(), `Failed to navigate to ${url}: ${res?.status()}`).toBeTruthy();
     await this.injectUserScript();
     return res;
   }
 
   public async reload(): Promise<null | Response> {
-    const res = await this.page.reload();
+    const res = await this.page.reload({waitUntil: 'domcontentloaded'});
     expect(res?.ok(), `Failed to reload ${this.page.url()}: ${res?.status()}`).toBeTruthy();
     await this.injectUserScript();
     return res;
@@ -100,10 +105,10 @@ export class UserscriptPage {
     }
 
     await saveButton.click();
-    const storage = await this.page.context().storageState();
+    const localStorageEntries = await this.page.evaluate(() => Object.entries(localStorage));
 
-    expect(storage.origins[0]?.localStorage).toEqual(
-      expect.arrayContaining(options.map(({name, defaultValue}) => ({name, value: (!defaultValue).toString()})))
+    expect(localStorageEntries).toEqual(
+      expect.arrayContaining(options.map(({name, defaultValue}) => [name, (!defaultValue).toString()]))
     );
   }
 

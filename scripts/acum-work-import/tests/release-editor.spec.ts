@@ -106,7 +106,7 @@ const test = base.extend({
   },
 });
 
-test.describe('release editor @allow_fail', () => {
+test.describe('release editor', () => {
   test('can import album', async ({page, testRelease}) => {
     // fill in the album ID
     const input = page.getByPlaceholder('Album ID or URL');
@@ -139,7 +139,7 @@ test.describe('release editor @allow_fail', () => {
   });
 });
 
-base.describe('release editor @allow_fail', () => {
+base.describe('release editor', () => {
   base('work import does not add arrangers', async ({page, testRelease, musicbrainzPage}) => {
     await testRelease.editRelationships(musicbrainzPage);
 
@@ -217,7 +217,7 @@ base.describe('release editor @allow_fail', () => {
     await removeButton.click();
 
     // add existing work instead
-    await page.getByRole('row', {name: work.title}).getByRole('button').nth(4).click();
+    await page.getByRole('row', {name: work.title}).getByRole('button', {name: 'Add related work'}).click();
     await page
       .getByRole('textbox', {name: 'Search for a work:'})
       .fill(`${baseURL}/work/960c1321-e1c9-3a80-8b69-0205f556855a`);

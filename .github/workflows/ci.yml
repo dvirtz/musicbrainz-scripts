@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main, beta]
+    branches: [ main, beta ]
 
 permissions:
   contents: read # for checkout
@@ -30,22 +30,11 @@ jobs:
         run: yarn ci
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
-      - name: Run Playwright tests (excluding @allow_fail)
-        run: yarn test -- --pass-with-no-tests --grep-invert @allow_fail
+      - name: Run Playwright tests
+        run: yarn test
         env:
-          MB_USERNAME: ${{ secrets.MB_USERNAME }}
-          MB_PASSWORD: ${{ secrets.MB_PASSWORD }}
           # https://github.com/nodejs/node/issues/59364
           NODE_OPTIONS: --no-experimental-strip-types
-      - name: Run @allow_fail tests (non-blocking)
-        continue-on-error: true
-        run: yarn test -- --pass-with-no-tests --grep @allow_fail
-        env:
-          MB_USERNAME: ${{ secrets.MB_USERNAME }}
-          MB_PASSWORD: ${{ secrets.MB_PASSWORD }}
-          # https://github.com/nodejs/node/issues/59364
-          NODE_OPTIONS: --no-experimental-strip-types
-        timeout-minutes: 30
       - name: Setup tmate session
         if: ${{ failure() && runner.debug == '1' }}
         uses: mxschmitt/action-tmate@v3

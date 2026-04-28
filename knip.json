@@ -6,7 +6,8 @@
   ],
   "ignore": [
     "plugin-release-config.mjs",
-    "scripts/create-script.mts"
+    "scripts/create-script.mts",
+    "**/fixtures/har/**"
   ],
   "workspaces": {}
 }

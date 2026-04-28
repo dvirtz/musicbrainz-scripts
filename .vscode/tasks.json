@@ -74,6 +74,20 @@
 			"problemMatcher": [],
 			"label": "npm: ci",
 			"detail": "yarn check-types && yarn build && yarn lint"
+		},
+		{
+			"type": "shell",
+			"label": "update HAR",
+			"command": "yarn",
+			"args": [
+				"workspace",
+				"@dvirtz/${input:workspace}",
+				"record-har",
+				"--",
+				"-g",
+				"${input:test}"
+			],
+			"problemMatcher": [],
 		}
 	],
 	"inputs": [
@@ -107,6 +121,17 @@
 				"taskId": "debug-url",
 				"rememberPrevious": true,
 			}
-		}
+		},
+		{
+			"id": "test",
+			"type": "command",
+			"command": "shellCommand.execute",
+			"args": {
+				"command": "echo .*${prompt:prompt=Enter test name or .* for all}",
+				"useSingleResult": true,
+				"rememberPrevious": true,
+				"taskId": "test",
+			}
+		},
 	]
 }

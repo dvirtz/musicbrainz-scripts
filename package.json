@@ -29,6 +29,7 @@
     "watch": "turbo run build-watch",
     "release": "yarn workspaces foreach --all --topological-dev --exclude '@dvirtz/musicbrainz-scripts' --exclude 'lib/*' exec semantic-release && semantic-release",
     "test": "turbo run test",
+    "record:har": "turbo run record:har",
     "ci": "yarn check-types && yarn build && yarn lint",
     "lint:knip": "knip --tags=-knipignore",
     "lint:markdown": "markdownlint-cli2",

@@ -1,0 +1,1 @@
+{"id":"571bf2f5-54fa-4917-9e1f-da4657917ef8","gid":"571bf2f5-54fa-4917-9e1f-da4657917ef8","name":"scaffold-festival-days test: Test Festival","type":"Festival","life-span":{"begin":"2026-03-10","end":"2026-03-12"},"relations":[{"target-type":"event","type":"parts","direction":"forward","target":{"id":"00000000-0000-4000-8000-000000000999"}}]}

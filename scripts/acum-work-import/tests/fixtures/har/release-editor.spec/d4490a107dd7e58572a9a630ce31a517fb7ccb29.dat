@@ -1,0 +1,35 @@
+------WebKitFormBoundaryIwUOLgrsQ4cVL563
+Content-Disposition: form-data; name="edit-work.name"
+
+אותך
+------WebKitFormBoundaryIwUOLgrsQ4cVL563
+Content-Disposition: form-data; name="edit-work.comment"
+
+
+------WebKitFormBoundaryIwUOLgrsQ4cVL563
+Content-Disposition: form-data; name="edit-work.type_id"
+
+17
+------WebKitFormBoundaryIwUOLgrsQ4cVL563
+Content-Disposition: form-data; name="edit-work.languages.0"
+
+167
+------WebKitFormBoundaryIwUOLgrsQ4cVL563
+Content-Disposition: form-data; name="edit-work.iswcs.0"
+
+T-002.099.506-5
+------WebKitFormBoundaryIwUOLgrsQ4cVL563
+Content-Disposition: form-data; name="edit-work.attributes.0.type_id"
+
+141
+------WebKitFormBoundaryIwUOLgrsQ4cVL563
+Content-Disposition: form-data; name="edit-work.attributes.0.value"
+
+1056369
+------WebKitFormBoundaryIwUOLgrsQ4cVL563
+Content-Disposition: form-data; name="edit-work.edit_note"
+
+
+----
+Imported from https://nocs.acum.org.il/acumsitesearchdb/album?albumid=006625 using userscript version 1.0.0 from https://homepage.com.
+------WebKitFormBoundaryIwUOLgrsQ4cVL563--

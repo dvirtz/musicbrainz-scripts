@@ -1,0 +1,2 @@
+(self.webpackChunkmusicbrainz_server=self.webpackChunkmusicbrainz_server||[]).push([[6416],{"bXpfDW+":(e,s,_)=>{_.p=window.__MB__.DBDefs.STATIC_RESOURCES_LOCATION+"/"}},e=>{var s;s="bXpfDW+",e(e.s=s)}]);
+//# sourceMappingURL=public-path-a9743e6.js.map

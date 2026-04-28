@@ -1,7 +1,7 @@
 import {test} from '#tests/fixtures/setlistfm-test.ts';
 import {expect} from '@playwright/test';
 
-test.describe('place page @allow_fail', () => {
+test.describe('place page', () => {
   test('existing place', async ({page, setlistfmPage, userscriptPage, baseURL}) => {
     await setlistfmPage.goto('/venue/whisky-a-go-go-west-hollywood-ca-usa-5bd66bd4.html');
 
