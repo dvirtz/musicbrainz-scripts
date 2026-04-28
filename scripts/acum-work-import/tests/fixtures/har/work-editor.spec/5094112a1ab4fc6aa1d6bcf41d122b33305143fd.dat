@@ -1,0 +1,35 @@
+------WebKitFormBoundaryG8PkAm5VujxVH9c4
+Content-Disposition: form-data; name="edit-work.name"
+
+דוד מלך ישראל חי וקיים
+------WebKitFormBoundaryG8PkAm5VujxVH9c4
+Content-Disposition: form-data; name="edit-work.comment"
+
+
+------WebKitFormBoundaryG8PkAm5VujxVH9c4
+Content-Disposition: form-data; name="edit-work.type_id"
+
+17
+------WebKitFormBoundaryG8PkAm5VujxVH9c4
+Content-Disposition: form-data; name="edit-work.languages.0"
+
+167
+------WebKitFormBoundaryG8PkAm5VujxVH9c4
+Content-Disposition: form-data; name="edit-work.iswcs.0"
+
+T-002.541.630-1
+------WebKitFormBoundaryG8PkAm5VujxVH9c4
+Content-Disposition: form-data; name="edit-work.attributes.0.type_id"
+
+141
+------WebKitFormBoundaryG8PkAm5VujxVH9c4
+Content-Disposition: form-data; name="edit-work.attributes.0.value"
+
+1251910
+------WebKitFormBoundaryG8PkAm5VujxVH9c4
+Content-Disposition: form-data; name="edit-work.edit_note"
+
+
+----
+Imported from https://nocs.acum.org.il/acumsitesearchdb/work?workid=1251909 using userscript version 1.0.0 from https://homepage.com.
+------WebKitFormBoundaryG8PkAm5VujxVH9c4--

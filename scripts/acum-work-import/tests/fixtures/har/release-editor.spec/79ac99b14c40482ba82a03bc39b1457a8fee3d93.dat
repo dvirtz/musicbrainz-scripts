@@ -1,0 +1,39 @@
+------WebKitFormBoundarycBrDw5oR9QPZkExp
+Content-Disposition: form-data; name="edit-work.name"
+
+אדם האמין
+------WebKitFormBoundarycBrDw5oR9QPZkExp
+Content-Disposition: form-data; name="edit-work.comment"
+
+
+------WebKitFormBoundarycBrDw5oR9QPZkExp
+Content-Disposition: form-data; name="edit-work.type_id"
+
+17
+------WebKitFormBoundarycBrDw5oR9QPZkExp
+Content-Disposition: form-data; name="edit-work.languages.0"
+
+167
+------WebKitFormBoundarycBrDw5oR9QPZkExp
+Content-Disposition: form-data; name="edit-work.iswcs.0"
+
+T-002.099.493-7
+------WebKitFormBoundarycBrDw5oR9QPZkExp
+Content-Disposition: form-data; name="edit-work.iswcs.1"
+
+T-002.588.626-3
+------WebKitFormBoundarycBrDw5oR9QPZkExp
+Content-Disposition: form-data; name="edit-work.attributes.0.type_id"
+
+141
+------WebKitFormBoundarycBrDw5oR9QPZkExp
+Content-Disposition: form-data; name="edit-work.attributes.0.value"
+
+1056362
+------WebKitFormBoundarycBrDw5oR9QPZkExp
+Content-Disposition: form-data; name="edit-work.edit_note"
+
+
+----
+Imported from https://nocs.acum.org.il/acumsitesearchdb/album?albumid=006625 using userscript version 1.0.0 from https://homepage.com.
+------WebKitFormBoundarycBrDw5oR9QPZkExp--

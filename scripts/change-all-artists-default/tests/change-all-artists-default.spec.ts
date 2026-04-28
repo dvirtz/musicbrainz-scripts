@@ -3,7 +3,7 @@ import {test} from '@repo/test-support/musicbrainz-test';
 
 const release = '148cc205-92b8-42e6-a3b8-9758503a48cd';
 
-test('release artist toolkit change-all default', async ({musicbrainzPage, page}) => {
+test('change all artists default', async ({musicbrainzPage, page}) => {
   await musicbrainzPage.editTracklist(release);
 
   const checkbox = page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'}).getByRole('checkbox');

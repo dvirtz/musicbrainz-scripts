@@ -20,6 +20,9 @@ Apply this skill when implementing or modifying userscripts in this repository.
 - Mimic the website UI when adding new UI elements.
 - When running Playwright tests, use a non-HTML reporter so no browser report window opens (for example, `--reporter=line`).
 - Ensure code passes linting by running `yarn lint` from the repo root.
+- Prefer HAR-backed Playwright tests in CI over live website dependencies once test flows are stable.
+- Record and refresh HAR files with `UPDATE_HAR=1` and commit them under `tests/fixtures/har/`.
+- HAR recordings must include all live domains used by a spec (for example, `www.setlist.fm` and `nocs.acum.org.il`).
 
 ## Suggested Workflow
 
@@ -29,4 +32,5 @@ Apply this skill when implementing or modifying userscripts in this repository.
 4. Place UI components in dedicated `.tsx` files and use `*.module.css` for component styling.
 5. Refactor shared logic into `lib/` packages when appropriate.
 6. Run tests with a non-HTML reporter (for example, `yarn workspace @dvirtz/<script-name> test --reporter=line`).
-7. Run `yarn lint` from the repo root and fix any issues.
+7. Refresh HARs when test data changes (for example, `UPDATE_HAR=1 yarn workspace @dvirtz/<script-name> test --reporter=line`).
+8. Run `yarn lint` from the repo root and fix any issues.

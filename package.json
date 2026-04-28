@@ -29,6 +29,7 @@
     "watch": "turbo run build-watch",
     "release": "yarn workspaces foreach --all --topological-dev --exclude '@dvirtz/musicbrainz-scripts' --exclude 'lib/*' exec semantic-release && semantic-release",
     "test": "turbo run test",
+    "record:har": "turbo run record:har --continue=always --concurrency=1",
     "ci": "yarn check-types && yarn build && yarn lint",
     "lint:knip": "knip --tags=-knipignore",
     "lint:markdown": "markdownlint-cli2",
@@ -48,7 +49,7 @@
     "@commitlint/config-conventional": "^19.4.1",
     "@commitlint/config-workspace-scopes": "^20.2.0",
     "@eslint/js": "^9.14.0",
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.59.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/node": "^22.9.0",
@@ -87,7 +88,7 @@
     "fetch-retry": "^6.0.0",
     "p-queue": "^8.1.0",
     "dedent": "^1.7.0",
-    "@playwright/test": "^1.57.0"
+    "@playwright/test": "^1.59.1"
   },
   "lint-staged": {
     "src/**": [

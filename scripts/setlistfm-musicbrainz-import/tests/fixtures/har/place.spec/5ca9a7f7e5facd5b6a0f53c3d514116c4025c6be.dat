@@ -1,0 +1,311 @@
+var slPlayer = (function () {
+  var utilFunctions = {
+    log: function(){
+      if (utilFunctions.queryparams['debugplayer'] == 'true'){
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift('[slPlayer]\t');
+        console.log.apply(console, args);
+      }
+    },
+    queryparams: new Proxy(new URLSearchParams(window.location.search), {
+      get: (searchParams, prop) => searchParams.get(prop),
+    })
+  }
+  utilFunctions.log(
+    "Logging on."
+  );
+
+  var slPlayerSetup = function (player, playlist_url, additional_cust_params) {
+    var videoMeta = playerSetupFunctions.buildMeta(
+      player,
+      playlist_url,
+      additional_cust_params
+    );
+
+    playerSetupFunctions.setupTimeoutsAndSyndAdListener(player, videoMeta);
+  };
+
+  var playerSetupFunctions = {
+    buildMeta: function (player, playlist_url, additional_cust_params) {
+      return {
+        timing: {
+          last_time: 0,
+          time_offset: 0,
+          v: { 0: 0, 1: 0 },
+          play_thresholds: {
+            10: false,
+            15: false,
+            20: false,
+            25: false,
+            30: false,
+          },
+        },
+        playback: {
+          playlist_url: playlist_url,
+          player_setup: false,
+          syndicated_swap: false,
+          is_exact_match: false,
+          ad_played: false,
+        },
+        advertising: playerSetupFunctions.buildAdvertising(
+          additional_cust_params
+        ),
+        syndication_details: false,
+      };
+    },
+    buildAdvertising: function (additional_cust_params) {
+      var cust_params = {
+        sponsor: "__item-sponsor__",
+        sponsor_campaign: "__item-sponsor__",
+        suppress_ads: "__item-suppressads__",
+      };
+      if (typeof additional_cust_params === "object") {
+        for (var param_name in additional_cust_params) {
+          cust_params[param_name] = additional_cust_params[param_name];
+        }
+      }
+
+      var advertising = jwDefaults.advertising;
+      advertising.schedule[0].custParams = cust_params;
+      //player bidding removed for now
+      return advertising;
+    },
+    setupTimeoutsAndSyndAdListener: function (player, videoMeta) {
+      googletag.cmd.push(function () {
+        googletag
+          .pubads()
+          .addEventListener("slotResponseReceived", function (event) {
+            const slot = event.slot;
+            if (
+              (slot.getTargetingMap()["pagepos"] == "555" ||
+                slot.getTargetingMap()["pagepos"] == "555b") /*for testing*/ &&
+              !slot.getResponseInformation()
+            ) {
+              //slot won't be filled
+              utilFunctions.log(
+                "RESULT: Google ad syndication response received with no fill.  Building with defaults",
+                videoMeta
+              );
+              playerSetupFunctions.buildPlayer(player, videoMeta); //build with defaults
+            } //Otherwise we wait for the regular ad callback and don't need to do anything until it's rendered
+          });
+      });
+
+      var ad_callback = function (e) {
+        //implementing like this so we can attach to multiple events
+        utilFunctions.log(
+          "RESULT: Google ad CALLBACK received with fill.",
+          videoMeta
+        );
+        // utilFunctions.log("\t" + e.detail.video_id + ' - ' + e.detail.title);
+        // utilFunctions.log('\tvideoMeta below to make sure its here correctly');    // utilFunctions.log(e);
+        videoMeta.syndication_details = e.detail;
+        playerSetupFunctions.buildPlayer(player, videoMeta);
+      };
+
+      window.addEventListener("setlist_vid_campaign2", function (e) {
+        ad_callback(e);
+      });
+      window.addEventListener("setlist_syndication_campaign", function (e) {
+        ad_callback(e);
+      });
+
+      setTimeout(function () {
+        //check in 1000ms (was 750ms) if it looks like gtag is loading
+        if (!googletag["_loadStarted_"]) {
+          utilFunctions.log(
+            "RESULT: timed out on _loadStarted_. loading default",
+            videoMeta
+          );
+          utilFunctions.log( "\tgoogletag:", googletag);
+          playerSetupFunctions.buildPlayer(player, videoMeta);
+        } else {
+          setTimeout(function () {
+            //load started, but if still no ad in 3000ms (was 2000ms), stop waiting and show default
+            utilFunctions.log(
+              "RESULT: got _loadStarted_ on time, and now timed out on ad load. loading default if not already swapped",
+              videoMeta
+            );
+            playerSetupFunctions.buildPlayer(player, videoMeta);
+          }, 3000);
+        }
+      }, 1000);
+    },
+    forceExactMatch: function(player, videoMeta) {
+      utilFunctions.log("Not a syndicated video, but forcing float via exact match anyway.");
+      var $videoPlayerContainer = $(player.getContainer()).parents(
+        ".videoPlayer"
+      );
+      videoMeta.playback.is_exact_match = $videoPlayerContainer.hasClass(
+        "videoPlayerExactMatch"
+      );
+      $videoPlayerContainer.addClass("videoPlayerExactMatch");
+    },
+    buildPlayer: function (player, videoMeta) {
+      utilFunctions.log( "EFFECT: building player.  syndication: "); //, videoMeta.syndication_details, ' player_setup: ', videoMeta.playback.player_setup);
+      utilFunctions.log( "\tmeta:", videoMeta);
+      if (!videoMeta.playback.player_setup) {
+        videoMeta.playback.player_setup = true; //do this first to mitigate race conditions
+        utilFunctions.log( "\tsetup: not setup yet, doing now.");
+      } else {
+        utilFunctions.log( "\tsetup: Already set up, doing nothing");
+        return; //already setup.
+      }
+
+      if (videoMeta.syndication_details) {
+        syndicatedVideoFunctions.swapSyndicated(player, videoMeta);
+      } else { //not syndicated
+        if (Math.random() < 0.9){ //flip a coin
+          playerSetupFunctions.forceExactMatch(player, videoMeta);
+        }
+      }
+      utilFunctions.log( "\tsetup advertising:", videoMeta.advertising);
+      const setup_options = {
+        playlist: videoMeta.playback.playlist_url,
+        mute: true,
+        autostart: true,
+        advertising: videoMeta.advertising,
+      };
+
+      utilFunctions.log("Full object sent to the JWPlayer.setup() call:", setup_options);
+      player.setup(setup_options);
+
+      player.on("time", function (e) {
+        playerEventHandlers.time(e, player, videoMeta);
+      });
+
+      player.on("ready", playerEventHandlers.ready);
+
+      player.on("seek", function (e) {
+        var tDelta = e.offset - e.position; //if I seek backswards, this is a negative number, so to offset the total time played, I need to add it to the current position
+        videoMeta.time_offset = videoMeta.time_offset - tDelta;
+      });
+
+      player.on("adStarted", function (e) {
+        videoMeta.playback.ad_played = true;
+      });
+    },
+  };
+
+  var playerEventHandlers = {
+    ready: function (e) {
+      var pl = this.getPlaylist()[0];
+      if (pl && (!pl.product || pl.product.toUpperCase() != "TOUR UPDATE")) {
+        var vidPlayerHeading = $(this.getContainer())
+          .parents(".videoPlayer")
+          .find("h2");
+        vidPlayerHeading.css({
+          "background-image":
+            "url(https://setlist-utils.lncontent.works/images/logo-setlistfm3.svg)",
+          "background-position": "left 0px",
+        });
+        vidPlayerHeading.parent().css({
+          "padding-top": "6px",
+          "padding-bottom": "6px",
+        });
+      }
+
+      //muting/click-to-unmute
+      $(this.getContainer()).click({ player: this }, function (e) {
+        player = e.data.player;
+        if (!player._setlistUnmuted && player.getMute()) {
+          player._setlistUnmuted = true;
+          player.setMute(false);
+          player.seek(0);
+          player.play();
+        }
+      });
+    },
+    time: function (e, player, videoMeta) {
+      videoMeta.timing.v[e.viewable]++;
+      var time = e.position;
+      var elapsed = videoMeta.timing.time_offset + time;
+
+      var nextThreshold = Object.keys(videoMeta.timing.play_thresholds)
+        .filter(function (threshold) {
+          return !videoMeta.timing.play_thresholds[threshold];
+        })
+        .shift();
+
+      if (
+        nextThreshold &&
+        videoMeta.timing.last_time < nextThreshold &&
+        elapsed > nextThreshold
+      ) {
+        //we've hit a milestone play-through time
+        videoMeta.timing.play_thresholds[nextThreshold] = true;
+        playerEventHandlers.timeThresholdHit(player, nextThreshold, videoMeta);
+      }
+
+      videoMeta.timing.last_time = time;
+    },
+    timeThresholdHit: function (player, threshold, videoMeta) {
+      var video = player.getPlaylistItem();
+      var viewablePercent = Math.round(
+        (100 * videoMeta.timing.v[1]) /
+          (videoMeta.timing.v[1] + videoMeta.timing.v[0])
+      );
+      var eventMeta = {
+        JW_video_ID: video.mediaid,
+        JW_video_seconds_viewed: Number(threshold),
+        JW_video_viewable_percent: viewablePercent,
+        JW_video_title: video.title,
+        JW_video_exact_match: videoMeta.playback.is_exact_match,
+        JW_video_ad_played: videoMeta.playback.ad_played,
+        JW_video_syndicated: videoMeta.playback.syndicated_swap,
+      };
+      gtag("event", "JW_video_watch", eventMeta);
+
+      if (eventMeta.JW_video_seconds_viewed == 20) {
+        syndicatedVideoFunctions.recordView(videoMeta);
+      }
+    },
+  };
+
+  var syndicatedVideoFunctions = {
+    swapSyndicated: function (player, videoMeta) {
+      utilFunctions.log(
+        "\tSwapping in syndication video.  Meta:",
+        videoMeta
+      );
+
+      const click_url = videoMeta.syndication_details.click;
+
+      videoMeta.playback.playlist_url =
+        "//cdn.jwplayer.com/v2/media/" + videoMeta.syndication_details.video_id;
+      videoMeta.playback.syndicated_swap = true;
+      videoMeta.advertising = {}; //don't call an ad tag if it's syndicated //TODO: this logs errors.
+
+      var $videoPlayerContainer = $(player.getContainer()).parents(
+        ".videoPlayer"
+      );
+      videoMeta.playback.is_exact_match = $videoPlayerContainer.hasClass(
+        "videoPlayerExactMatch"
+      );
+      $videoPlayerContainer.addClass("videoPlayerExactMatch");
+
+      $videoPlayerContainer
+        .find("h3 span")
+        .text(videoMeta.syndication_details.title).wrap('<a href="'+click_url+'" target="_blank"></a>');
+      $videoPlayerContainer.find(".row > div:last").css("display", "none"); //hide artist tags
+    },
+    recordView: function (videoMeta) {
+      utilFunctions.log( "recording a view if syndication!");
+      if (videoMeta.playback.syndicated_swap) {
+        utilFunctions.log(
+          "yep, syndicated",
+          videoMeta.syndication_details.view
+        );
+        $("body").append(
+          '<img src="' +
+            videoMeta.syndication_details.view +
+            '" style="display:none">'
+        );
+      }
+    },
+  };
+
+  return { setup: slPlayerSetup };
+})();
+
+var slPlayerSetup = slPlayer.setup;

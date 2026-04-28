@@ -24,6 +24,10 @@ export class MusicbrainzPage {
   }
 
   async login() {
+    if (this.userscriptPage.isHarReplay) {
+      return;
+    }
+
     await this.page.goto('/login');
     // Check if we are already logged in
     if (this.page.url().includes('/login')) {
@@ -46,21 +50,26 @@ export class MusicbrainzPage {
     return value;
   }
 
-  async createEdit(body: object): Promise<WsJsEditResponseT> {
-    const response = await this.page.request.post('/ws/js/edit/create', {
+  async createEdit(body: object, baseURL: string | undefined): Promise<WsJsEditResponseT> {
+    return this.userscriptPage.requestJSON<WsJsEditResponseT>('/ws/js/edit/create', {
       data: body,
-      failOnStatusCode: true,
+      method: 'POST',
+      baseURL,
     });
-
-    return (await response.json()) as WsJsEditResponseT;
   }
 
-  async deleteEntity(entityType: NonUrlRelatableEntityTypeT, gid: string, editNote: string) {
-    await this.page.request.post(`/${entityType}/${gid}/delete`, {
+  async deleteEntity(
+    entityType: NonUrlRelatableEntityTypeT,
+    gid: string,
+    editNote: string,
+    baseURL: string | undefined
+  ) {
+    await this.userscriptPage.request(`/${entityType}/${gid}/delete`, {
       form: {
         'confirm.edit_note': editNote,
       },
-      failOnStatusCode: true,
+      method: 'POST',
+      baseURL,
     });
   }
 

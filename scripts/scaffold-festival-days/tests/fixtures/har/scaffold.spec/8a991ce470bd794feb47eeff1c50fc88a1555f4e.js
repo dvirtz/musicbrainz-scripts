@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkmusicbrainz_server=self.webpackChunkmusicbrainz_server||[]).push([[1723],{Z0uSk3q:(r,e,s)=>{var u=s("EVdnBjI"),n=s.n(u);window.$=n(),window.jQuery=n()}},r=>{r.O(0,[8096],(()=>{return e="Z0uSk3q",r(r.s=e);var e}));r.O()}]);
+//# sourceMappingURL=jquery-global-0aec8c5.js.map

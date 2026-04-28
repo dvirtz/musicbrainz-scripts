@@ -107,7 +107,7 @@ const test = base.extend({
   },
 });
 
-test.describe('release editor @allow_fail', () => {
+test.describe('release editor', () => {
   test('can import album', async ({page, testRelease, userscriptPage}) => {
     // fill in the album ID
     const input = page.getByPlaceholder('Album ID or URL');
@@ -144,7 +144,7 @@ test.describe('release editor @allow_fail', () => {
   });
 });
 
-base.describe('release editor @allow_fail', () => {
+base.describe('release editor', () => {
   base('work import does not add arrangers', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
     await testRelease.editRelationships(musicbrainzPage);
 
@@ -181,21 +181,22 @@ base.describe('release editor @allow_fail', () => {
     await checkBox.check();
 
     // make sure artist is not found
-    await userscriptPage.rejectRoute((url: URL) => {
+    const rejectMissingArtistRequests = (url: URL) => {
       if (url.pathname === '/ws/2/artist') {
         const query = url.searchParams.get('query');
         return query ? query.includes(work.lyricists[0]!) || query.includes('ipi:') : false;
       }
       return url.pathname === '/ws/2/url';
-    });
+    };
+    const unrouteRejectMissingArtistRequests = await userscriptPage.rejectRoute(rejectMissingArtistRequests);
 
     await testRelease.importAlbum(page);
 
     const failedToFindWarning = page.getByText('failed to find');
     await expect(failedToFindWarning).toContainText(`Track 1: failed to find lyricist ${work.lyricists[0]}`);
 
-    // enable artist fetching again
-    await page.unrouteAll();
+    // enable artist fetching again without removing HAR replay routes
+    await unrouteRejectMissingArtistRequests();
 
     await testRelease.importAlbum(page);
 
@@ -203,7 +204,7 @@ base.describe('release editor @allow_fail', () => {
     await expect(lyricistLinks).toHaveCount(1);
   });
 
-  base('submits after works removed', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
+  base('submits after works removed', async ({page, testRelease, musicbrainzPage, userscriptPage, baseURL}) => {
     await testRelease.editRelationships(musicbrainzPage);
 
     const work = testRelease.works()[4]!;
@@ -225,6 +226,13 @@ base.describe('release editor @allow_fail', () => {
     // remove imported work
     const removeButton = page.getByRole('heading', {name: work.title}).getByRole('button').first();
     await removeButton.click();
+
+    // add existing work instead
+    await page.getByRole('row', {name: work.title}).getByRole('button', {name: 'Add related work'}).click();
+    await page
+      .getByRole('textbox', {name: 'Search for a work:'})
+      .fill(`${baseURL}/work/960c1321-e1c9-3a80-8b69-0205f556855a`);
+    await page.getByRole('button', {name: 'Done'}).click();
 
     // submit page
     await page.route('**/work/create', () => {

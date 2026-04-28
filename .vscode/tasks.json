@@ -74,6 +74,22 @@
 			"problemMatcher": [],
 			"label": "npm: ci",
 			"detail": "yarn check-types && yarn build && yarn lint"
+		},
+		{
+			"type": "npm",
+			"script": "record:har",
+			"problemMatcher": [],
+			"label": "npm: record:har",
+			"detail": "turbo run record:har"
+		},
+		{
+			"type": "shell",
+			"label": "sanitize HAR",
+			"command": "node",
+			"args": [
+				"lib/test-support/src/sanitize-har.mjs"
+			],
+			"problemMatcher": []
 		}
 	],
 	"inputs": [
@@ -107,6 +123,6 @@
 				"taskId": "debug-url",
 				"rememberPrevious": true,
 			}
-		}
+		},
 	]
 }

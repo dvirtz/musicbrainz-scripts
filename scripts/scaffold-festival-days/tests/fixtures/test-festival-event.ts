@@ -27,21 +27,25 @@ class TestPlaces {
 
   private placeIds: string[] = [];
 
-  async create(musicbrainzPage: MusicbrainzPage) {
+  async create(musicbrainzPage: MusicbrainzPage, baseURL: string | undefined) {
     for (const place of TestPlaces.places) {
-      const gid = await TestPlaces.createPlace(musicbrainzPage, place.name);
+      const gid = await TestPlaces.createPlace(musicbrainzPage, place.name, baseURL);
       this.placeIds.push(gid);
     }
   }
 
-  private static async createPlace(musicbrainzPage: MusicbrainzPage, placeName: string): Promise<string> {
-    const existingPlace = await musicbrainzPage.page.request.get('/ws/2/place', {
+  private static async createPlace(
+    musicbrainzPage: MusicbrainzPage,
+    placeName: string,
+    baseURL: string | undefined
+  ): Promise<string> {
+    const existingPlaceJson = await musicbrainzPage.userscriptPage.requestJSON<PlaceSearchResultsT>('/ws/2/place', {
       params: {
         query: `place:"${placeName}"`,
         fmt: 'json',
       },
+      baseURL,
     });
-    const existingPlaceJson = (await existingPlace.json()) as PlaceSearchResultsT;
     if (existingPlaceJson?.places && existingPlaceJson.places.length > 0) {
       return existingPlaceJson.places[0]!.id;
     }
@@ -89,19 +93,19 @@ class TestFestivalEvent {
 
   private constructor(public readonly gid: string) {}
 
-  static async create(musicbrainzPage: MusicbrainzPage) {
-    const eventGid = await TestFestivalEvent.createEvent(musicbrainzPage);
+  static async create(musicbrainzPage: MusicbrainzPage, baseURL: string | undefined) {
+    const eventGid = await TestFestivalEvent.createEvent(musicbrainzPage, baseURL);
     return new TestFestivalEvent(eventGid);
   }
 
-  static async createEvent(musicbrainzPage: MusicbrainzPage) {
-    const existingEvent = await musicbrainzPage.page.request.get('/ws/2/event', {
+  static async createEvent(musicbrainzPage: MusicbrainzPage, baseURL: string | undefined) {
+    const existingEventJson = await musicbrainzPage.userscriptPage.requestJSON<EventSearchResultsT>('/ws/2/event', {
       params: {
         query: `event:"${this.name}"`,
         fmt: 'json',
       },
+      baseURL,
     });
-    const existingEventJson = (await existingEvent.json()) as EventSearchResultsT;
     if (existingEventJson?.events && existingEventJson.events.length > 0) {
       return existingEventJson.events[0]!.id;
     }
@@ -152,15 +156,14 @@ class TestFestivalEvent {
   }
 
   async getDaySubEvents(musicbrainzPage: MusicbrainzPage): Promise<string[]> {
-    const response = await musicbrainzPage.page.request.get(`/ws/2/event/${this.gid}`, {
+    const eventData = await musicbrainzPage.userscriptPage.requestJSON<{
+      relations?: Array<{type: string; direction?: string; target: {id: string}}>;
+    }>(`/ws/2/event/${this.gid}`, {
       params: {
         inc: 'part-of-rels',
         fmt: 'json',
       },
     });
-    const eventData = (await response.json()) as {
-      relations?: Array<{type: string; direction?: string; target: {id: string}}>;
-    };
     return Array.isArray(eventData.relations)
       ? eventData.relations
           .filter(
@@ -172,15 +175,14 @@ class TestFestivalEvent {
   }
 
   async getVenueSubEvents(musicbrainzPage: MusicbrainzPage, dayEventGid: string): Promise<string[]> {
-    const response = await musicbrainzPage.page.request.get(`/ws/2/event/${dayEventGid}`, {
+    const eventData = await musicbrainzPage.userscriptPage.requestJSON<{
+      relations?: Array<{type: string; direction?: string; target: {id: string}}>;
+    }>(`/ws/2/event/${dayEventGid}`, {
       params: {
         inc: 'part-of-rels',
         fmt: 'json',
       },
     });
-    const eventData = (await response.json()) as {
-      relations?: Array<{type: string; direction?: string; target: {id: string}}>;
-    };
     return Array.isArray(eventData.relations)
       ? eventData.relations
           .filter(
@@ -192,15 +194,14 @@ class TestFestivalEvent {
   }
 
   async getParentEvent(musicbrainzPage: MusicbrainzPage, eventGid: string): Promise<string | null> {
-    const response = await musicbrainzPage.page.request.get(`/ws/2/event/${eventGid}`, {
+    const eventData = await musicbrainzPage.userscriptPage.requestJSON<{
+      relations?: Array<{type: string; direction?: string; target: {id: string}}>;
+    }>(`/ws/2/event/${eventGid}`, {
       params: {
         inc: 'part-of-rels',
         fmt: 'json',
       },
     });
-    const eventData = (await response.json()) as {
-      relations?: Array<{type: string; direction?: string; target: {id: string}}>;
-    };
     if (!Array.isArray(eventData.relations)) {
       return null;
     }
@@ -217,13 +218,13 @@ export const test = base.extend<{
   testPlaces: TestPlaces;
   musicbrainzPage: MusicbrainzPage;
 }>({
-  testFestivalEvent: async ({musicbrainzPage}, use) => {
-    const testFestivalEvent = await TestFestivalEvent.create(musicbrainzPage);
+  testFestivalEvent: async ({musicbrainzPage, baseURL}, use) => {
+    const testFestivalEvent = await TestFestivalEvent.create(musicbrainzPage, baseURL);
     await use(testFestivalEvent);
   },
-  testPlaces: async ({musicbrainzPage}, use) => {
+  testPlaces: async ({musicbrainzPage, baseURL}, use) => {
     const testPlaces = new TestPlaces();
-    await testPlaces.create(musicbrainzPage);
+    await testPlaces.create(musicbrainzPage, baseURL);
     await use(testPlaces);
   },
 });
