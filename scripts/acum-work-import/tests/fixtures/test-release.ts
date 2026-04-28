@@ -552,63 +552,69 @@ class TestRelease {
   // cspell:enable
   private constructor(public readonly gid: string) {}
 
-  static async create(musicbrainzPage: MusicbrainzPage) {
-    const releaseGid = await TestRelease.createRelease(musicbrainzPage);
+  static async create(musicbrainzPage: MusicbrainzPage, baseURL: string | undefined) {
+    const releaseGid = await TestRelease.createRelease(musicbrainzPage, baseURL);
     return new TestRelease(releaseGid);
   }
 
-  static async createRelease(musicbrainzPage: MusicbrainzPage) {
-    const existingRelease = await musicbrainzPage.page.request.get('/ws/2/release', {
-      params: {
-        query: `release:"${this.name}"`,
-        fmt: 'json',
-      },
-    });
-    const existingReleaseJson = (await existingRelease.json()) as ReleaseSearchResultsT;
+  static async createRelease(musicbrainzPage: MusicbrainzPage, baseURL: string | undefined) {
+    const existingReleaseJson = await musicbrainzPage.userscriptPage.requestJSON<ReleaseSearchResultsT>(
+      '/ws/2/release',
+      {
+        params: {
+          query: `release:"${this.name}"`,
+          fmt: 'json',
+        },
+        baseURL,
+      }
+    );
     if (existingReleaseJson.releases.length > 0) {
       return existingReleaseJson.releases[0]!.id;
     }
 
-    const response = await musicbrainzPage.createEdit({
-      'edits': [
-        {
-          'name': this.name,
-          'artist_credit': {
-            // cspell:disable
-            'names': [
-              {
-                'artist': {
+    const response = await musicbrainzPage.createEdit(
+      {
+        'edits': [
+          {
+            'name': this.name,
+            'artist_credit': {
+              // cspell:disable
+              'names': [
+                {
+                  'artist': {
+                    'name': 'אריק איינשטיין',
+                    'id': 432499,
+                    'gid': 'd3c90d1b-f529-404b-939d-41873386d4b4',
+                  },
                   'name': 'אריק איינשטיין',
-                  'id': 432499,
-                  'gid': 'd3c90d1b-f529-404b-939d-41873386d4b4',
+                  'join_phrase': ' ו',
                 },
-                'name': 'אריק איינשטיין',
-                'join_phrase': ' ו',
-              },
-              {
-                'artist': {
-                  'name': 'שם טוב לוי',
-                  'id': 600807,
-                  'gid': '20d1949e-ee90-44ed-a26a-05a4d441bbaa',
+                {
+                  'artist': {
+                    'name': 'שם טוב לוי',
+                    'id': 600807,
+                    'gid': '20d1949e-ee90-44ed-a26a-05a4d441bbaa',
+                  },
+                  'name': 'שם-טוב לוי',
+                  'join_phrase': null,
                 },
-                'name': 'שם-טוב לוי',
-                'join_phrase': null,
-              },
-            ],
+              ],
+            },
+            // cspell:enable
+            'release_group_id': 806165,
+            'comment': '',
+            'language_id': null,
+            'packaging_id': null,
+            'script_id': null,
+            'status_id': null,
+            'edit_type': 31,
           },
-          // cspell:enable
-          'release_group_id': 806165,
-          'comment': '',
-          'language_id': null,
-          'packaging_id': null,
-          'script_id': null,
-          'status_id': null,
-          'edit_type': 31,
-        },
-      ],
-      'makeVotable': false,
-      'editNote': 'test',
-    });
+        ],
+        'makeVotable': false,
+        'editNote': 'test',
+      },
+      baseURL
+    );
     expect(response.edits).toHaveLength(1);
     const responseEdit = response.edits[0] as {
       edit_type: EDIT_RELEASE_CREATE_T;
@@ -617,26 +623,29 @@ class TestRelease {
     };
     expect(responseEdit.response).toBe(1);
     expect(responseEdit.edit_type).toBe(EDIT_RELEASE_CREATE);
-    await TestRelease.createMedium(musicbrainzPage, responseEdit.entity.gid);
+    await TestRelease.createMedium(musicbrainzPage, responseEdit.entity.gid, baseURL);
     return responseEdit.entity.gid;
   }
 
-  static async createMedium(page: MusicbrainzPage, releaseGid: string) {
+  static async createMedium(page: MusicbrainzPage, releaseGid: string, baseURL: string | undefined) {
     // cspell:disable
-    const response = await page.createEdit({
-      'edits': [
-        {
-          'name': '',
-          'format_id': 1,
-          'position': 1,
-          'tracklist': TestRelease.tracks,
-          'release': releaseGid,
-          'edit_type': 51,
-        },
-      ],
-      'makeVotable': false,
-      'editNote': 'test',
-    });
+    const response = await page.createEdit(
+      {
+        'edits': [
+          {
+            'name': '',
+            'format_id': 1,
+            'position': 1,
+            'tracklist': TestRelease.tracks,
+            'release': releaseGid,
+            'edit_type': 51,
+          },
+        ],
+        'makeVotable': false,
+        'editNote': 'test',
+      },
+      baseURL
+    );
     // cspell:enable
     expect(response.edits).toHaveLength(1);
     const responseEdit = response.edits[0] as {
@@ -652,8 +661,8 @@ class TestRelease {
     await musicbrainzPage.userscriptPage.goto(`/release/${this.gid}/edit-relationships`);
   }
 
-  async deleteRelease(musicbrainzPage: MusicbrainzPage) {
-    await musicbrainzPage.deleteEntity('release', this.gid, 'deleting test release');
+  async deleteRelease(musicbrainzPage: MusicbrainzPage, baseURL: string | undefined) {
+    await musicbrainzPage.deleteEntity('release', this.gid, 'deleting test release', baseURL);
   }
 
   acumUrl() {
@@ -684,8 +693,8 @@ export const test = base.extend<{
   testRelease: TestRelease;
   musicbrainzPage: MusicbrainzPage;
 }>({
-  testRelease: async ({musicbrainzPage}, use) => {
-    const testRelease = await TestRelease.create(musicbrainzPage);
+  testRelease: async ({musicbrainzPage, baseURL}, use) => {
+    const testRelease = await TestRelease.create(musicbrainzPage, baseURL);
 
     await use(testRelease);
   },

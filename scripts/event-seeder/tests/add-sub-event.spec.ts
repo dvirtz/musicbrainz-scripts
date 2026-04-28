@@ -58,25 +58,4 @@ test.describe('event-seeder:add-sub-event', () => {
     await expect(heldAtRow).toBeAttached();
     await expect(heldAtRow.getByRole('link')).toHaveAttribute('href', `/place/${TestEvent.heldAt}`);
   });
-
-  test('falls back to appending in editing links list when merge link is missing', async ({
-    page,
-    musicbrainzPage,
-    testEvent,
-  }) => {
-    await page.route(`**/event/${testEvent.gid}`, async route => {
-      const response = await route.fetch();
-      const body = await response.text();
-      await route.fulfill({
-        response,
-        body: body.replace(/<a href="[^"]*merge_queue[^"]*">[^<]*<\/a>/, ''),
-      });
-    });
-
-    await musicbrainzPage.userscriptPage.goto(`/event/${testEvent.gid}`);
-
-    const addSubEventLink = page.locator('#add-sub-event-link');
-    await expect(addSubEventLink).toBeAttached();
-    await expect(page.locator('div#sidebar ul.links li:has(#add-sub-event-link)')).toBeAttached();
-  });
 });

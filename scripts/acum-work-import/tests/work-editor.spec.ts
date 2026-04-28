@@ -10,7 +10,7 @@ async function selectBoxText(locator: Locator) {
   );
 }
 
-test.describe('work editor @allow_fail', () => {
+test.describe('work editor', () => {
   test('can import work', async ({page, userscriptPage}) => {
     await userscriptPage.goto('/work/create');
 
@@ -128,10 +128,10 @@ test.describe('work editor @allow_fail', () => {
   });
 
   test('can import medley work', async ({page, userscriptPage, musicbrainzPage, baseURL}) => {
+    await userscriptPage.goto('/work/create');
+
     // turn off existing work search
     await userscriptPage.setLocalStorage('searchWorks', 'false');
-
-    await userscriptPage.goto('/work/create');
 
     // spell: disable
     const work = {
@@ -333,10 +333,10 @@ test.describe('work editor @allow_fail', () => {
   });
 
   test('can import translated work', async ({page, userscriptPage}) => {
+    await userscriptPage.goto('/work/create');
+
     // turn off existing work search
     await userscriptPage.setLocalStorage('searchWorks', 'false');
-
-    await userscriptPage.goto('/work/create');
 
     // spell: disable
     const work = {

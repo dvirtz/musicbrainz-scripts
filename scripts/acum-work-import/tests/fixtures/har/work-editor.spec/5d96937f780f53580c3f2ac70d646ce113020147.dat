@@ -1,0 +1,35 @@
+------WebKitFormBoundaryKdvF630LA8yrkAJi
+Content-Disposition: form-data; name="edit-work.name"
+
+ביום ההוא אקים את סוכת דוד הנופלת
+------WebKitFormBoundaryKdvF630LA8yrkAJi
+Content-Disposition: form-data; name="edit-work.comment"
+
+
+------WebKitFormBoundaryKdvF630LA8yrkAJi
+Content-Disposition: form-data; name="edit-work.type_id"
+
+17
+------WebKitFormBoundaryKdvF630LA8yrkAJi
+Content-Disposition: form-data; name="edit-work.languages.0"
+
+167
+------WebKitFormBoundaryKdvF630LA8yrkAJi
+Content-Disposition: form-data; name="edit-work.iswcs.0"
+
+T-002.541.631-2
+------WebKitFormBoundaryKdvF630LA8yrkAJi
+Content-Disposition: form-data; name="edit-work.attributes.0.type_id"
+
+141
+------WebKitFormBoundaryKdvF630LA8yrkAJi
+Content-Disposition: form-data; name="edit-work.attributes.0.value"
+
+1251911
+------WebKitFormBoundaryKdvF630LA8yrkAJi
+Content-Disposition: form-data; name="edit-work.edit_note"
+
+
+----
+Imported from https://nocs.acum.org.il/acumsitesearchdb/work?workid=1251909 using userscript version 1.0.0 from https://homepage.com.
+------WebKitFormBoundaryKdvF630LA8yrkAJi--

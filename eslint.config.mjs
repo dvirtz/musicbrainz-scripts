@@ -17,6 +17,7 @@ export default tsEslint.config(
       '**/.turbo/**',
       '**/playwright-report/**',
       '**/test-results/**',
+      '**/fixtures/har/**',
     ],
   },
   {
@@ -43,6 +44,9 @@ export default tsEslint.config(
     extends: [tsEslint.configs.disableTypeChecked],
     languageOptions: {
       sourceType: 'module',
+      globals: {
+        ...globals.node,
+      },
     },
   },
   {

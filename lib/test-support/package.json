@@ -3,9 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "bin": {
+    "record-har": "./src/record-har.mjs",
+    "sanitize-har": "./src/sanitize-har.mjs"
+  },
   "exports": {
     "./musicbrainz-page": "./src/musicbrainz-page.ts",
     "./musicbrainz-test": "./src/musicbrainz-test.ts",
+    "./record-har": "./src/record-har.mjs",
+    "./sanitize-har": "./src/sanitize-har.mjs",
     "./test-config": "./src/test-config.ts",
     "./userscript-manager-mock": "./src/userscript-manager-mock.ts",
     "./userscript-page": "./src/userscript-page.ts",
