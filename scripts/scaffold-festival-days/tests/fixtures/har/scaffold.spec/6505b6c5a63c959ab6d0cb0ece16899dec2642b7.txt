@@ -1,0 +1,3 @@
+{"sent_at":"2026-04-28T20:29:35.251Z","sdk":{"name":"sentry.javascript.browser","version":"7.119.2"}}
+{"type":"session"}
+{"sid":"167ed318e18b4367b757ba2f8a51d67f","init":true,"started":"2026-04-28T20:29:35.251Z","timestamp":"2026-04-28T20:29:35.251Z","status":"ok","errors":0,"attrs":{"release":"f5e5e3449d","environment":"test","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.4 Safari/537.36"}}

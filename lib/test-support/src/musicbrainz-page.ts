@@ -24,6 +24,10 @@ export class MusicbrainzPage {
   }
 
   async login() {
+    if (this.userscriptPage.isHarReplay) {
+      return;
+    }
+
     await this.page.goto('/login');
     // Check if we are already logged in
     if (this.page.url().includes('/login')) {

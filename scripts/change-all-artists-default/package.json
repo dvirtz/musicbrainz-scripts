@@ -12,7 +12,8 @@
     "build-watch": "yarn run build --watch",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "test": "playwright test"
+    "test": "playwright test",
+    "record:har": "record-har"
   },
   "devDependencies": {
     "@playwright/test": "*",

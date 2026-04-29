@@ -9,7 +9,7 @@ async function selectBoxText(locator: Locator) {
   );
 }
 
-test.describe('work editor @allow_fail', () => {
+test.describe('work editor', () => {
   test('can import work', async ({page, userscriptPage}) => {
     await userscriptPage.goto('/work/create');
 

@@ -12,6 +12,11 @@
     "noUncheckedIndexedAccess": true,
     "module": "NodeNext",
     "noEmit": true,
-    "allowImportingTsExtensions": true,
-  }
+    "allowImportingTsExtensions": true
+  },
+  "exclude": [
+    "../../**/node_modules",
+    "../../**/dist",
+    "../../**/fixtures/har"
+  ]
 }

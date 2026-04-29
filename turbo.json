@@ -50,6 +50,22 @@
         "MB_USERNAME",
         "MB_PASSWORD"
       ]
+    },
+    "record:har": {
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "tests/fixtures/har/**",
+        "test-results/**",
+        "playwright-report/**"
+      ],
+      "env": [
+        "MB_USERNAME",
+        "MB_PASSWORD",
+        "UPDATE_HAR"
+      ],
+      "cache": false
     }
   }
 }

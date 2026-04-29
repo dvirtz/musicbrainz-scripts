@@ -1,0 +1,13 @@
+#EXTM3U
+#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=360000,RESOLUTION=480x270,CODECS="mp4a.40.2,avc1.42c015",FRAME-RATE=24.0,CLOSED-CAPTIONS=NONE
+https://videos-cloudfront-usp.jwpsrv.com/69f1c298_a88bbe57fdf7fd5dd21a994f647cd595269c8a8a/sites/JBhMQwaZ/media/mLmiyPJn/versions/gt0iObh9/manifest.ism/manifest-audio_0_EEEC8jq8_dq2yaB6R=112004-video_0_EEEC8jq8_KueWnqSZ=235045.m3u8
+#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=1940000,RESOLUTION=1920x1080,CODECS="mp4a.40.2,avc1.640028",FRAME-RATE=24.0,CLOSED-CAPTIONS=NONE
+https://videos-cloudfront-usp.jwpsrv.com/69f1c298_a88bbe57fdf7fd5dd21a994f647cd595269c8a8a/sites/JBhMQwaZ/media/mLmiyPJn/versions/gt0iObh9/manifest.ism/manifest-audio_0_EEEC8jq8_dq2yaB6R=112004-video_0_EEEC8jq8_KueWnqSZ=1808458.m3u8
+#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=930000,RESOLUTION=1280x720,CODECS="mp4a.40.2,avc1.4d401f",FRAME-RATE=24.0,CLOSED-CAPTIONS=NONE
+https://videos-cloudfront-usp.jwpsrv.com/69f1c298_a88bbe57fdf7fd5dd21a994f647cd595269c8a8a/sites/JBhMQwaZ/media/mLmiyPJn/versions/gt0iObh9/manifest.ism/manifest-audio_0_EEEC8jq8_dq2yaB6R=112004-video_0_EEEC8jq8_KueWnqSZ=805565.m3u8
+#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=460000,RESOLUTION=720x406,CODECS="mp4a.40.2,avc1.4d401e",FRAME-RATE=24.0,CLOSED-CAPTIONS=NONE
+https://videos-cloudfront-usp.jwpsrv.com/69f1c298_a88bbe57fdf7fd5dd21a994f647cd595269c8a8a/sites/JBhMQwaZ/media/mLmiyPJn/versions/gt0iObh9/manifest.ism/manifest-audio_0_EEEC8jq8_dq2yaB6R=112004-video_0_EEEC8jq8_KueWnqSZ=335852.m3u8
+#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=260000,RESOLUTION=320x180,CODECS="mp4a.40.2,avc1.42c00d",FRAME-RATE=24.0,CLOSED-CAPTIONS=NONE
+https://videos-cloudfront-usp.jwpsrv.com/69f1c298_a88bbe57fdf7fd5dd21a994f647cd595269c8a8a/sites/JBhMQwaZ/media/mLmiyPJn/versions/gt0iObh9/manifest.ism/manifest-audio_0_EEEC8jq8_dq2yaB6R=112004-video_0_EEEC8jq8_KueWnqSZ=137859.m3u8
+#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=120000,CODECS="mp4a.40.2"
+https://videos-cloudfront-usp.jwpsrv.com/69f1c298_a88bbe57fdf7fd5dd21a994f647cd595269c8a8a/sites/JBhMQwaZ/media/mLmiyPJn/versions/gt0iObh9/manifest.ism/manifest-audio_0_EEEC8jq8_dq2yaB6R=112004.m3u8

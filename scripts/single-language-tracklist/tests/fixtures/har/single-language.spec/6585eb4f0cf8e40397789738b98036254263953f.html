@@ -1,0 +1,1722 @@
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en"><head><meta charSet="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/><meta content="IE=edge" http-equiv="X-UA-Compatible"/><link href="/static/images/favicons/apple-touch-icon-57x57.png" rel="apple-touch-icon" sizes="57x57"/><link href="/static/images/favicons/apple-touch-icon-60x60.png" rel="apple-touch-icon" sizes="60x60"/><link href="/static/images/favicons/apple-touch-icon-72x72.png" rel="apple-touch-icon" sizes="72x72"/><link href="/static/images/favicons/apple-touch-icon-76x76.png" rel="apple-touch-icon" sizes="76x76"/><link href="/static/images/favicons/apple-touch-icon-114x114.png" rel="apple-touch-icon" sizes="114x114"/><link href="/static/images/favicons/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120"/><link href="/static/images/favicons/apple-touch-icon-144x144.png" rel="apple-touch-icon" sizes="144x144"/><link href="/static/images/favicons/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152"/><link href="/static/images/favicons/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180"/><link href="/static/images/favicons/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/><link href="/static/images/favicons/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/><link href="/static/images/favicons/site.webmanifest" rel="manifest"/><link href="/static/images/favicons/safari-pinned-tab.svg" rel="mask-icon"/><link href="/favicon.ico" rel="shortcut icon"/><meta content="#f1f1f1" name="msapplication-TileColor"/><meta content="/static/images/favicons/mstile-144x144.png" name="msapplication-TileImage"/><meta content="#ffffff" name="theme-color"/><title>MusicBrainz</title><link href="https://musicbrainz.org/release/add" rel="canonical"/><link href="/static/search_plugins/opensearch/musicbrainz_artist.xml" rel="search" title="MusicBrainz: Artist" type="application/opensearchdescription+xml"/><link href="/static/search_plugins/opensearch/musicbrainz_label.xml" rel="search" title="MusicBrainz: Label" type="application/opensearchdescription+xml"/><link href="/static/search_plugins/opensearch/musicbrainz_release.xml" rel="search" title="MusicBrainz: Release" type="application/opensearchdescription+xml"/><link href="/static/search_plugins/opensearch/musicbrainz_track.xml" rel="search" title="MusicBrainz: Track" type="application/opensearchdescription+xml"/><link href="https://static.metabrainz.org/MB/common-ae6ee23.css" rel="stylesheet" type="text/css"/><link href="https://static.metabrainz.org/MB/icons-738f6ce.css" rel="stylesheet" type="text/css"/><noscript><link href="https://static.metabrainz.org/MB/noscript-dfb70de.css" rel="stylesheet" type="text/css"/></noscript><script>Object.defineProperty(window,"__MB__",{value:Object.freeze({"DBDefs":Object.freeze({"CRITIQUEBRAINZ_SERVER":"https://critiquebrainz.org","DB_STAGING_TESTING_FEATURES":true,"DEVELOPMENT_SERVER":false,"DISABLE_IMAGE_EDITING":false,"GIT_BRANCH":"test","GIT_SHA":"f5e5e3449d","MAPBOX_ACCESS_TOKEN":"[redacted]","MAPBOX_MAP_ID":"mapbox/streets-v11","MB_LANGUAGES":["da","de","el","eo","es","et","fi","fr","he","hr","it","ja","nb","nl","oc","pl","ru","sq","sv","tr","zh","en"],"MTCAPTCHA_PRIVATE_TEST_KEY":"[redacted]","MTCAPTCHA_PUBLIC_KEY":"","SENTRY_DSN_PUBLIC":"https://66ce4ddac265405f4bb80b23b4952c66@o4508558300676097.ingest.de.sentry.io/4509277087465552","STATIC_RESOURCES_LOCATION":"https://static.metabrainz.org/MB","WEB_SERVER":"test.musicbrainz.org","WIKITRANS_SERVER":"wiki.musicbrainz.org"}),"$c":Object.freeze({"action":{"name":"add"},"relative_uri":"/release/add","req":{"method":"GET","query_params":{},"uri":"https://test.musicbrainz.org/release/add"},"session":{},"stash":{"current_language":"en","seeded_release_data":{"errors":[],"seed":{}},"server_languages":[{"native_language":"dansk","name":"da","id":null,"native_territory":null},{"name":"de","native_language":"Deutsch","native_territory":null,"id":null},{"native_territory":null,"id":null,"name":"et","native_language":"eesti"},{"native_territory":null,"id":null,"name":"en","native_language":"English"},{"name":"es","native_language":"español","native_territory":null,"id":null},{"native_language":"Esperanto","name":"eo","native_territory":null,"id":null},{"native_territory":null,"id":null,"name":"fr","native_language":"français"},{"name":"hr","native_language":"hrvatski","native_territory":null,"id":null},{"name":"it","native_language":"italiano","id":null,"native_territory":null},{"native_territory":null,"id":null,"native_language":"Nederlands","name":"nl"},{"name":"nb","native_language":"norsk bokmål","id":null,"native_territory":null},{"id":null,"native_territory":null,"native_language":"occitan","name":"oc"},{"native_territory":null,"id":null,"name":"pl","native_language":"polski"},{"name":"sq","native_language":"shqip","native_territory":null,"id":null},{"native_language":"suomi","name":"fi","id":null,"native_territory":null},{"native_language":"svenska","name":"sv","id":null,"native_territory":null},{"name":"tr","native_language":"Türkçe","native_territory":null,"id":null},{"name":"el","native_language":"Ελληνικά","id":null,"native_territory":null},{"name":"ru","native_language":"русский","id":null,"native_territory":null},{"id":null,"native_territory":null,"native_language":"עברית","name":"he"},{"native_language":"中文","name":"zh","id":null,"native_territory":null},{"id":null,"native_territory":null,"native_language":"日本語","name":"ja"}],"source_entity":{"isNewEntity":true,"entityType":"release"}},"user":{"entityType":"editor","avatar":"","has_confirmed_email_address":true,"id":2410625,"name":"dvirtz-readonly","preferences":{"datetime_format":"%Y-%m-%d %H:%M %Z","timezone":"UTC"},"privileges":8324}}),"jedData":Object.seal({"en":null,"locale":"en"})})})</script><script src="https://static.metabrainz.org/MB/public-path-a9743e6.js"></script><script src="https://static.metabrainz.org/MB/runtime-5d78e4d.js"></script><script src="https://static.metabrainz.org/MB/whatwg-fetch-283a729.js"></script><script src="https://static.metabrainz.org/MB/vendors-bda49c5.js"></script><script src="https://static.metabrainz.org/MB/common-chunks-b9f50f2.js"></script><script src="https://static.metabrainz.org/MB/common/jquery-global-0aec8c5.js"></script><script src="https://static.metabrainz.org/MB/common/sentry-3c11ab3.js"></script></head>    <body><link rel="preload" as="image" href="https://static.metabrainz.org/MB/header-logo-1f7dc2a.svg"/><link rel="preload" as="image" href="https://static.metabrainz.org/MB/search-52f8034.svg"/><script src="https://static.metabrainz.org/MB/common/MB/Control/Menu-9072f2f.js" async=""></script><div class="header"><a class="logo" href="/" title="MusicBrainz"><img alt="MusicBrainz" class="logo" src="https://static.metabrainz.org/MB/header-logo-1f7dc2a.svg"/></a><div class="right"><div class="top"><div class="links-container"><ul class="menu" tabindex="-1"><li class="account" tabindex="-1"><span class="menu-header">dvirtz-readonly<!-- --> ▾</span><ul><li><a href="/user/dvirtz-readonly">Profile</a></li><li><a href="/account/applications">Applications</a></li><li><a href="/user/dvirtz-readonly/subscriptions/artist">Subscriptions</a></li><li><a href="/logout">Log out</a></li></ul></li><li class="data" tabindex="-1"><span class="menu-header">My data<!-- --> ▾</span><ul><li><a href="/user/dvirtz-readonly/collections">My collections</a></li><li><a href="/user/dvirtz-readonly/ratings">My ratings</a></li><li><a href="/user/dvirtz-readonly/tags">My tags</a></li><li class="separator"><a href="/user/dvirtz-readonly/edits/open">My open edits</a></li><li><a href="/user/dvirtz-readonly/edits">All my edits</a></li><li><a href="/edit/subscribed">Edits for subscribed entities</a></li><li><a href="/edit/subscribed_editors">Edits by subscribed editors</a></li><li><a href="/edit/notes-received">Notes left on my edits</a></li></ul></li><li class="admin" tabindex="-1"><span class="menu-header">Admin<!-- --> ▾</span><ul><li><a href="/admin/attributes">Edit attributes</a></li><li><a href="/admin/statistics-events">Edit statistics events</a></li><li><a href="/admin/email-search">Email search</a></li><li><a href="/admin/privilege-search">Privilege search</a></li><li><a href="/admin/locked-usernames/search">Locked username search</a></li><li><a href="/admin/possible-spammers">Possible spammers</a></li></ul></li></ul></div><div class="search-container"><form action="/search" method="get"><input id="headerid-query" placeholder="Search" required="" type="text" name="query"/> <select id="headerid-type" name="type"><option value="artist">Artist</option><option value="event">Event</option><option value="recording">Recording</option><option value="release">Release</option><option value="release_group">Release group</option><option value="series">Series</option><option value="work">Work</option><option value="area">Area</option><option value="instrument">Instrument</option><option value="label">Label</option><option value="place">Place</option><option value="annotation">Annotation</option><option value="tag">Tag</option><option value="cdstub">CD stub</option><option value="editor">Editor</option></select> <input id="headerid-method" type="hidden" name="method" value="indexed"/><button type="submit"><img alt="Search" class="search" src="https://static.metabrainz.org/MB/search-52f8034.svg"/></button></form></div></div><div class="bottom"><ul class="menu"><li class="about" tabindex="-1"><span class="menu-header">About us<!-- --> ▾</span><ul><li><a href="/doc/About">About MusicBrainz</a></li><li><a href="https://metabrainz.org/sponsors">Sponsors</a></li><li><a href="https://metabrainz.org/team">Team</a></li><li><a href="https://www.redbubble.com/people/metabrainz/shop">Shop</a></li><li><a href="https://metabrainz.org/contact">Contact us</a></li><li class="separator"><a href="/doc/About/Data_License">Data licenses</a></li><li><a href="https://metabrainz.org/social-contract">Social contract</a></li><li><a href="/doc/Code_of_Conduct">Code of Conduct</a></li><li><a href="https://metabrainz.org/privacy">Privacy policy</a></li><li><a href="https://metabrainz.org/gdpr">GDPR compliance</a></li><li><a href="/doc/Copyright_and_DMCA_Compliance">Copyright and DMCA compliance</a></li><li><a href="/doc/Data_Removal_Policy">Data removal policy</a></li><li class="separator"><a href="/elections">Auto-editor elections</a></li><li><a href="/privileged">Privileged user accounts</a></li><li><a href="/statistics">Statistics</a></li><li><a href="/statistics/timeline">Timeline graph</a></li><li><a href="/history">MusicBrainz history</a></li></ul></li><li class="products" tabindex="-1"><span class="menu-header">Products<!-- --> ▾</span><ul><li><a href="//picard.musicbrainz.org">MusicBrainz Picard</a></li><li><a href="/doc/AudioRanger">AudioRanger</a></li><li><a href="/doc/Mp3tag">Mp3tag</a></li><li><a href="/doc/Yate_Music_Tagger">Yate Music Tagger</a></li><li class="separator"><a href="/doc/MusicBrainz_for_Android">MusicBrainz for Android</a></li><li class="separator"><a href="/doc/MusicBrainz_Server">MusicBrainz Server</a></li><li><a href="/doc/MusicBrainz_Database">MusicBrainz Database</a></li><li class="separator"><a href="/doc/Developer_Resources">Developer resources</a></li><li><a href="/doc/MusicBrainz_API">MusicBrainz API</a></li><li><a href="/doc/Live_Data_Feed">Live Data Feed</a></li></ul></li><li class="search" tabindex="-1"><span class="menu-header">Search<!-- --> ▾</span><ul><li><a href="/search">Advanced search</a></li><li><a href="/search/edits">Edit search</a></li><li><a href="/tags">Tag cloud</a></li><li><a href="/cdstub/browse">Top CD stubs</a></li></ul></li><li class="editing" tabindex="-1"><span class="menu-header">Editing<!-- --> ▾</span><ul><li><a href="/artist/create">Add artist</a></li><li><a href="/label/create">Add label</a></li><li><a href="/release-group/create">Add release group</a></li><li><a href="/release/add">Add release</a></li><li><a href="/release/add?artist=89ad4ac3-39f7-470e-963a-56509c546377">Add Various Artists release</a></li><li><a href="/recording/create">Add standalone recording</a></li><li><a href="/work/create">Add work</a></li><li><a href="/place/create">Add place</a></li><li><a href="/series/create">Add series</a></li><li><a href="/event/create">Add event</a></li><li class="separator"><a href="/vote">Vote on edits</a></li><li><a href="/reports">Reports</a></li></ul></li><li class="documentation" tabindex="-1"><span class="menu-header">Documentation<!-- --> ▾</span><ul><li><a href="/doc/Beginners_Guide">Beginners guide</a></li><li><a href="/doc/Style">Style guidelines</a></li><li><a href="/doc/How_To">How tos</a></li><li><a href="/doc/Frequently_Asked_Questions">FAQs</a></li><li><a href="/doc/MusicBrainz_Documentation">Documentation index</a></li><li class="separator"><a href="/doc/Edit_Types">Edit types</a></li><li><a href="/relationships">Relationship types</a></li><li><a href="/instruments">Instrument list</a></li><li><a href="/genres">Genre list</a></li><li class="separator"><a href="/doc/Development">Development</a></li></ul></li><li class="language-selector" tabindex="-1"><span class="menu-header">English ▾</span><ul><li><a href="/set-language/da?returnto=%2Frelease%2Fadd">Dansk</a></li><li><a href="/set-language/de?returnto=%2Frelease%2Fadd">Deutsch</a></li><li><a href="/set-language/et?returnto=%2Frelease%2Fadd">Eesti</a></li><li><strong><a href="/set-language/en?returnto=%2Frelease%2Fadd">English</a></strong></li><li><a href="/set-language/es?returnto=%2Frelease%2Fadd">Español</a></li><li><a href="/set-language/eo?returnto=%2Frelease%2Fadd">Esperanto</a></li><li><a href="/set-language/fr?returnto=%2Frelease%2Fadd">Français</a></li><li><a href="/set-language/hr?returnto=%2Frelease%2Fadd">Hrvatski</a></li><li><a href="/set-language/it?returnto=%2Frelease%2Fadd">Italiano</a></li><li><a href="/set-language/nl?returnto=%2Frelease%2Fadd">Nederlands</a></li><li><a href="/set-language/nb?returnto=%2Frelease%2Fadd">Norsk bokmål</a></li><li><a href="/set-language/oc?returnto=%2Frelease%2Fadd">Occitan</a></li><li><a href="/set-language/pl?returnto=%2Frelease%2Fadd">Polski</a></li><li><a href="/set-language/sq?returnto=%2Frelease%2Fadd">Shqip</a></li><li><a href="/set-language/fi?returnto=%2Frelease%2Fadd">Suomi</a></li><li><a href="/set-language/sv?returnto=%2Frelease%2Fadd">Svenska</a></li><li><a href="/set-language/tr?returnto=%2Frelease%2Fadd">Türkçe</a></li><li><a href="/set-language/el?returnto=%2Frelease%2Fadd">Ελληνικά</a></li><li><a href="/set-language/ru?returnto=%2Frelease%2Fadd">Русский</a></li><li><a href="/set-language/he?returnto=%2Frelease%2Fadd">עברית</a></li><li><a href="/set-language/zh?returnto=%2Frelease%2Fadd">中文</a></li><li><a href="/set-language/ja?returnto=%2Frelease%2Fadd">日本語</a></li><li><a href="/set-language/unset?returnto=%2Frelease%2Fadd">(reset language)</a></li><li class="separator"><a href="https://translations.metabrainz.org/projects/musicbrainz/">Help translate</a></li></ul></li></ul></div></div></div><div class="warning" id="unsupported-browser" style="display:none"><p>The browser you’re using is unsupported, and the website may not work correctly for you. It’s recommended that you upgrade to a recent version of Firefox, Safari, Edge, or any Chrome-based browser. If that’s not possible, you can try enabling <a href="/toggle-legacy-browser?returnto=https%3A%2F%2Ftest.musicbrainz.org%2Frelease%2Fadd">legacy browser mode</a>.</p></div><script src="/static/scripts/supported-browser-check.js"></script>            
+                <div class="banner server-details">
+                    <p>This is a MusicBrainz development server. <a href="https://musicbrainz.org/release/add">Return to musicbrainz.org</a>.</p>
+                    <button type="button" class="dismiss-banner remove-item icon" data-banner-name="server_details"></button>
+                </div>
+            
+        
+
+        
+
+        
+
+        <div id="page" class="fullwidth">  
+    <h1>Add release</h1>
+  
+
+  <div id="release-editor" style="display: none;" data-bind="delegatedHandler: ['click', 'change', 'keydown']">
+    <ul>
+      <li><a href="#information">Release information</a></li>
+      
+        <li><a href="#duplicates-tab">Release duplicates</a></li>
+      
+      <li><a href="#tracklist">Tracklist</a></li>
+      <li><a href="#recordings" title="First enter all track information, including titles and artist credits, in order to edit their recordings.">Recordings</a></li>
+      <li><a href="#edit-note">Edit note</a></li>
+    </ul>
+
+    <!-- ko if: seedErrors -->
+      <div id="seed-errors" class="page-error">
+        The data you’ve seeded contained the following errors:
+        <ul data-bind="foreach: seedErrors">
+          <li data-bind="text: $data"></li>
+        </ul>
+        Review the <a href="https://test.musicbrainz.org/doc/Development/Release_Editor_Seeding">documentation</a> on release editor seeding and make sure your data is formatted correctly.
+      </div>
+    <!-- /ko -->
+
+    <!-- ko if: loadError -->
+      <div class="page-error" data-bind="text: loadErrorMessage()"></div>
+    <!-- /ko -->
+
+    <div id="information">
+      <div class="half-width" data-bind="with: rootField.release">
+  <fieldset>
+    <legend>Release information</legend>
+
+    <table class="row-form">
+    <tbody>
+      <tr>
+        <td><label for="title" class="required">Title:</label></td>
+        <td colspan="2">
+          <table>
+            <tr>
+              <td colspan="2" style="padding: 0">
+                <input id="name" class="with-guesscase-guessfeat" type="text" size="47" required="required" data-bind="value: name, valueUpdate: 'input', controlsBubble: $root.titleBubble"" />
+                <button type="button" class="guesscase-title icon" title="Guess case"></button>
+                <button type="button" class="guessfeat icon" title="Guess feat. artists" data-click="guessReleaseFeatArtists"></button>
+                <button type="button" class="guesscase-options icon" title="Guess case options"></button>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+        <tr class="error">
+    <td></td>
+    <td colspan="2" class="error field-error" data-bind="showErrorWhenTabIsSwitched: needsName">A release title is required.</td>
+  </tr>
+
+      <tr>
+        <td><label for="release-artist" class="required">Artist:</label></td>
+        <td class="release-artist" data-bind="artistCreditEditor: $data"></td>
+      </tr>
+
+        <tr class="error">
+    <td></td>
+    <td colspan="2" class="error field-error" data-bind="showErrorWhenTabIsSwitched: needsArtistCredit">You must select an artist for the release (the background color of the artist field should be green). If you’ve entered an artist but the background remains uncolored, click the magnifying glass to match the name to a MusicBrainz artist. If the artist doesn’t exist yet, you can add it by selecting “Add a new artist” from the bottom of the search results drop-down.</td>
+  </tr>
+
+      <tr>
+        <td><label for="release-group">Release group:</label></td>
+        <td colspan="2">
+          <span class="autocomplete">
+            <input id="release-group" type="text"
+              data-bind="
+                autocomplete: {
+                  entity: 'release-group',
+                  currentSelection: releaseGroup,
+                  entityConstructor: $root.fields.ReleaseGroup
+                },
+                controlsBubble: $root.releaseGroupBubble"
+            />
+            <link rel="preload" as="image" href="https://static.metabrainz.org/MB/search-52f8034.svg"/><img alt="Search" class="search" src="https://static.metabrainz.org/MB/search-52f8034.svg"/>
+          </span>
+        </td>
+      </tr>
+
+      <tr data-bind="if: $root.loadingDuplicateReleaseGroups()">
+        <td></td>
+        <td colspan="2">
+          <div class="duplicate-release-groups-loading loading-message">
+            Checking existing release groups…
+          </div>
+        </td>
+      </tr>
+
+      <tr data-bind="if: $root.failedLoadingDuplicateReleaseGroups()">
+        <td></td>
+        <td colspan="2">
+          <div class="duplicate-release-groups-error">
+            Release group search error
+            <a data-click="loadDuplicateReleaseGroups">Retry</a>
+          </div>
+        </td>
+      </tr>
+
+      <tr data-bind="if: $root.duplicateReleaseGroups().length > 0">
+        <td></td>
+        <td colspan="2">
+          <div class="duplicate-release-groups-label">
+            Existing release groups with similar names:
+          </div>
+          <div class="duplicate-release-groups-list">
+            <!-- ko foreach: $root.duplicateReleaseGroups -->
+              <label>
+                <input name="release-group-selection" type="radio" data-change="selectReleaseGroup" />
+                <div>
+                  <a target="_blank" data-bind="attr: { href: '/release-group/' + $data.gid }, text: $data.name"></a>
+                  <span data-bind="text: $data.details"></span>
+                </div>
+              </label>
+            <!-- /ko -->
+            <label>
+              <input name="release-group-selection" type="radio" checked data-change="clearReleaseGroup" />
+              <div>Add a new release group</div>
+            </label>
+          </div>
+        </td>
+      </tr>
+
+        <tr data-bind="showMessageRightAway: willCreateReleaseGroup">
+    <td></td>
+    <td colspan="2">If you don’t select an existing release group, a new one will be added with the types selected below.</td>
+  </tr>
+
+        <tr class="error">
+    <td></td>
+    <td colspan="2" class="error field-error" data-bind="showErrorWhenTabIsSwitched: needsReleaseGroup">You must select an existing release group.</td>
+  </tr>
+
+      <!-- ko with: releaseGroup -->
+        <!-- ko if: $data.gid -->
+          <!-- ko if: canTakeName($parent.name()) -->
+            <tr>
+              <td></td>
+              <td colspan="2">
+                <div class="checkbox">
+                  <div>
+                    <input type="checkbox" id="copy-title-to-rg" data-bind="checked: $root.copyTitleToReleaseGroup" />
+                    <label class="inline" for="copy-title-to-rg">
+                      Copy the release title to the release group
+                    </label>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          <!-- /ko -->
+          <!-- ko if: canTakeArtist($parent.artistCredit) -->
+            <tr>
+              <td></td>
+              <td colspan="2">
+                <div class="checkbox">
+                  <div>
+                    <input type="checkbox" id="copy-ac-to-rg" data-bind="checked: $root.copyArtistToReleaseGroup" />
+                    <label class="inline" for="copy-ac-to-rg">
+                      Copy the release artist credit to the release group
+                    </label>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          <!-- /ko -->
+        <!-- /ko -->
+      <!-- /ko -->
+
+      
+        <!-- ko with: releaseGroup -->
+          <tr>
+      <td><label for="primary-type">Primary type:</label></td>
+  <td colspan="2">
+    <select id="primary-type" style="width: 100%;" data-bind="value: typeID, disable: !!$data.gid, controlsBubble: $root.primaryTypeBubble">
+      <option value="" selected="selected">&#160;</option>
+      
+          <option value="1">Album</option>  <option value="3">EP</option>  <option value="2">Single</option>  <option value="12">Broadcast</option>  <option value="11">Other</option>
+
+      
+    </select>
+  </td>
+  </tr>
+
+          <tr>
+      <td><label for="secondary-types">Secondary types:</label></td>
+  <td colspan="2">
+    <select id="secondary-types" style="width: 100%;" data-bind="selectedOptions: secondaryTypeIDs, controlsBubble: $root.secondaryTypesBubble, disable: !!$data.gid" multiple>
+      <option value="" selected="selected">&#160;</option>
+      
+          <option value="11">Audio drama</option>  <option value="5">Audiobook</option>  <option value="1">Compilation</option>  <option value="10">Demo</option>  <option value="8">DJ-mix</option>  <option value="4">Interview</option>  <option value="6">Live</option>  <option value="9">Mixtape/Street</option>  <option value="7">Remix</option>  <option value="2">Soundtrack</option>  <option value="3">Spokenword</option>
+
+      
+    </select>
+  </td>
+  </tr>
+        <!-- /ko -->
+      
+
+        <tr>
+      <td><label for="status">Status:</label></td>
+  <td colspan="2">
+    <select id="status" style="width: 100%;" data-bind="value: statusID, controlsBubble: $root.statusBubble">
+      <option value="" selected="selected">&#160;</option>
+      
+          <option value="1">Official</option>  <option value="2">Promotion</option>  <option value="3">Bootleg</option>  <option value="4">Pseudo-Release</option>  <option value="5">Withdrawn</option>  <option value="6">Cancelled</option>
+
+      
+    </select>
+  </td>
+  </tr>
+
+        <tr>
+      <td><label for="language">Language:</label></td>
+  <td colspan="2">
+    <select id="language" style="width: 100%;" data-bind="value: languageID, controlsBubble: $root.languageBubble">
+      <option value="" selected="selected">&#160;</option>
+      
+        
+        <optgroup label="Frequently used">
+            <option value="284">[Multiple languages]</option>  <option value="18">Arabic</option>  <option value="76">Chinese</option>  <option value="113">Dutch</option>  <option value="120">English</option>  <option value="131">Finnish</option>  <option value="134">French</option>  <option value="145">German</option>  <option value="159">Greek</option>  <option value="171">Hindi</option>  <option value="176">Hungarian</option>  <option value="195">Italian</option>  <option value="198">Japanese</option>  <option value="224">Korean</option>  <option value="338">Polish</option>  <option value="340">Portuguese</option>  <option value="353">Russian</option>  <option value="393">Spanish</option>  <option value="403">Swedish</option>  <option value="433">Turkish</option>
+
+        </optgroup>
+        <optgroup label="Other">
+            <option value="24">[Artificial (Other)]</option>  <option value="2">Abkhazian</option>  <option value="3">Achinese</option>  <option value="4">Acoli</option>  <option value="5">Adangme</option>  <option value="6">Adyghe</option>  <option value="1">Afar</option>  <option value="8">Afrihili</option>  <option value="9">Afrikaans</option>  <option value="473">Ainu</option>  <option value="10">Akan</option>  <option value="11">Akkadian</option>  <option value="12">Albanian</option>  <option value="13">Aleut</option>  <option value="709">Algonquin</option>  <option value="15">Amharic</option>  <option value="475">Angika</option>  <option value="20">Aragonese</option>  <option value="23">Arapaho</option>  <option value="25">Arawak</option>  <option value="5403">Ardhamāgadhī Prākrit</option>  <option value="21">Armenian</option>  <option value="479">Aromanian</option>  <option value="26">Assamese</option>  <option value="27">Asturian</option>  <option value="866">Atikamekw</option>  <option value="30">Avaric</option>  <option value="31">Avestan</option>  <option value="32">Awadhi</option>  <option value="33">Aymara</option>  <option value="34">Azerbaijani</option>  <option value="1470">Baeggu</option>  <option value="40">Balinese</option>  <option value="38">Baluchi</option>  <option value="39">Bambara</option>  <option value="42">Basa</option>  <option value="37">Bashkir</option>  <option value="41">Basque</option>  <option value="982">Bavarian</option>  <option value="44">Beja</option>  <option value="45">Belarusian</option>  <option value="46">Bemba</option>  <option value="47">Bengali</option>  <option value="49">Bhojpuri</option>  <option value="51">Bikol</option>  <option value="52">Bini</option>  <option value="53">Bislama</option>  <option value="64">Blin</option>  <option value="1394">Bodo (India)</option>  <option value="56">Bosnian</option>  <option value="57">Braj</option>  <option value="58">Breton</option>  <option value="1322">Buamu</option>  <option value="61">Buginese</option>  <option value="62">Bulgarian</option>  <option value="60">Buriat</option>  <option value="63">Burmese</option>  <option value="1406">Burushaski</option>  <option value="65">Caddo</option>  <option value="2311">Cajun French</option>  <option value="68">Catalan</option>  <option value="70">Cebuano</option>  <option value="7217">Celtiberian</option>  <option value="5809">Central Okinawan</option>  <option value="2243">Central Yupik</option>  <option value="75">Chagatai</option>  <option value="72">Chamorro</option>  <option value="74">Chechen</option>  <option value="82">Cherokee</option>  <option value="85">Cheyenne</option>  <option value="73">Chibcha</option>  <option value="313">Chichewa</option>  <option value="79">Chinook jargon</option>  <option value="81">Chipewyan</option>  <option value="80">Choctaw</option>  <option value="83">Church Slavic</option>  <option value="77">Chuukese</option>  <option value="84">Chuvash</option>  <option value="87">Coptic</option>  <option value="88">Cornish</option>  <option value="89">Corsican</option>  <option value="93">Cree</option>  <option value="286">Creek</option>  <option value="94">Crimean Tatar</option>  <option value="366">Croatian</option>  <option value="7303">Cuneiform Luwian</option>  <option value="98">Czech</option>  <option value="99">Dakota</option>  <option value="100">Danish</option>  <option value="101">Dargwa</option>  <option value="103">Delaware</option>  <option value="106">Dinka</option>  <option value="107">Divehi</option>  <option value="108">Dogri</option>  <option value="105">Dogrib</option>  <option value="111">Duala</option>  <option value="112">Dutch, Middle (ca.1050-1350)</option>  <option value="114">Dyula</option>  <option value="115">Dzongkha</option>  <option value="584">Eastern Arrernte</option>  <option value="116">Efik</option>  <option value="117">Egyptian (Ancient)</option>  <option value="118">Ekajuk</option>  <option value="119">Elamite</option>  <option value="121">English, Middle (1100-1500)</option>  <option value="16">English, Old (ca.450-1100)</option>  <option value="290">Erzya</option>  <option value="122">Esperanto</option>  <option value="123">Estonian</option>  <option value="124">Ewe</option>  <option value="125">Ewondo</option>  <option value="126">Fang</option>  <option value="128">Fanti</option>  <option value="127">Faroese</option>  <option value="129">Fijian</option>  <option value="130">Filipino</option>  <option value="133">Fon</option>  <option value="136">French, Old (842-ca.1400)</option>  <option value="485">Frisian, Eastern</option>  <option value="484">Frisian, Northern</option>  <option value="137">Frisian, Western</option>  <option value="139">Friulian</option>  <option value="138">Fulah</option>  <option value="140">Ga</option>  <option value="67">Galibi Carib</option>  <option value="150">Galician</option>  <option value="249">Ganda</option>  <option value="1591">Garifuna</option>  <option value="141">Gayo</option>  <option value="142">Gbaya</option>  <option value="146">Geez</option>  <option value="144">Georgian</option>  <option value="299">German, Low</option>  <option value="152">German, Middle High (ca.1050-1500)</option>  <option value="153">German, Old High (ca.750-1050)</option>  <option value="476">German, Swiss</option>  <option value="147">Gilbertese</option>  <option value="154">Gondi</option>  <option value="155">Gorontalo</option>  <option value="156">Gothic</option>  <option value="157">Grebo</option>  <option value="158">Greek, Ancient</option>  <option value="204">Greenlandic</option>  <option value="2534">Gronings</option>  <option value="2386">Guadeloupean Creole French</option>  <option value="160">Guarani</option>  <option value="161">Gujarati</option>  <option value="2511">Gumatj</option>  <option value="2581">Gupapuyngu</option>  <option value="2638">Guyanese Creole English</option>  <option value="162">Gwich'in</option>  <option value="163">Haida</option>  <option value="164">Haitian Creole</option>  <option value="165">Hausa</option>  <option value="166">Hawaiian</option>  <option value="167">Hebrew</option>  <option value="168">Herero</option>  <option value="169">Hiligaynon</option>  <option value="174">Hiri Motu</option>  <option value="173">Hmong</option>  <option value="177">Hupa</option>  <option value="178">Iban</option>  <option value="180">Icelandic</option>  <option value="181">Ido</option>  <option value="179">Igbo</option>  <option value="186">Iloko</option>  <option value="189">Indonesian</option>  <option value="2967">Ingrian</option>  <option value="191">Ingush</option>  <option value="4369">Innu</option>  <option value="187">Interlingua</option>  <option value="185">Interlingue</option>  <option value="184">Inuktitut</option>  <option value="192">Inupiaq</option>  <option value="149">Irish</option>  <option value="2980">Jamaican Creole English</option>  <option value="196">Javanese</option>  <option value="6526">Jewish Babylonian Aramaic (ca. 200-1200 CE)</option>  <option value="200">Judeo-Arabic</option>  <option value="199">Judeo-Persian</option>  <option value="212">Kabardian</option>  <option value="3185">Kabuverdianu</option>  <option value="202">Kabyle</option>  <option value="203">Kachin</option>  <option value="459">Kalmyk</option>  <option value="205">Kamba</option>  <option value="206">Kannada</option>  <option value="209">Kanuri</option>  <option value="201">Kara-Kalpak</option>  <option value="227">Karachay-Balkar</option>  <option value="477">Karelian</option>  <option value="208">Kashmiri</option>  <option value="96">Kashubian</option>  <option value="211">Kazakh</option>  <option value="3137">Khanty</option>  <option value="213">Khasi</option>  <option value="215">Khmer, Central</option>  <option value="217">Kikuyu</option>  <option value="220">Kimbundu</option>  <option value="218">Kinyarwanda</option>  <option value="219">Kirghiz</option>  <option value="421">Klingon</option>  <option value="3529">Kölsch</option>  <option value="222">Komi</option>  <option value="223">Kongo</option>  <option value="221">Konkani</option>  <option value="225">Kosraean</option>  <option value="226">Kpelle</option>  <option value="230">Kuanyama</option>  <option value="231">Kumyk</option>  <option value="7421">Kunigami</option>  <option value="232">Kurdish</option>  <option value="229">Kurukh</option>  <option value="233">Kutenai</option>  <option value="3885">Ladin</option>  <option value="234">Ladino</option>  <option value="235">Lahnda</option>  <option value="3880">Lakota</option>  <option value="236">Lamba</option>  <option value="237">Lao</option>  <option value="238">Latin</option>  <option value="239">Latvian</option>  <option value="4039">Laz</option>  <option value="240">Lezghian</option>  <option value="241">Limburgish</option>  <option value="242">Lingala</option>  <option value="243">Lithuanian</option>  <option value="3858">Liv</option>  <option value="197">Lojban</option>  <option value="245">Lozi</option>  <option value="248">Luba-Katanga</option>  <option value="247">Luba-Lulua</option>  <option value="250">Luiseno</option>  <option value="251">Lunda</option>  <option value="252">Luo</option>  <option value="253">Lushai</option>  <option value="246">Luxembourgish</option>  <option value="4018">Luyia</option>  <option value="254">Macedonian</option>  <option value="255">Madurese</option>  <option value="256">Magahi</option>  <option value="258">Maithili</option>  <option value="259">Makasar</option>  <option value="275">Malagasy</option>  <option value="266">Malay</option>  <option value="260">Malayalam</option>  <option value="276">Maltese</option>  <option value="277">Manchu</option>  <option value="268">Mandar</option>  <option value="1739">Mandarin Chinese</option>  <option value="261">Mandingo</option>  <option value="278">Manipuri</option>  <option value="4358">Mansi</option>  <option value="151">Manx</option>  <option value="262">Maori</option>  <option value="22">Mapudungun</option>  <option value="264">Marathi</option>  <option value="78">Mari</option>  <option value="257">Marshallese</option>  <option value="288">Marwari</option>  <option value="265">Masai</option>  <option value="269">Mende</option>  <option value="271">Mi'kmaq</option>  <option value="4663">Min Nan Chinese</option>  <option value="2735">Mina (Cameroon)</option>  <option value="272">Minangkabau</option>  <option value="287">Mirandese</option>  <option value="4538">Miyako</option>  <option value="280">Mohawk</option>  <option value="267">Moksha</option>  <option value="244">Mongo</option>  <option value="282">Mongolian</option>  <option value="283">Mossi</option>  <option value="478">N'Ko</option>  <option value="294">Nauru</option>  <option value="295">Navajo</option>  <option value="297">Ndebele, North</option>  <option value="296">Ndebele, South</option>  <option value="298">Ndonga</option>  <option value="293">Neapolitan</option>  <option value="301">Nepal Bhasa</option>  <option value="300">Nepali</option>  <option value="7618">Nhengatu</option>  <option value="302">Nias</option>  <option value="304">Niuean</option>  <option value="486">No linguistic content</option>  <option value="307">Nogai</option>  <option value="4991">Norn</option>  <option value="308">Norse, Old</option>  <option value="309">Norwegian</option>  <option value="306">Norwegian Bokmål</option>  <option value="305">Norwegian Nynorsk</option>  <option value="314">Nyamwezi</option>  <option value="315">Nyankole</option>  <option value="316">Nyoro</option>  <option value="317">Nzima</option>  <option value="318">Occitan</option>  <option value="319">Ojibwa</option>  <option value="320">Oriya</option>  <option value="321">Oromo</option>  <option value="322">Osage</option>  <option value="323">Ossetian</option>  <option value="328">Pahlavi</option>  <option value="332">Palauan</option>  <option value="337">Pali</option>  <option value="329">Pampanga</option>  <option value="327">Pangasinan</option>  <option value="331">Papiamento</option>  <option value="334">Persian</option>  <option value="5402">Pitjantjatjara</option>  <option value="339">Pohnpeian</option>  <option value="342">Provençal, Old (to 1500)</option>  <option value="330">Punjabi</option>  <option value="343">Pushto</option>  <option value="5603">Puyuma</option>  <option value="344">Quechua</option>  <option value="5662">Quenya</option>  <option value="345">Rajasthani</option>  <option value="346">Rapanui</option>  <option value="347">Rarotongan</option>  <option value="5690">Réunion Creole French</option>  <option value="351">Romanian</option>  <option value="349">Romansh</option>  <option value="350">Romany</option>  <option value="352">Rundi</option>  <option value="5790">Rusyn</option>  <option value="359">Samaritan Aramaic</option>  <option value="383">Sami, Inari</option>  <option value="382">Sami, Lule</option>  <option value="380">Sami, Northern</option>  <option value="385">Sami, Skolt</option>  <option value="379">Sami, Southern</option>  <option value="384">Samoan</option>  <option value="354">Sandawe</option>  <option value="355">Sango</option>  <option value="360">Sanskrit</option>  <option value="362">Santali</option>  <option value="394">Sardinian</option>  <option value="361">Sasak</option>  <option value="365">Scots</option>  <option value="148">Scottish Gaelic</option>  <option value="367">Selkup</option>  <option value="363">Serbian</option>  <option value="395">Serer</option>  <option value="371">Shan</option>  <option value="386">Shona</option>  <option value="182">Sichuan Yi</option>  <option value="364">Sicilian</option>  <option value="372">Sidamo</option>  <option value="54">Siksika</option>  <option value="5989">Sindarin</option>  <option value="387">Sindhi</option>  <option value="373">Sinhala</option>  <option value="104">Slave (Athapascan)</option>  <option value="377">Slovak</option>  <option value="378">Slovenian</option>  <option value="390">Somali</option>  <option value="388">Soninke</option>  <option value="110">Sorbian, Lower</option>  <option value="175">Sorbian, Upper</option>  <option value="310">Sotho, Northern</option>  <option value="392">Sotho, Southern</option>  <option value="474">Southern Altai</option>  <option value="3309">Southern Kiwai</option>  <option value="480">Sranan Tongo</option>  <option value="398">Sukuma</option>  <option value="399">Sundanese</option>  <option value="400">Susu</option>  <option value="6216">Svan</option>  <option value="402">Swahili</option>  <option value="397">Swati</option>  <option value="404">Syriac</option>  <option value="414">Tagalog</option>  <option value="405">Tahitian</option>  <option value="413">Tajik</option>  <option value="423">Tamashek</option>  <option value="407">Tamil</option>  <option value="408">Tatar</option>  <option value="409">Telugu</option>  <option value="411">Tereno</option>  <option value="412">Tetum</option>  <option value="415">Thai</option>  <option value="416">Tibetan</option>  <option value="417">Tigre</option>  <option value="418">Tigrinya</option>  <option value="410">Timne</option>  <option value="419">Tiv</option>  <option value="422">Tlingit</option>  <option value="426">Tok Pisin</option>  <option value="420">Tokelau</option>  <option value="7845">Toki Pona</option>  <option value="424">Tonga (Nyasa)</option>  <option value="425">Tonga (Tonga Islands)</option>  <option value="427">Tsimshian</option>  <option value="429">Tsonga</option>  <option value="428">Tswana</option>  <option value="431">Tumbuka</option>  <option value="324">Turkish, Ottoman</option>  <option value="430">Turkmen</option>  <option value="435">Tuvalu</option>  <option value="437">Tuvinian</option>  <option value="436">Twi</option>  <option value="438">Udmurt</option>  <option value="440">Uighur</option>  <option value="441">Ukrainian</option>  <option value="442">Umbundu</option>  <option value="5995">Ume Sami</option>  <option value="444">Urdu</option>  <option value="445">Uzbek</option>  <option value="446">Vai</option>  <option value="447">Venda</option>  <option value="6913">Veps</option>  <option value="448">Vietnamese</option>  <option value="449">Volapük</option>  <option value="6966">Võro</option>  <option value="450">Votic</option>  <option value="457">Walloon</option>  <option value="6981">Walser</option>  <option value="453">Waray</option>  <option value="7009">Warlpiri</option>  <option value="454">Washo</option>  <option value="455">Welsh</option>  <option value="820">Western Arrarnta</option>  <option value="452">Wolaitta</option>  <option value="458">Wolof</option>  <option value="7181">Wyandot</option>  <option value="460">Xhosa</option>  <option value="5808">Yaeyama</option>  <option value="356">Yakut</option>  <option value="461">Yao</option>  <option value="462">Yapese</option>  <option value="463">Yiddish</option>  <option value="7602">Yoron</option>  <option value="464">Yoruba</option>  <option value="7636">Yucateco</option>  <option value="7640">Yue Chinese</option>  <option value="466">Zapotec</option>  <option value="2009">Zarma</option>  <option value="483">Zaza</option>  <option value="467">Zenaga</option>  <option value="468">Zhuang</option>  <option value="470">Zulu</option>  <option value="471">Zuni</option>
+
+        </optgroup>
+      
+    </select>
+  </td>
+  </tr>
+
+        <tr>
+      <td><label for="script">Script:</label></td>
+  <td colspan="2">
+    <select id="script" style="width: 100%;" data-bind="value: scriptID, controlsBubble: $root.scriptBubble">
+      <option value="" selected="selected">&#160;</option>
+      
+        
+        <optgroup label="Frequently used">
+            <option value="18">Arabic</option>  <option value="31">Cyrillic</option>  <option value="22">Greek</option>  <option value="92">Han (Hanzi, Kanji, Hanja)</option>  <option value="93">Han (Simplified variant)</option>  <option value="94">Han (Traditional variant)</option>  <option value="11">Hebrew</option>  <option value="85">Japanese</option>  <option value="84">Katakana</option>  <option value="43">Korean</option>  <option value="28">Latin</option>  <option value="65">Thai</option>
+
+        </optgroup>
+        <optgroup label="Other">
+            <option value="160">[Multiple scripts]</option>  <option value="35">Armenian</option>  <option value="72">Balinese</option>  <option value="53">Bengali</option>  <option value="42">Bopomofo</option>  <option value="96">Braille</option>  <option value="75">Buginese</option>  <option value="78">Buhid</option>  <option value="87">Canadian Syllabics</option>  <option value="108">Carian</option>  <option value="71">Cham</option>  <option value="88">Cherokee</option>  <option value="23">Coptic</option>  <option value="1">Cuneiform, Sumero-Akkadian</option>  <option value="82">Cypriot</option>  <option value="37">Deseret</option>  <option value="50">Devanagari</option>  <option value="4">Egyptian hieroglyphs</option>  <option value="86">Ethiopic</option>  <option value="36">Georgian</option>  <option value="33">Glagolitic</option>  <option value="24">Gothic</option>  <option value="52">Gujarati</option>  <option value="49">Gurmukhi</option>  <option value="101">Hangul</option>  <option value="77">Hanunoo</option>  <option value="83">Hiragana</option>  <option value="100">Japanese syllabaries</option>  <option value="60">Kannada</option>  <option value="70">Kayah Li</option>  <option value="48">Kharoshthi</option>  <option value="68">Khmer</option>  <option value="102">Khutsuri</option>  <option value="69">Lao</option>  <option value="57">Lepcha</option>  <option value="58">Limbu</option>  <option value="81">Linear B</option>  <option value="109">Lycian</option>  <option value="110">Lydian</option>  <option value="62">Malayalam</option>  <option value="111">Mathematical notation</option>  <option value="17">Mongolian</option>  <option value="64">Myanmar</option>  <option value="103">N'ko</option>  <option value="67">New Tai Lue</option>  <option value="27">Ogham</option>  <option value="104">Ol Chiki</option>  <option value="25">Old Italic</option>  <option value="2">Old Persian</option>  <option value="20">Old Turkic</option>  <option value="54">Oriya</option>  <option value="38">Osmanya</option>  <option value="56">Phags-pa</option>  <option value="9">Phoenician</option>  <option value="105">Rejang</option>  <option value="26">Runic</option>  <option value="106">Saurashtra</option>  <option value="40">Shavian</option>  <option value="63">Sinhala</option>  <option value="107">Sundanese</option>  <option value="51">Syloti Nagri</option>  <option value="112">Symbols</option>  <option value="12">Syriac</option>  <option value="76">Tagalog</option>  <option value="79">Tagbanwa</option>  <option value="66">Tai Le</option>  <option value="61">Tamil</option>  <option value="59">Telugu</option>  <option value="19">Thaana</option>  <option value="55">Tibetan</option>  <option value="10">Tifinagh</option>  <option value="3">Ugaritic</option>  <option value="91">Vai</option>  <option value="90">Yi</option>
+
+        </optgroup>
+      
+    </select>
+  </td>
+  </tr>
+    </tbody>
+    </table>
+  </fieldset>
+
+  <fieldset>
+    <legend>Release event</legend>
+
+    <table class="row-form">
+    <tbody>
+    <!-- ko foreach: events -->
+      <tr>
+        <td><label>Date:</label></td>
+        <td class="partial-date">
+          <span class="partial-date">
+            <input type="text" maxlength="4" placeholder="YYYY" size="4"
+              class="partial-date-year"
+              data-bind="
+                value: date.year,
+                valueUpdate: 'input',
+                controlsBubble: $root.dateBubble,
+                withLabel: 'event-date'"
+            />-<input type="text" maxlength="2" placeholder="MM" size="2"
+                class="partial-date-month"
+                data-bind="
+                  value: date.month,
+                  valueUpdate: 'input',
+                  controlsBubble: $root.dateBubble"
+            />-<input type="text" maxlength="2" placeholder="DD" size="2"
+                class="partial-date-day"
+                data-bind="
+                  value: date.day,
+                  valueUpdate: 'input',
+                  controlsBubble: $root.dateBubble" />
+          </span>
+        </td>
+          <td><label for="country">Country:</label></td>
+  <td colspan="1">
+    <select id="country" style="width: 100%;" data-bind="value: countryID, withLabel: 'country', controlsBubble: $root.countryBubble">
+      <option value="" selected="selected">&#160;</option>
+      
+          <option value="240">[Worldwide]</option>  <option value="1">Afghanistan</option>  <option value="250">Åland Islands</option>  <option value="2">Albania</option>  <option value="3">Algeria</option>  <option value="4">American Samoa</option>  <option value="5">Andorra</option>  <option value="6">Angola</option>  <option value="7">Anguilla</option>  <option value="8">Antarctica</option>  <option value="9">Antigua and Barbuda</option>  <option value="10">Argentina</option>  <option value="11">Armenia</option>  <option value="12">Aruba</option>  <option value="13">Australia</option>  <option value="14">Austria</option>  <option value="15">Azerbaijan</option>  <option value="16">Bahamas</option>  <option value="17">Bahrain</option>  <option value="18">Bangladesh</option>  <option value="19">Barbados</option>  <option value="20">Belarus</option>  <option value="21">Belgium</option>  <option value="22">Belize</option>  <option value="23">Benin</option>  <option value="24">Bermuda</option>  <option value="25">Bhutan</option>  <option value="26">Bolivia</option>  <option value="258">Bonaire, Sint Eustatius and Saba</option>  <option value="27">Bosnia and Herzegovina</option>  <option value="28">Botswana</option>  <option value="29">Bouvet Island</option>  <option value="30">Brazil</option>  <option value="31">British Indian Ocean Territory</option>  <option value="230">British Virgin Islands</option>  <option value="32">Brunei</option>  <option value="33">Bulgaria</option>  <option value="34">Burkina Faso</option>  <option value="35">Burundi</option>  <option value="36">Cambodia</option>  <option value="37">Cameroon</option>  <option value="38">Canada</option>  <option value="39">Cape Verde</option>  <option value="40">Cayman Islands</option>  <option value="41">Central African Republic</option>  <option value="42">Chad</option>  <option value="43">Chile</option>  <option value="44">China</option>  <option value="45">Christmas Island</option>  <option value="46">Cocos (Keeling) Islands</option>  <option value="47">Colombia</option>  <option value="48">Comoros</option>  <option value="49">Congo</option>  <option value="50">Cook Islands</option>  <option value="51">Costa Rica</option>  <option value="52">Côte d'Ivoire</option>  <option value="53">Croatia</option>  <option value="54">Cuba</option>  <option value="259">Curaçao</option>  <option value="55">Cyprus</option>  <option value="56">Czechia</option>  <option value="245">Czechoslovakia</option>  <option value="236">Democratic Republic of the Congo</option>  <option value="57">Denmark</option>  <option value="58">Djibouti</option>  <option value="59">Dominica</option>  <option value="60">Dominican Republic</option>  <option value="244">East Germany</option>  <option value="62">Ecuador</option>  <option value="63">Egypt</option>  <option value="64">El Salvador</option>  <option value="65">Equatorial Guinea</option>  <option value="66">Eritrea</option>  <option value="67">Estonia</option>  <option value="201">Eswatini</option>  <option value="68">Ethiopia</option>  <option value="241">Europe</option>  <option value="69">Falkland Islands</option>  <option value="70">Faroe Islands</option>  <option value="139">Federated States of Micronesia</option>  <option value="71">Fiji</option>  <option value="72">Finland</option>  <option value="73">France</option>  <option value="75">French Guiana</option>  <option value="76">French Polynesia</option>  <option value="77">French Southern Territories</option>  <option value="78">Gabon</option>  <option value="79">Gambia</option>  <option value="80">Georgia</option>  <option value="81">Germany</option>  <option value="82">Ghana</option>  <option value="83">Gibraltar</option>  <option value="84">Greece</option>  <option value="85">Greenland</option>  <option value="86">Grenada</option>  <option value="87">Guadeloupe</option>  <option value="88">Guam</option>  <option value="89">Guatemala</option>  <option value="251">Guernsey</option>  <option value="90">Guinea</option>  <option value="91">Guinea-Bissau</option>  <option value="92">Guyana</option>  <option value="93">Haiti</option>  <option value="94">Heard Island and McDonald Islands</option>  <option value="95">Honduras</option>  <option value="96">Hong Kong</option>  <option value="97">Hungary</option>  <option value="98">Iceland</option>  <option value="99">India</option>  <option value="100">Indonesia</option>  <option value="101">Iran</option>  <option value="102">Iraq</option>  <option value="103">Ireland</option>  <option value="252">Isle of Man</option>  <option value="104">Israel</option>  <option value="105">Italy</option>  <option value="106">Jamaica</option>  <option value="107">Japan</option>  <option value="253">Jersey</option>  <option value="108">Jordan</option>  <option value="109">Kazakhstan</option>  <option value="110">Kenya</option>  <option value="111">Kiribati</option>  <option value="2358">Kosovo</option>  <option value="114">Kuwait</option>  <option value="115">Kyrgyzstan</option>  <option value="116">Laos</option>  <option value="117">Latvia</option>  <option value="118">Lebanon</option>  <option value="119">Lesotho</option>  <option value="120">Liberia</option>  <option value="121">Libya</option>  <option value="122">Liechtenstein</option>  <option value="123">Lithuania</option>  <option value="124">Luxembourg</option>  <option value="125">Macao</option>  <option value="127">Madagascar</option>  <option value="128">Malawi</option>  <option value="129">Malaysia</option>  <option value="130">Maldives</option>  <option value="131">Mali</option>  <option value="132">Malta</option>  <option value="133">Marshall Islands</option>  <option value="134">Martinique</option>  <option value="135">Mauritania</option>  <option value="136">Mauritius</option>  <option value="137">Mayotte</option>  <option value="138">Mexico</option>  <option value="140">Moldova</option>  <option value="141">Monaco</option>  <option value="142">Mongolia</option>  <option value="247">Montenegro</option>  <option value="143">Montserrat</option>  <option value="144">Morocco</option>  <option value="145">Mozambique</option>  <option value="146">Myanmar</option>  <option value="147">Namibia</option>  <option value="148">Nauru</option>  <option value="149">Nepal</option>  <option value="150">Netherlands</option>  <option value="151">Netherlands Antilles</option>  <option value="152">New Caledonia</option>  <option value="153">New Zealand</option>  <option value="154">Nicaragua</option>  <option value="155">Niger</option>  <option value="156">Nigeria</option>  <option value="157">Niue</option>  <option value="158">Norfolk Island</option>  <option value="112">North Korea</option>  <option value="126">North Macedonia</option>  <option value="159">Northern Mariana Islands</option>  <option value="160">Norway</option>  <option value="161">Oman</option>  <option value="162">Pakistan</option>  <option value="163">Palau</option>  <option value="249">Palestine</option>  <option value="164">Panama</option>  <option value="165">Papua New Guinea</option>  <option value="166">Paraguay</option>  <option value="167">Peru</option>  <option value="168">Philippines</option>  <option value="169">Pitcairn</option>  <option value="170">Poland</option>  <option value="171">Portugal</option>  <option value="172">Puerto Rico</option>  <option value="173">Qatar</option>  <option value="174">Réunion</option>  <option value="175">Romania</option>  <option value="176">Russia</option>  <option value="177">Rwanda</option>  <option value="255">Saint Barthélemy</option>  <option value="196">Saint Helena, Ascension and Tristan da Cunha</option>  <option value="178">Saint Kitts and Nevis</option>  <option value="179">Saint Lucia</option>  <option value="256">Saint Martin (French part)</option>  <option value="197">Saint Pierre and Miquelon</option>  <option value="180">Saint Vincent and The Grenadines</option>  <option value="181">Samoa</option>  <option value="182">San Marino</option>  <option value="183">Sao Tome and Principe</option>  <option value="184">Saudi Arabia</option>  <option value="185">Senegal</option>  <option value="254">Serbia</option>  <option value="242">Serbia and Montenegro</option>  <option value="186">Seychelles</option>  <option value="187">Sierra Leone</option>  <option value="188">Singapore</option>  <option value="260">Sint Maarten (Dutch part)</option>  <option value="189">Slovakia</option>  <option value="190">Slovenia</option>  <option value="191">Solomon Islands</option>  <option value="192">Somalia</option>  <option value="193">South Africa</option>  <option value="248">South Georgia and the South Sandwich Islands</option>  <option value="113">South Korea</option>  <option value="257">South Sudan</option>  <option value="243">Soviet Union</option>  <option value="194">Spain</option>  <option value="195">Sri Lanka</option>  <option value="198">Sudan</option>  <option value="199">Suriname</option>  <option value="200">Svalbard and Jan Mayen</option>  <option value="202">Sweden</option>  <option value="203">Switzerland</option>  <option value="204">Syria</option>  <option value="205">Taiwan</option>  <option value="206">Tajikistan</option>  <option value="207">Tanzania</option>  <option value="208">Thailand</option>  <option value="61">Timor-Leste</option>  <option value="209">Togo</option>  <option value="210">Tokelau</option>  <option value="211">Tonga</option>  <option value="212">Trinidad and Tobago</option>  <option value="213">Tunisia</option>  <option value="214">Turkey</option>  <option value="215">Turkmenistan</option>  <option value="216">Turks and Caicos Islands</option>  <option value="217">Tuvalu</option>  <option value="231">U.S. Virgin Islands</option>  <option value="218">Uganda</option>  <option value="219">Ukraine</option>  <option value="220">United Arab Emirates</option>  <option value="221">United Kingdom</option>  <option value="222">United States</option>  <option value="223">United States Minor Outlying Islands</option>  <option value="224">Uruguay</option>  <option value="225">Uzbekistan</option>  <option value="226">Vanuatu</option>  <option value="227">Vatican City</option>  <option value="228">Venezuela</option>  <option value="229">Vietnam</option>  <option value="232">Wallis and Futuna</option>  <option value="233">Western Sahara</option>  <option value="234">Yemen</option>  <option value="235">Yugoslavia</option>  <option value="237">Zambia</option>  <option value="238">Zimbabwe</option>
+
+      
+    </select>
+  </td>
+        <td>
+          <button type="button" class="icon remove-item remove-release-event" title="Remove release event" data-click="removeReleaseEvent"></button>
+        </td>
+      </tr>
+
+        <tr class="error">
+    <td></td>
+    <td colspan="4" class="error field-error" data-bind="showErrorRightAway: hasInvalidDate">The date you've entered is not valid.</td>
+  </tr>
+        <tr class="error">
+    <td></td>
+    <td colspan="4" class="error field-error" data-bind="showErrorRightAway: hasTooShortYear">The year should have four digits. If you want to enter a year earlier than 1000 CE, please pad with zeros, such as “0123”.</td>
+  </tr>
+        <tr class="error">
+    <td></td>
+    <td colspan="4" class="error field-error" data-bind="showErrorRightAway: isDuplicate">You cannot use the same country more than once.</td>
+  </tr>
+    <!-- /ko -->
+
+      <tr>
+        <td></td>
+        <td colspan="4" class="add-item">
+          <button type="button" class="with-label add-item" title="Add release event" data-click="addReleaseEvent">
+            Add release event
+          </button>
+        </td>
+      </tr>
+
+    <!-- ko foreach: labels -->
+      <tr>
+        <td><label>Label:</label></td>
+        <td>
+          <span class="autocomplete">
+            <input type="text" class="name"
+              data-bind="
+                withLabel: 'label',
+                autocomplete: {
+                  entity: 'label',
+                  currentSelection: label
+                },
+                controlsBubble: $root.labelBubble"
+            />
+            <link rel="preload" as="image" href="https://static.metabrainz.org/MB/search-52f8034.svg"/><img alt="Search" class="search" src="https://static.metabrainz.org/MB/search-52f8034.svg"/>
+          </span>
+        </td>
+        <td><label>Cat. No:</label></td>
+        <td>
+          <input type="text" data-bind="withLabel: 'catno', value: catalogNumber, valueUpdate: 'input', controlsBubble: $root.catalogNumberBubble" />
+        </td>
+        <td>
+          <button type="button" class="remove-item icon remove-release-label" title="Remove label" data-click="removeReleaseLabel"></button>
+        </td>
+      </tr>
+
+        <tr class="error">
+    <td></td>
+    <td colspan="4" class="error field-error" data-bind="showErrorWhenTabIsSwitched: needsLabel"><!-- ko text: needsLabelMessage() --><!-- /ko --></td>
+  </tr>
+
+        <tr class="error">
+    <td></td>
+    <td colspan="4" class="error field-error" data-bind="showErrorRightAway: isDuplicate">This label/catalog number pair already exists.</td>
+  </tr>
+    <!-- /ko -->
+
+      <tr>
+        <td></td>
+        <td colspan="4" class="add-item">
+          <button type="button" class="with-label add-item" title="Add label" data-click="addReleaseLabel">
+            Add label
+          </button>
+        </td>
+      </tr>
+
+      <tr>
+        <td><label for="barcode">Barcode:</label></td>
+        <td colspan="4">
+          <input id="barcode" type="text" pattern="[0-9]*" data-bind="value: barcode.value, valueUpdate: 'input', disable: barcode.none, controlsBubble: $root.barcodeBubble" />
+        </td>
+      </tr>
+
+        <tr class="error">
+    <td></td>
+    <td colspan="4" class="error field-error" data-bind="showErrorRightAway: barcode.error"></td>
+  </tr>
+
+      <tr>
+        <td></td>
+        <td colspan="4">
+          <input id="no-barcode" type="checkbox" data-bind="checked: barcode.none" />
+          <label class="inline" for="no-barcode">
+            This release does not have a barcode
+          </label>
+        </td>
+      </tr>
+
+        <tr>
+      <td><label for="packaging">Packaging:</label></td>
+  <td colspan="4">
+    <select id="packaging" style="width: 100%;" data-bind="value: packagingID, controlsBubble: $root.packagingBubble">
+      <option value="" selected="selected">&#160;</option>
+      
+          <option value="9">Book</option>  <option value="19">Box</option>  <option value="4">Cardboard/Paper Sleeve</option>  <option value="8">Cassette Case</option>  <option value="56">Clamshell Case</option>  <option value="17">Digibook</option>  <option value="89">Digifile</option>  <option value="3">Digipak</option>  <option value="13">Discbox Slider</option>  <option value="10">Fatbox</option>  <option value="12">Gatefold Cover</option>  <option value="1">Jewel Case</option>  <option value="6">Keep Case</option>  <option value="55">Longbox</option>  <option value="54">Metal Tin</option>  <option value="18">Plastic Sleeve</option>  <option value="20">Slidepack</option>  <option value="2">Slim Jewel Case</option>  <option value="11">Snap Case</option>  <option value="21">SnapPack</option>  <option value="16">Super Jewel Box</option>  <option value="5">Other</option>  <option value="7">None</option>
+
+      
+    </select>
+  </td>
+  </tr>
+    </tbody>
+    </table>
+  </fieldset>
+
+  <fieldset class="information">
+    <legend>Additional information</legend>
+    <table class="row-form">
+    <tbody>
+      <tr>
+        <td><label for="annotation">Annotation:</label></td>
+        <td>
+          <textarea id="annotation" data-bind="value: annotation, controlsBubble: $root.annotationBubble"></textarea>
+        </td>
+      </tr>
+
+      <tr>
+        <td><label for="comment">Disambiguation:</label></td>
+        <td>
+          <input id="comment" type="text" maxlength="255" data-bind="value: comment, controlsBubble: $root.commentBubble" />
+        </td>
+      </tr>
+    </tbody>
+    </table>
+  </fieldset>
+
+  <fieldset class="information">
+    <legend>External links</legend>
+    <script type="application/json">{}</script><div class="external-links-editor-container"><p class="loading-message">Loading...</p></div>
+  </fieldset>
+</div>
+
+<div class="documentation" data-bind="with: rootField.release">
+  <div class="bubble" data-bind="bubble: $root.titleBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Style/Release#Title" target="_blank">title</a> is the release’s name.
+    </p>
+    <p>
+      Please see the <a href="https://test.musicbrainz.org/doc/Style/Titles" target="_blank">style guidelines</a> for more information.
+    </p>
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.artistBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Style/Release#Artist" target="_blank">artist</a> field contains the artist or artists as shown on the release.
+    </p>
+    <p>
+      Please see the artist credits <a href="https://test.musicbrainz.org/doc/Artist_Credits" target="_blank">documentation</a> and <a href="https://test.musicbrainz.org/doc/Style/Artist_Credits" target="_blank">style guidelines</a> for more information.
+    </p>
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.releaseGroupBubble">
+    <!-- ko with: target() && target().releaseGroup -->
+      <!-- ko if: $data.gid -->
+        <p data-bind="html: $data.selectionMessage()"></p>
+      <!-- /ko -->
+      <!-- ko ifnot: $data.gid -->
+        <p>
+          The <a href="https://test.musicbrainz.org/doc/Release_Group" target="_blank">release group</a> groups related releases into a single logical entity.
+        </p>
+        <p>
+          Examples of releases that should be grouped together include original releases, reissues, different formats such as CD and digital media, and remasters.
+        </p>
+        <p>
+          Please see the <a href="https://test.musicbrainz.org/doc/Style/Release_Group" target="_blank">style guidelines</a> for more information.
+        </p>
+      <!-- /ko -->
+    <!-- /ko -->
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.primaryTypeBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Release_Group/Type" target="_blank">primary type</a> describes how the release group is categorized.
+    </p>
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.secondaryTypesBubble">
+    <p>
+      <a href="https://test.musicbrainz.org/doc/Release_Group/Type" target="_blank">Secondary types</a> are additional attributes describing the release group. Leave this blank if none apply. You can select multiple types by using Ctrl + click (or Cmd + click on a Mac).
+    </p>
+    <p>
+      Please see the <a href="https://test.musicbrainz.org/doc/Style/Release_Group#Secondary_types" target="_blank">style guidelines</a> for more information.
+    </p>
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.statusBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Release#Status" target="_blank">status</a> describes how “official” the release is.
+    </p>
+    <p>
+      Please see the <a href="https://test.musicbrainz.org/doc/Style/Release#Status" target="_blank">style guidelines</a> for more information.
+    </p>
+    <!-- ko if: target() && target().statusID() == 4 -->
+      <p>
+        The pseudo‐release status should be used for unofficial translations and transliterations of tracklists and release titles, and does not denote a separate real release. It should not be used to denote bootlegs, mixtape/street albums, demos, or digital albums. Be sure to link to the corresponding real release with the <a href="https://test.musicbrainz.org/relationship/fc399d47-23a7-4c28-bfcf-0607a562b644">transl(iter)ation relationship</a>.
+      </p>
+    <!-- /ko -->
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.languageBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Release#Language" target="_blank">language</a> attribute should be set to the language used for the release title and track titles. It should not be set to the language the lyrics are written in, nor to the language used for other extra information on the cover.
+    </p>
+    <p>
+      Please see the <a href="https://test.musicbrainz.org/doc/Style/Release#Language_and_script" target="_blank">style guidelines</a> for more information.
+    </p>
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.scriptBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Release#Script" target="_blank">script</a> attribute should be set to the script used for the release title and track titles.
+    </p>
+    <p>
+      Please see the <a href="https://test.musicbrainz.org/doc/Style/Release#Language_and_script" target="_blank">style guidelines</a> for more information.
+    </p>
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.dateBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Release/Date" target="_blank">date</a> describes when this particular release was made available.
+    </p>
+    <p>
+      Please see the <a href="https://test.musicbrainz.org/doc/Style/Release#Date" target="_blank">style guidelines</a> for more information.
+    </p>
+    <!-- ko if: target() && target().hasAmazonDate() -->
+      <p class="warning">   <link rel="preload" as="image" href="https://static.metabrainz.org/MB/warning-a23357c.png"/><img alt="Warning" class="warning" src="https://static.metabrainz.org/MB/warning-a23357c.png"/>        <span>
+          “1990-10-25” is the bogus date that Amazon gives to all releases for which they don’t know the actual date. <strong>Please use this date only if you’re certain this date is correct.</strong>
+        </span>
+      </p>
+    <!-- /ko -->
+    <!-- ko if: target() && target().hasJanuaryFirstDate() -->
+      <p class="warning">   <link rel="preload" as="image" href="https://static.metabrainz.org/MB/warning-a23357c.png"/><img alt="Warning" class="warning" src="https://static.metabrainz.org/MB/warning-a23357c.png"/>        <span>
+          If you do not know the month or day of release, please leave them empty. January 1st is not often the actual release date. <strong>Please double‐check that you have entered the release date correctly.</strong>
+        </span>
+      </p>
+    <!-- /ko -->
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.countryBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Release/Country" target="_blank">country</a> describes where the release was made available.
+    </p>
+    <p>
+      If you aren’t sure where it was released, please leave this unset.
+    </p>
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.catalogNumberBubble">
+    <!-- ko ifnot: target() && catNoLooksLikeASIN(target().catalogNumber()) -->
+      <p>
+        The <a href="https://test.musicbrainz.org/doc/Release/Catalog_Number" target="_blank">catalog number</a> is assigned by the label and can often be found on the spine or near the barcode on physical media.
+      </p>
+      <p>
+        If you can’t find a catalog number, please leave this blank. If you are certain the release does not have a catalog number assigned, enter “[none]”.
+      </p>
+    <!-- /ko -->
+    <!-- ko if: target() && catNoLooksLikeASIN(target().catalogNumber()) -->
+      <p>
+        The catalog number you have entered looks like an Amazon ASIN.
+      </p>
+      <p>
+        If this is an Amazon ASIN, please do not enter it in the catalog number field, but add it as a URL relationship later.
+      </p>
+    <!-- /ko -->
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.labelBubble">
+    <!-- ko with: target() && target().label() -->
+      <!-- ko if: $data.gid -->
+        <p data-bind="html: $data.selectionMessage()"></p>
+      <!-- /ko -->
+      <!-- ko ifnot: $data.gid -->
+        <p>
+          The <a href="https://test.musicbrainz.org/doc/Label" target="_blank">label</a> is the imprint associated with the release. Please also see the guidelines about <a href="https://test.musicbrainz.org/doc/Style/Unknown_and_untitled/Special_purpose_label" target="_blank">special purpose labels</a>.
+        </p>
+      <!-- /ko -->
+    <!-- /ko -->
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.barcodeBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Barcode" target="_blank">barcode</a> is the numeric identifier (such as UPC or EAN) associated with the release.
+    </p>
+    <p>
+      Do not mark digital media releases as having no barcode unless you are familiar with the platform. Most mainstream digital platforms use barcodes, even when they are not shown.
+    </p>
+    <p>
+      If you don’t know whether the release has a barcode or not, please leave this blank.
+    </p>
+    <!-- ko with: target() && target().barcode -->
+      <!-- ko if: message -->
+        <p data-bind="text: message"></p>
+      <!-- /ko -->
+      <!-- ko if: existing -->
+        <p data-bind="html: existing"></p>
+      <!-- /ko -->
+      <!-- ko if: error() || confirmed() -->
+        <p class="field-error">
+          <label>
+            <strong>
+              <input type="checkbox" data-bind="checked: confirmed" />
+              I confirm that this is the barcode as it appears on the release.            </strong>
+          </label>
+        </p>
+      <!-- /ko -->
+    <!-- /ko -->
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.packagingBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Release/Packaging" target="_blank">packaging</a> attribute describes the outermost packaging of the release.
+    </p>
+    <p>
+      For digital media releases, this should usually be “None”.
+    </p>
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.annotationBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Annotation" target="_blank">annotation</a> field functions like a miniature wiki. It’s fine to leave it empty.
+    </p>
+    <p>
+      The purpose of this field is to add information that usually doesn’t fit into the strict structural data schema of MusicBrainz (be it due to technical limitations that may be addressed later, or because the information in itself has to be free‐form text).
+    </p>
+    <p>
+      This annotation will be published under an open license (<a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank">CC BY-NC-SA 3.0</a>) and as such, it should not contain text that you don’t have the right to release under that license. While you can quote a source to support a point you’re making, you should never enter promotional text or other artist- or label‐owned text into the annotation.
+    </p>
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.commentBubble">
+    <p>
+      The <a href="https://test.musicbrainz.org/doc/Disambiguation_Comment" target="_blank">disambiguation</a> field helps users distinguish between releases in the same release group. Please leave it empty if other properties like artist, format, label, or date distinguish this release.
+    </p>
+    <p>
+      This field is not a place to store general background information about the release. That kind of information should go in the annotation field.
+    </p>
+  </div>
+
+  <div class="bubble" data-bind="bubble: $root.externalLinkBubble">
+    <p>
+      External links are URLs associated with this particular release.
+    </p>
+    <p>
+      Mail‐order links shouldn’t be attached to digital media releases, and download and streaming links shouldn’t be attached to CD or vinyl releases.
+    </p>
+    <p>
+      Please see the <a href="https://test.musicbrainz.org/doc/Style/Relationships/URLs" target="_blank">style guidelines</a> for more information.
+    </p>
+  </div>
+</div>
+
+    </div>
+
+    
+      <div id="duplicates-tab">
+        <fieldset>
+  <legend>Similar releases</legend>
+
+  <p>Based on the information you have provided, we have found the following similar release to already exist in MusicBrainz. If you wish to base your release on an existing release, select it below.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Release</th>
+        <th>Artist</th>
+        <th>Format</th>
+        <th>Tracks</th>
+        <th>Date</th>
+        <th>Country</th>
+        <th>Label</th>
+        <th>Catalog#</th>
+        <th>Barcode</th>
+      </tr>
+    </thead>
+    <tbody data-bind="foreach: similarReleases">
+      <tr data-bind="css: { even: $index() % 2 === 1 }">
+        <td>
+          <input type="radio" name="base-release" data-bind="attr: { value: gid }, checked: $parent.baseRelease" />
+        </td>
+        <td data-bind="html: html({ target: '_blank' })"></td>
+        <td data-bind="html: renderArtistCredit(artistCredit)"></td>
+        <td data-bind="text: formats"></td>
+        <td data-bind="text: tracks"></td>
+        <td data-bind="html: dates.join('<br />')"></td>
+        <td data-bind="html: countries.join('<br />')"></td>
+        <td data-bind="html: labels.map(function (x) { return x.html(); }).join('<br />')"></td>
+        <td data-bind="html: catalogNumbers.join('<br />')"></td>
+        <td data-bind="text: barcode"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="row no-label" style="padding: 0.5em">
+    <label>
+      <input type="radio" name="base-release" value="" data-bind="checked: baseRelease" />
+      Do not use any of the above releases as a starting point
+    </label>
+  </div>
+</fieldset>
+
+      </div>
+    
+
+    <div id="tracklist">
+      <script type="text/html" id="template.track-parser">
+  
+  <p>Enter a tracklist below: (<a href="#" data-bind="click: $root.trackParser.toggleParserHelp">help</a>)</p>
+  <div data-bind="visible: $root.trackParser.parserHelpVisible">
+    <p>If you have a tracklist you can copy and paste, you can input it here.</p>
+    <p>By default, the parser expects the following format:</p>
+    <ul>
+      <li>1. Love Me Do - The Beatles (2:23)</li>
+      <li>2. P.S. I Love You - The Beatles (2:03)</li>
+    </ul>
+    <p>
+      You can use the checkboxes under the parser to deactivate some sections. For example, you can deactivate “Lines contain track artists” if your data has no track artists, or “Use track lengths” if you have track lengths but want the parser to ignore them.
+    </p>
+    <p>
+      If you select “Enable vinyl track numbers”, the parser will also accept strings such as “A1” as track numbers.
+    </p>
+    </div>
+  <textarea class="tracklist" data-bind="value: toBeParsed"></textarea>
+
+  <!-- ko if: error -->
+    <p class="error">Unable to parse the tracklist you entered.</p>
+  <!-- /ko -->
+
+  <h3 class="track-parser-options">Options</h3>
+
+  <table class="track-parser-options" data-bind="with: $root.trackParser.options">
+    <tr>
+      <td>
+        <label>
+          <input type="checkbox" name="lines-have-numbers" data-bind="checked: hasTrackNumbers" /> Lines start with a track number
+        </label>
+      </td>
+      <td>
+        <label>
+          <input type="checkbox" name="use-numbers" data-bind="checked: useTrackNumbers, enable: hasTrackNumbers" /> Use track numbers
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding-left: 2em">
+        <label>
+          <input type="checkbox" name="enable-vinyl-numbers" data-bind="checked: hasVinylNumbers, enable: hasTrackNumbers" /> Enable vinyl track numbers
+        </label>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>
+        <label>
+          <input type="checkbox" name="lines-have-artists" data-bind="checked: hasTrackArtists" /> Lines contain track artists
+        </label>
+      </td>
+      <td>
+        <label>
+          <input type="checkbox" name="use-artists" data-bind="checked: useTrackArtists, enable: hasTrackArtists" /> Use track artists
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label>
+        <input type="checkbox" name="use-custom-delimiter" data-bind="checked: useCustomDelimiter" /> Use custom artist delimiter
+        </label>
+       </td>
+       <td>
+        <label>
+          <input type="checkbox" name="use-titles" data-bind="checked: useTrackNames" /> Use track titles
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding-left: 2em">
+        <label data-bind="visible: useCustomDelimiter"> Custom delimiter:
+          <input type="text" name="custom-delimiter" data-bind="value: customDelimiter, valueUpdate: 'input'" />
+          (<a href="#" data-bind="click: $root.trackParser.toggleDelimiterHelp">help</a>)
+          <p class="error" data-bind="text: $root.trackParser.customDelimiterError"></p>
+          <p data-bind="visible: $root.trackParser.delimiterHelpVisible" style="max-width: 25em">
+            <i>Enter the delimiter that separates the track name from the artist name (valid <a href="https://developer.mozilla.org/docs/Web/JavaScript/Guide/Regular_Expressions">regular expressions</a> are accepted).</i>
+          </p>
+        </label>
+      </td>
+      <td>
+        <label>
+          <input type="checkbox" name="use-lengths" data-bind="checked: useTrackLengths" /> Use track lengths
+        </label>
+      </td>
+    </tr>
+  </table>
+</script>
+
+<script type="text/html" id="template.medium-search">
+  <table>
+    <tr>
+      <td><label for="import-release">Release:</label></td>
+      <td><input id="import-release" type="text" data-bind="value: releaseName, valueUpdate: 'afterkeydown'" data-keydown="keydownEvent" /></td>
+      <td rowspan="2"></td>
+    </tr>
+    <tr>
+      <td><label for="import-artist">Artist:</label></td>
+      <td><input id="import-artist" type="text" data-bind="value: artistName, valueUpdate: 'afterkeydown'" data-keydown="keydownEvent" /></td>
+    </tr>
+    <tr>
+      <td><label for="import-track-count">Track count:</label></td>
+      <td><input id="import-track-count" type="number" data-bind="value: trackCount, valueUpdate: 'afterkeydown'" data-keydown="keydownEvent" /></td>
+      <td class="buttons">
+        <button type="button" data-click="buttonClicked" data-bind="enable: releaseName() || artistName() || trackCount() || searching(), text: searching() ? 'Cancel' : 'Search'"></button>
+      </td>
+    </tr>
+  </table>
+
+  <!-- ko if: searchResults() && searchResults().length > 0 -->
+  <p>Select a medium from the search results below and then click "Add medium".</p>
+  <p>The tracklist for the medium (including the track/recording associations, but not other data such as medium format) will be loaded as a medium on this release.</p>
+  <!-- /ko -->
+
+  <!-- ko if: totalPages() > 1 -->
+  <div style="text-align: center">
+    <a href="#" data-click="previousPage">«</a>
+    <!-- ko text: pageText() --><!-- /ko -->
+    <a href="#" data-click="nextPage">»</a>
+  </div>
+  <!-- /ko -->
+
+  <!-- ko if: searching -->
+    <p class="loading-message">Searching...</p>
+  <!-- /ko -->
+
+  <!-- ko if: !searching() && searchResults() && searchResults().length === 0 -->
+    <p>No results</p>
+  <!-- /ko -->
+
+  <!-- ko if: error -->
+    <p class="error">An error occurred:  <span data-bind="text: error"></span></p>
+  <!-- /ko -->
+
+  <!-- ko foreach: { data: searchResults, if: searchResults } -->
+    <div class="search-result">
+      <a class="icon" href="#" data-click="toggle">
+        <span class="ui-icon" data-bind="css: { 'ui-icon-triangle-1-e': !expanded(), 'ui-icon-triangle-1-s': expanded() }">Expand</span>
+        <span data-bind="html: link()"></span>
+      </a>
+    </div>
+
+    <!-- ko if: expanded() && loaded() -->
+    <table class="medium tbl" data-bind="delegatedHandler: 'keydown'">
+      <thead>
+        <tr>
+          <th class="position">#</th>
+          <th class="title">Title</th>
+          <th class="artist">Artist</th>
+          <th class="length">Length</th>
+        </tr>
+      </thead>
+      <tbody data-bind="foreach: tracks">
+        <tr class="track">
+          <td class="position" style="text-align: right;" data-bind="text: position"></td>
+          <td class="title"><bdi data-bind="text: name"></bdi></td>
+          <td class="artist" data-bind="text: artist"></td>
+          <td class="length" data-bind="text: formattedLength"></td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- /ko -->
+
+    <!-- ko if: expanded() && loading() -->
+      <p class="loading-message">Now loading tracklist...</p>
+    <!-- /ko -->
+
+    <!-- ko if: error -->
+      <p class="error" data-bind="text: error"></p>
+    <!-- /ko -->
+  <!-- /ko -->
+</script>
+
+<script type="text/html" id="template.track-row">
+  <tr class="track" data-bind="attr: { id: elementID }">
+    <td class="reorder">
+      <!-- ko if: position() == 0 -->
+        
+  <div class="pregap-track icon img" title="This track is hidden in the pregap."></div>
+      <!-- /ko -->
+      <!-- ko if: position() > 0 -->
+        <button type="button" class="icon track-down" title="Move track down"
+          data-bind="disableBecauseDiscIDs: !isDataTrack()"
+          data-click="moveTrackDown">
+        </button>
+        <button type="button" class="icon track-up" title="Move track up"
+          data-bind="disableBecauseDiscIDs: !isDataTrack() || (previous() && !previous().isDataTrack())"
+          data-click="moveTrackUp">
+        </button>
+      <!-- /ko -->
+    </td>
+
+    <td class="position">
+      <input class="pos" type="text" data-bind="value: number" data-keydown="onTrackInputKeyDown" />
+    </td>
+
+    <td class="title">
+      <input type="text" class="track-name" data-bind="value: inputName, valueUpdate: 'input', css: { modified: nameModified(), preview: previewNameDiffers() }, event: { focus: $root.focusTrackName }" data-keydown="onTrackInputKeyDown" />
+    </td>
+
+    <td class="artist autocomplete" data-bind="artistCreditEditor: $data">
+    </td>
+
+    <td class="length">
+      <input type="text" class="track-length" size="5" data-bind="value: formattedLength, disableBecauseDiscIDs: position() > 0 && !isDataTrack(), css: { error: position() == 0 && medium.hasInvalidPregapLength() }" data-keydown="onTrackInputKeyDown" placeholder="?:??" />
+    </td>
+
+    <td class="icon">
+      <button type="button" class="icon guesscase-title" title="Guess case track" data-bind="click: $root.guessCaseTrackName, event: { mouseenter: $root.guessCaseTrackName, mouseleave: $root.guessCaseTrackName }"></button>
+      <button type="button" class="icon guessfeat" title="Guess feat. artists" data-click="guessTrackFeatArtists"></button>
+      <!-- ko ifnot: (medium.hasToc() && !isDataTrack()) -->
+      <button type="button" class="icon remove-item remove-track" title="Remove track" data-click="removeTrack"></button>
+      <!-- /ko -->
+    </td>
+  </tr>
+</script>
+
+<div id="track-parser-dialog" style="display: none;" data-bind="with: $root.trackParserDialog, delegatedHandler: 'click'">
+  <!-- ko template: "template.track-parser" --><!-- /ko -->
+
+  <div class="buttons">
+    <button type="button" class="negative" id="close-track-parser" data-bind="click: close">Close</button>
+    <button type="button" id="parse-tracks" style="float: right" data-bind="click: parse">Parse tracks</button>
+  </div>
+</div>
+
+<div id="add-medium-dialog" style="display: none;" data-bind="with: $root.addMediumDialog, delegatedHandler: ['click', 'keydown']">
+  <p>To enter a new tracklist, use an existing medium or import a disc from a CD stub, select the appropriate tab.</p>
+
+  <ul>
+    <li><a href="#add-medium-parser">Manual entry</a></li>
+    <li><a href="#add-medium-existing">Existing medium</a></li>
+    <li><a href="#add-medium-cdstub">CD stub import</a></li>
+  </ul>
+
+  <div id="add-medium-parser">
+    <!-- ko template: { name: "template.track-parser", data: trackParser } --><!-- /ko -->
+  </div>
+
+  <div id="add-medium-existing">
+    <p>Use the following fields to search for an existing medium.</p>
+    <!-- ko template: { name: "template.medium-search", data: mediumSearch } --><!-- /ko -->
+  </div>
+
+  <div id="add-medium-cdstub">
+    <p>Use the following fields to search for a CD stub.</p>
+    <!-- ko template: { name: "template.medium-search", data: cdstubSearch } --><!-- /ko -->
+  </div>
+
+  <div class="buttons">
+    <button type="button" class="negative" id="close-add-medium" data-click="close">Close</button>
+    <button type="button" style="float: right" class="positive" data-click="addMedium" data-bind="enable: currentTab().result()">Add medium</button>
+  </div>
+</div>
+
+<div data-bind="with: rootField.release">
+  <p class="error field-error" data-bind="showErrorRightAway: needsMediums">Add a medium by clicking “Add medium” below, or tick the box confirming the tracklist is unknown.</p>
+
+  <!-- ko if: !mediums().length -->
+    <p>
+      <label>
+        <input type="checkbox" data-bind="checked: hasUnknownTracklist" />
+        I have no information about this release’s media and tracklist.
+      </label>
+    </p>
+  <!-- /ko -->
+
+  <!-- ko if: !needsMediums() && mediums().length === loadedMediums().length &&
+              mediums().map(function (m) { return m.toc(); }).filter(Boolean).length < ($data.seededTocs ? Object.values($data.seededTocs).length : 0) -->
+    <div class="warning">
+      <p>You’ve seeded some disc IDs that aren’t matched to any medium. If this is wrong, use the “Attach disc ID” options below.</p>
+    </div>
+  <!-- /ko -->
+
+  <!-- ko loop: { items: mediums, id: 'uniqueID' } -->
+  <fieldset class="advanced-medium">
+    <legend data-bind="text: formattedName()"></legend>
+
+    <table class="advanced-format">
+      <tr>
+        <td class="icon">
+          <button type="button" class="icon collapse-medium" data-click="toggleMedium" data-bind="css: { 'expand-medium': collapsed, 'collapse-medium': !collapsed() }, attr: { title: collapsed() ? 'Expand medium' : 'Collapse medium' }"></button>
+        </td>
+
+        <td class="format">
+          <label data-bind="attr: { for: 'medium-format-' + uniqueID }">Format:</label>
+          <select data-bind="value: formatID, attr: { id: 'medium-format-' + uniqueID }">
+            <option value="" selected="selected">—</option>
+            <option value="1">CD</option>
+            <option value="61">   Copy Control CD</option>
+            <option value="43">   Data CD</option>
+            <option value="44">   DTS CD</option>
+            <option value="42">   Enhanced CD</option>
+            <option value="25">   HDCD</option>
+            <option value="129">   Mixed Mode CD</option>
+            <option value="33">   CD-R</option>
+            <option value="34">   8cm CD</option>
+            <option value="35">   Blu-spec CD</option>
+            <option value="36">   SHM-CD</option>
+            <option value="37">   HQCD</option>
+            <option value="39">   CD+G</option>
+            <option value="40">      8cm CD+G</option>
+            <option value="12">Digital Media</option>
+            <option value="73">Phonograph record</option>
+            <option value="7">   Vinyl</option>
+            <option value="29">      7" Vinyl</option>
+            <option value="30">      10" Vinyl</option>
+            <option value="31">      12" Vinyl</option>
+            <option value="51">      Flexi-disc</option>
+            <option value="52">         7" Flexi-disc</option>
+            <option value="53">   Shellac</option>
+            <option value="56">      7" Shellac</option>
+            <option value="54">      10" Shellac</option>
+            <option value="55">      12" Shellac</option>
+            <option value="8">Cassette</option>
+            <option value="83">   Microcassette</option>
+            <option value="2">DVD</option>
+            <option value="94">   Data DVD</option>
+            <option value="18">   DVD-Audio</option>
+            <option value="93">   Data DVD-R</option>
+            <option value="92">   DVD-R Video</option>
+            <option value="19">   DVD-Video</option>
+            <option value="3">SACD</option>
+            <option value="84">   SACD (2 channels)</option>
+            <option value="85">   SACD (multichannel)</option>
+            <option value="38">   Hybrid SACD</option>
+            <option value="63">      Hybrid SACD (CD layer)</option>
+            <option value="64">      Hybrid SACD (SACD layer)</option>
+            <option value="87">         Hybrid SACD (SACD layer, 2 channels)</option>
+            <option value="86">         Hybrid SACD (SACD layer, multichannel)</option>
+            <option value="57">   SHM-SACD</option>
+            <option value="89">      SHM-SACD (2 channels)</option>
+            <option value="88">      SHM-SACD (multichannel)</option>
+            <option value="4">DualDisc</option>
+            <option value="67">   DualDisc (CD side)</option>
+            <option value="66">   DualDisc (DVD-Video side)</option>
+            <option value="65">   DualDisc (DVD-Audio side)</option>
+            <option value="130">   DualDisc (DVD side)</option>
+            <option value="6">MiniDisc</option>
+            <option value="20">Blu-ray</option>
+            <option value="79">   Blu-ray-R</option>
+            <option value="41">CDV</option>
+            <option value="22">VCD</option>
+            <option value="23">   SVCD</option>
+            <option value="5">LaserDisc</option>
+            <option value="71">   8" LaserDisc</option>
+            <option value="72">   12" LaserDisc</option>
+            <option value="62">SD Card</option>
+            <option value="27">   slotMusic</option>
+            <option value="26">USB Flash Drive</option>
+            <option value="21">VHS</option>
+            <option value="13">Other</option>
+            <option value="131">   Betacam SP</option>
+            <option value="24">   Betamax</option>
+            <option value="9">   Cartridge</option>
+            <option value="78">      8-Track Cartridge</option>
+            <option value="75">      HiPac</option>
+            <option value="74">      PlayTape</option>
+            <option value="60">   CED</option>
+            <option value="11">   DAT</option>
+            <option value="128">   DataPlay</option>
+            <option value="16">   DCC</option>
+            <option value="46">   Download Card</option>
+            <option value="47">   DVDplus</option>
+            <option value="70">      DVDplus (CD side)</option>
+            <option value="69">      DVDplus (DVD-Video side)</option>
+            <option value="68">      DVDplus (DVD-Audio side)</option>
+            <option value="50">   Edison Diamond Disc</option>
+            <option value="76">   Floppy Disk</option>
+            <option value="49">      3.5" Floppy Disk</option>
+            <option value="91">      5.25" Floppy Disk</option>
+            <option value="77">      Zip Disk</option>
+            <option value="17">   HD-DVD</option>
+            <option value="95">   KiT Album</option>
+            <option value="58">   Pathé disc</option>
+            <option value="15">   Piano Roll</option>
+            <option value="45">   Playbutton</option>
+            <option value="10">   Reel-to-reel</option>
+            <option value="90">   Tefifon</option>
+            <option value="28">   UMD</option>
+            <option value="59">   VHD</option>
+            <option value="48">   VinylDisc</option>
+            <option value="82">      VinylDisc (CD side)</option>
+            <option value="80">      VinylDisc (DVD side)</option>
+            <option value="81">      VinylDisc (Vinyl side)</option>
+            <option value="14">   Wax Cylinder</option>
+          </select>
+          <label>
+            <input id="format-unknown" type="checkbox" data-bind="checked: formatUnknownToUser, enable: formatID() == ''" />
+            I don’t know
+          </label>
+          (<a href="https://test.musicbrainz.org/doc/Release/Format" target="_blank">help</a>)
+          <!-- ko if: release.mediums().length > 1 || name() -->
+            <label data-bind="attr: { for: 'medium-title-' + uniqueID }">Medium title:</label>
+            <input type="text" data-bind="attr: { id: 'medium-title-' + uniqueID }, value: inputName, valueUpdate: 'input', css: { modified: nameModified(), preview: previewNameDiffers() }, event: { focus: $root.focusMediumName }" />
+            <button type="button" class="icon guesscase-title" title="Guess case medium title" data-bind="click: $root.guessCaseMediumName, event: { mouseenter: $root.guessCaseMediumName, mouseleave: $root.guessCaseMediumName }"></button>
+          <!-- /ko -->
+          <p class="error field-error" style="padding-left: 1em" data-bind="showErrorWhenTabIsSwitched: needsFormat">A format is required. If you don’t know it, tick the “I don’t know” checkbox next to the format dropdown.
+          </p>
+        </td>
+
+        <td class="align-right icon" >
+          <button type="button" class="icon medium-down" title="Move medium down" data-click="moveMediumDown"></button>
+          <button type="button" class="icon medium-up" title="Move medium up" data-click="moveMediumUp"></button>
+          <button type="button" class="icon remove-item" title="Remove medium" style="margin-left: 16px" data-click="removeMedium"></button>
+        </td>
+      </tr>
+  <tr class="error">
+    <td></td>
+    <td colspan="2" class="error field-error" data-bind="showErrorRightAway: hasInvalidFormat">This medium has a disc ID, pregap track, or data track, so you can only change the format to one that can have disc IDs.</td>
+  </tr>
+    </table>
+
+    <!-- ko if: hasUselessMediumTitle -->
+      <div class="medium-title warning">   <link rel="preload" as="image" href="https://static.metabrainz.org/MB/warning-a23357c.png"/><img alt="Warning" class="warning" src="https://static.metabrainz.org/MB/warning-a23357c.png"/>
+        <p>
+          <strong>Warning:</strong>
+          <span id="useless-medium-title-warning" data-bind='html: uselessMediumTitleWarning()' />
+        </p>
+        <label>
+          <input id="confirm-medium-title" type="checkbox" data-bind="checked: confirmedMediumTitle" />
+          <span id="confirm-medium-title-message" data-bind="text: confirmMediumTitleMessage()" />
+        </label>
+        <p class="error field-error" style="padding-left: 1em" data-bind="showErrorWhenTabIsSwitched: hasUnconfirmedUselessMediumTitle">If you’re sure the entered medium title is correct, confirm it above. Otherwise, please fix the data.
+        </p>
+      </div>
+    <!-- /ko -->
+
+    <!-- ko if: hasTooEarlyFormat -->
+      <div class="warning">   <link rel="preload" as="image" href="https://static.metabrainz.org/MB/warning-a23357c.png"/><img alt="Warning" class="warning" src="https://static.metabrainz.org/MB/warning-a23357c.png"/>
+        <p>
+          <strong>Warning:</strong>
+          This medium is set to a format that did not exist on the selected release date.
+          <br />
+          <!-- ko if: hasUnconfirmedEarlyFormat -->
+          This should never be correct. Make sure that, say, your release set to CD isn’t meant to be a vinyl, or your vinyl isn’t actually a shellac disc.
+          <!-- /ko -->
+          <!-- ko ifnot: hasUnconfirmedEarlyFormat -->
+          This problem already existed before you opened the release editor, so you don’t need to do anything about it. But if you have some time, consider trying to find out what the real format should be or if the release should be split!
+          <!-- /ko -->
+        </p>
+        <p class="error field-error" style="padding-left: 1em" data-bind="showErrorWhenTabIsSwitched: hasUnconfirmedEarlyFormat">This medium is set to a format that did not exist on the selected release date.
+        </p>
+      </div>
+    <!-- /ko -->
+
+    <!-- ko if: hasStrangeDigitalPackaging -->
+      <div class="warning">   <link rel="preload" as="image" href="https://static.metabrainz.org/MB/warning-a23357c.png"/><img alt="Warning" class="warning" src="https://static.metabrainz.org/MB/warning-a23357c.png"/>
+        <p>
+          <strong>Warning:</strong>
+          This medium format is set to “Digital Media”, but the packaging type for this release is not “None”.
+        </p>
+        <p>
+          This is almost always incorrect. Please make sure whether you actually wanted a different format (such as “USB Flash Drive” or “Download Card”) or packaging type.
+        </p>
+        <label>
+          <input id="confirm-digital-packaging" type="checkbox" data-bind="checked: confirmedStrangeDigitalPackaging" />
+          I confirm this is a correct medium format/packaging combination.
+        </label>
+        <p class="error field-error" style="padding-left: 1em" data-bind="showErrorWhenTabIsSwitched: hasUnconfirmedStrangeDigitalPackaging">If you’re sure the combination of “Digital Media” and the selected packaging is correct, confirm it above. Otherwise, please fix the data.
+        </p>
+      </div>
+    <!-- /ko -->
+
+    <!-- ko if: loading -->
+      <div class="tracklist-loading">
+        <span class="loading-message">Now loading tracklist...</span>
+      </div>
+    <!-- /ko -->
+
+    <!-- ko if: hasVariousArtistsTracks -->
+      <div class="various-artists warning">   <link rel="preload" as="image" href="https://static.metabrainz.org/MB/warning-a23357c.png"/><img alt="Warning" class="warning" src="https://static.metabrainz.org/MB/warning-a23357c.png"/>
+        <p>
+          <strong>Warning:</strong>
+          You’ve used the <a href="https://test.musicbrainz.org/doc/Style/Unknown_and_untitled/Special_purpose_artist#List_of_official_SPAs" target="_blank">Various Artists</a> special purpose artist for some tracks below. <a href="https://test.musicbrainz.org/doc/Style/Unknown_and_untitled/Special_purpose_artist#List_of_official_SPAs" target="_blank">Various Artists</a> should very rarely be used for tracks; please make sure the artists have been entered correctly.
+        </p>
+        <label>
+          <input id="confirm-va" type="checkbox" data-bind="checked: confirmedVariousArtists" />
+          I confirm this is an intentional use of Various Artists for tracks.
+        </label>
+        <p class="error field-error" style="padding-left: 1em" data-bind="showErrorWhenTabIsSwitched: hasUnconfirmedVariousArtists">If you’re sure the use of Various Artists is correct, confirm it above. Otherwise, please fix the data.
+        </p>
+      </div>
+    <!-- /ko -->
+
+    <!-- ko if: hasFeatInTrackTitles -->
+      <div class="feat-titles warning">   <link rel="preload" as="image" href="https://static.metabrainz.org/MB/warning-a23357c.png"/><img alt="Warning" class="warning" src="https://static.metabrainz.org/MB/warning-a23357c.png"/>
+        <p>
+          <strong>Warning:</strong>
+          This medium seems to have featured artists in the track titles. These should usually be <a href="https://test.musicbrainz.org/doc/Style/Artist_Credits" target="_blank">entered as part of the track artist</a>.
+        </p>
+        <!-- ko if: hasAddedFeatInTrackTitles -->
+          <label>
+            <input id="confirm-feat" type="checkbox" data-bind="checked: confirmedFeatInTrackTitles" />
+            I confirm this is an intentional use of featured artists in track titles, or that these aren’t actually featured artists.
+          </label>
+          <p class="error field-error" style="padding-left: 1em" data-bind="showErrorWhenTabIsSwitched: hasUnconfirmedFeatInTrackTitles">If you’re sure the use of featured artists in track titles is correct, confirm it above. Otherwise, please fix the data (the “Guess feat. artists” button might help!).
+          </p>
+        <!-- /ko -->
+      </div>
+    <!-- /ko -->
+
+    <!-- ko if: release.shouldUseEnglishCapitalization() && hasCapitalizedETI() -->
+      <div class="capitalized-eti warning">   <link rel="preload" as="image" href="https://static.metabrainz.org/MB/warning-a23357c.png"/><img alt="Warning" class="warning" src="https://static.metabrainz.org/MB/warning-a23357c.png"/>
+        <p>
+          <strong>Warning:</strong>
+          This medium seems to have capitalized <a href="https://test.musicbrainz.org/doc/Style/Titles#Extra_title_information" target="_blank">extra title information</a> in track titles. Descriptive parts of extra title information like “remix” or “version” should be lowercased in most languages.
+        </p>
+        <!-- ko if: hasAddedCapitalizedETI() && $root.isBeginner -->
+          <label>
+            <input id="confirm-eti" type="checkbox" data-bind="checked: confirmedCapitalizedETI" />
+            I confirm that this extra title information is capitalized correctly.
+          </label>
+          <p class="error field-error" style="padding-left: 1em" data-bind="showErrorWhenTabIsSwitched: hasUnconfirmedCapitalizedETI">If you’re sure the extra title information is capitalized correctly, confirm it above. Otherwise, please fix the data (the “Guess case” button might help!).
+          </p>
+        <!-- /ko -->
+      </div>
+    <!-- /ko -->
+
+    <!-- ko if: hasMiscapitalizedTitles() -->
+      <div class="miscapitalized-titles warning">   <link rel="preload" as="image" href="https://static.metabrainz.org/MB/warning-a23357c.png"/><img alt="Warning" class="warning" src="https://static.metabrainz.org/MB/warning-a23357c.png"/>
+        <p>
+          <strong>Warning:</strong>
+          This medium may have incorrectly capitalized English track titles. Short articles, conjunctions, and prepositions like “and”, “of”, “or”, “to”, and “the” <a href="https://test.musicbrainz.org/doc/Style/Language/English" target="_blank">should typically be lowercased</a>.
+        </p>
+        <p>
+          Common exceptions are <a href="https://test.musicbrainz.org/doc/Style/Principle/Error_correction_and_artist_intent#Artist_Intent" target="_blank">artist intent</a> and <a href="https://test.musicbrainz.org/doc/Style/Language/Japanese" target="_blank">Japanese releases</a>.
+        </p>
+        <!-- ko if: hasAddedMiscapitalizedTitles() && $root.isBeginner -->
+          <label>
+            <input id="confirm-miscapitalized-titles" type="checkbox" data-bind="checked: confirmedMiscapitalizedTitles" />
+            I confirm that these titles are capitalized correctly.
+          </label>
+          <p class="error field-error" style="padding-left: 1em" data-bind="showErrorWhenTabIsSwitched: hasUnconfirmedMiscapitalizedTitles">If you’re sure the titles are capitalized correctly, confirm it above. Otherwise, please fix the data (the “Guess case” button might help!).
+          </p>
+        <!-- /ko -->
+      </div>
+    <!-- /ko -->
+
+    <div data-bind="visible: loaded() && !collapsed()">
+      <!-- ko if: tracks().length === 0 -->
+      <p style="margin: 1em">
+        <label>
+          <input id="tracks-unknown" type="checkbox" data-bind="checked: tracksUnknownToUser" />
+          I don’t know the tracklist for this medium.
+        </label>
+      </p>
+      <!-- /ko -->
+
+      <p class="error field-error" style="padding: 1em" data-bind="showErrorWhenTabIsSwitched: needsTracks">Tracks are required. If you don’t know them, but do know some info (such as the format or number of media), tick the “I don’t know the tracklist for this medium” checkbox above and enter the available info. If you have no information about this release’s media, remove all media.</p>
+
+      <p class="error field-error" style="padding: 1em" data-bind="showErrorWhenTabIsSwitched: needsTrackTitles">You must enter a title for every track (if the track is untitled, enter “<code>[untitled]</code>”).</p>
+
+      <p class="error field-error" style="padding: 1em" data-bind="showErrorWhenTabIsSwitched: needsTrackArtists">You must select an artist for every track (the background color of every artist field should be green). If you’ve entered an artist but the background remains uncolored, click the magnifying glass to match the name to a MusicBrainz artist. If the artist doesn’t exist yet, you can add it by selecting “Add a new artist” from the bottom of the search results drop-down.</p>
+
+      <p class="error field-error" style="padding: 1em" data-bind="showErrorWhenTabIsSwitched: hasInvalidPregapLength">
+        None of the attached disc IDs can fit a pregap track of the given length.
+      </p>
+
+      <table class="medium tbl">
+        <thead>
+          <tr>
+            <th class="reorder"></th>
+            <th class="position">#</th>
+            <th class="title">Title</th>
+            <th class="artist">Artist</th>
+            <th class="length">Length</th>
+            <th class="icons"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- ko loop: { items: audioTracks, id: 'uniqueID' } -->
+            <!-- ko template: "template.track-row" --><!-- /ko -->
+          <!-- /ko -->
+          <!-- ko if: hasDataTracks -->
+            <tr class="subh">
+              <td colspan="7">
+                
+  <div class="data-track icon img" title="This track is a data track."></div>
+                Data tracks
+              </td>
+            </tr>
+            <!-- ko loop: { items: dataTracks, id: 'uniqueID' } -->
+              <!-- ko template: "template.track-row" --><!-- /ko -->
+            <!-- /ko -->
+          <!-- /ko -->
+        </tbody>
+      </table>
+
+      <!-- ko if: $parent.seededTocs && Object.keys($parent.seededTocs).length -->
+      <div id="discid-attachment">
+        Attach disc ID:
+        <select data-bind="options: Object.values($parent.seededTocs).sort(),
+                           optionsText: $root.utils.calculateDiscID,
+                           optionsCaption: '',
+                           value: toc"></select>
+        <!-- ko with: toc -->
+          <a target="_blank" data-bind="attr: { href: '/cdtoc/' + $root.utils.calculateDiscID($data) }">link</a>
+        <!-- /ko -->
+      </div>
+      <!-- /ko -->
+
+      <div id="tracklist-tools">
+        <!-- ko if: canHaveDiscID() -->
+          <p style="margin-top: 0;">
+            <label>
+              <input class="has-pregap" type="checkbox" data-bind="checked: hasPregap" />
+              This disc has a hidden pregap track before track 1
+              (<a href="#" data-bind="click: togglePregapTrackHelp">help</a>)
+            </label>
+            <div class="ar-descr" data-bind="visible: showPregapTrackHelp">
+              <p>
+                Some discs contain a hidden track in the pregap section that precedes track 1. Use this to add (or remove) the special pregap track section.
+              </p>
+              <p>
+                Keep in mind that unselecting this will remove the track if the medium has a disc ID! If you unselect it by mistake, please readd the pregap track before submitting.
+              </p>
+            </div>
+          </p>
+          <p style="margin-top: 0;">
+            <label>
+              <input class="has-data-tracks" type="checkbox" data-bind="checked: hasDataTracks" />
+              This disc contains data tracks at the end
+              (<a href="#" data-bind="click: toggleDataTracksHelp">help</a>)
+            </label>
+            <div class="ar-descr" data-bind="visible: showDataTracksHelp">
+              <p>
+                Some discs contain one or more data tracks after all audio tracks. Use this to add (or remove) the special data tracks section. You should only add data tracks that contain audio or video (<a href="https://test.musicbrainz.org/doc/Data_Track" target="_blank">more info</a>)
+              </p>
+              <p>
+                Keep in mind that unselecting this will remove the tracks if the medium has a disc ID! If you unselect it by mistake, please readd the data tracks before submitting.
+              </p>
+            </div>
+          </p>
+        <!-- /ko -->
+
+        <div class="buttons">
+          <button type="button" class="open-track-parser" data-click="openTrackParser">Track parser</button>
+          <button type="button" class="reset-track-numbers" data-click="resetTrackNumbers">Reset track numbers</button>
+          <button type="button" data-click="swapTitlesWithArtists">Swap track titles with artist credits</button>
+          <button type="button" data-bind="click: $root.guessMediumCase, event: { mouseenter: $root.guessMediumCase, mouseleave: $root.guessMediumCase }">Guess case</button>
+          <button type="button" data-click="guessMediumFeatArtists">Guess feat. artists from track titles</button>
+        </div>
+
+        <div class="icon add-tracks" data-bind="if: !hasToc() || hasDataTracks()">
+          Add <input type="number" maxlength="2" placeholder="1" data-bind="value: addTrackCount" /> track(s)
+          <button type="button" class="icon add-item" title="Add track(s)" data-click="addNewTracks"></button>
+        </div>
+      </div>
+    </div>
+
+  </fieldset>
+  <!-- /ko -->
+
+  <!-- ko if: mediums() && mediums().length -->
+    <div data-bind="guessCase: $root.guessCaseAllMedia.bind($data)">
+        <fieldset class="guesscase">
+    <legend>Guess case</legend>
+    
+      <link rel="preload" as="image" href="https://static.metabrainz.org/MB/guesscase.32x32-fa110d8.png"/><img alt="" src="https://static.metabrainz.org/MB/guesscase.32x32-fa110d8.png" style="float:left;margin:1em"/>
+    
+    <div style="float: right; margin: 10px;" class="buttons">
+      <button id="guess-case-button" type="button" data-bind="click: guessCase, event: { mouseenter: guessCase, mouseleave: guessCase }">Guess case</button>
+    </div>
+    <p class="guesscase-options">
+      <select data-bind="value: modeName">
+        <option value="English">English</option>
+        <option value="Sentence">Sentence</option>
+        <option value="French">French</option>
+        <option value="Turkish">Turkish</option>
+      </select>
+      (<a href="/doc/Guess_Case" target="_blank">help</a>)
+      <br />
+      <label>
+        <input type="checkbox" data-bind="checked: keepUpperCase" />
+        Keep all-uppercase words uppercased
+      </label>
+      <br />
+      <label>
+        <input type="checkbox" data-bind="checked: upperCaseRoman" />
+        Uppercase Roman numerals
+      </label>
+    </p>
+  </fieldset>
+    </div>
+  <!-- /ko -->
+</div>
+
+    </div>
+
+    <div id="recordings">
+      <div class="changes" data-bind="with: rootField.release">
+  <div class="warning field-error" data-bind="showErrorRightAway: needsRecordings">
+    <p><strong>Note:</strong> All tracks require an associated recording. Click “Edit” to select a recording for each track. Choose “Add a new recording” if an appropriate one doesn’t exist yet.</p>
+
+    <div data-bind="if: tracksWithUnsetPreviousRecordings().length">
+      <p>
+        Keep in mind that recording durations are <a href="https://test.musicbrainz.org/doc/Recording">recalculated from tracks</a> once the duration of a track changes. As such, if you correct the duration of a track whose recording is only used in this release, just reuse the old recording, don’t add a new one. If the recording is also used elsewhere and the durations are significantly different, consider adding a new recording instead.
+      </p>
+      <p>
+        <button type="button" class="styled-button" data-click="reuseUnsetPreviousRecordings">Reuse previous recordings</button>
+      </p>
+    </div>
+  </div>
+
+  <div class="half-width" data-bind="affectsBubble: $root.recordingBubble">
+
+  <div data-bind="loop: { items: mediums, id: 'uniqueID' }">
+    <fieldset>
+      <legend data-bind="text: formattedName()"></legend>
+
+      <table id="track-recording-assignation" data-bind="if: loaded">
+        <tbody data-bind="if: tracks().length === 0">
+          <tr>
+            <td></td>
+            <td class="name" style="padding: 1em">The tracklist for this medium is unknown.</td>
+          <tr>
+        </tbody>
+
+        <thead data-bind="if: tracks().length > 0">
+          <tr>
+            <th></th>
+            <th colspan="2" style="text-align: left">track</th>
+            <th colspan="2" style="text-align: left">recording</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody data-bind="loop: { items: tracks, id: 'uniqueID' }">
+          <tr class="track" data-bind="css: { even: position() % 2 === 0 }">
+
+            <td rowspan="2" class="position" data-bind="text: position"></td>
+
+            <td class="name"><bdi data-bind="text: name"></bdi></td>
+            
+            <td class="length" data-bind="text: '(' + (formattedLength() || '?:??') + ')'"></td>
+
+            <!-- ko if: hasExistingRecording() -->
+              <td class="name" data-bind="html: recording().html({ target: '_blank' })"></td>
+              <td class="length" data-bind="text: '(' + (recording().formattedLength || '?:??') + ')'"></td>
+            <!-- /ko -->
+
+            <!-- ko if: hasNewRecording -->
+              <td class="name add-new">(add a new recording)</td>
+              <td class="length"></td>
+            <!-- /ko -->
+
+            <!-- ko if: needsRecording() -->
+              <td class="name"></td>
+              <td class="length"></td>
+            <!-- /ko -->
+
+            <td rowspan="2" class="buttons">
+              <button class="edit-track-recording" type="button" data-bind="controlsBubble: $root.recordingBubble, css: { negative: needsRecording() }">Edit</button>
+            </td>
+          </tr>
+
+          <tr class="artist" data-bind="css: { even: position() % 2 === 0 }">
+            <td colspan="2" data-bind="with: renderArtistCredit(artistCredit)">
+              by <span data-bind="html: $data"></span>
+            </td>
+            <td colspan="2">
+              <!-- ko if: isCompleteArtistCredit(recording().artistCredit) -->
+                by <span data-bind="html: renderArtistCredit(recording().artistCredit)"></span>
+              <!-- /ko -->
+            </td>
+          </tr>
+
+          <tr data-bind="if: titleDiffersFromRecording() || artistDiffersFromRecording(), css: { even: position() % 2 === 0 }">
+            <td></td>
+            <td colspan="5" class="checkbox">
+              <label data-bind="if: titleDiffersFromRecording()">
+                <input class="update-recording-title" type="checkbox" data-bind="checked: updateRecordingTitle" />
+                Update the recording title to match the track title.
+              </label>
+              <br />
+              <label data-bind="if: artistDiffersFromRecording()">
+                <input class="update-recording-artist" type="checkbox" data-bind="checked: updateRecordingArtist" />
+                Update the recording artist credit to match the track artist credit.
+              </label>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ko ifnot: loaded -->
+      <div class="edit-recording">
+        <div class="buttons">
+          <button type="button" data-bind="disable: loading" data-click="loadTracks">
+            Edit
+          </button>
+        </div>
+
+        <span style="display: inline-block; ">
+          Click Edit to edit the recording associations for this disc.
+        </span>
+
+        <!-- ko if: loading -->
+          <div class="recordings-loading">
+            <span class="loading-message">
+              Now loading recording associations...
+            </span>
+          </div>
+        <!-- /ko -->
+      </div>
+      <!-- /ko -->
+    </fieldset>
+  </div>
+
+  </div>
+
+  <!-- ko if: hasTracks() -->
+    <fieldset>
+      <p>
+        If the <a href="https://test.musicbrainz.org/doc/Recording">recording titles/artists</a> listed above are incorrect, you can check the boxes below to replace them with the track titles/artists for this release.
+      </p>
+      <p>
+        <strong>Note:</strong> In classical music, <a href="https://test.musicbrainz.org/doc/Style/Classical/Recording/Artist">recording artists</a> should almost always be different from <a href="https://test.musicbrainz.org/doc/Style/Classical/Track/Artist">track artists</a>, so don’t use the “copy artist credits” option while editing a classical release unless you’re very sure it’s a good idea!
+      </p>
+      <legend>Options</legend>
+      <p>
+        <label>
+          <input id="update-all-recording-titles" type="checkbox" data-bind="checked: $root.copyTrackTitlesToRecordings" />
+          Copy all track titles to associated recordings.
+        </label>
+      </p>
+      <p>
+        <label>
+          <input id="update-all-recording-artists" type="checkbox" data-bind="checked: $root.copyTrackArtistsToRecordings" />
+          Copy all track artist credits to associated recordings.
+        </label>
+      </p>
+    </fieldset>
+  <!-- /ko -->
+
+  <div class="documentation">
+
+    <div class="bubble" id="recording-assoc-bubble" data-bind="bubble: $root.recordingBubble">
+      <p>Each track in the MusicBrainz database has to be linked to a recording, choose the appropriate recording or look for it in the database.</p>
+
+      <p>If we do not have a recording for this track in the database yet, please select "Add a new recording" below.</p>
+
+      <p data-bind="with: target">
+        Search:
+        <span class="autocomplete">
+          <link rel="preload" as="image" href="https://static.metabrainz.org/MB/search-52f8034.svg"/><img alt="Search" class="search" src="https://static.metabrainz.org/MB/search-52f8034.svg"/>
+          <input type="text" class="name" data-bind="autocomplete: { entity: 'recording', currentSelection: recording, lookupHook: $root.recordingAssociation.autocompleteHook($data) }" />
+        </span>
+      </p>
+
+      <table data-bind="with: target">
+        <tbody>
+          <tr>
+            <td>
+              <input name="recording-selection" value="" type="radio" id="add-new-recording" data-bind="checked: hasNewRecording, checkedValue: true" />
+            </td>
+            <td colspan="3">
+              <label for="add-new-recording">
+                Add a new recording
+              </label>
+            </td>
+          </tr>
+
+          <!-- ko if: loadingSuggestedRecordings -->
+          <tr>
+            <td colspan="4" style="background-position: left 1em; padding-bottom: 1em; padding-top: 1em; vertical-align: top;" class="loading-message">
+              Looking for suggested recordings...
+            </td>
+          </tr>
+          <!-- /ko -->
+          <!-- ko if: suggestedRecordings().length -->
+          <tr>
+            <td colspan="4">
+              <h3 style="margin-bottom: 1em;">Suggested recordings:</h3>
+            </td>
+          </tr>
+          <!-- /ko -->
+          <!-- ko foreach: suggestedRecordings -->
+          <tr>
+            <td class="select">
+              <input name="recording-selection" type="radio" data-bind="attr: { value: gid }, checked: String($parent.recordingGID())" data-change="recording" />
+            </td>
+            <td class="recording" data-bind="html: html({ target: '_blank' })"></td>
+            <td class="artist" data-bind="html: renderArtistCredit(artistCredit)"></td>
+            <td class="length" data-bind="text: formattedLength"></td>
+          </tr>
+          <!-- ko if: $data.appearsOn && appearsOn.results.length > 0 -->
+          <tr>
+            <td></td>
+            <td colspan="3" class="appears-on">appears on:
+              <span class="appears" data-bind="html: appearsOn.results.map(function (x) { return x.html({ target: '_blank' }); }).join(', ')"></span>
+            </td>
+          </tr>
+          <!-- /ko -->
+          <!-- /ko -->
+        </tbody>
+      </table>
+
+      
+  <div class="buttons" style="float: right;">
+    <button type="button" data-click="previousTrack">Previous</button>
+    <button type="button" data-click="nextTrack">Next</button>
+    <button type="button" class="positive" data-click="hide">Done</button>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+    </div>
+
+    <div id="edit-note"><div class="form" id="form"><div class="warning"><p>You haven’t made any changes!</p></div><div class="half-width"></div></div>    </div>
+
+    <div class="buttons">
+      <button type="button" id="enter-edit" class="positive" data-click="submitEdits" data-bind="visible: activeTabID() === '#edit-note', enable: allowsSubmission()">Enter edit</button>
+      <button type="button" class="negative" data-click="cancelPage">Cancel</button>
+
+      <button type="button" data-bind="visible: activeTabIndex() > 0" data-click="previousTab">&laquo; Previous</button>
+      <button type="button" data-bind="visible: activeTabIndex() < tabCount - 1" data-click="nextTab">Next &raquo;</button>
+      <!-- For release adds, we want to make sure the user at least sees release duplicates -->
+      <button type="button" data-bind="visible: (activeTabIndex() > 0 || action === 'edit') && (activeTabIndex() < tabCount - 1)" data-click="lastTab">Finish</button>
+
+      <!-- ko template: { if: activeTabID() === "#tracklist", data: addMediumDialog } -->
+        <button type="button" data-click="open">Add medium</button>
+      <!-- /ko -->
+
+    </div>
+  </div>
+  <table id="guesscase-options" style="display: none;">
+    <tr>
+      <td>
+        <select data-bind="value: modeName">
+          <option value="English">English</option>
+          <option value="Sentence">Sentence</option>
+          <option value="French">French</option>
+          <option value="Turkish">Turkish</option>
+        </select>
+        (<a href="/doc/Guess_Case" target="_blank">help</a>)
+        <br />
+        <label>
+          <input type="checkbox" data-bind="checked: keepUpperCase" />
+          Keep all-uppercase words uppercased
+        </label>
+        <br />
+        <label>
+          <input type="checkbox" data-bind="checked: upperCaseRoman" />
+          Uppercase Roman numerals
+        </label>
+      </td>
+      <td>
+        <span data-bind="html: help"></span>
+      </td>
+    </tr>
+  </table>
+  <script src="https://static.metabrainz.org/MB/release-editor-f3874c0.js"></script>
+
+  <script>
+    MB.formatsWithDiscIDs = [1,3,4,13,25,33,34,35,36,37,38,39,40,41,42,44,47,48,57,61,63,67,70,82,129];
+
+    MB.mediumFormatDates = {"38":1999,"65":2004,"73":1886,"63":1999,"52":1962,"75":1971,"30":1931,"26":2000,"64":1999,"46":null,"61":2001,"19":1996,"86":1999,"71":1978,"74":1966,"56":1897,"15":1883,"13":null,"91":1976,"94":1995,"93":1997,"14":1877,"3":1999,"82":2007,"79":null,"37":2008,"11":1976,"95":2017,"42":1995,"69":1999,"129":1982,"22":1993,"12":null,"84":1999,"81":2007,"76":1972,"24":1975,"21":1976,"66":2004,"44":1997,"41":1987,"43":null,"59":1983,"23":1998,"85":1999,"128":2002,"92":1997,"45":2011,"83":1969,"25":1995,"49":1981,"62":1999,"29":1931,"53":1895,"16":1992,"89":2010,"72":1978,"55":1903,"131":1986,"54":1901,"51":1962,"57":2010,"80":2007,"5":1978,"48":2007,"28":2004,"20":2006,"40":null,"88":2010,"36":2007,"27":2008,"2":1995,"47":1999,"4":2004,"58":1906,"50":1912,"87":1999,"8":1964,"31":1931,"17":2006,"1":1982,"34":1982,"33":1988,"78":1964,"9":1962,"60":1981,"35":2008,"70":1999,"68":1999,"7":1931,"77":1994,"39":1985,"67":2004,"130":2004,"6":1992,"90":1936,"10":1935,"18":2000};
+
+    MB.releaseEditor.init({
+      action: "add",
+      returnTo: "https://test.musicbrainz.org/",
+      redirectURI: "",
+    });
+  </script>        </div>
+
+        <div id="footer">
+            <p class="left" id="footer-menu">
+                <a href="https://metabrainz.org/donate" class="internal">Donate</a>
+                <a href="//wiki.musicbrainz.org/" class="internal">Wiki</a>
+                <a href="https://community.metabrainz.org/" class="internal">Forums</a>
+                <a href="/doc/Communication/ChatBrainz" class="internal">Chat</a>
+                <a href="https://tickets.metabrainz.org/" class="internal">Bug tracker</a>
+                <a href="https://blog.metabrainz.org/" class="internal">Blog</a>
+                <a href="https://mastodon.social/@MusicBrainz" class="internal">Mastodon</a>
+                <a href="https://bsky.app/profile/musicbrainz.org" class="internal">Bluesky</a>            </p>
+
+            <p class="right">
+                Brought to you by <a href="https://metabrainz.org/">MetaBrainz Foundation</a> and our <a href="https://metabrainz.org/sponsors">sponsors</a> and <a href="https://metabrainz.org/supporters">supporters</a>.
+                <br/>Running: <span class="tooltip" title="Last commit by Michael Wiencek on 2026-04-20: Exclude oauth2 namespace from `REQUIRE_LOGIN_FOR_VIEWING`">test (f5e5e3449d)</span>            </p>
+        </div>
+<script src="https://static.metabrainz.org/MB/common/banner-1d2a8bc.js" async="async"></script>    </body>
+</html>

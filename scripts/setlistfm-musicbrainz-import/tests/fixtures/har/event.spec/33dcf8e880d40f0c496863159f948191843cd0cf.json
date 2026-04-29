@@ -1,0 +1,81 @@
+{
+  "version": "v1",
+  "language": "en",
+  "portal": {
+      "defaultValues": [
+      "GRANTED",
+      "DENIED"
+    ]
+  },
+  "banner": {
+    "title": "We value your privacy",
+    "sectionTitle": "Google consents",
+    "description": "Please note that this website/app uses one or more Google services and may gather and store information including but not limited to your visit or usage behaviour. You may click to grant or deny consent to Google and its third-party tags to use your data for below specified purposes in below Google consent section.",
+    "confirm": "Confirm"
+  },
+  "purposes": [
+    {
+      "id": 1,
+      "portal": {
+        "title": "Consent for storage related to advertising like cookies on web or device identifiers in apps by Google."
+      },
+      "banner": {
+        "title": "I want to allow Google to enable storage related to advertising like cookies on web or device identifiers in apps."
+      }
+    },
+    {
+      "id": 2,
+      "portal": {
+        "title": "Consent for user data to be sent to Google for online advertising purposes."
+      },
+      "banner": {
+        "title": "I want to allow my user data to be sent to Google for online advertising purposes."
+      }
+    },
+    {
+      "id": 3,
+      "portal": {
+        "title": "Consent for Google to send personalized advertising to the end-user."
+      },
+      "banner": {
+        "title": "I want to allow Google to send me personalized advertising."
+      }
+    },
+    {
+      "id": 4,
+      "portal": {
+        "title": "Consent for storage related to analytics like cookies on web or device identifiers in apps by Google."
+      },
+      "banner": {
+        "title": "I want to allow Google to enable storage related to analytics like cookies on web or device identifiers in apps."
+      }
+    },
+    {
+      "id": 5,
+      "portal": {
+        "title": "Consent for storage related to functionality of the website or app by Google."
+      },
+      "banner": {
+        "title": "I want to allow Google to enable storage related to functionality of the website or app."
+      }
+    },
+    {
+      "id": 6,
+      "portal": {
+        "title": "Consent for storage related to personalization by Google."
+      },
+      "banner": {
+        "title": "I want to allow Google to enable storage related to personalization."
+      }
+    },
+    {
+      "id": 7,
+      "portal": {
+        "title": "Consent for storage related to secuiry, including authentication functionality and fraud prevention, and other user protection by Google."
+      },
+      "banner": {
+        "title": "I want to allow Google to enable storage related to secuirity, including authentication functionality and fraud prevention, and other user protection."
+      }
+    }
+  ]
+}
