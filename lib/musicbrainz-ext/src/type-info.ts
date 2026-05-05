@@ -28,7 +28,7 @@ export const workAttributeTypes = fetchOrGetFromCache(
   'work_attribute_type'
 );
 
-type WorkAttributeTypeAllowedValueT = OptionTreeT<'work_attribute_type_allowed_value'> & {
+export type WorkAttributeTypeAllowedValueT = OptionTreeT<'work_attribute_type_allowed_value'> & {
   value: string;
   workAttributeTypeID: number;
 };

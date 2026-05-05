@@ -52,28 +52,8 @@ export async function importWork(
 
   const version = versions[0]!;
 
-  if (version.isMedley === '1') {
-    const workCount = version.list!.length + 1;
-    await executePipeline(
-      from(version.list ?? []).pipe(
-        mergeMap(async medleyVersion => await fetchWorks(new Version(medleyVersion.id, medleyVersion.workId))),
-        filter((works): works is NonEmptyArray<WorkBean> => works.length > 0),
-        map(medleyWorks => medleyWorks[0]),
-        mergeMap(
-          async medleyWork =>
-            await addMedleyWork(
-              work,
-              medleyWork,
-              version.list!.findIndex(version => version.workId == medleyWork.workId) + 1,
-              addWarning
-            )
-        ),
-        scan(accumulator => accumulator + 1, 0),
-        tap(count => setProgress([count / workCount, `Loaded ${count}/${workCount} works`]))
-      )
-    );
-  }
-
+  // needs to be before medley works are added
+  // otherwise the attribute selectors will match the medley attributes
   const {editData} = await workEditData(
     {
       ...work,
@@ -98,6 +78,28 @@ export async function importWork(
     version,
     addWarning
   );
+
+  if (version.isMedley === '1') {
+    const workCount = version.list!.length + 1;
+    await executePipeline(
+      from(version.list ?? []).pipe(
+        mergeMap(async medleyVersion => await fetchWorks(new Version(medleyVersion.id, medleyVersion.workId))),
+        filter((works): works is NonEmptyArray<WorkBean> => works.length > 0),
+        map(medleyWorks => medleyWorks[0]),
+        mergeMap(
+          async medleyWork =>
+            await addMedleyWork(
+              work,
+              medleyWork,
+              version.list!.findIndex(version => version.workId == medleyWork.workId) + 1,
+              addWarning
+            )
+        ),
+        scan(accumulator => accumulator + 1, 0),
+        tap(count => setProgress([count / workCount, `Loaded ${count}/${workCount} works`]))
+      )
+    );
+  }
 
   setInput(form, 'name', editData.name, addWarning);
   setInput(form, 'comment', editData.comment, addWarning);

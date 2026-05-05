@@ -3,7 +3,12 @@ import classes from '#ui/work-edit-dialog.module.css';
 import {WorkEditDialog} from '#ui/work-edit-dialog.tsx';
 import {WorkEditData} from '#work-edit-data.ts';
 import {isNewWork, workLink} from '#works.ts';
-import {workLanguages, workTypes} from '@repo/musicbrainz-ext/type-info';
+import {
+  workAttributeAllowedValues,
+  workAttributeTypes,
+  workLanguages,
+  workTypes,
+} from '@repo/musicbrainz-ext/type-info';
 import {createEffect, createSignal, Show} from 'solid-js';
 import {render} from 'solid-js/web';
 import {WorkT} from 'typedbrainz/types';
@@ -67,6 +72,8 @@ export async function addWorkEditor(
   anchor?.insertAdjacentElement('afterend', container);
   const allowedTypes = Object.values(await workTypes);
   const allowedLanguages = Object.values(await workLanguages);
+  const allowedAttributeTypes = Object.values(await workAttributeTypes);
+  const allowedAttributeValues = Object.values(await workAttributeAllowedValues);
   render(
     () => (
       <WorkEditDataProvider
@@ -75,6 +82,8 @@ export async function addWorkEditor(
         originalEditData={originalEditData}
         workTypes={allowedTypes}
         workLanguages={allowedLanguages}
+        workAttributeTypes={allowedAttributeTypes}
+        workAttributeAllowedValues={allowedAttributeValues}
       >
         <WorkEditor work={work} parent={parent} />
       </WorkEditDataProvider>

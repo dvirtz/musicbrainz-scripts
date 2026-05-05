@@ -1,15 +1,19 @@
 import {WorkEditData, workEditDataEqual} from '#work-edit-data.ts';
+import {buildOptionList, buildOptionListFromKeys} from '@repo/musicbrainz-ext/build-options-list';
 import {urlFromMbid} from '@repo/musicbrainz-ext/edits';
+import {WorkAttributeTypeAllowedValueT} from '@repo/musicbrainz-ext/type-info';
 import {createContext, ParentProps, useContext} from 'solid-js';
 import {createStore, unwrap} from 'solid-js/store';
-import {LanguageT, WorkT, WorkTypeT} from 'typedbrainz/types';
+import {LanguageT, WorkAttributeTypeT, WorkT, WorkTypeT} from 'typedbrainz/types';
 
 const makeWorkEditDataContext = (
   work: WorkT,
   editData: WorkEditData,
   originalEditData: WorkEditData,
   workTypes: WorkTypeT[],
-  workLanguages: LanguageT[]
+  workLanguages: LanguageT[],
+  workAttributeTypes: WorkAttributeTypeT[],
+  workAttributeAllowedValues: WorkAttributeTypeAllowedValueT[]
 ) => {
   const [liveEditData, setEditData] = createStore(structuredClone(editData));
   return {
@@ -33,6 +37,13 @@ const makeWorkEditDataContext = (
     workId: () => work.id,
     workTypes: () => workTypes,
     workLanguages: () => workLanguages,
+    workAttributeTypes: () => buildOptionList(workAttributeTypes),
+    workAttributeAllowedValues: () =>
+      new Map(
+        Map.groupBy(Object.values(workAttributeAllowedValues), x => x.workAttributeTypeID)
+          .entries()
+          .map(([typeId, children]) => [typeId, buildOptionListFromKeys(children, 'value', 'id')])
+      ),
   } as const;
 };
 
@@ -53,6 +64,8 @@ export function WorkEditDataProvider(
     originalEditData: WorkEditData;
     workTypes: WorkTypeT[];
     workLanguages: LanguageT[];
+    workAttributeTypes: WorkAttributeTypeT[];
+    workAttributeAllowedValues: WorkAttributeTypeAllowedValueT[];
   }
 ) {
   return (
@@ -62,7 +75,9 @@ export function WorkEditDataProvider(
         props.editData,
         props.originalEditData,
         props.workTypes,
-        props.workLanguages
+        props.workLanguages,
+        props.workAttributeTypes,
+        props.workAttributeAllowedValues
       )}
     >
       {props.children}
