@@ -1,3 +1,4 @@
+import {seedAcumStorageFromUrl} from '#tests/fixtures/acum-storage.ts';
 import {expect, Locator} from '@playwright/test';
 import {MEDLEY_OF_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
 import {test} from '@repo/test-support/musicbrainz-test';
@@ -20,6 +21,8 @@ test.describe('work editor @allow_fail', () => {
     const input = page.getByPlaceholder('Work ID or URL');
     await input.fill(workUrl);
     await expect(input).toHaveValue(versionId);
+
+    await seedAcumStorageFromUrl(userscriptPage, 'work-2661255-2661255001.json', workUrl);
 
     const importButton = page.getByRole('button', {name: 'Import work from ACUM'});
     await importButton.click();
@@ -64,6 +67,8 @@ test.describe('work editor @allow_fail', () => {
     await input.fill(workUrl);
     await expect(input).toHaveValue(workId);
 
+    await seedAcumStorageFromUrl(userscriptPage, 'work-1119554.json', workUrl);
+
     const importButton = page.getByRole('button', {name: 'Import work from ACUM'});
     await importButton.click();
 
@@ -101,6 +106,8 @@ test.describe('work editor @allow_fail', () => {
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/version?workid=1010819&versionid=1010819002`;
 
     const input = page.getByPlaceholder('Work ID or URL');
+
+    await seedAcumStorageFromUrl(userscriptPage, 'work-1010819.json', workUrl);
     await input.fill(workUrl);
     await expect(input).toHaveValue('1010819002');
 
@@ -198,6 +205,8 @@ test.describe('work editor @allow_fail', () => {
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${work.workId}`;
     const input = page.getByPlaceholder('Work ID or URL');
     await input.fill(workUrl);
+    await seedAcumStorageFromUrl(userscriptPage, 'work-medley-1251909.json', workUrl);
+
     await expect(input).toHaveValue(work.workId);
 
     const importButton = page.getByRole('button', {name: 'Import work from ACUM'});
@@ -353,6 +362,8 @@ test.describe('work editor @allow_fail', () => {
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${work.workId}&versionid=${work.attributes[0].value}`;
     const input = page.getByPlaceholder('Work ID or URL');
     await input.fill(workUrl);
+    await seedAcumStorageFromUrl(userscriptPage, 'work-translated-1129800.json', workUrl);
+
     await expect(input).toHaveValue(work.attributes[0].value);
 
     const importButton = page.getByRole('button', {name: 'Import work from ACUM'});
