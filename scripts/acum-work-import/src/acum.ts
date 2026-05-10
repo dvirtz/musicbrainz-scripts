@@ -1,7 +1,8 @@
 import {AcumWorkType} from '#acum-work-type.ts';
 import {tryFetchJSON} from '@repo/fetch/fetch';
 import {formatISWC} from '@repo/musicbrainz-ext/format-iswc';
-import {filter, lastValueFrom, map, mergeAll, mergeMap, range, startWith, toArray} from 'rxjs';
+import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
+import {filter, from, lastValueFrom, map, mergeAll, mergeMap, range, startWith, toArray} from 'rxjs';
 
 export type IPBaseNumber = string;
 
@@ -172,7 +173,7 @@ async function fetchAlbum(albumId: string): Promise<AlbumBean> {
 }
 
 export async function workISWCs(work: WorkBean) {
-  return (work.isTranslated === '1' ? [] : await fetchWork(workId(work)))
+  return (work.isTranslated === '1' ? [] : await fetchWorks(new Entity(workId(work), 'Work')))
     ?.map(albumVersion => albumVersion.versionIswcNumber)
     .filter((iswc): iswc is string => iswc !== undefined && iswc.length > 0)
     .map(formatISWC);
@@ -217,6 +218,21 @@ export function workLanguage(track: WorkBean): WorkLanguage {
 
 export type EntityT = 'Work' | 'Album' | 'Version';
 
+const latestAcumDataStorageKey = 'acum-work-import';
+
+type StoredEntity = Readonly<{
+  entityType: EntityT;
+  id: string;
+  workId?: string;
+}>;
+
+type StoredAcumData = Readonly<{
+  version: 1;
+  savedAt: string;
+  sourceEntity: StoredEntity;
+  worksByEntity: Readonly<Record<string, ReadonlyArray<WorkBean>>>;
+}>;
+
 export class Entity<T extends EntityT = EntityT> {
   constructor(
     readonly id: string,
@@ -235,6 +251,188 @@ export class Version<T extends EntityT = 'Version'> extends Entity<T> {
     readonly entityType: T = 'Version' as T
   ) {
     super(id, entityType);
+  }
+}
+
+function entityCacheKey(entity: Entity) {
+  if (entity.entityType === 'Version') {
+    const version = entity as Version;
+    return `${entity.entityType}:${entity.id}:${version.workId ?? versionWorkId(entity.id)}`;
+  }
+
+  return `${entity.entityType}:${entity.id}`;
+}
+
+function parseEntityCacheKey(key: string): Entity | undefined {
+  const [entityType, id, workId] = key.split(':');
+  if (!entityType || !id || !['Work', 'Album', 'Version'].includes(entityType)) {
+    return;
+  }
+  const typedEntityType = entityType as EntityT;
+
+  if (typedEntityType === 'Version') {
+    return new Version(id, workId ?? versionWorkId(id));
+  }
+
+  return new Entity(id, typedEntityType);
+}
+
+function serializeEntity(entity: Entity): StoredEntity {
+  if (entity.entityType === 'Version') {
+    const version = entity as Version;
+    return {
+      entityType: entity.entityType,
+      id: entity.id,
+      workId: version.workId ?? versionWorkId(entity.id),
+    };
+  }
+
+  return {
+    entityType: entity.entityType,
+    id: entity.id,
+  };
+}
+
+function deserializeEntity(entity: StoredEntity): Entity | undefined {
+  if (!entity.id || !['Work', 'Album', 'Version'].includes(entity.entityType)) {
+    return;
+  }
+
+  if (entity.entityType === 'Version') {
+    return new Version(entity.id, entity.workId ?? versionWorkId(entity.id));
+  }
+
+  return new Entity(entity.id, entity.entityType);
+}
+
+async function readStoredAcumData(): Promise<StoredAcumData | undefined> {
+  try {
+    const parsed = await GM.getValue<StoredAcumData>(latestAcumDataStorageKey);
+    if (parsed.version !== 1 || !parsed.sourceEntity || !parsed.worksByEntity) {
+      return;
+    }
+    return parsed;
+  } catch (err) {
+    console.debug('failed to parse stored ACUM data', err);
+    return;
+  }
+}
+
+function prefetchRelatedWorks(
+  works: ReadonlyArray<WorkBean>,
+  visitedWorkIds: Set<string>,
+  visitedVersions: Set<string>
+): Promise<void> {
+  return executePipeline(
+    from(works).pipe(
+      mergeMap(async work => {
+        const canonicalWorkId = workId(work);
+        if (!visitedWorkIds.has(canonicalWorkId)) {
+          visitedWorkIds.add(canonicalWorkId);
+          const fullWorkVersions = await fetchWorks(new Entity(canonicalWorkId, 'Work'));
+          await prefetchRelatedWorks(fullWorkVersions, visitedWorkIds, visitedVersions);
+        }
+
+        await executePipeline(
+          from(work.list ?? []).pipe(
+            filter(medleyVersion => !visitedVersions.has(medleyVersion.id)),
+            mergeMap(async medleyVersion => {
+              visitedVersions.add(medleyVersion.id);
+              const medleyWorks = await fetchWorks(new Version(medleyVersion.id, medleyVersion.workId));
+              await prefetchRelatedWorks(medleyWorks, visitedWorkIds, visitedVersions);
+            })
+          )
+        );
+      })
+    )
+  );
+}
+
+export async function saveLatestEntityData(entity: Entity): Promise<number> {
+  entityCache.clear();
+
+  const works = await fetchWorks(entity);
+  await prefetchRelatedWorks(works, new Set<string>(), new Set<string>());
+
+  const payload: StoredAcumData = {
+    version: 1,
+    savedAt: new Date().toISOString(),
+    sourceEntity: serializeEntity(entity),
+    worksByEntity: Object.fromEntries(entityCache.entries()),
+  };
+
+  await GM.setValue(latestAcumDataStorageKey, payload);
+  return works.length;
+}
+
+export async function loadLatestEntityData(entityTypes?: ReadonlyArray<EntityT>): Promise<Entity | undefined> {
+  const stored = await readStoredAcumData();
+  if (!stored) {
+    return;
+  }
+
+  const entity = deserializeEntity(stored.sourceEntity);
+  if (!entity) {
+    return;
+  }
+
+  if (entityTypes && !entityTypes.includes(entity.entityType)) {
+    return;
+  }
+
+  entityCache.clear();
+  for (const [key, works] of Object.entries(stored.worksByEntity)) {
+    const parsedEntity = parseEntityCacheKey(key);
+    if (parsedEntity && works) {
+      entityCache.set(entityCacheKey(parsedEntity), works);
+    }
+  }
+
+  hydrateEntityCache(entityCache.values(), new Set<string>());
+
+  return entity;
+}
+
+function hydrateEntityCache(workSets: Iterable<ReadonlyArray<WorkBean>>, visitedVersionIds: Set<string>) {
+  for (const works of workSets) {
+    for (const work of works) {
+      const canonicalWorkId = workId(work);
+      const workEntity = new Entity(canonicalWorkId, 'Work');
+      const workKey = entityCacheKey(workEntity);
+      const existingWorkVersions = entityCache.get(workKey) ?? [];
+      if (!existingWorkVersions.some(track => track.versionId === work.versionId)) {
+        entityCache.set(workKey, [...existingWorkVersions, work]);
+      }
+
+      const versionEntity = new Version(work.versionId, canonicalWorkId);
+      const versionKey = entityCacheKey(versionEntity);
+      if (!entityCache.has(versionKey)) {
+        entityCache.set(versionKey, [work]);
+      }
+
+      for (const medleyVersion of work.list ?? []) {
+        if (visitedVersionIds.has(medleyVersion.id)) {
+          continue;
+        }
+        visitedVersionIds.add(medleyVersion.id);
+
+        const medleyVersionEntity = new Version(medleyVersion.id, medleyVersion.workId);
+        const medleyVersionKey = entityCacheKey(medleyVersionEntity);
+        if (!entityCache.has(medleyVersionKey)) {
+          const medleyWorkKey = entityCacheKey(new Entity(medleyVersion.workId, 'Work'));
+          const medleyWorks = entityCache.get(medleyWorkKey)?.filter(track => track.versionId === medleyVersion.id);
+          if (medleyWorks && medleyWorks.length > 0) {
+            entityCache.set(medleyVersionKey, medleyWorks);
+            hydrateEntityCache([medleyWorks], visitedVersionIds);
+          }
+        } else {
+          const cachedMedleyWorks = entityCache.get(medleyVersionKey);
+          if (cachedMedleyWorks) {
+            hydrateEntityCache([cachedMedleyWorks], visitedVersionIds);
+          }
+        }
+      }
+    }
   }
 }
 
@@ -262,13 +460,14 @@ export function replaceUrlWith<T extends EntityT>(input: string): Entity<T> | un
   }
 }
 
-const entityCache = new Map<Entity, ReadonlyArray<WorkBean>>();
+const entityCache = new Map<string, ReadonlyArray<WorkBean>>();
 
 export async function fetchWorks(entity: Entity): Promise<ReadonlyArray<WorkBean>> {
-  if (!entityCache.has(entity)) {
-    entityCache.set(entity, await fetchWorksUncached(entity));
+  const key = entityCacheKey(entity);
+  if (!entityCache.has(key)) {
+    entityCache.set(key, await fetchWorksUncached(entity));
   }
-  return entityCache.get(entity)!;
+  return entityCache.get(key)!;
 }
 
 async function fetchWorksUncached(entity: Entity): Promise<ReadonlyArray<WorkBean>> {

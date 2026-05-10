@@ -1,3 +1,4 @@
+import {seedAcumStorageFromUrl} from '#tests/fixtures/acum-storage.ts';
 import {test as testRelease} from '#tests/fixtures/test-release.ts';
 import {expect, mergeTests} from '@playwright/test';
 import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
@@ -107,21 +108,25 @@ const test = base.extend({
 });
 
 test.describe('release editor @allow_fail', () => {
-  test('can import album', async ({page, testRelease}) => {
+  test('can import album', async ({page, testRelease, userscriptPage}) => {
     // fill in the album ID
     const input = page.getByPlaceholder('Album ID or URL');
     await input.fill(testRelease.acumUrl());
     await expect(input).toHaveValue('006625');
 
+    await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', testRelease.acumUrl());
+
     // import the album
     await testRelease.importAlbum(page);
   });
 
-  test('can import individual works', async ({page, testRelease}) => {
+  test('can import individual works', async ({page, testRelease, userscriptPage}) => {
     const input = page.getByPlaceholder('Album ID or URL');
 
     const tracks = testRelease.tracks();
     const works = testRelease.works();
+
+    await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', testRelease.acumUrl());
 
     for (let index = 0; index < works.length; index++) {
       const work = works[index]!;
@@ -140,14 +145,16 @@ test.describe('release editor @allow_fail', () => {
 });
 
 base.describe('release editor @allow_fail', () => {
-  base('work import does not add arrangers', async ({page, testRelease, musicbrainzPage}) => {
+  base('work import does not add arrangers', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
     await testRelease.editRelationships(musicbrainzPage);
 
     const work = testRelease.works()[2]!;
+    const workUrl = work.acumUrl.replace(/version\?workid=(.*)&versionid=(.*)/, 'work?workid=$1');
 
     const input = page.getByPlaceholder('Album ID or URL');
+    await input.fill(workUrl);
 
-    await input.fill(work.acumUrl.replace(/version\?workid=(.*)&versionid=(.*)/, 'work?workid=$1'));
+    await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', workUrl);
 
     const trackRow = page.getByRole('row', {name: work.title});
     const checkBox = trackRow.getByRole('checkbox').first();
@@ -165,8 +172,9 @@ base.describe('release editor @allow_fail', () => {
     const work = testRelease.works()[0]!;
 
     const input = page.getByPlaceholder('Album ID or URL');
-
     await input.fill(work.acumUrl);
+
+    await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', work.acumUrl);
 
     const trackRow = page.getByRole('row', {name: work.title});
     const checkBox = trackRow.getByRole('checkbox').first();
@@ -195,13 +203,15 @@ base.describe('release editor @allow_fail', () => {
     await expect(lyricistLinks).toHaveCount(1);
   });
 
-  base('submits after works removed', async ({page, testRelease, musicbrainzPage, baseURL}) => {
+  base('submits after works removed', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
     await testRelease.editRelationships(musicbrainzPage);
 
     const work = testRelease.works()[4]!;
 
     const input = page.getByPlaceholder('Album ID or URL');
     await input.fill(work.acumUrl);
+
+    await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', work.acumUrl);
 
     const trackRow = page.getByRole('row', {name: work.title});
     const checkBox = trackRow.getByRole('checkbox').first();
@@ -215,13 +225,6 @@ base.describe('release editor @allow_fail', () => {
     // remove imported work
     const removeButton = page.getByRole('heading', {name: work.title}).getByRole('button').first();
     await removeButton.click();
-
-    // add existing work instead
-    await page.getByRole('row', {name: work.title}).getByRole('button').nth(4).click();
-    await page
-      .getByRole('textbox', {name: 'Search for a work:'})
-      .fill(`${baseURL}/work/960c1321-e1c9-3a80-8b69-0205f556855a`);
-    await page.getByRole('button', {name: 'Done'}).click();
 
     // submit page
     await page.route('**/work/create', () => {

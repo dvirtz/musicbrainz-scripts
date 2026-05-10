@@ -1,4 +1,4 @@
-import {Entity} from '#acum.ts';
+import {Entity, loadLatestEntityData} from '#acum.ts';
 import {importAlbum as tryImportWorks} from '#import-album.ts';
 import {replaceSubmitButton, submitWork} from '#submit.ts';
 import {ImportForm} from '#ui/import-form.tsx';
@@ -57,6 +57,11 @@ function AcumImporter() {
     }
   }
 
+  async function importFromPreferredSource(entity: Entity) {
+    const storedEntity = await loadLatestEntityData(['Album', 'Version', 'Work']);
+    await importWorks(storedEntity ?? entity);
+  }
+
   async function submitWorks(originalSubmitButton: HTMLButtonElement) {
     const submitButton = document.querySelector<HTMLButtonElement>('button[data-acum-replaced]');
     if (submitButton) submitButton.disabled = true;
@@ -99,7 +104,7 @@ function AcumImporter() {
 
   return (
     <>
-      <ImportForm entityTypes={['Album', 'Version', 'Work']} onSubmit={importWorks} idPattern="[0-9A-Z]+">
+      <ImportForm entityTypes={['Album', 'Version', 'Work']} onImport={importFromPreferredSource} idPattern="[0-9A-Z]+">
         <ProgressBar value={progress()[0]} label={progress()[1]} minValue={0} maxValue={1} />
       </ImportForm>
 

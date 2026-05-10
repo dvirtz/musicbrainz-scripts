@@ -6,7 +6,7 @@ import {createEffect, createSignal, ParentProps} from 'solid-js';
 export function ImportForm<T extends EntityT>(
   props: ParentProps & {
     entityTypes: Readonly<NonEmptyArray<T>>;
-    onSubmit: (entity: Entity<T>) => Promise<void>;
+    onImport: (entity: Entity<T>) => Promise<void>;
     idPattern: string;
   }
 ) {
@@ -26,11 +26,10 @@ export function ImportForm<T extends EntityT>(
     return button.title;
   });
 
-  const onSubmit = (ev: SubmitEvent) => {
-    ev.preventDefault();
+  const onImport = () => {
     setImporting(true);
     props
-      .onSubmit(entity())
+      .onImport(entity())
       .catch(console.error)
       .finally(() => setImporting(false));
   };
@@ -50,9 +49,9 @@ export function ImportForm<T extends EntityT>(
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form>
       <div class="buttons" style={{display: 'flex'}}>
-        <Button type="submit" ref={submitButton!}>
+        <Button type="button" ref={submitButton!} onClick={onImport}>
           <img
             src="https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg"
             alt="ACUM logo"
