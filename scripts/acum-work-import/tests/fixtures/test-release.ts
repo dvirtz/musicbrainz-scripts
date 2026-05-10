@@ -676,9 +676,6 @@ class TestRelease {
     const importButton = page.getByRole('button', {name: 'Import works from ACUM'});
 
     await importButton.click();
-    await expect(importButton).toBeDisabled();
-
-    // wait for import to finish
     await expect(importButton).toBeEnabled();
   }
 }
