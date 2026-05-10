@@ -1,0 +1,1181 @@
+{
+  "version": 1,
+  "savedAt": "2026-05-12T00:00:00.000Z",
+  "sourceEntity": {
+    "entityType": "Work",
+    "id": "1052784"
+  },
+  "worksByEntity": {
+    "Work:1052784": [
+      {
+        "type": "org.acum.site.searchdb.dto.bean.WorkBean",
+        "fullWorkId": "1052784001",
+        "work_id": "052784001",
+        "workNumber": "052784",
+        "workLanguage": "1",
+        "versionNumber": "001",
+        "searchTitleIsForeign": false,
+        "workHebName": "יש בי אהבה",
+        "workEngName": "YESH BI AHAVA",
+        "workIsForeign": false,
+        "workNameIsForeign": false,
+        "pool": "1",
+        "registration_date": "",
+        "publication_date": "",
+        "workAlbums": {
+          "type": "org.acum.site.searchdb.dto.bean.SubSummaryBean",
+          "total": "22"
+        },
+        "performer": {
+          "type": "org.acum.site.searchdb.dto.bean.PerformerBean",
+          "number": "2",
+          "performerHebName": "איינשטיין אריק",
+          "performerEngName": "EINSTEIN ARIK",
+          "searchTitleIsForeign": false,
+          "performerNameIsForeign": false,
+          "performerNameIsHebrew": false
+        },
+        "authors": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "composers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "arrangers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "creators": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "C",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "A",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00080671673",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "AR",
+            "protectionStatus": "1",
+            "declareDate": 290514
+          }
+        ],
+        "time": "04:13",
+        "isWork": "0",
+        "isVersion": "1",
+        "isMedley": "0",
+        "isTranslated": "0",
+        "translatedVersionIsForeign": false,
+        "youtubeId": "",
+        "rightsPercent": "100",
+        "albumTrackNumber": "3",
+        "workId": "1052784",
+        "versionId": "1052784001",
+        "versionEssenceType": "30",
+        "versionIswcNumber": "T-002.096.935-0",
+        "versionIsrcNumber": "",
+        "workType": "0",
+        "userOwnWork": false,
+        "notDPCreatorCount": "5",
+        "creatorCount": "5",
+        "versionIsExcludeed": "0",
+        "dpCreatorCount": "0",
+        "notAcumRepesentedCreatorCount": "0",
+        "acumRepesentedCreatorCount": "5"
+      },
+      {
+        "type": "org.acum.site.searchdb.dto.bean.WorkBean",
+        "fullWorkId": "1052784002",
+        "work_id": "052784002",
+        "workNumber": "052784",
+        "workLanguage": "1",
+        "versionNumber": "002",
+        "searchTitleIsForeign": false,
+        "workHebName": "יש בי אהבה",
+        "workEngName": "YESH BI AHAVA",
+        "workIsForeign": false,
+        "workNameIsForeign": false,
+        "pool": "1",
+        "registration_date": "",
+        "publication_date": "",
+        "workAlbums": {
+          "type": "org.acum.site.searchdb.dto.bean.SubSummaryBean",
+          "total": "22"
+        },
+        "performer": {
+          "type": "org.acum.site.searchdb.dto.bean.PerformerBean",
+          "number": "2",
+          "performerHebName": "איינשטיין אריק",
+          "performerEngName": "EINSTEIN ARIK",
+          "searchTitleIsForeign": false,
+          "performerNameIsForeign": false,
+          "performerNameIsHebrew": false
+        },
+        "authors": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "composers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "arrangers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "creators": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "C",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "A",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00080671673",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "AR",
+            "protectionStatus": "1",
+            "declareDate": 290514
+          }
+        ],
+        "time": "04:13",
+        "isWork": "0",
+        "isVersion": "1",
+        "isMedley": "0",
+        "isTranslated": "0",
+        "translatedVersionIsForeign": false,
+        "youtubeId": "",
+        "rightsPercent": "100",
+        "albumTrackNumber": "3",
+        "workId": "1052784",
+        "versionId": "1052784002",
+        "versionEssenceType": "30",
+        "versionIswcNumber": "T-002.096.936-1",
+        "versionIsrcNumber": "",
+        "workType": "0",
+        "userOwnWork": false,
+        "notDPCreatorCount": "5",
+        "creatorCount": "5",
+        "versionIsExcludeed": "0",
+        "dpCreatorCount": "0",
+        "notAcumRepesentedCreatorCount": "0",
+        "acumRepesentedCreatorCount": "5"
+      },
+      {
+        "type": "org.acum.site.searchdb.dto.bean.WorkBean",
+        "fullWorkId": "1052784003",
+        "work_id": "052784003",
+        "workNumber": "052784",
+        "workLanguage": "1",
+        "versionNumber": "003",
+        "searchTitleIsForeign": false,
+        "workHebName": "יש בי אהבה",
+        "workEngName": "YESH BI AHAVA",
+        "workIsForeign": false,
+        "workNameIsForeign": false,
+        "pool": "1",
+        "registration_date": "",
+        "publication_date": "",
+        "workAlbums": {
+          "type": "org.acum.site.searchdb.dto.bean.SubSummaryBean",
+          "total": "22"
+        },
+        "performer": {
+          "type": "org.acum.site.searchdb.dto.bean.PerformerBean",
+          "number": "2",
+          "performerHebName": "איינשטיין אריק",
+          "performerEngName": "EINSTEIN ARIK",
+          "searchTitleIsForeign": false,
+          "performerNameIsForeign": false,
+          "performerNameIsHebrew": false
+        },
+        "authors": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "composers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "arrangers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "creators": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "C",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "A",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00080671673",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "AR",
+            "protectionStatus": "1",
+            "declareDate": 290514
+          }
+        ],
+        "time": "04:13",
+        "isWork": "0",
+        "isVersion": "1",
+        "isMedley": "0",
+        "isTranslated": "0",
+        "translatedVersionIsForeign": false,
+        "youtubeId": "",
+        "rightsPercent": "100",
+        "albumTrackNumber": "3",
+        "workId": "1052784",
+        "versionId": "1052784003",
+        "versionEssenceType": "30",
+        "versionIswcNumber": "T-002.096.937-2",
+        "versionIsrcNumber": "",
+        "workType": "0",
+        "userOwnWork": false,
+        "notDPCreatorCount": "5",
+        "creatorCount": "5",
+        "versionIsExcludeed": "0",
+        "dpCreatorCount": "0",
+        "notAcumRepesentedCreatorCount": "0",
+        "acumRepesentedCreatorCount": "5"
+      },
+      {
+        "type": "org.acum.site.searchdb.dto.bean.WorkBean",
+        "fullWorkId": "1052784004",
+        "work_id": "052784004",
+        "workNumber": "052784",
+        "workLanguage": "1",
+        "versionNumber": "004",
+        "searchTitleIsForeign": false,
+        "workHebName": "יש בי אהבה",
+        "workEngName": "YESH BI AHAVA",
+        "workIsForeign": false,
+        "workNameIsForeign": false,
+        "pool": "1",
+        "registration_date": "",
+        "publication_date": "",
+        "workAlbums": {
+          "type": "org.acum.site.searchdb.dto.bean.SubSummaryBean",
+          "total": "22"
+        },
+        "performer": {
+          "type": "org.acum.site.searchdb.dto.bean.PerformerBean",
+          "number": "2",
+          "performerHebName": "איינשטיין אריק",
+          "performerEngName": "EINSTEIN ARIK",
+          "searchTitleIsForeign": false,
+          "performerNameIsForeign": false,
+          "performerNameIsHebrew": false
+        },
+        "authors": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "composers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "arrangers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "creators": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "C",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "A",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00080671673",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "AR",
+            "protectionStatus": "1",
+            "declareDate": 290514
+          }
+        ],
+        "time": "04:13",
+        "isWork": "0",
+        "isVersion": "1",
+        "isMedley": "0",
+        "isTranslated": "0",
+        "translatedVersionIsForeign": false,
+        "youtubeId": "",
+        "rightsPercent": "100",
+        "albumTrackNumber": "3",
+        "workId": "1052784",
+        "versionId": "1052784004",
+        "versionEssenceType": "30",
+        "versionIswcNumber": "T-931.118.944-3",
+        "versionIsrcNumber": "",
+        "workType": "0",
+        "userOwnWork": false,
+        "notDPCreatorCount": "5",
+        "creatorCount": "5",
+        "versionIsExcludeed": "0",
+        "dpCreatorCount": "0",
+        "notAcumRepesentedCreatorCount": "0",
+        "acumRepesentedCreatorCount": "5"
+      },
+      {
+        "type": "org.acum.site.searchdb.dto.bean.WorkBean",
+        "fullWorkId": "1052784005",
+        "work_id": "052784005",
+        "workNumber": "052784",
+        "workLanguage": "1",
+        "versionNumber": "005",
+        "searchTitleIsForeign": false,
+        "workHebName": "יש בי אהבה",
+        "workEngName": "YESH BI AHAVA",
+        "workIsForeign": false,
+        "workNameIsForeign": false,
+        "pool": "1",
+        "registration_date": "",
+        "publication_date": "",
+        "workAlbums": {
+          "type": "org.acum.site.searchdb.dto.bean.SubSummaryBean",
+          "total": "22"
+        },
+        "performer": {
+          "type": "org.acum.site.searchdb.dto.bean.PerformerBean",
+          "number": "2",
+          "performerHebName": "איינשטיין אריק",
+          "performerEngName": "EINSTEIN ARIK",
+          "searchTitleIsForeign": false,
+          "performerNameIsForeign": false,
+          "performerNameIsHebrew": false
+        },
+        "authors": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "composers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "arrangers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "creators": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "C",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "A",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00080671673",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "AR",
+            "protectionStatus": "1",
+            "declareDate": 290514
+          }
+        ],
+        "time": "04:13",
+        "isWork": "0",
+        "isVersion": "1",
+        "isMedley": "0",
+        "isTranslated": "0",
+        "translatedVersionIsForeign": false,
+        "youtubeId": "",
+        "rightsPercent": "100",
+        "albumTrackNumber": "3",
+        "workId": "1052784",
+        "versionId": "1052784005",
+        "versionEssenceType": "30",
+        "versionIswcNumber": "T-002.638.254-6",
+        "versionIsrcNumber": "",
+        "workType": "0",
+        "userOwnWork": false,
+        "notDPCreatorCount": "5",
+        "creatorCount": "5",
+        "versionIsExcludeed": "0",
+        "dpCreatorCount": "0",
+        "notAcumRepesentedCreatorCount": "0",
+        "acumRepesentedCreatorCount": "5"
+      },
+      {
+        "type": "org.acum.site.searchdb.dto.bean.WorkBean",
+        "fullWorkId": "1052784006",
+        "work_id": "052784006",
+        "workNumber": "052784",
+        "workLanguage": "1",
+        "versionNumber": "006",
+        "searchTitleIsForeign": false,
+        "workHebName": "יש בי אהבה",
+        "workEngName": "YESH BI AHAVA",
+        "workIsForeign": false,
+        "workNameIsForeign": false,
+        "pool": "1",
+        "registration_date": "",
+        "publication_date": "",
+        "workAlbums": {
+          "type": "org.acum.site.searchdb.dto.bean.SubSummaryBean",
+          "total": "22"
+        },
+        "performer": {
+          "type": "org.acum.site.searchdb.dto.bean.PerformerBean",
+          "number": "2",
+          "performerHebName": "איינשטיין אריק",
+          "performerEngName": "EINSTEIN ARIK",
+          "searchTitleIsForeign": false,
+          "performerNameIsForeign": false,
+          "performerNameIsHebrew": false
+        },
+        "authors": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "composers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "arrangers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "creators": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "C",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "A",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00080671673",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "AR",
+            "protectionStatus": "1",
+            "declareDate": 290514
+          }
+        ],
+        "time": "04:13",
+        "isWork": "0",
+        "isVersion": "1",
+        "isMedley": "0",
+        "isTranslated": "0",
+        "translatedVersionIsForeign": false,
+        "youtubeId": "",
+        "rightsPercent": "100",
+        "albumTrackNumber": "3",
+        "workId": "1052784",
+        "versionId": "1052784006",
+        "versionEssenceType": "30",
+        "versionIswcNumber": "T-002.638.255-7",
+        "versionIsrcNumber": "",
+        "workType": "0",
+        "userOwnWork": false,
+        "notDPCreatorCount": "5",
+        "creatorCount": "5",
+        "versionIsExcludeed": "0",
+        "dpCreatorCount": "0",
+        "notAcumRepesentedCreatorCount": "0",
+        "acumRepesentedCreatorCount": "5"
+      },
+      {
+        "type": "org.acum.site.searchdb.dto.bean.WorkBean",
+        "fullWorkId": "1052784007",
+        "work_id": "052784007",
+        "workNumber": "052784",
+        "workLanguage": "1",
+        "versionNumber": "007",
+        "searchTitleIsForeign": false,
+        "workHebName": "יש בי אהבה",
+        "workEngName": "YESH BI AHAVA",
+        "workIsForeign": false,
+        "workNameIsForeign": false,
+        "pool": "1",
+        "registration_date": "",
+        "publication_date": "",
+        "workAlbums": {
+          "type": "org.acum.site.searchdb.dto.bean.SubSummaryBean",
+          "total": "22"
+        },
+        "performer": {
+          "type": "org.acum.site.searchdb.dto.bean.PerformerBean",
+          "number": "2",
+          "performerHebName": "איינשטיין אריק",
+          "performerEngName": "EINSTEIN ARIK",
+          "searchTitleIsForeign": false,
+          "performerNameIsForeign": false,
+          "performerNameIsHebrew": false
+        },
+        "authors": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "composers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "arrangers": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorBean",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false
+          }
+        ],
+        "creators": [
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "C",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00226770073",
+            "creatorHebName": "ארקדי דוכין",
+            "creatorEngName": "ARKADI DUCHIN",
+            "creatorIpBaseNumber": "I-000164573-2",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "A",
+            "protectionStatus": "1",
+            "declareDate": 300395,
+            "publishers": [
+              {
+                "type": "org.acum.site.searchdb.dto.bean.PublisherBean",
+                "number": "01082433966",
+                "publisherHebName": "צאן ברזל מוזיקה בע\"ם",
+                "publisherEngName": "TZON BARZEL MUSIC LTD",
+                "publisherIpBaseNumber": "I-005878104-5",
+                "publisherIsZky": false,
+                "publisherNameIsForeign": false,
+                "publisherNameIsHebrew": false,
+                "roleCode": "E",
+                "protectionStatus": "1",
+                "declareDate": 0,
+                "address": "",
+                "zipCode": "",
+                "phone": "",
+                "fax": "",
+                "email": "",
+                "hasContactInfo": false
+              }
+            ]
+          },
+          {
+            "type": "org.acum.site.searchdb.dto.bean.CreatorFullBean",
+            "number": "00080671673",
+            "creatorHebName": "שם טוב לוי",
+            "creatorEngName": "SHEM TOV LEVY",
+            "creatorIpBaseNumber": "I-000148929-6",
+            "creatorIsZky": false,
+            "creatorNameIsForeign": false,
+            "creatorNameIsHebrew": false,
+            "roleCode": "AR",
+            "protectionStatus": "1",
+            "declareDate": 290514
+          }
+        ],
+        "time": "04:13",
+        "isWork": "0",
+        "isVersion": "1",
+        "isMedley": "0",
+        "isTranslated": "0",
+        "translatedVersionIsForeign": false,
+        "youtubeId": "",
+        "rightsPercent": "100",
+        "albumTrackNumber": "3",
+        "workId": "1052784",
+        "versionId": "1052784007",
+        "versionEssenceType": "30",
+        "versionIswcNumber": "T-337.882.716-4",
+        "versionIsrcNumber": "",
+        "workType": "0",
+        "userOwnWork": false,
+        "notDPCreatorCount": "5",
+        "creatorCount": "5",
+        "versionIsExcludeed": "0",
+        "dpCreatorCount": "0",
+        "notAcumRepesentedCreatorCount": "0",
+        "acumRepesentedCreatorCount": "5"
+      }
+    ]
+  }
+}

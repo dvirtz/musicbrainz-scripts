@@ -1,4 +1,4 @@
-import {Entity} from '#acum.ts';
+import {Entity, loadLatestEntityData} from '#acum.ts';
 import {medleyWorkRelationships, importWork as tryImportWork} from '#import-work.ts';
 import {updateMedleyWorkRelationship} from '#relationships.ts';
 import {replaceSubmitButton, submitWork} from '#submit.ts';
@@ -29,6 +29,16 @@ function AcumImporter(props: {form: HTMLFormElement}) {
     }
   }
 
+  async function importFromPreferredSource(entity: Entity<'Work' | 'Version'>) {
+    const storedEntity = await loadLatestEntityData(['Work', 'Version']);
+    const importEntity =
+      storedEntity && (storedEntity.entityType === 'Work' || storedEntity.entityType === 'Version')
+        ? (storedEntity as Entity<'Work' | 'Version'>)
+        : entity;
+
+    await importWork(importEntity);
+  }
+
   replaceSubmitButton(async (originalSubmitButton: HTMLButtonElement) => {
     const submitButton = document.querySelector<HTMLButtonElement>('button[data-acum-replaced]');
     if (submitButton) submitButton.disabled = true;
@@ -45,7 +55,7 @@ function AcumImporter(props: {form: HTMLFormElement}) {
 
   return (
     <>
-      <ImportForm entityTypes={['Work', 'Version']} onSubmit={importWork} idPattern="[12][0-9A-Z]+">
+      <ImportForm entityTypes={['Work', 'Version']} onImport={importFromPreferredSource} idPattern="[12][0-9A-Z]+">
         <ProgressBar value={progress()[0]} label={progress()[1]} minValue={0} maxValue={1} />
       </ImportForm>
     </>

@@ -1,0 +1,40 @@
+.captureButton {
+  padding: 10px 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.topMenuActionItem {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: 12px;
+}
+
+.captureButtonTopMenu {
+  margin: 6px 10px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: transparent;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.captureButtonTopMenu:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.captureButtonTopMenu:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 2px;
+}
+
+.captureButton:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
