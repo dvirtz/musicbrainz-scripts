@@ -14,7 +14,7 @@ async function expectSeededUrlRelationships(page: Page) {
   const externalLinksRows = page.locator('#external-links-editor').locator('tr');
   for (const [index, relationship] of TestEvent.urlRelationships.entries()) {
     const linkRow = externalLinksRows.nth(index * 2);
-    await expect(linkRow.locator('input')).toHaveValue(relationship.url);
+    await expect(linkRow.getByRole('link')).toHaveText(relationship.url);
     const typeRow = externalLinksRows.nth(index * 2 + 1);
     await expect(typeRow.locator('label.relationship-name')).toContainText(relationship.linkTypeName);
   }
