@@ -1,10 +1,10 @@
 import {expect} from '@playwright/test';
 import {test} from '@repo/test-support/musicbrainz-test';
 
-const url = 'release/5fe5a3dd-3bc9-4dff-ab6c-6f7fae6e42e2/edit#tracklist';
+const release = '5fe5a3dd-3bc9-4dff-ab6c-6f7fae6e42e2';
 
-test('reset action restores canonical artist name', async ({userscriptPage, page}) => {
-  await userscriptPage.goto(url);
+test('reset action restores canonical artist name', async ({page, musicbrainzPage}) => {
+  await musicbrainzPage.editTracklist(release);
 
   const trackName = 'Goodbye New York';
   // cspell: disable-next-line
