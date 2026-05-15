@@ -64,6 +64,12 @@ export class MusicbrainzPage {
     });
   }
 
+  async editTracklist(release: string) {
+    await this.userscriptPage.goto(`release/${release}/edit`);
+
+    await this.page.getByRole('link', {name: 'Tracklist'}).click();
+  }
+
   public expectWorkCreateToMatch(postData: {[k: string]: unknown}, work: Work) {
     expect(postData).toMatchObject({
       'edit-work.name': work.title,
