@@ -1,3 +1,8 @@
+## @dvirtz/acum-work-import-v1.21.0-beta.1 (2026-05-15)
+
+* feat: simplify work dialog UI ([dde4b0d](https://github.com/dvirtz/musicbrainz-scripts/commit/dde4b0d))
+* feat(acum-work-import): save/restore ACUM data ([b024d84](https://github.com/dvirtz/musicbrainz-scripts/commit/b024d84)), closes [#186](https://github.com/dvirtz/musicbrainz-scripts/issues/186)
+
 ## @dvirtz/acum-work-import-v1.20.7 (2026-04-13)
 
 * fix(acum-work-import): can't assign const property ([ab9f19a](https://github.com/dvirtz/musicbrainz-scripts/commit/ab9f19a))
