@@ -1,10 +1,10 @@
 import {expect} from '@playwright/test';
 import {test} from '@repo/test-support/musicbrainz-test';
 
-const url = 'release/148cc205-92b8-42e6-a3b8-9758503a48cd/edit#tracklist';
+const release = '148cc205-92b8-42e6-a3b8-9758503a48cd';
 
-test('release artist toolkit change-all default', async ({userscriptPage, page}) => {
-  await userscriptPage.goto(url);
+test('release artist toolkit change-all default', async ({musicbrainzPage, page}) => {
+  await musicbrainzPage.editTracklist(release);
 
   const checkbox = page
     .getByRole('group', {name: 'dvirtz MusicBrainz scripts'})
@@ -31,21 +31,21 @@ test('release artist toolkit change-all default', async ({userscriptPage, page})
   await expect(artistName).toHaveValue(newArtistName);
 });
 
-test('prepopulated from storage: true', async ({userscriptPage, page}) => {
+test('prepopulated from storage: true', async ({musicbrainzPage, page}) => {
   // Seed localStorage before the userscript and page are initialized
   await page.addInitScript(() => {
     localStorage.setItem('change-matching-artists', JSON.stringify(true));
   });
 
-  await userscriptPage.goto(url);
+  await musicbrainzPage.editTracklist(release);
 
   await page.locator('#open-ac-5628185').click();
   const checkbox = page.getByRole('checkbox', {name: 'Change all artists on this'});
   await expect(checkbox).toBeChecked();
 });
 
-test('persisted value survives reload', async ({userscriptPage, page}) => {
-  await userscriptPage.goto(url);
+test('persisted value survives reload', async ({musicbrainzPage, userscriptPage, page}) => {
+  await musicbrainzPage.editTracklist(release);
 
   const checkbox = page
     .getByRole('group', {name: 'dvirtz MusicBrainz scripts'})
@@ -54,6 +54,8 @@ test('persisted value survives reload', async ({userscriptPage, page}) => {
 
   // Reload and re-inject the userscript
   await userscriptPage.reload();
+
+  await musicbrainzPage.editTracklist(release);
 
   await expect(checkbox).toBeChecked();
 });

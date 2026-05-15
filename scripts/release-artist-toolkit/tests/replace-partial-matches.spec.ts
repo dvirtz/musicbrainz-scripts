@@ -1,10 +1,10 @@
 import {expect} from '@playwright/test';
 import {test} from '@repo/test-support/musicbrainz-test';
 
-const url = 'release/4a4c1819-f721-4c76-8213-9b0557b18961/edit#tracklist';
+const release = '4a4c1819-f721-4c76-8213-9b0557b18961';
 
-test('propagates partially matching credits', async ({userscriptPage, page}) => {
-  await userscriptPage.goto(url);
+test('propagates partially matching credits', async ({musicbrainzPage, page}) => {
+  await musicbrainzPage.editTracklist(release);
 
   const changePartiallyMatchingCheckbox = page.locator('#checkbox-cl-2-control > input');
   await expect(changePartiallyMatchingCheckbox).not.toBeChecked();
