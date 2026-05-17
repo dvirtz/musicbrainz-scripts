@@ -47,6 +47,7 @@ class AcumButton {
     const element = document.createElement('button');
     element.id = captureButtonId;
     element.type = 'button';
+    element.className = `${styles.captureButton} ${styles.captureButtonTopMenu}`;
 
     const button = new AcumButton(element);
     button.setTextContent();
@@ -101,12 +102,12 @@ class AcumButton {
       anchor.append(actionItem);
     }
 
+    this.setTextContent();
+
     if (this.element.parentElement === actionItem) {
       return;
     }
 
-    this.setTextContent();
-    this.element.className = [styles.captureButton, styles.captureButtonTopMenu].filter(Boolean).join(' ');
     actionItem.append(this.element);
   }
 

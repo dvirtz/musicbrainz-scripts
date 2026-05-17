@@ -2,7 +2,7 @@ import {AcumWorkType} from '#acum-work-type.ts';
 import {tryFetchJSON} from '@repo/fetch/fetch';
 import {formatISWC} from '@repo/musicbrainz-ext/format-iswc';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
-import {filter, from, lastValueFrom, map, mergeAll, mergeMap, range, startWith, toArray} from 'rxjs';
+import {filter, from, ignoreElements, lastValueFrom, map, mergeAll, mergeMap, range, startWith, toArray} from 'rxjs';
 
 export type IPBaseNumber = string;
 
@@ -318,32 +318,17 @@ async function readStoredAcumData(): Promise<StoredAcumData | undefined> {
   }
 }
 
-function prefetchRelatedWorks(
-  works: ReadonlyArray<WorkBean>,
-  visitedWorkIds: Set<string>,
-  visitedVersions: Set<string>
-): Promise<void> {
-  return executePipeline(
+async function prefetchRelatedWorks(works: ReadonlyArray<WorkBean>): Promise<void> {
+  await executePipeline(
     from(works).pipe(
-      mergeMap(async work => {
-        const canonicalWorkId = workId(work);
-        if (!visitedWorkIds.has(canonicalWorkId)) {
-          visitedWorkIds.add(canonicalWorkId);
-          const fullWorkVersions = await fetchWorks(new Entity(canonicalWorkId, 'Work'));
-          await prefetchRelatedWorks(fullWorkVersions, visitedWorkIds, visitedVersions);
-        }
-
-        await executePipeline(
-          from(work.list ?? []).pipe(
-            filter(medleyVersion => !visitedVersions.has(medleyVersion.id)),
-            mergeMap(async medleyVersion => {
-              visitedVersions.add(medleyVersion.id);
-              const medleyWorks = await fetchWorks(new Version(medleyVersion.id, medleyVersion.workId));
-              await prefetchRelatedWorks(medleyWorks, visitedWorkIds, visitedVersions);
-            })
-          )
-        );
-      })
+      mergeMap(work =>
+        from(work.list ?? []).pipe(
+          map(medleyVersion => new Version(medleyVersion.id, medleyVersion.workId)),
+          startWith(new Entity(work.workId || work.fullWorkId, 'Work'))
+        )
+      ),
+      mergeMap(fetchWorks),
+      ignoreElements()
     )
   );
 }
@@ -352,7 +337,7 @@ export async function saveLatestEntityData(entity: Entity): Promise<number> {
   entityCache.clear();
 
   const works = await fetchWorks(entity);
-  await prefetchRelatedWorks(works, new Set<string>(), new Set<string>());
+  await prefetchRelatedWorks(works);
 
   const payload: StoredAcumData = {
     version: 1,
@@ -388,52 +373,7 @@ export async function loadLatestEntityData(entityTypes?: ReadonlyArray<EntityT>)
     }
   }
 
-  hydrateEntityCache(entityCache.values(), new Set<string>());
-
   return entity;
-}
-
-function hydrateEntityCache(workSets: Iterable<ReadonlyArray<WorkBean>>, visitedVersionIds: Set<string>) {
-  for (const works of workSets) {
-    for (const work of works) {
-      const canonicalWorkId = workId(work);
-      const workEntity = new Entity(canonicalWorkId, 'Work');
-      const workKey = entityCacheKey(workEntity);
-      const existingWorkVersions = entityCache.get(workKey) ?? [];
-      if (!existingWorkVersions.some(track => track.versionId === work.versionId)) {
-        entityCache.set(workKey, [...existingWorkVersions, work]);
-      }
-
-      const versionEntity = new Version(work.versionId, canonicalWorkId);
-      const versionKey = entityCacheKey(versionEntity);
-      if (!entityCache.has(versionKey)) {
-        entityCache.set(versionKey, [work]);
-      }
-
-      for (const medleyVersion of work.list ?? []) {
-        if (visitedVersionIds.has(medleyVersion.id)) {
-          continue;
-        }
-        visitedVersionIds.add(medleyVersion.id);
-
-        const medleyVersionEntity = new Version(medleyVersion.id, medleyVersion.workId);
-        const medleyVersionKey = entityCacheKey(medleyVersionEntity);
-        if (!entityCache.has(medleyVersionKey)) {
-          const medleyWorkKey = entityCacheKey(new Entity(medleyVersion.workId, 'Work'));
-          const medleyWorks = entityCache.get(medleyWorkKey)?.filter(track => track.versionId === medleyVersion.id);
-          if (medleyWorks && medleyWorks.length > 0) {
-            entityCache.set(medleyVersionKey, medleyWorks);
-            hydrateEntityCache([medleyWorks], visitedVersionIds);
-          }
-        } else {
-          const cachedMedleyWorks = entityCache.get(medleyVersionKey);
-          if (cachedMedleyWorks) {
-            hydrateEntityCache([cachedMedleyWorks], visitedVersionIds);
-          }
-        }
-      }
-    }
-  }
 }
 
 export function replaceUrlWith<T extends EntityT>(input: string): Entity<T> | undefined {
