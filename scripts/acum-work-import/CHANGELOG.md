@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.21.0-beta.2 (2026-05-17)
+
+* fix(acum-work-import): reset text when navigating and translated work error ([e84b9f4](https://github.com/dvirtz/musicbrainz-scripts/commit/e84b9f4))
+
 ## @dvirtz/acum-work-import-v1.21.0-beta.1 (2026-05-15)
 
 * feat: simplify work dialog UI ([dde4b0d](https://github.com/dvirtz/musicbrainz-scripts/commit/dde4b0d))
