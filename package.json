@@ -12,7 +12,7 @@
   "license": "BSL-1.0",
   "private": true,
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "keywords": [
     "musicbrainz",
@@ -53,7 +53,7 @@
     "@semantic-release/git": "^10.0.1",
     "@types/node": "^22.9.0",
     "@types/tampermonkey": "^5.0.4",
-    "cspell": "^8.14.2",
+    "cspell": "^10.0.0",
     "dotenv": "^16.4.7",
     "eslint": "^9.9.1",
     "eslint-config-prettier": "^9.1.0",
