@@ -36,7 +36,9 @@ words:
   - typedbrainz
   - userscript
   - userscripts
+  - versionid
   - vite
+  - workid
   - yitzchaki
 patterns:
   - name: user_script_id
