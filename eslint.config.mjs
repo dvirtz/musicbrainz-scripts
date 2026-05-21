@@ -55,6 +55,14 @@ export default tsEslint.config(
     },
     rules: {
       'no-relative-import-paths/no-relative-import-paths': ['error', {allowSameFolder: false}],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.property.name='unrouteAll']",
+          message:
+            'Do not use unrouteAll in Playwright tests. It can remove HAR replay routes from shared fixtures and break teardown/recording. Use userscriptPage.route(...) and the returned unroute callback instead.',
+        },
+      ],
     },
   },
   {

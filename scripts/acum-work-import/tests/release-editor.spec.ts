@@ -28,7 +28,7 @@ const test = base.extend({
     const arrangerLabels = page.getByText('arranger:');
     await expect(arrangerLabels).toHaveCount(testRelease.tracks().length);
 
-    await page.route('**/work/create', async (route, request) => {
+    const unrouteWorkCreate = await userscriptPage.route('**/work/create', async (route, request) => {
       const postData = await userscriptPage.postDataJSON(request);
       const workName = postData['edit-work.name'] as string;
       expect(workName).toBeDefined();
@@ -52,7 +52,7 @@ const test = base.extend({
       arrangers: [] as string[],
     }));
     const workIndex = (title: string) => workTitles.findIndex(v => compareInsensitive(v, title) === 0);
-    await page.route('ws/js/edit/create', async (route, request) => {
+    const unrouteEditCreate = await userscriptPage.route('ws/js/edit/create', async (route, request) => {
       const postData = await userscriptPage.postDataJSON(request);
       if ('editNote' in postData) {
         // Show visible diff to debug whitespace/unicode differences
@@ -103,7 +103,8 @@ const test = base.extend({
       }))
     ).toEqual(workCreators);
 
-    await page.unrouteAll();
+    await unrouteWorkCreate();
+    await unrouteEditCreate();
   },
 });
 
@@ -235,10 +236,12 @@ base.describe('release editor', () => {
     await page.getByRole('button', {name: 'Done'}).click();
 
     // submit page
-    await page.route('**/work/create', () => {
+    const unrouteWorkCreate = await userscriptPage.route('**/work/create', () => {
       throw new Error('should not create any work');
     });
-    await page.route('ws/js/edit/create', route => route.fulfill({json: {edits: []}}));
+    const unrouteEditCreate = await userscriptPage.route('ws/js/edit/create', route =>
+      route.fulfill({json: {edits: []}})
+    );
 
     const enterEdit = page.getByRole('button', {name: 'Enter edit'});
     await expect(enterEdit).toHaveAttribute('data-acum-replaced', 'true');
@@ -246,5 +249,8 @@ base.describe('release editor', () => {
     await enterEdit.click();
 
     await expect(page).toHaveURL(`/release/${testRelease.gid}`);
+
+    await unrouteWorkCreate();
+    await unrouteEditCreate();
   });
 });
