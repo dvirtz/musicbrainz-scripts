@@ -4,11 +4,11 @@ import {test} from '@repo/test-support/musicbrainz-test';
 // Basic existence test, extend as needed
 
 [
-  {buttonName: 'Remove LHS', keptIndex: 1},
-  {buttonName: 'Remove RHS', keptIndex: 0},
-  {buttonName: 'Remove RHS', keptIndex: 0, separator: '-'},
-].forEach(({buttonName, keptIndex, separator}) => {
-  test(`${buttonName}${separator ? `, ${separator}` : ''}`, async ({page, baseURL, userscriptPage}) => {
+  {name: 'Remove LHS', buttonName: 'Remove LHS', keptIndex: 1},
+  {name: 'Remove RHS', buttonName: 'Remove RHS', keptIndex: 0},
+  {name: 'Remove RHS with custom separator', buttonName: 'Remove RHS', keptIndex: 0, separator: '-'},
+].forEach(({name, buttonName, keptIndex, separator}) => {
+  test(name, async ({page, baseURL, userscriptPage}) => {
     const formData: Record<string, string> = {
       // cspell: disable
       'name': 'סודות גדולים = Big Secrets',

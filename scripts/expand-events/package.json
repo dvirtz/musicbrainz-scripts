@@ -12,8 +12,8 @@
     "build-watch": "yarn run build --watch",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "test": "playwright test",
-    "record:har": "record-har"
+    "test": "playwright test --project=chromium",
+    "record:har": "playwright test --max-failures=0 --project=chromium-har"
   },
   "dependencies": {
     "@repo/common-types": "workspace:*",

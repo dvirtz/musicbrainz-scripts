@@ -1,0 +1,35 @@
+------WebKitFormBoundaryZkfwCrQq0HrSh70y
+Content-Disposition: form-data; name="edit-work.name"
+
+אני מתגעגע אבא
+------WebKitFormBoundaryZkfwCrQq0HrSh70y
+Content-Disposition: form-data; name="edit-work.comment"
+
+
+------WebKitFormBoundaryZkfwCrQq0HrSh70y
+Content-Disposition: form-data; name="edit-work.type_id"
+
+17
+------WebKitFormBoundaryZkfwCrQq0HrSh70y
+Content-Disposition: form-data; name="edit-work.languages.0"
+
+167
+------WebKitFormBoundaryZkfwCrQq0HrSh70y
+Content-Disposition: form-data; name="edit-work.iswcs.0"
+
+T-002.099.499-3
+------WebKitFormBoundaryZkfwCrQq0HrSh70y
+Content-Disposition: form-data; name="edit-work.attributes.0.type_id"
+
+141
+------WebKitFormBoundaryZkfwCrQq0HrSh70y
+Content-Disposition: form-data; name="edit-work.attributes.0.value"
+
+1056365
+------WebKitFormBoundaryZkfwCrQq0HrSh70y
+Content-Disposition: form-data; name="edit-work.edit_note"
+
+
+----
+Imported from https://nocs.acum.org.il/acumsitesearchdb/album?albumid=006625 using userscript version 1.0.0 from https://homepage.com.
+------WebKitFormBoundaryZkfwCrQq0HrSh70y--

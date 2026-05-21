@@ -18,8 +18,6 @@ export function defineConfig(baseURL: string, userscriptPath: string, options?: 
     forbidOnly: !!process.env.CI,
     /* Retry on CI only */
     retries: process.env.CI ? 2 : 0,
-    /* Can't run in parallel due to Musicbrainz rate limit */
-    workers: 1,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: 'html',
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -41,6 +39,12 @@ export function defineConfig(baseURL: string, userscriptPath: string, options?: 
       {
         name: 'chromium',
         use: {...devices['Desktop Chrome']},
+      },
+      {
+        name: 'chromium-har',
+        /* Can't run in parallel due to Musicbrainz rate limit */
+        workers: 1,
+        use: {...devices['Desktop Chrome'], updateHar: true},
       },
     ],
   });

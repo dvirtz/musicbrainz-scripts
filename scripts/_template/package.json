@@ -12,7 +12,7 @@
     "build-watch": "yarn run build --watch",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "test": "playwright test"
+    "test": "playwright test --project=chromium"
   },
   "dependencies": {
     "@repo/common-types": "workspace:*",

@@ -81,15 +81,6 @@
 			"problemMatcher": [],
 			"label": "npm: record:har",
 			"detail": "turbo run record:har"
-		},
-		{
-			"type": "shell",
-			"label": "sanitize HAR",
-			"command": "node",
-			"args": [
-				"lib/test-support/src/sanitize-har.mjs"
-			],
-			"problemMatcher": []
 		}
 	],
 	"inputs": [
