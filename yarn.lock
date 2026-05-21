@@ -2662,9 +2662,6 @@ __metadata:
     "@repo/typescript-config": "workspace:*"
     eslint: "npm:*"
     typescript: "npm:*"
-  bin:
-    record-har: ./src/record-har.mjs
-    sanitize-har: ./src/sanitize-har.mjs
   languageName: unknown
   linkType: soft
 
