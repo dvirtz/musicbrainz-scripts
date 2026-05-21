@@ -234,7 +234,7 @@ test.describe('work editor', () => {
     await expect(medleyRelationships).toHaveText(medleyWorks.map(work => work.title));
 
     // Reroute submit endpoints to verify data
-    await page.route('/work/create', async (route, request) => {
+    const unrouteWorkCreate = await userscriptPage.route('/work/create', async (route, request) => {
       const postData = await userscriptPage.postDataJSON(request);
       const title = postData['edit-work.name'];
       const expected = [work, ...medleyWorks].find(work => work.title === title)!;
@@ -272,7 +272,7 @@ test.describe('work editor', () => {
 
     let relationshipId = 1;
 
-    await page.route('/ws/js/entity/**', async (route, request) => {
+    const unrouteEntityLookup = await userscriptPage.route('/ws/js/entity/**', async (route, request) => {
       const parts = request.url().split('/');
       const gid = parts[parts.length - 1]!;
       expect(gid).toBeDefined();
@@ -329,7 +329,8 @@ test.describe('work editor', () => {
 
     await expect(page).toHaveURL(`${baseURL}`);
 
-    await page.unrouteAll();
+    await unrouteWorkCreate();
+    await unrouteEntityLookup();
   });
 
   test('can import translated work', async ({page, userscriptPage}) => {

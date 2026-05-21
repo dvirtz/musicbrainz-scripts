@@ -244,16 +244,23 @@ export class UserscriptPage {
     await this.page.evaluate(([key, value]) => localStorage.setItem(key, value), [key, value] as const);
   }
 
+  public async route(
+    url: string | RegExp | ((url: URL) => boolean),
+    handler: (route: Route, request: Request) => Promise<void> | void
+  ): Promise<() => Promise<void>> {
+    await this.page.route(url, handler);
+
+    return async () => {
+      await this.page.unroute(url, handler);
+    };
+  }
+
   public async rejectRoute(url: string | RegExp | ((url: URL) => boolean)): Promise<() => Promise<void>> {
     const handler = (route: Route) =>
       route.fulfill({
         status: 404,
       });
 
-    await this.page.route(url, handler);
-
-    return async () => {
-      await this.page.unroute(url, handler);
-    };
+    return this.route(url, handler);
   }
 }

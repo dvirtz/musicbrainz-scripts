@@ -1,10 +1,11 @@
 import {test} from '#tests/fixtures/test-festival-event.ts';
-import {expect, type Page, type Request} from '@playwright/test';
+import {expect, type Page} from '@playwright/test';
 import {
   EDIT_RELATIONSHIP_CREATE,
   EVENT_HELD_AT_RELATIONSHIP_TYPE_ID as HELD_AT_RELATIONSHIP_TYPE_ID,
   EVENT_PART_OF_RELATIONSHIP_TYPE_ID as PART_OF_RELATIONSHIP_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
+import {UserscriptPage} from '@repo/test-support/userscript-page';
 
 type CreatedEvent = {name: string; placeId: string | null; placeCreditName: string | null};
 
@@ -32,6 +33,7 @@ type ScaffoldRouteState = {
   eventNamesById: Map<string, string>;
   createEventEditNotes: string[];
   createRelationshipEditNotes: string[];
+  unroute: () => Promise<void>;
 };
 
 type TestEventDate = {year: string; month: string; day: string};
@@ -52,8 +54,7 @@ async function confirmScaffoldCreation(page: Page, expectsDialog: boolean = true
 }
 
 async function setupScaffoldRoutes(params: {
-  page: Pick<Page, 'route'>;
-  userscriptPage: {postDataJSON: (request: Request) => Promise<Record<string, unknown>>};
+  userscriptPage: UserscriptPage;
   testFestivalEvent: {
     gid: string;
     getName: () => string;
@@ -67,7 +68,7 @@ async function setupScaffoldRoutes(params: {
   endDate?: TestEventDate;
   relations?: Array<Record<string, unknown>>;
 }): Promise<ScaffoldRouteState> {
-  const {page, userscriptPage, testFestivalEvent, testPlaces, exposedPlaces, eventType, beginDate, endDate, relations} =
+  const {userscriptPage, testFestivalEvent, testPlaces, exposedPlaces, eventType, beginDate, endDate, relations} =
     params;
   const createdEvents: CreatedEvent[] = [];
   const relationships: RelationshipEdit[] = [];
@@ -100,7 +101,7 @@ async function setupScaffoldRoutes(params: {
     },
   }));
 
-  await page.route(`**/ws/2/event/${testFestivalEvent.gid}?*`, async route => {
+  const unrouteEvent = await userscriptPage.route(`**/ws/2/event/${testFestivalEvent.gid}?*`, async route => {
     await route.fulfill({
       json: {
         id: testFestivalEvent.gid,
@@ -116,7 +117,7 @@ async function setupScaffoldRoutes(params: {
     });
   });
 
-  await page.route('**/event/create', async (route, request) => {
+  const unrouteEventCreate = await userscriptPage.route('**/event/create', async (route, request) => {
     const postData = await userscriptPage.postDataJSON(request);
     const name = String(postData['edit-event.name'] ?? '');
     createEventEditNotes.push(String(postData['edit-event.edit_note'] ?? ''));
@@ -130,7 +131,7 @@ async function setupScaffoldRoutes(params: {
     await route.fulfill({json: {mbid: gid}});
   });
 
-  await page.route('**/ws/js/edit/create', async (route, request) => {
+  const unrouteEditCreate = await userscriptPage.route('**/ws/js/edit/create', async (route, request) => {
     const postData = await userscriptPage.postDataJSON(request);
     createRelationshipEditNotes.push(String(postData['editNote'] ?? ''));
     const edits = (postData['edits'] ?? []) as Array<{
@@ -197,6 +198,11 @@ async function setupScaffoldRoutes(params: {
     eventNamesById,
     createEventEditNotes,
     createRelationshipEditNotes,
+    unroute: async () => {
+      await unrouteEvent();
+      await unrouteEventCreate();
+      await unrouteEditCreate();
+    },
   };
 }
 
@@ -208,7 +214,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     // Wait for the toolbox to appear
@@ -218,7 +224,7 @@ test.describe('scaffold festival days', () => {
     const scaffoldButton = page.getByRole('button', {name: /create.*festival.*day/i});
     await expect(scaffoldButton).toBeAttached();
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('shows the UI for a single-day festival event', async ({
@@ -228,8 +234,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    await setupScaffoldRoutes({
-      page,
+    const routeState = await setupScaffoldRoutes({
       userscriptPage,
       testFestivalEvent,
       testPlaces,
@@ -243,7 +248,7 @@ test.describe('scaffold festival days', () => {
     ).toBeAttached();
     await expect(page.getByLabel('Day word:')).toHaveCount(0);
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('does not show the UI when the festival already has sub-events', async ({
@@ -253,8 +258,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    await setupScaffoldRoutes({
-      page,
+    const routeState = await setupScaffoldRoutes({
       userscriptPage,
       testFestivalEvent,
       testPlaces,
@@ -273,7 +277,7 @@ test.describe('scaffold festival days', () => {
 
     await expect(page.getByRole('button', {name: /create.*festival.*day/i})).toHaveCount(0);
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('displays place selection checkboxes', async ({
@@ -283,7 +287,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     // Wait for the toolbox to appear
@@ -295,7 +299,7 @@ test.describe('scaffold festival days', () => {
       await expect(checkbox).toBeAttached();
     }
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('creates day sub-events with standard naming', async ({
@@ -305,7 +309,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    const routeState = await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     // Wait for the toolbox to appear
@@ -332,7 +336,7 @@ test.describe('scaffold festival days', () => {
     expect(dayEvents).toHaveLength(expectedDayNames.length);
     expect(dayEvents.map(event => event.name)).toEqual(expectedDayNames);
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('creates venue sub-events under each day', async ({
@@ -342,7 +346,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    const routeState = await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     // Wait for the toolbox to appear
@@ -376,7 +380,7 @@ test.describe('scaffold festival days', () => {
       }
     }
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('links sub-events with part-of relationships', async ({
@@ -386,7 +390,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    const routeState = await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     // Wait for the toolbox to appear
@@ -429,7 +433,7 @@ test.describe('scaffold festival days', () => {
       }
     }
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('allows selecting subset of places', async ({
@@ -439,7 +443,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    const routeState = await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     // Wait for the toolbox to appear
@@ -468,7 +472,7 @@ test.describe('scaffold festival days', () => {
     expect(venueEvents).toHaveLength(dayCount);
     expect(venueEvents.every(event => event.placeId === selectedPlaceId)).toBe(true);
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('allows deselecting specific day/place cells in matrix', async ({
@@ -478,7 +482,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    const routeState = await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
@@ -513,7 +517,7 @@ test.describe('scaffold festival days', () => {
     const deselectedComboName = `${festivalName}, Day 1: ${places[0]?.name ?? ''}`;
     expect(venueEvents.some(event => event.name === deselectedComboName)).toBe(false);
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('skips day event when all places are deselected for that day in matrix', async ({
@@ -523,7 +527,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    const routeState = await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
@@ -557,7 +561,7 @@ test.describe('scaffold festival days', () => {
       expect(dayEvents.some(event => event.name === `${festivalName}, Day ${d}`)).toBe(true);
     }
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('creates day sub-events when no places are linked', async ({
@@ -568,7 +572,6 @@ test.describe('scaffold festival days', () => {
     testPlaces,
   }) => {
     const routeState = await setupScaffoldRoutes({
-      page,
       userscriptPage,
       testFestivalEvent,
       testPlaces,
@@ -589,7 +592,7 @@ test.describe('scaffold festival days', () => {
     expect(dayEvents).toHaveLength(dayCount);
     expect(venueEvents).toHaveLength(0);
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('creates direct per-place sub-events for single-day festivals', async ({
@@ -600,7 +603,6 @@ test.describe('scaffold festival days', () => {
     testPlaces,
   }) => {
     const routeState = await setupScaffoldRoutes({
-      page,
       userscriptPage,
       testFestivalEvent,
       testPlaces,
@@ -632,7 +634,7 @@ test.describe('scaffold festival days', () => {
       expect(match).toBeDefined();
     }
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('links single-day per-place sub-events directly to the festival', async ({
@@ -643,7 +645,6 @@ test.describe('scaffold festival days', () => {
     testPlaces,
   }) => {
     const routeState = await setupScaffoldRoutes({
-      page,
       userscriptPage,
       testFestivalEvent,
       testPlaces,
@@ -673,7 +674,7 @@ test.describe('scaffold festival days', () => {
       expect(hasFestivalLink).toBe(true);
     }
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('disables single-day creation when no places are selected', async ({
@@ -683,8 +684,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    await setupScaffoldRoutes({
-      page,
+    const routeState = await setupScaffoldRoutes({
       userscriptPage,
       testFestivalEvent,
       testPlaces,
@@ -699,7 +699,7 @@ test.describe('scaffold festival days', () => {
     ).toBeAttached();
     await expect(page.getByRole('button', {name: /create.*festival.*place/i})).toBeDisabled();
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('uses stored day word for sub-event names', async ({
@@ -713,7 +713,7 @@ test.describe('scaffold festival days', () => {
       localStorage.setItem('day-word', JSON.stringify('Jour'));
     });
 
-    const routeState = await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
@@ -728,7 +728,7 @@ test.describe('scaffold festival days', () => {
     expect(dayEvents).toHaveLength(expectedDayNames.length);
     expect(dayEvents.map(event => event.name)).toEqual(expectedDayNames);
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('remembers selected day word', async ({
@@ -738,7 +738,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
@@ -748,7 +748,7 @@ test.describe('scaffold festival days', () => {
     const stored = await page.evaluate(() => localStorage.getItem('day-word'));
     expect(stored).toBe(JSON.stringify('Jour'));
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('prepends custom edit note text to generated edit notes', async ({
@@ -758,7 +758,7 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    const routeState = await setupScaffoldRoutes({page, userscriptPage, testFestivalEvent, testPlaces});
+    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
@@ -785,7 +785,7 @@ test.describe('scaffold festival days', () => {
       );
     }
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('uses place credit name when creating venue sub-events for multi-day festival', async ({
@@ -798,7 +798,6 @@ test.describe('scaffold festival days', () => {
     const placeIds = testPlaces.getAll();
     const placeCreditNames = ['Credit Name 1', 'Credit Name 2'] as const;
     const routeState = await setupScaffoldRoutes({
-      page,
       userscriptPage,
       testFestivalEvent,
       testPlaces,
@@ -853,7 +852,7 @@ test.describe('scaffold festival days', () => {
       }
     }
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 
   test('uses place credit name when creating per-place sub-events for single-day festival', async ({
@@ -866,7 +865,6 @@ test.describe('scaffold festival days', () => {
     const placeIds = testPlaces.getAll();
     const placeCreditNames = ['Credit Name 1', 'Credit Name 2'] as const;
     const routeState = await setupScaffoldRoutes({
-      page,
       userscriptPage,
       testFestivalEvent,
       testPlaces,
@@ -912,6 +910,6 @@ test.describe('scaffold festival days', () => {
       });
     }
 
-    await page.unrouteAll();
+    await routeState.unroute();
   });
 });
