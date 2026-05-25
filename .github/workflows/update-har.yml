@@ -34,8 +34,17 @@ jobs:
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
 
-      - name: Refresh HAR recordings
-        run: yarn record:har
+      - name: Refresh HAR recordings (non-tagged)
+        run: yarn record:har -- --pass-with-no-tests --grep-invert '@allow_har_failure'
+        env:
+          MB_USERNAME: ${{ secrets.MB_USERNAME }}
+          MB_PASSWORD: ${{ secrets.MB_PASSWORD }}
+          # https://github.com/nodejs/node/issues/59364
+          NODE_OPTIONS: --no-experimental-strip-types
+
+      - name: Refresh HAR recordings (allow_har_failure)
+        continue-on-error: true
+        run: yarn record:har -- --pass-with-no-tests --grep '@allow_har_failure'
         env:
           MB_USERNAME: ${{ secrets.MB_USERNAME }}
           MB_PASSWORD: ${{ secrets.MB_PASSWORD }}
