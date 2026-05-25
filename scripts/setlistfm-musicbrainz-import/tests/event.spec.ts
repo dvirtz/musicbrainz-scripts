@@ -2,7 +2,7 @@ import {test} from '#tests/fixtures/setlistfm-test.ts';
 import {expect} from '@playwright/test';
 import dedent from 'dedent';
 
-test.describe('event page', () => {
+test.describe('event page', {tag: '@allow_har_failure'}, () => {
   test('existing event', async ({page, setlistfmPage, userscriptPage, baseURL}) => {
     await setlistfmPage.goto('/setlist/elton-john/2022/enterprise-center-st-louis-mo-4389530f.html');
 
