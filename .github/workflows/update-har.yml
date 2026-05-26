@@ -1,13 +1,19 @@
-name: Update HAR Recordings
+name: Monitor HAR Recordings
 
 on:
   schedule:
     - cron: "0 2 * * 1"
   workflow_dispatch:
+    inputs:
+      force_non_tagged_failure:
+        description: "Force non-tagged refresh failure for monitoring verification"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  issues: write
 
 jobs:
   update-har:
@@ -34,8 +40,16 @@ jobs:
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
 
-      - name: Refresh HAR recordings (non-tagged)
-        run: yarn record:har -- --pass-with-no-tests --grep-invert '@allow_har_failure'
+      - name: Refresh HAR recordings
+        id: refresh-non-tagged
+        shell: bash
+        run: |
+          set -euo pipefail
+          yarn record:har -- --pass-with-no-tests --grep-invert '@allow_har_failure'
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.force_non_tagged_failure }}" == "true" ]]; then
+            echo "Forcing non-tagged refresh failure for monitoring verification after tests completed"
+            exit 1
+          fi
         env:
           MB_USERNAME: ${{ secrets.MB_USERNAME }}
           MB_PASSWORD: ${{ secrets.MB_PASSWORD }}
@@ -43,6 +57,7 @@ jobs:
           NODE_OPTIONS: --no-experimental-strip-types
 
       - name: Refresh HAR recordings (allow_har_failure)
+        id: refresh-allow-har-failure
         continue-on-error: true
         run: yarn record:har -- --pass-with-no-tests --grep '@allow_har_failure'
         env:
@@ -50,26 +65,45 @@ jobs:
           MB_PASSWORD: ${{ secrets.MB_PASSWORD }}
           # https://github.com/nodejs/node/issues/59364
           NODE_OPTIONS: --no-experimental-strip-types
+      - name: Setup tmate session
+        if: ${{ failure() && runner.debug == '1' }}
+        uses: mxschmitt/action-tmate@v3
 
       - name: Detect HAR changes
         id: har-changes
         shell: bash
         run: |
           set -euo pipefail
-          if git status --porcelain | grep -E 'tests/fixtures/har/.*\.har$' >/dev/null; then
+          if git status --porcelain | grep -E 'scripts/.*/tests/fixtures/har/' >/dev/null; then
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           else
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create PR with refreshed HARs
-        if: steps.har-changes.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@v6
+      - name: Upload monitoring artifacts
+        id: upload-monitoring-artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
         with:
-          commit-message: "chore(test): refresh HAR recordings"
-          title: "chore(test): refresh HAR recordings"
-          body: |
-            Automated HAR refresh from scheduled live-site test run.
-          branch: chore/update-har-recordings
-          delete-branch: true
-          labels: automated
+          name: har-monitoring-artifacts
+          path: |
+            scripts/*/tests/fixtures/har/
+            scripts/*/playwright-report/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Create or update monitoring issue
+        if: ${{ failure() && steps.refresh-non-tagged.outcome == 'failure' }}
+        uses: benlei/create-issue-templateless@v1
+        with:
+          title: "HAR monitoring: non-tagged failures"
+          update-option: upsert
+          fields: |
+            Summary, Scheduled HAR monitoring detected failures in non-tagged tests.
+            Workflow run, "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            Artifacts, "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-monitoring-artifacts.outputs.artifact-id }}"
+            Run attempt, "${{ github.run_attempt }}"
+            Non-tagged refresh outcome, "${{ steps.refresh-non-tagged.outcome }}"
+            allow_har_failure refresh outcome, "${{ steps.refresh-allow-har-failure.outcome }}"
+            HAR fixture changes detected, "${{ steps.har-changes.outputs.has_changes }}"
+            Note, This issue is intentionally non-blocking for CI replay checks.
