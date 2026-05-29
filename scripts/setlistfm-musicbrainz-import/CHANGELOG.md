@@ -1,3 +1,9 @@
+## @dvirtz/setlistfm-musicbrainz-import-v1.8.1 (2026-05-29)
+
+* ci: allow failure on setlist.fm tests when recording HAR ([b0b46a1](https://github.com/dvirtz/musicbrainz-scripts/commit/b0b46a1))
+* test: simplify HAR recording ([7e7926a](https://github.com/dvirtz/musicbrainz-scripts/commit/7e7926a))
+* test: use pre-recorded responses for testing ([a746183](https://github.com/dvirtz/musicbrainz-scripts/commit/a746183))
+
 ## @dvirtz/setlistfm-musicbrainz-import-v1.8.0 (2026-03-31)
 
 * feat(event-seeder): clone an event ([6f72397](https://github.com/dvirtz/musicbrainz-scripts/commit/6f72397))
