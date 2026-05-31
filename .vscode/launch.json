@@ -9,6 +9,7 @@
       "request": "launch",
       "name": "Userscript",
       "url": "${input:debug-url}",
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-user-data",
       "pathMapping": {
         "/src": "${workspaceFolder}/scripts/${input:workspace}/src",
       },
