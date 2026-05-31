@@ -6,9 +6,7 @@ export default defineConfig('acum-work-import', {
   version: '1.21.0',
   icon: 'https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg',
   match: [
-    'http*://nocs.acum.org.il/acumsitesearchdb/album*',
-    'http*://nocs.acum.org.il/acumsitesearchdb/work*',
-    'http*://nocs.acum.org.il/acumsitesearchdb/version*',
+    'http*://nocs.acum.org.il/acumsitesearchdb/*',
     'http*://*.musicbrainz.org/release/*/edit-relationships',
     'http*://*.musicbrainz.org/release/*/edit-relationships?*',
     'http*://*.musicbrainz.org/work/*/edit',
