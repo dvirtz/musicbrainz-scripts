@@ -53,6 +53,14 @@
 			"problemMatcher": []
 		},
 		{
+			"label": "chrome: launch debug profile",
+			"type": "shell",
+			"problemMatcher": [],
+			"windows": {
+				"command": "start chrome -ArgumentList --user-data-dir=${workspaceFolder}/.vscode/chrome-user-data,${input:debug-url}",
+			}
+		},
+		{
 			"type": "npm",
 			"script": "lint",
 			"problemMatcher": [],
@@ -114,6 +122,15 @@
 				"taskId": "debug-url",
 				"rememberPrevious": true,
 			}
+		},
+		{
+			"id": "debug-url",
+			"type": "command",
+			"command": "shellCommand.execute",
+			"args": {
+				"command": "echo ${taskId:debug-url}",
+				"useSingleResult": true,
+			},
 		},
 	]
 }
