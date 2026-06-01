@@ -1,3 +1,10 @@
+## @dvirtz/acum-work-import-v1.21.1 (2026-06-01)
+
+* fix(acum-work-import): run on all acum pages ([b48290f](https://github.com/dvirtz/musicbrainz-scripts/commit/b48290f))
+* test: avoid calling unrouteAll ([16a5201](https://github.com/dvirtz/musicbrainz-scripts/commit/16a5201))
+* test: simplify HAR recording ([7e7926a](https://github.com/dvirtz/musicbrainz-scripts/commit/7e7926a))
+* test: use pre-recorded responses for testing ([a746183](https://github.com/dvirtz/musicbrainz-scripts/commit/a746183))
+
 ## @dvirtz/acum-work-import-v1.21.0 (2026-05-18)
 
 * feat: simplify work dialog UI ([8736735](https://github.com/dvirtz/musicbrainz-scripts/commit/8736735))
