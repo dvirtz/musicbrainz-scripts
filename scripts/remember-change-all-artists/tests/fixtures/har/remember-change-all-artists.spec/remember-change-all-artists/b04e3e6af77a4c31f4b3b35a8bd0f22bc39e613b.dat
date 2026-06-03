@@ -1,0 +1,11 @@
+import { mergeMap, pipe } from "/node_modules/.vite/deps/rxjs.js?v=19b5dcd6";
+export function asyncTap(fn) {
+  return pipe(
+    mergeMap(async (arg) => {
+      await fn(arg);
+      return arg;
+    })
+  );
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFzeW5jLXRhcC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge21lcmdlTWFwLCBwaXBlfSBmcm9tICdyeGpzJztcclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBhc3luY1RhcDxUPihmbjogKF86IFQpID0+IFByb21pc2U8dm9pZD4pIHtcclxuICByZXR1cm4gcGlwZShcclxuICAgIG1lcmdlTWFwKGFzeW5jIChhcmc6IFQpID0+IHtcclxuICAgICAgYXdhaXQgZm4oYXJnKTtcclxuICAgICAgcmV0dXJuIGFyZztcclxuICAgIH0pXHJcbiAgKTtcclxufVxyXG4iXSwibWFwcGluZ3MiOiJBQUFBLFNBQVEsVUFBVSxZQUFXO0FBRXRCLGdCQUFTLFNBQVksSUFBNkI7QUFDdkQsU0FBTztBQUFBLElBQ0wsU0FBUyxPQUFPLFFBQVc7QUFDekIsWUFBTSxHQUFHLEdBQUc7QUFDWixhQUFPO0FBQUEsSUFDVCxDQUFDO0FBQUEsRUFDSDtBQUNGOyIsIm5hbWVzIjpbXX0=

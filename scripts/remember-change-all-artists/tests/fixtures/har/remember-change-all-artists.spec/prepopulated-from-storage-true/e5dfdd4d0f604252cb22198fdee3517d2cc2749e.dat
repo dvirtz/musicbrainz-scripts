@@ -1,0 +1,15 @@
+import { modifyArtistCreditBubble } from "/src/credit-bubble.ts?t=1780681024558";
+import { createUI } from "/src/ui.tsx";
+import { asyncTap } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/rxjs-ext/src/async-tap.ts";
+import { executePipeline } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/rxjs-ext/src/execute-pipeline.ts";
+import { newElements } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/rxjs-ext/src/wait-for-element.ts";
+async function main() {
+  await createUI();
+  const isArtistCreditBubble = (node) => {
+    return node instanceof HTMLElement && node.id === "artist-credit-bubble";
+  };
+  await executePipeline(newElements(isArtistCreditBubble).pipe(asyncTap(modifyArtistCreditBubble)));
+}
+main().catch(console.error);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7bW9kaWZ5QXJ0aXN0Q3JlZGl0QnViYmxlfSBmcm9tICcjY3JlZGl0LWJ1YmJsZS50cyc7XHJcbmltcG9ydCB7Y3JlYXRlVUl9IGZyb20gJyN1aS50c3gnO1xyXG5pbXBvcnQge2FzeW5jVGFwfSBmcm9tICdAcmVwby9yeGpzLWV4dC9hc3luYy10YXAnO1xyXG5pbXBvcnQge2V4ZWN1dGVQaXBlbGluZX0gZnJvbSAnQHJlcG8vcnhqcy1leHQvZXhlY3V0ZS1waXBlbGluZSc7XHJcbmltcG9ydCB7bmV3RWxlbWVudHN9IGZyb20gJ0ByZXBvL3J4anMtZXh0L3dhaXQtZm9yLWVsZW1lbnQnO1xyXG5cclxuYXN5bmMgZnVuY3Rpb24gbWFpbigpIHtcclxuICBhd2FpdCBjcmVhdGVVSSgpO1xyXG5cclxuICBjb25zdCBpc0FydGlzdENyZWRpdEJ1YmJsZSA9IChub2RlOiBOb2RlKTogbm9kZSBpcyBIVE1MRWxlbWVudCA9PiB7XHJcbiAgICByZXR1cm4gbm9kZSBpbnN0YW5jZW9mIEhUTUxFbGVtZW50ICYmIG5vZGUuaWQgPT09ICdhcnRpc3QtY3JlZGl0LWJ1YmJsZSc7XHJcbiAgfTtcclxuXHJcbiAgYXdhaXQgZXhlY3V0ZVBpcGVsaW5lKG5ld0VsZW1lbnRzKGlzQXJ0aXN0Q3JlZGl0QnViYmxlKS5waXBlKGFzeW5jVGFwKG1vZGlmeUFydGlzdENyZWRpdEJ1YmJsZSkpKTtcclxufVxyXG5cclxubWFpbigpLmNhdGNoKGNvbnNvbGUuZXJyb3IpO1xyXG4iXSwibWFwcGluZ3MiOiJBQUFBLFNBQVEsZ0NBQStCO0FBQ3ZDLFNBQVEsZ0JBQWU7QUFDdkIsU0FBUSxnQkFBZTtBQUN2QixTQUFRLHVCQUFzQjtBQUM5QixTQUFRLG1CQUFrQjtBQUUxQixlQUFlLE9BQU87QUFDcEIsUUFBTSxTQUFTO0FBRWYsUUFBTSx1QkFBdUIsQ0FBQyxTQUFvQztBQUNoRSxXQUFPLGdCQUFnQixlQUFlLEtBQUssT0FBTztBQUFBLEVBQ3BEO0FBRUEsUUFBTSxnQkFBZ0IsWUFBWSxvQkFBb0IsRUFBRSxLQUFLLFNBQVMsd0JBQXdCLENBQUMsQ0FBQztBQUNsRztBQUVBLEtBQUssRUFBRSxNQUFNLFFBQVEsS0FBSzsiLCJuYW1lcyI6W119

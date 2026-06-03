@@ -21,7 +21,6 @@
   "workspaces": [
     "scripts/*",
     "!scripts/_template",
-    "!scripts/add-sub-event",
     "lib/*"
   ],
   "scripts": {

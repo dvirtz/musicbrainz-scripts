@@ -1,0 +1,16 @@
+import "/node_modules/.vite/deps/chunk-QWN5BXRD.js?v=fab4e7e1";
+
+// ../../node_modules/typedbrainz/lib/index.js
+function isReleaseRelationshipEditor(relationshipEditor) {
+  var _a;
+  return ((_a = relationshipEditor.state) == null ? void 0 : _a.entity.entityType) === "release";
+}
+function isNonReleaseRelationshipEditor(relationshipEditor) {
+  var _a;
+  return ((_a = relationshipEditor.state) == null ? void 0 : _a.entity.entityType) !== "release";
+}
+export {
+  isNonReleaseRelationshipEditor,
+  isReleaseRelationshipEditor
+};
+//# sourceMappingURL=typedbrainz.js.map

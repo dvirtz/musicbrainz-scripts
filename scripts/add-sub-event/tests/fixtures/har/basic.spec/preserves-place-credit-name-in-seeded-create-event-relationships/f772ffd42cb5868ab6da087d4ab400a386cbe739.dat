@@ -1,0 +1,52 @@
+import {
+  __privateAdd,
+  __privateGet,
+  __privateSet
+} from "/node_modules/.vite/deps/chunk-QWN5BXRD.js?v=fab4e7e1";
+
+// ../../node_modules/p-lazy/index.js
+var _executor, _promise;
+var _PLazy = class _PLazy extends Promise {
+  constructor(executor) {
+    super((resolve) => {
+      resolve();
+    });
+    __privateAdd(this, _executor);
+    __privateAdd(this, _promise);
+    __privateSet(this, _executor, executor);
+  }
+  static from(function_) {
+    return new _PLazy((resolve) => {
+      resolve(function_());
+    });
+  }
+  static resolve(value) {
+    return new _PLazy((resolve) => {
+      resolve(value);
+    });
+  }
+  static reject(error) {
+    return new _PLazy((resolve, reject) => {
+      reject(error);
+    });
+  }
+  then(onFulfilled, onRejected) {
+    __privateGet(this, _promise) ?? __privateSet(this, _promise, new Promise(__privateGet(this, _executor)));
+    return __privateGet(this, _promise).then(onFulfilled, onRejected);
+  }
+  catch(onRejected) {
+    __privateGet(this, _promise) ?? __privateSet(this, _promise, new Promise(__privateGet(this, _executor)));
+    return __privateGet(this, _promise).catch(onRejected);
+  }
+  finally(onFinally) {
+    __privateGet(this, _promise) ?? __privateSet(this, _promise, new Promise(__privateGet(this, _executor)));
+    return __privateGet(this, _promise).finally(onFinally);
+  }
+};
+_executor = new WeakMap();
+_promise = new WeakMap();
+var PLazy = _PLazy;
+export {
+  PLazy as default
+};
+//# sourceMappingURL=p-lazy.js.map

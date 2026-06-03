@@ -1,0 +1,31 @@
+import { injectAddSubEventLink } from "/src/sidebar-link.ts";
+import { mountDeprecationBanner } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/common-ui/src/deprecation-banner.tsx";
+import { getEventGid } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/musicbrainz-ext/src/event-path.ts";
+import { extractParentEventSeedData, seedEvent } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/musicbrainz-ext/src/event-seed.ts";
+import { tryFetchJSON } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/musicbrainz-ext/src/fetch.ts";
+async function main() {
+  await mountDeprecationBanner({
+    name: "Add sub-event",
+    replacementName: "Event Seeder",
+    replacementUrl: "https://github.com/dvirtz/musicbrainz-scripts/blob/main/scripts/event-seeder/README.md"
+  });
+  const eventGid = getEventGid();
+  if (!eventGid) {
+    return;
+  }
+  const event = await tryFetchJSON(`/ws/2/event/${eventGid}?fmt=json&inc=event-rels%20place-rels`);
+  if (!event) {
+    return null;
+  }
+  const seedData = extractParentEventSeedData(event);
+  if (!seedData) {
+    return;
+  }
+  const createUrl = seedEvent(seedData);
+  injectAddSubEventLink(createUrl);
+}
+void main().catch((error) => {
+  console.error("[add-sub-event] Error:", error);
+});
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7aW5qZWN0QWRkU3ViRXZlbnRMaW5rfSBmcm9tICcjc2lkZWJhci1saW5rLnRzJztcclxuaW1wb3J0IHttb3VudERlcHJlY2F0aW9uQmFubmVyfSBmcm9tICdAcmVwby9jb21tb24tdWkvZGVwcmVjYXRpb24tYmFubmVyJztcclxuaW1wb3J0IHtnZXRFdmVudEdpZH0gZnJvbSAnQHJlcG8vbXVzaWNicmFpbnotZXh0L2V2ZW50LXBhdGgnO1xyXG5pbXBvcnQge2V4dHJhY3RQYXJlbnRFdmVudFNlZWREYXRhLCBzZWVkRXZlbnR9IGZyb20gJ0ByZXBvL211c2ljYnJhaW56LWV4dC9ldmVudC1zZWVkJztcclxuaW1wb3J0IHR5cGUge01CRXZlbnR9IGZyb20gJ0ByZXBvL211c2ljYnJhaW56LWV4dC9ldmVudC10eXBlcyc7XHJcbmltcG9ydCB7dHJ5RmV0Y2hKU09OfSBmcm9tICdAcmVwby9tdXNpY2JyYWluei1leHQvZmV0Y2gnO1xyXG5cclxuYXN5bmMgZnVuY3Rpb24gbWFpbigpIHtcclxuICBhd2FpdCBtb3VudERlcHJlY2F0aW9uQmFubmVyKHtcclxuICAgIG5hbWU6ICdBZGQgc3ViLWV2ZW50JyxcclxuICAgIHJlcGxhY2VtZW50TmFtZTogJ0V2ZW50IFNlZWRlcicsXHJcbiAgICByZXBsYWNlbWVudFVybDogJ2h0dHBzOi8vZ2l0aHViLmNvbS9kdmlydHovbXVzaWNicmFpbnotc2NyaXB0cy9ibG9iL21haW4vc2NyaXB0cy9ldmVudC1zZWVkZXIvUkVBRE1FLm1kJyxcclxuICB9KTtcclxuXHJcbiAgY29uc3QgZXZlbnRHaWQgPSBnZXRFdmVudEdpZCgpO1xyXG4gIGlmICghZXZlbnRHaWQpIHtcclxuICAgIHJldHVybjtcclxuICB9XHJcblxyXG4gIGNvbnN0IGV2ZW50ID0gYXdhaXQgdHJ5RmV0Y2hKU09OPE1CRXZlbnQ+KGAvd3MvMi9ldmVudC8ke2V2ZW50R2lkfT9mbXQ9anNvbiZpbmM9ZXZlbnQtcmVscyUyMHBsYWNlLXJlbHNgKTtcclxuICBpZiAoIWV2ZW50KSB7XHJcbiAgICByZXR1cm4gbnVsbDtcclxuICB9XHJcblxyXG4gIGNvbnN0IHNlZWREYXRhID0gZXh0cmFjdFBhcmVudEV2ZW50U2VlZERhdGEoZXZlbnQpO1xyXG4gIGlmICghc2VlZERhdGEpIHtcclxuICAgIHJldHVybjtcclxuICB9XHJcblxyXG4gIGNvbnN0IGNyZWF0ZVVybCA9IHNlZWRFdmVudChzZWVkRGF0YSk7XHJcbiAgaW5qZWN0QWRkU3ViRXZlbnRMaW5rKGNyZWF0ZVVybCk7XHJcbn1cclxuXHJcbnZvaWQgbWFpbigpLmNhdGNoKGVycm9yID0+IHtcclxuICBjb25zb2xlLmVycm9yKCdbYWRkLXN1Yi1ldmVudF0gRXJyb3I6JywgZXJyb3IpO1xyXG59KTtcclxuIl0sIm1hcHBpbmdzIjoiQUFBQSxTQUFRLDZCQUE0QjtBQUNwQyxTQUFRLDhCQUE2QjtBQUNyQyxTQUFRLG1CQUFrQjtBQUMxQixTQUFRLDRCQUE0QixpQkFBZ0I7QUFFcEQsU0FBUSxvQkFBbUI7QUFFM0IsZUFBZSxPQUFPO0FBQ3BCLFFBQU0sdUJBQXVCO0FBQUEsSUFDM0IsTUFBTTtBQUFBLElBQ04saUJBQWlCO0FBQUEsSUFDakIsZ0JBQWdCO0FBQUEsRUFDbEIsQ0FBQztBQUVELFFBQU0sV0FBVyxZQUFZO0FBQzdCLE1BQUksQ0FBQyxVQUFVO0FBQ2I7QUFBQSxFQUNGO0FBRUEsUUFBTSxRQUFRLE1BQU0sYUFBc0IsZUFBZSxRQUFRLHVDQUF1QztBQUN4RyxNQUFJLENBQUMsT0FBTztBQUNWLFdBQU87QUFBQSxFQUNUO0FBRUEsUUFBTSxXQUFXLDJCQUEyQixLQUFLO0FBQ2pELE1BQUksQ0FBQyxVQUFVO0FBQ2I7QUFBQSxFQUNGO0FBRUEsUUFBTSxZQUFZLFVBQVUsUUFBUTtBQUNwQyx3QkFBc0IsU0FBUztBQUNqQztBQUVBLEtBQUssS0FBSyxFQUFFLE1BQU0sV0FBUztBQUN6QixVQUFRLE1BQU0sMEJBQTBCLEtBQUs7QUFDL0MsQ0FBQzsiLCJuYW1lcyI6W119

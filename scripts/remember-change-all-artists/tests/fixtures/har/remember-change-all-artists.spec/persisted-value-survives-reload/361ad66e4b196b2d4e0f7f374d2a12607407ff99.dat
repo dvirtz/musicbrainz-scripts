@@ -1,0 +1,31 @@
+import { createComponent as _$createComponent } from "/node_modules/.vite/deps/solid-js_web.js?v=19b5dcd6";
+import { mergeProps as _$mergeProps } from "/node_modules/.vite/deps/solid-js_web.js?v=19b5dcd6";
+import { memo as _$memo } from "/node_modules/.vite/deps/solid-js_web.js?v=19b5dcd6";
+import { useFormControlContext } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/node_modules/@kobalte/core/dist/chunk/XUUROM4M.jsx";
+import { createTagName } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/node_modules/@kobalte/core/dist/chunk/OYES4GOP.jsx";
+import { Polymorphic } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/node_modules/@kobalte/core/dist/chunk/FLVHQV4A.jsx";
+import { mergeDefaultProps, mergeRefs } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/node_modules/@kobalte/utils/dist/index.js?v=19b5dcd6";
+import { createEffect, onCleanup, splitProps } from "/node_modules/.vite/deps/solid-js.js?v=19b5dcd6";
+function FormControlLabel(props) {
+  let ref;
+  const context = useFormControlContext();
+  const mergedProps = mergeDefaultProps({
+    id: context.generateId("label")
+  }, props);
+  const [local, others] = splitProps(mergedProps, ["ref"]);
+  const tagName = createTagName(() => ref, () => "label");
+  createEffect(() => onCleanup(context.registerLabel(others.id)));
+  return _$createComponent(Polymorphic, _$mergeProps({
+    as: "label",
+    ref(r$) {
+      var _ref$ = mergeRefs((el) => ref = el, local.ref);
+      typeof _ref$ === "function" && _ref$(r$);
+    },
+    get ["for"]() {
+      return _$memo(() => tagName() === "label")() ? context.fieldId() : void 0;
+    }
+  }, () => context.dataset(), others));
+}
+export { FormControlLabel };
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6Ijs7O0FBQUEsU0FDRUEsNkJBQ0s7QUFDUCxTQUNFQyxxQkFDSztBQUNQLFNBQ0VDLG1CQUNLO0FBR1AsU0FDRUMsbUJBQ0FDLGlCQUNLO0FBQ1AsU0FDRUMsY0FDQUMsV0FDQUMsa0JBQ0s7QUFDUCxTQUFTQyxpQkFBaUJDLE9BQU87QUFDL0IsTUFBSUM7QUFDSixRQUFNQyxVQUFVWCxzQkFBc0I7QUFDdEMsUUFBTVksY0FBY1Qsa0JBQ2xCO0FBQUEsSUFDRVUsSUFBSUYsUUFBUUcsV0FBVyxPQUFPO0FBQUEsRUFDaEMsR0FDQUwsS0FDRjtBQUNBLFFBQU0sQ0FBQ00sT0FBT0MsTUFBTSxJQUFJVCxXQUFXSyxhQUFhLENBQUMsS0FBSyxDQUFDO0FBQ3ZELFFBQU1LLFVBQVVoQixjQUNkLE1BQU1TLEtBQ04sTUFBTSxPQUNSO0FBQ0FMLGVBQWEsTUFBTUMsVUFBVUssUUFBUU8sY0FBY0YsT0FBT0gsRUFBRSxDQUFDLENBQUM7QUFDOUQsU0FBQU0sa0JBQVFqQixhQUFXa0IsYUFBQTtBQUFBLElBQ2pCQyxJQUFFO0FBQUEsSUFBQVgsSUFBQVksSUFBQTtBQUFBLFVBQUFDLFFBQ0duQixVQUFXb0IsUUFBT2QsTUFBTWMsSUFBSVQsTUFBTUwsR0FBRztBQUFDLGFBQUFhLFVBQUEsY0FBQUEsTUFBQUQsRUFBQTtBQUFBO0FBQUE7QUFBQSxhQUN0Q0csT0FBQSxNQUFBUixRQUFRLE1BQU0sT0FBTyxNQUFHTixRQUFRZSxRQUFRLElBQUk7QUFBQSxJQUFNO0FBQUEsV0FDbkRmLFFBQVFnQixRQUFRLEdBQ2hCWCxNQUFNO0FBRWQ7QUFFQSxTQUNFUiIsIm5hbWVzIjpbInVzZUZvcm1Db250cm9sQ29udGV4dCIsImNyZWF0ZVRhZ05hbWUiLCJQb2x5bW9ycGhpYyIsIm1lcmdlRGVmYXVsdFByb3BzIiwibWVyZ2VSZWZzIiwiY3JlYXRlRWZmZWN0Iiwib25DbGVhbnVwIiwic3BsaXRQcm9wcyIsIkZvcm1Db250cm9sTGFiZWwiLCJwcm9wcyIsInJlZiIsImNvbnRleHQiLCJtZXJnZWRQcm9wcyIsImlkIiwiZ2VuZXJhdGVJZCIsImxvY2FsIiwib3RoZXJzIiwidGFnTmFtZSIsInJlZ2lzdGVyTGFiZWwiLCJfJGNyZWF0ZUNvbXBvbmVudCIsIl8kbWVyZ2VQcm9wcyIsImFzIiwiciQiLCJfcmVmJCIsImVsIiwiXyRtZW1vIiwiZmllbGRJZCIsImRhdGFzZXQiXSwiaWdub3JlTGlzdCI6W10sInNvdXJjZXMiOlsiRk9YVkNRRlYuanN4Il0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7XG4gIHVzZUZvcm1Db250cm9sQ29udGV4dFxufSBmcm9tIFwiLi9YVVVST000TS5qc3hcIjtcbmltcG9ydCB7XG4gIGNyZWF0ZVRhZ05hbWVcbn0gZnJvbSBcIi4vT1lFUzRHT1AuanN4XCI7XG5pbXBvcnQge1xuICBQb2x5bW9ycGhpY1xufSBmcm9tIFwiLi9GTFZIUVY0QS5qc3hcIjtcblxuLy8gc3JjL2Zvcm0tY29udHJvbC9mb3JtLWNvbnRyb2wtbGFiZWwudHN4XG5pbXBvcnQge1xuICBtZXJnZURlZmF1bHRQcm9wcyxcbiAgbWVyZ2VSZWZzXG59IGZyb20gXCJAa29iYWx0ZS91dGlsc1wiO1xuaW1wb3J0IHtcbiAgY3JlYXRlRWZmZWN0LFxuICBvbkNsZWFudXAsXG4gIHNwbGl0UHJvcHNcbn0gZnJvbSBcInNvbGlkLWpzXCI7XG5mdW5jdGlvbiBGb3JtQ29udHJvbExhYmVsKHByb3BzKSB7XG4gIGxldCByZWY7XG4gIGNvbnN0IGNvbnRleHQgPSB1c2VGb3JtQ29udHJvbENvbnRleHQoKTtcbiAgY29uc3QgbWVyZ2VkUHJvcHMgPSBtZXJnZURlZmF1bHRQcm9wcyhcbiAgICB7XG4gICAgICBpZDogY29udGV4dC5nZW5lcmF0ZUlkKFwibGFiZWxcIilcbiAgICB9LFxuICAgIHByb3BzXG4gICk7XG4gIGNvbnN0IFtsb2NhbCwgb3RoZXJzXSA9IHNwbGl0UHJvcHMobWVyZ2VkUHJvcHMsIFtcInJlZlwiXSk7XG4gIGNvbnN0IHRhZ05hbWUgPSBjcmVhdGVUYWdOYW1lKFxuICAgICgpID0+IHJlZixcbiAgICAoKSA9PiBcImxhYmVsXCJcbiAgKTtcbiAgY3JlYXRlRWZmZWN0KCgpID0+IG9uQ2xlYW51cChjb250ZXh0LnJlZ2lzdGVyTGFiZWwob3RoZXJzLmlkKSkpO1xuICByZXR1cm4gPFBvbHltb3JwaGljXG4gICAgYXM9XCJsYWJlbFwiXG4gICAgcmVmPXttZXJnZVJlZnMoKGVsKSA9PiByZWYgPSBlbCwgbG9jYWwucmVmKX1cbiAgICBmb3I9e3RhZ05hbWUoKSA9PT0gXCJsYWJlbFwiID8gY29udGV4dC5maWVsZElkKCkgOiB2b2lkIDB9XG4gICAgey4uLmNvbnRleHQuZGF0YXNldCgpfVxuICAgIHsuLi5vdGhlcnN9XG4gIC8+O1xufVxuXG5leHBvcnQge1xuICBGb3JtQ29udHJvbExhYmVsXG59O1xuIl0sImZpbGUiOiJDOi9Vc2Vycy9keWl0emNoYWtpL0dpdEh1Yi9tZXRhYnJhaW56L211c2ljYnJhaW56LXNjcmlwdHMvbm9kZV9tb2R1bGVzL0Brb2JhbHRlL2NvcmUvZGlzdC9jaHVuay9GT1hWQ1FGVi5qc3giLCJ4X2dvb2dsZV9pZ25vcmVMaXN0IjpbMF19
