@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@repo/common-types": "workspace:*",
+    "@repo/common-ui": "workspace:^",
     "@repo/fetch": "workspace:*",
     "@repo/musicbrainz-ext": "workspace:*",
     "@repo/rxjs-ext": "workspace:*",

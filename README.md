@@ -89,6 +89,11 @@ Expands and collapses child sub-events inline on event pages, with recursive det
 
 See the script [README](scripts/expand-events/README.md) for more information.
 
+## Deprecated Userscripts
+
+- [Add Sub-event](scripts/add-sub-event/README.md) is deprecated. Use [Event Seeder](scripts/event-seeder/README.md).
+- [Remember Change All Artists](scripts/remember-change-all-artists/README.md) is deprecated. Use [Release Artist Toolkit](scripts/release-artist-toolkit/README.md).
+
 ## Development
 
 This is a TypeScript monorepo using Yarn workspaces and Turbo for build orchestration.
