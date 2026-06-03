@@ -1,6 +1,7 @@
 // cspell: ignore guesscase
 
 import {Checkbox} from '@kobalte/core/checkbox';
+import {mountDeprecationBanner} from '@repo/common-ui/deprecation-banner';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import {createSignal} from 'solid-js';
@@ -25,6 +26,12 @@ function RememberChangeAllArtists(props: {initiallyChecked: boolean}) {
 }
 
 export async function createUI() {
+  await mountDeprecationBanner({
+    name: 'Remember "Change all artists"',
+    replacementName: 'Release Artist Toolkit',
+    replacementUrl: 'https://github.com/dvirtz/musicbrainz-scripts/blob/main/scripts/release-artist-toolkit/README.md',
+  });
+
   const guessCaseBox =
     document.querySelector<HTMLDivElement>('div:has(> fieldset.guesscase)') ??
     (await waitForElement(
@@ -37,7 +44,7 @@ export async function createUI() {
     return;
   }
 
-  const theToolbox = toolbox(document, 'full-page');
+  const theToolbox = toolbox(document, 'full-page', () => {});
   guessCaseBox?.insertAdjacentElement('afterend', theToolbox);
 
   const container = (<div id={containerId}></div>) as HTMLDivElement;
