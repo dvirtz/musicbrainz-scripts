@@ -1,0 +1,63 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/ui.tsx");import { template as _$template } from "/node_modules/.vite/deps/solid-js_web.js?v=19b5dcd6";
+import { createComponent as _$createComponent } from "/node_modules/.vite/deps/solid-js_web.js?v=19b5dcd6";
+import { effect as _$effect } from "/node_modules/.vite/deps/solid-js_web.js?v=19b5dcd6";
+import { $$registry as _$$registry, $$refresh as _$$refresh, $$component as _$$component } from "/@solid-refresh";
+const _REGISTRY = _$$registry();
+var _tmpl$ = /* @__PURE__ */ _$template(`<input type=checkbox>`), _tmpl$2 = /* @__PURE__ */ _$template(`<div id=remember-change-all-artists-toolbox>`);
+var RememberChangeAllArtists = _$$component(_REGISTRY, "RememberChangeAllArtists", function RememberChangeAllArtists2(props) {
+  const [checked, setChecked] = createSignal(props.initiallyChecked);
+  const onChange = (newValue) => {
+    setChecked(newValue);
+    GM.setValue("change-matching-artists", newValue).catch(console.error);
+  };
+  return _$createComponent(Checkbox, {
+    get children() {
+      return _$createComponent(Checkbox.Label, {
+        get children() {
+          return [(() => {
+            var _el$ = _tmpl$();
+            _el$.addEventListener("change", (e) => onChange(e.currentTarget.checked));
+            _$effect(() => _el$.checked = checked());
+            return _el$;
+          })(), 'Remember "Change all artists" option'];
+        }
+      });
+    }
+  });
+}, {
+  location: "src\\ui.tsx:10:0"
+});
+import { Checkbox } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/node_modules/@kobalte/core/dist/checkbox/index.jsx";
+import { mountDeprecationBanner } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/common-ui/src/deprecation-banner.tsx";
+import { toolbox } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/common-ui/src/toolbox.tsx";
+import { waitForElement } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/rxjs-ext/src/wait-for-element.ts";
+import { createSignal } from "/node_modules/.vite/deps/solid-js.js?v=19b5dcd6";
+import { render } from "/node_modules/.vite/deps/solid-js_web.js?v=19b5dcd6";
+export async function createUI() {
+  await mountDeprecationBanner({
+    name: 'Remember "Change all artists"',
+    replacementName: "Release Artist Toolkit",
+    replacementUrl: "https://github.com/dvirtz/musicbrainz-scripts/blob/main/scripts/release-artist-toolkit/README.md"
+  });
+  const guessCaseBox = document.querySelector("div:has(> fieldset.guesscase)") ?? await waitForElement((node) => node instanceof HTMLDivElement && node.querySelector("fieldset.guesscase") !== null);
+  const containerId = "remember-change-all-artists-toolbox";
+  if (document.getElementById(containerId)) {
+    return;
+  }
+  const theToolbox = toolbox(document, "full-page", () => {
+  });
+  guessCaseBox?.insertAdjacentElement("afterend", theToolbox);
+  const container = _tmpl$2();
+  theToolbox.appendChild(container);
+  const initiallyChecked = await GM.getValue("change-matching-artists", false);
+  const _cleanup = render(() => _$createComponent(RememberChangeAllArtists, {
+    initiallyChecked
+  }), container);
+  if (import.meta.hot) import.meta.hot.dispose(_cleanup);
+}
+if (import.meta.hot) {
+  _$$refresh("vite", import.meta.hot, _REGISTRY);
+  import.meta.hot.accept();
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6Ijs7Ozs7O0lBU1NBLDJCQUF3QkMsYUFBQUMsV0FBQSxxQ0FBeEJGLDBCQUF5QkcsT0FBb0M7QUFDcEUsUUFBTSxDQUFDQyxTQUFTQyxVQUFVLElBQUlDLGFBQWFILE1BQU1JLGdCQUFnQjtBQUVqRSxRQUFNQyxXQUFXQSxDQUFDQyxhQUFzQjtBQUN0Q0osZUFBV0ksUUFBUTtBQUNuQkMsT0FBR0MsU0FBUywyQkFBMkJGLFFBQVEsRUFBRUcsTUFBTUMsUUFBUUMsS0FBSztBQUFBLEVBQ3RFO0FBRUEsU0FBQUMsa0JBQ0dDLFVBQVE7QUFBQSxRQUFBQyxXQUFBO0FBQUEsYUFBQUYsa0JBQ05DLFNBQVNFLE9BQUs7QUFBQSxZQUFBRCxXQUFBO0FBQUE7QUFBQSxnQkFBQUUsT0FBQUMsT0FBQTtBQUFBRCxpQkFBQUUsaUJBQUEsVUFDd0NDLE9BQUtkLFNBQVNjLEVBQUVDLGNBQWNuQixPQUFPLENBQUM7QUFBQW9CLHFCQUFBLE1BQUFMLEtBQUFmLFVBQTNEQSxRQUFRLENBQUM7QUFBQSxtQkFBQWU7QUFBQUEsVUFBQTtBQUFBO0FBQUE7QUFBQTtBQUFBO0FBS2pELEdBQUM7QUFBQSxFQUFBTSxVQUFBO0FBQUE7QUF2QkQsU0FBUVQsZ0JBQWU7QUFDdkIsU0FBUVUsOEJBQTZCO0FBQ3JDLFNBQVFDLGVBQWM7QUFDdEIsU0FBUUMsc0JBQXFCO0FBQzdCLFNBQVF0QixvQkFBbUI7QUFDM0IsU0FBUXVCLGNBQWE7QUFvQnJCLHNCQUFzQkMsV0FBVztBQUMvQixRQUFNSix1QkFBdUI7QUFBQSxJQUMzQkssTUFBTTtBQUFBLElBQ05DLGlCQUFpQjtBQUFBLElBQ2pCQyxnQkFBZ0I7QUFBQSxFQUNsQixDQUFDO0FBRUQsUUFBTUMsZUFDSkMsU0FBU0MsY0FBOEIsK0JBQStCLEtBQ3JFLE1BQU1SLGVBQ0wsQ0FBQ1MsU0FDQ0EsZ0JBQWdCQyxrQkFBa0JELEtBQUtELGNBQWMsb0JBQW9CLE1BQU0sSUFDbkY7QUFFRixRQUFNRyxjQUFjO0FBQ3BCLE1BQUlKLFNBQVNLLGVBQWVELFdBQVcsR0FBRztBQUN4QztBQUFBLEVBQ0Y7QUFFQSxRQUFNRSxhQUFhZCxRQUFRUSxVQUFVLGFBQWEsTUFBTTtBQUFBLEVBQUMsQ0FBQztBQUMxREQsZ0JBQWNRLHNCQUFzQixZQUFZRCxVQUFVO0FBRTFELFFBQU1FLFlBQVlDLFFBQUE7QUFDbEJILGFBQVdJLFlBQVlGLFNBQVM7QUFDaEMsUUFBTXBDLG1CQUFtQixNQUFNRyxHQUFHb0MsU0FBUywyQkFBMkIsS0FBSztBQUFFLFFBQUFDLFdBQzdFbEIsT0FBTyxNQUFBZCxrQkFBT2YsMEJBQXdCO0FBQUEsSUFBQ087QUFBQUEsRUFBa0MsSUFBTW9DLFNBQVM7QUFBQyxNQUFBSyxZQUFBQyxJQUFBRCxhQUFBQyxJQUFBQyxRQUFBSCxRQUFBO0FBQzNGO0FBQUMsSUFBQUMsWUFBQUMsS0FBQTtBQUFBRSxhQUFBLFFBQUFILFlBQUFDLEtBQUEvQyxTQUFBO0FBQUE4QyxjQUFBQyxJQUFBRyxPQUFBO0FBQUEiLCJuYW1lcyI6WyJSZW1lbWJlckNoYW5nZUFsbEFydGlzdHMiLCJfJCRjb21wb25lbnQiLCJfUkVHSVNUUlkiLCJwcm9wcyIsImNoZWNrZWQiLCJzZXRDaGVja2VkIiwiY3JlYXRlU2lnbmFsIiwiaW5pdGlhbGx5Q2hlY2tlZCIsIm9uQ2hhbmdlIiwibmV3VmFsdWUiLCJHTSIsInNldFZhbHVlIiwiY2F0Y2giLCJjb25zb2xlIiwiZXJyb3IiLCJfJGNyZWF0ZUNvbXBvbmVudCIsIkNoZWNrYm94IiwiY2hpbGRyZW4iLCJMYWJlbCIsIl9lbCQiLCJfdG1wbCQiLCJhZGRFdmVudExpc3RlbmVyIiwiZSIsImN1cnJlbnRUYXJnZXQiLCJfJGVmZmVjdCIsImxvY2F0aW9uIiwibW91bnREZXByZWNhdGlvbkJhbm5lciIsInRvb2xib3giLCJ3YWl0Rm9yRWxlbWVudCIsInJlbmRlciIsImNyZWF0ZVVJIiwibmFtZSIsInJlcGxhY2VtZW50TmFtZSIsInJlcGxhY2VtZW50VXJsIiwiZ3Vlc3NDYXNlQm94IiwiZG9jdW1lbnQiLCJxdWVyeVNlbGVjdG9yIiwibm9kZSIsIkhUTUxEaXZFbGVtZW50IiwiY29udGFpbmVySWQiLCJnZXRFbGVtZW50QnlJZCIsInRoZVRvb2xib3giLCJpbnNlcnRBZGphY2VudEVsZW1lbnQiLCJjb250YWluZXIiLCJfdG1wbCQyIiwiYXBwZW5kQ2hpbGQiLCJnZXRWYWx1ZSIsIl9jbGVhbnVwIiwiaW1wb3J0IiwiaG90IiwiZGlzcG9zZSIsIl8kJHJlZnJlc2giLCJhY2NlcHQiXSwiaWdub3JlTGlzdCI6W10sInNvdXJjZXMiOlsidWkudHN4Il0sInNvdXJjZXNDb250ZW50IjpbIi8vIGNzcGVsbDogaWdub3JlIGd1ZXNzY2FzZVxyXG5cclxuaW1wb3J0IHtDaGVja2JveH0gZnJvbSAnQGtvYmFsdGUvY29yZS9jaGVja2JveCc7XHJcbmltcG9ydCB7bW91bnREZXByZWNhdGlvbkJhbm5lcn0gZnJvbSAnQHJlcG8vY29tbW9uLXVpL2RlcHJlY2F0aW9uLWJhbm5lcic7XHJcbmltcG9ydCB7dG9vbGJveH0gZnJvbSAnQHJlcG8vY29tbW9uLXVpL3Rvb2xib3gnO1xyXG5pbXBvcnQge3dhaXRGb3JFbGVtZW50fSBmcm9tICdAcmVwby9yeGpzLWV4dC93YWl0LWZvci1lbGVtZW50JztcclxuaW1wb3J0IHtjcmVhdGVTaWduYWx9IGZyb20gJ3NvbGlkLWpzJztcclxuaW1wb3J0IHtyZW5kZXJ9IGZyb20gJ3NvbGlkLWpzL3dlYic7XHJcblxyXG5mdW5jdGlvbiBSZW1lbWJlckNoYW5nZUFsbEFydGlzdHMocHJvcHM6IHtpbml0aWFsbHlDaGVja2VkOiBib29sZWFufSkge1xyXG4gIGNvbnN0IFtjaGVja2VkLCBzZXRDaGVja2VkXSA9IGNyZWF0ZVNpZ25hbChwcm9wcy5pbml0aWFsbHlDaGVja2VkKTtcclxuXHJcbiAgY29uc3Qgb25DaGFuZ2UgPSAobmV3VmFsdWU6IGJvb2xlYW4pID0+IHtcclxuICAgIHNldENoZWNrZWQobmV3VmFsdWUpO1xyXG4gICAgR00uc2V0VmFsdWUoJ2NoYW5nZS1tYXRjaGluZy1hcnRpc3RzJywgbmV3VmFsdWUpLmNhdGNoKGNvbnNvbGUuZXJyb3IpO1xyXG4gIH07XHJcblxyXG4gIHJldHVybiAoXHJcbiAgICA8Q2hlY2tib3g+XHJcbiAgICAgIDxDaGVja2JveC5MYWJlbD5cclxuICAgICAgICA8aW5wdXQgdHlwZT1cImNoZWNrYm94XCIgY2hlY2tlZD17Y2hlY2tlZCgpfSBvbkNoYW5nZT17ZSA9PiBvbkNoYW5nZShlLmN1cnJlbnRUYXJnZXQuY2hlY2tlZCl9IC8+XHJcbiAgICAgICAgUmVtZW1iZXIgXCJDaGFuZ2UgYWxsIGFydGlzdHNcIiBvcHRpb25cclxuICAgICAgPC9DaGVja2JveC5MYWJlbD5cclxuICAgIDwvQ2hlY2tib3g+XHJcbiAgKTtcclxufVxyXG5cclxuZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIGNyZWF0ZVVJKCkge1xyXG4gIGF3YWl0IG1vdW50RGVwcmVjYXRpb25CYW5uZXIoe1xyXG4gICAgbmFtZTogJ1JlbWVtYmVyIFwiQ2hhbmdlIGFsbCBhcnRpc3RzXCInLFxyXG4gICAgcmVwbGFjZW1lbnROYW1lOiAnUmVsZWFzZSBBcnRpc3QgVG9vbGtpdCcsXHJcbiAgICByZXBsYWNlbWVudFVybDogJ2h0dHBzOi8vZ2l0aHViLmNvbS9kdmlydHovbXVzaWNicmFpbnotc2NyaXB0cy9ibG9iL21haW4vc2NyaXB0cy9yZWxlYXNlLWFydGlzdC10b29sa2l0L1JFQURNRS5tZCcsXHJcbiAgfSk7XHJcblxyXG4gIGNvbnN0IGd1ZXNzQ2FzZUJveCA9XHJcbiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yPEhUTUxEaXZFbGVtZW50PignZGl2Omhhcyg+IGZpZWxkc2V0Lmd1ZXNzY2FzZSknKSA/P1xyXG4gICAgKGF3YWl0IHdhaXRGb3JFbGVtZW50KFxyXG4gICAgICAobm9kZSk6IG5vZGUgaXMgSFRNTERpdkVsZW1lbnQgPT5cclxuICAgICAgICBub2RlIGluc3RhbmNlb2YgSFRNTERpdkVsZW1lbnQgJiYgbm9kZS5xdWVyeVNlbGVjdG9yKCdmaWVsZHNldC5ndWVzc2Nhc2UnKSAhPT0gbnVsbFxyXG4gICAgKSk7XHJcblxyXG4gIGNvbnN0IGNvbnRhaW5lcklkID0gJ3JlbWVtYmVyLWNoYW5nZS1hbGwtYXJ0aXN0cy10b29sYm94JztcclxuICBpZiAoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoY29udGFpbmVySWQpKSB7XHJcbiAgICByZXR1cm47XHJcbiAgfVxyXG5cclxuICBjb25zdCB0aGVUb29sYm94ID0gdG9vbGJveChkb2N1bWVudCwgJ2Z1bGwtcGFnZScsICgpID0+IHt9KTtcclxuICBndWVzc0Nhc2VCb3g/Lmluc2VydEFkamFjZW50RWxlbWVudCgnYWZ0ZXJlbmQnLCB0aGVUb29sYm94KTtcclxuXHJcbiAgY29uc3QgY29udGFpbmVyID0gKDxkaXYgaWQ9e2NvbnRhaW5lcklkfT48L2Rpdj4pIGFzIEhUTUxEaXZFbGVtZW50O1xyXG4gIHRoZVRvb2xib3guYXBwZW5kQ2hpbGQoY29udGFpbmVyKTtcclxuICBjb25zdCBpbml0aWFsbHlDaGVja2VkID0gYXdhaXQgR00uZ2V0VmFsdWUoJ2NoYW5nZS1tYXRjaGluZy1hcnRpc3RzJywgZmFsc2UpO1xyXG4gIHJlbmRlcigoKSA9PiA8UmVtZW1iZXJDaGFuZ2VBbGxBcnRpc3RzIGluaXRpYWxseUNoZWNrZWQ9e2luaXRpYWxseUNoZWNrZWR9IC8+LCBjb250YWluZXIpO1xyXG59XHJcbiJdLCJmaWxlIjoiQzovVXNlcnMvZHlpdHpjaGFraS9HaXRIdWIvbWV0YWJyYWluei9tdXNpY2JyYWluei1zY3JpcHRzL3NjcmlwdHMvcmVtZW1iZXItY2hhbmdlLWFsbC1hcnRpc3RzL3NyYy91aS50c3gifQ==

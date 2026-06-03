@@ -1,0 +1,21 @@
+import { createComponent as _$createComponent } from "/node_modules/.vite/deps/solid-js_web.js?v=19b5dcd6";
+import { mergeProps as _$mergeProps } from "/node_modules/.vite/deps/solid-js_web.js?v=19b5dcd6";
+import { splitProps } from "/node_modules/.vite/deps/solid-js.js?v=19b5dcd6";
+import { Dynamic } from "/node_modules/.vite/deps/solid-js_web.js?v=19b5dcd6";
+function Polymorphic(props) {
+  const [local, others] = splitProps(props, ["as"]);
+  if (!local.as) {
+    throw new Error("[kobalte]: Polymorphic is missing the required `as` prop.");
+  }
+  return (
+    // @ts-ignore: Props are valid but not worth calculating
+    _$createComponent(Dynamic, _$mergeProps(others, {
+      get component() {
+        return local.as;
+      }
+    }))
+  );
+}
+export { Polymorphic };
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6Ijs7QUFDQSxTQUNFQSxrQkFDSztBQUNQLFNBQVNDLGVBQWU7QUFDeEIsU0FBU0MsWUFBWUMsT0FBTztBQUMxQixRQUFNLENBQUNDLE9BQU9DLE1BQU0sSUFBSUwsV0FBV0csT0FBTyxDQUFDLElBQUksQ0FBQztBQUNoRCxNQUFJLENBQUNDLE1BQU1FLElBQUk7QUFDYixVQUFNLElBQUlDLE1BQ1IsMkRBQ0Y7QUFBQSxFQUNGO0FBQ0E7QUFBQTtBQUFBLElBQ0VDLGtCQUNDUCxTQUFPUSxhQUFLSixRQUFNO0FBQUEsVUFBRUssWUFBUztBQUFBLGVBQUVOLE1BQU1FO0FBQUFBLE1BQUU7QUFBQTtBQUFBO0FBRTVDO0FBRUEsU0FDRUoiLCJuYW1lcyI6WyJzcGxpdFByb3BzIiwiRHluYW1pYyIsIlBvbHltb3JwaGljIiwicHJvcHMiLCJsb2NhbCIsIm90aGVycyIsImFzIiwiRXJyb3IiLCJfJGNyZWF0ZUNvbXBvbmVudCIsIl8kbWVyZ2VQcm9wcyIsImNvbXBvbmVudCJdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJGTFZIUVY0QS5qc3giXSwic291cmNlc0NvbnRlbnQiOlsiLy8gc3JjL3BvbHltb3JwaGljL3BvbHltb3JwaGljLnRzeFxuaW1wb3J0IHtcbiAgc3BsaXRQcm9wc1xufSBmcm9tIFwic29saWQtanNcIjtcbmltcG9ydCB7IER5bmFtaWMgfSBmcm9tIFwic29saWQtanMvd2ViXCI7XG5mdW5jdGlvbiBQb2x5bW9ycGhpYyhwcm9wcykge1xuICBjb25zdCBbbG9jYWwsIG90aGVyc10gPSBzcGxpdFByb3BzKHByb3BzLCBbXCJhc1wiXSk7XG4gIGlmICghbG9jYWwuYXMpIHtcbiAgICB0aHJvdyBuZXcgRXJyb3IoXG4gICAgICBcIltrb2JhbHRlXTogUG9seW1vcnBoaWMgaXMgbWlzc2luZyB0aGUgcmVxdWlyZWQgYGFzYCBwcm9wLlwiXG4gICAgKTtcbiAgfVxuICByZXR1cm4gKFxuICAgIC8vIEB0cy1pZ25vcmU6IFByb3BzIGFyZSB2YWxpZCBidXQgbm90IHdvcnRoIGNhbGN1bGF0aW5nXG4gICAgPER5bmFtaWMgey4uLm90aGVyc30gY29tcG9uZW50PXtsb2NhbC5hc30gLz5cbiAgKTtcbn1cblxuZXhwb3J0IHtcbiAgUG9seW1vcnBoaWNcbn07XG4iXSwiZmlsZSI6IkM6L1VzZXJzL2R5aXR6Y2hha2kvR2l0SHViL21ldGFicmFpbnovbXVzaWNicmFpbnotc2NyaXB0cy9ub2RlX21vZHVsZXMvQGtvYmFsdGUvY29yZS9kaXN0L2NodW5rL0ZMVkhRVjRBLmpzeCIsInhfZ29vZ2xlX2lnbm9yZUxpc3QiOlswXX0=

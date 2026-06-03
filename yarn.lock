@@ -1137,6 +1137,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@dvirtz/add-sub-event@workspace:scripts/add-sub-event":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/add-sub-event@workspace:scripts/add-sub-event"
+  dependencies:
+    "@playwright/test": "npm:*"
+    "@repo/common-types": "workspace:*"
+    "@repo/common-ui": "workspace:^"
+    "@repo/fetch": "workspace:*"
+    "@repo/musicbrainz-ext": "workspace:*"
+    "@repo/rxjs-ext": "workspace:*"
+    "@repo/test-support": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
+    "@repo/vite-config": "workspace:*"
+    cross-env: "npm:*"
+    dom-mutations: "npm:*"
+    eslint: "npm:*"
+    rxjs: "npm:*"
+    semantic-release: "npm:*"
+    typescript: "npm:*"
+    vite: "npm:*"
+  languageName: unknown
+  linkType: soft
+
 "@dvirtz/event-seeder@workspace:scripts/event-seeder":
   version: 0.0.0-use.local
   resolution: "@dvirtz/event-seeder@workspace:scripts/event-seeder"
@@ -1235,6 +1258,27 @@ __metadata:
     "@repo/vite-config": "workspace:*"
     eslint: "npm:*"
     solid-js: "npm:*"
+    vite: "npm:*"
+  languageName: unknown
+  linkType: soft
+
+"@dvirtz/remember-change-all-artists@workspace:scripts/remember-change-all-artists":
+  version: 0.0.0-use.local
+  resolution: "@dvirtz/remember-change-all-artists@workspace:scripts/remember-change-all-artists"
+  dependencies:
+    "@kobalte/core": "npm:*"
+    "@playwright/test": "npm:*"
+    "@repo/common-types": "workspace:^"
+    "@repo/common-ui": "workspace:^"
+    "@repo/rxjs-ext": "workspace:*"
+    "@repo/test-support": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
+    "@repo/vite-config": "workspace:*"
+    cross-env: "npm:*"
+    dom-mutations: "npm:*"
+    eslint: "npm:*"
+    rxjs: "npm:*"
+    semantic-release: "npm:*"
     vite: "npm:*"
   languageName: unknown
   linkType: soft

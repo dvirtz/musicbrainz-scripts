@@ -1,0 +1,8 @@
+import { MBID_REGEXP } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/musicbrainz-ext/src/constants.ts";
+const EVENT_GID_REGEXP = new RegExp(`/event/(${MBID_REGEXP.source})`, "i");
+export function getEventGid(pathname = window.location.pathname) {
+  const match = pathname.match(EVENT_GID_REGEXP);
+  return match?.[1] ?? null;
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImV2ZW50LXBhdGgudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtNQklEX1JFR0VYUH0gZnJvbSAnI2NvbnN0YW50cy50cyc7XHJcblxyXG5jb25zdCBFVkVOVF9HSURfUkVHRVhQID0gbmV3IFJlZ0V4cChgL2V2ZW50Lygke01CSURfUkVHRVhQLnNvdXJjZX0pYCwgJ2knKTtcclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBnZXRFdmVudEdpZChwYXRobmFtZTogc3RyaW5nID0gd2luZG93LmxvY2F0aW9uLnBhdGhuYW1lKTogc3RyaW5nIHwgbnVsbCB7XHJcbiAgY29uc3QgbWF0Y2ggPSBwYXRobmFtZS5tYXRjaChFVkVOVF9HSURfUkVHRVhQKTtcclxuICByZXR1cm4gbWF0Y2g/LlsxXSA/PyBudWxsO1xyXG59XHJcbiJdLCJtYXBwaW5ncyI6IkFBQUEsU0FBUSxtQkFBa0I7QUFFMUIsTUFBTSxtQkFBbUIsSUFBSSxPQUFPLFdBQVcsWUFBWSxNQUFNLEtBQUssR0FBRztBQUVsRSxnQkFBUyxZQUFZLFdBQW1CLE9BQU8sU0FBUyxVQUF5QjtBQUN0RixRQUFNLFFBQVEsU0FBUyxNQUFNLGdCQUFnQjtBQUM3QyxTQUFPLFFBQVEsQ0FBQyxLQUFLO0FBQ3ZCOyIsIm5hbWVzIjpbXX0=
