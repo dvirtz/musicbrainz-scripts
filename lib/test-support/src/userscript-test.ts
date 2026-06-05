@@ -23,13 +23,20 @@ export const test = base.extend<UserscriptTestOptions & {userscriptPage: Userscr
   userscriptPath: ['', {option: true}],
   updateHar: [false, {option: true}],
 
-  userscriptPage: async ({page, userscriptPath, updateHar}, use, testInfo) => {
+  userscriptPage: async ({baseURL, page, userscriptPath, updateHar}, use, testInfo) => {
     const specBaseName = path.basename(testInfo.file, path.extname(testInfo.file));
     const slug = slugify(testInfo.title);
     const testArtifactsDir = path.join(path.dirname(testInfo.file), 'fixtures', 'har', specBaseName, slug);
     const harPath = path.join(testArtifactsDir, `${slug}.har`);
 
     await mkdir(testArtifactsDir, {recursive: true});
+
+    if (baseURL) {
+      await page.context().grantPermissions(['local-network-access'], {
+        origin: new URL(baseURL).origin,
+      });
+    }
+
     await page.routeFromHAR(harPath, {
       update: updateHar,
       notFound: updateHar ? 'fallback' : 'abort',
