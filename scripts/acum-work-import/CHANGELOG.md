@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.21.2 (2026-06-07)
+
+* fix(acum-work-import): compare mediums by position ([66ab73d](https://github.com/dvirtz/musicbrainz-scripts/commit/66ab73d)), closes [#196](https://github.com/dvirtz/musicbrainz-scripts/issues/196)
+
 ## @dvirtz/acum-work-import-v1.21.1 (2026-06-01)
 
 * fix(acum-work-import): run on all acum pages ([b48290f](https://github.com/dvirtz/musicbrainz-scripts/commit/b48290f))
