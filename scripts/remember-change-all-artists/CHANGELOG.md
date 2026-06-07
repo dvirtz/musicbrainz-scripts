@@ -1,3 +1,9 @@
+## @dvirtz/remember-change-all-artists-v1.0.2 (2026-06-07)
+
+* feat(add-sub-event,remember-change-all-artists): deprecate scripts ([b4663a4](https://github.com/dvirtz/musicbrainz-scripts/commit/b4663a4))
+* feat(add-sub-event,remember-change-all-artists): restore deleted userscript ([f76dfd4](https://github.com/dvirtz/musicbrainz-scripts/commit/f76dfd4))
+* refactor: rename change all artists script ([bf09b9f](https://github.com/dvirtz/musicbrainz-scripts/commit/bf09b9f))
+
 ## [@dvirtz/remember-change-all-artists-v1.0.1](https://github.com/dvirtz/musicbrainz-scripts/compare/@dvirtz/remember-change-all-artists-v1.0.0...@dvirtz/remember-change-all-artists-v1.0.1) (2025-11-17)
 
 
