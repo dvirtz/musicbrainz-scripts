@@ -2,8 +2,12 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "npm",
-			"script": "watch",
+			"type": "shell",
+			"command": "yarn",
+			"args": [
+				"run",
+				"watch"
+			],
 			"group": "build",
 			"problemMatcher": [],
 			"label": "npm: watch",
