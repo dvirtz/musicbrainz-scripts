@@ -77,6 +77,10 @@ export class UserscriptPage {
 
     const devServerOrigin = await this.getDevServerOrigin();
     if (devServerOrigin) {
+      // Allow the browser to reach the Vite dev server despite routeFromHAR intercepting all
+      // requests. page.route() takes precedence over routeFromHAR regardless of order.
+      await this.page.route(`${devServerOrigin}/**`, route => route.continue());
+
       // In dev-server mode the entry URL is served by vite-plugin-monkey's dev middleware.
       // It returns a list of ES module imports (including the actual TypeScript source),
       // all served by Vite with sourcemaps — enabling TypeScript breakpoints.
@@ -112,7 +116,9 @@ export class UserscriptPage {
       return null;
     }
 
-    const installScript = await this.fetchWithTimeout(new URL(DEV_SERVER_INSTALL_PATH, DEV_SERVER_ORIGIN));
+    const installScript = await this.fetchWithTimeout(
+      new URL(`${DEV_SERVER_INSTALL_PATH}?origin=${encodeURI(DEV_SERVER_ORIGIN)}`, DEV_SERVER_ORIGIN)
+    );
     if (!installScript) {
       return null;
     }
