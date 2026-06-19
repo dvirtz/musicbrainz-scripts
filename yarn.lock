@@ -1279,6 +1279,7 @@ __metadata:
     eslint: "npm:*"
     rxjs: "npm:*"
     semantic-release: "npm:*"
+    solid-js: "npm:*"
     vite: "npm:*"
   languageName: unknown
   linkType: soft
