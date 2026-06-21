@@ -37,8 +37,13 @@ export class MusicbrainzPage {
       await usernameBox.fill(username);
       const passwordBox = this.page.getByLabel('Password');
       await passwordBox.fill(password);
-      const loginButton = this.page.getByRole('button', {name: 'Log in'});
+      const loginButton = this.page.getByRole('button', {name: /(Log|Sign) in/});
       await loginButton.click();
+    }
+
+    if (this.page.url().includes('/oauth2/authorize')) {
+      const allowButton = this.page.getByRole('button', {name: 'Allow access'});
+      await allowButton.click();
     }
   }
 
