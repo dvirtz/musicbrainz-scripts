@@ -25,4 +25,7 @@
   "css.lint.validProperties": [
     "composes"
   ],
+  "search.exclude": {
+    "**/fixtures/har": true
+  },
 }
