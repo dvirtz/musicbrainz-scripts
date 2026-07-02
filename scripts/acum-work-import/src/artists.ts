@@ -72,7 +72,7 @@ async function findArtist(
     if (
       byAlias &&
       byAlias.artists.length > 0 &&
-      byAlias.artists[0]!.aliases.some(alias => nameMatch(creator, alias.name))
+      byAlias.artists[0]!.aliases?.some(alias => nameMatch(creator, alias.name))
     ) {
       addWarning(`${role} ${byAlias.artists[0]!.name} found by alias search, please verify (IPI = ${creator.number})`);
       return byAlias.artists[0]!.id;

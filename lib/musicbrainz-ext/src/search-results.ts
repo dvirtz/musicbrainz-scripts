@@ -8,7 +8,7 @@ export type ArtistSearchResultsT = CommonSearchResultsT & {
   artists: ReadonlyArray<{
     id: string;
     name: string;
-    aliases: ReadonlyArray<{name: string}>;
+    aliases?: ReadonlyArray<{name: string}>;
   }>;
 };
 
