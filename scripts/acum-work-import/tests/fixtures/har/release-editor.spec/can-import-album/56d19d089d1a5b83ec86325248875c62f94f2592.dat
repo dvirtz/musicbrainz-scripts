@@ -1,0 +1,6 @@
+import pWaitFor from "/node_modules/.vite/deps/p-wait-for.js?v=c2a67b83";
+export async function waitForEditorState() {
+  return pWaitFor(() => typeof MB !== "undefined" && MB?.relationshipEditor.state !== void 0);
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndhaXQtZm9yLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBwV2FpdEZvciBmcm9tICdwLXdhaXQtZm9yJztcclxuXHJcbmV4cG9ydCBhc3luYyBmdW5jdGlvbiB3YWl0Rm9yRWRpdG9yU3RhdGUoKSB7XHJcbiAgcmV0dXJuIHBXYWl0Rm9yKCgpID0+IHR5cGVvZiBNQiAhPT0gJ3VuZGVmaW5lZCcgJiYgTUI/LnJlbGF0aW9uc2hpcEVkaXRvci5zdGF0ZSAhPT0gdW5kZWZpbmVkKTtcclxufVxyXG4iXSwibWFwcGluZ3MiOiJBQUFBLE9BQU8sY0FBYztBQUVyQixzQkFBc0IscUJBQXFCO0FBQ3pDLFNBQU8sU0FBUyxNQUFNLE9BQU8sT0FBTyxlQUFlLElBQUksbUJBQW1CLFVBQVUsTUFBUztBQUMvRjsiLCJuYW1lcyI6W119

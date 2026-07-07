@@ -1,0 +1,37 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/ui/form-row.tsx");import { template as _$template } from "/node_modules/.vite/deps/solid-js_web.js?v=c2a67b83";
+import { classList as _$classList } from "/node_modules/.vite/deps/solid-js_web.js?v=c2a67b83";
+import { effect as _$effect } from "/node_modules/.vite/deps/solid-js_web.js?v=c2a67b83";
+import { insert as _$insert } from "/node_modules/.vite/deps/solid-js_web.js?v=c2a67b83";
+import { use as _$use } from "/node_modules/.vite/deps/solid-js_web.js?v=c2a67b83";
+import { $$registry as _$$registry, $$refresh as _$$refresh, $$component as _$$component } from "/@solid-refresh";
+const _REGISTRY = _$$registry();
+var _tmpl$ = /* @__PURE__ */ _$template(`<div>`);
+import classes from "/src/ui/work-edit-dialog.module.css";
+import { mergeProps } from "/node_modules/.vite/deps/solid-js.js?v=c2a67b83";
+export const FormRow = _$$component(_REGISTRY, "FormRow", function FormRow2(props) {
+  props = mergeProps({
+    hasNoLabel: false,
+    hasNoMarge: false
+  }, props);
+  return (() => {
+    var _el$ = _tmpl$();
+    var _ref$ = props.rowRef;
+    typeof _ref$ === "function" ? _$use(_ref$, _el$) : props.rowRef = _el$;
+    _$insert(_el$, () => props.children);
+    _$effect((_$p) => _$classList(_el$, {
+      row: true,
+      [classes.row]: true,
+      "no-label": props.hasNoLabel,
+      "no-margin": props.hasNoMargin
+    }, _$p));
+    return _el$;
+  })();
+}, {
+  location: "src\\ui\\form-row.tsx:14:7"
+});
+if (import.meta.hot) {
+  _$$refresh("vite", import.meta.hot, _REGISTRY);
+  import.meta.hot.accept();
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7QUFVQSxPQUFPQSxhQUFhO0FBQ3BCLFNBQVFDLGtCQUE4QjtBQUV0QyxhQUFnQkMsVUFBT0MsYUFBQUMsV0FBQSxvQkFBUEYsU0FDZEcsT0FLQTtBQUNBQSxVQUFRSixXQUFXO0FBQUEsSUFBQ0ssWUFBWTtBQUFBLElBQU9DLFlBQVk7QUFBQSxFQUFLLEdBQUdGLEtBQUs7QUFDaEU7QUFBQSxRQUFBRyxPQUFBQyxPQUFBO0FBQUEsUUFBQUMsUUFRU0wsTUFBTU07QUFBTSxXQUFBRCxVQUFBLGFBQUFFLE1BQUFGLE9BQUFGLElBQUEsSUFBWkgsTUFBTU0sU0FBTUg7QUFBQUssYUFBQUwsTUFBQSxNQUVoQkgsTUFBTVMsUUFBUTtBQUFBQyxhQUFBQyxTQUFBQyxZQUFBVCxNQVJKO0FBQUEsTUFDVFUsS0FBSztBQUFBLE1BQ0wsQ0FBQ2xCLFFBQVFrQixHQUFJLEdBQUc7QUFBQSxNQUNoQixZQUFZYixNQUFNQztBQUFBQSxNQUNsQixhQUFhRCxNQUFNYztBQUFBQSxJQUNyQixHQUFDSCxHQUFBO0FBQUEsV0FBQVI7QUFBQUEsRUFBQTtBQU1QLEdBQUM7QUFBQSxFQUFBWSxVQUFBO0FBQUE7QUFBQSxJQUFBQyxZQUFBQyxLQUFBO0FBQUFDLGFBQUEsUUFBQUYsWUFBQUMsS0FBQWxCLFNBQUE7QUFBQWlCLGNBQUFDLElBQUFFLE9BQUE7QUFBQSIsIm5hbWVzIjpbImNsYXNzZXMiLCJtZXJnZVByb3BzIiwiRm9ybVJvdyIsIl8kJGNvbXBvbmVudCIsIl9SRUdJU1RSWSIsInByb3BzIiwiaGFzTm9MYWJlbCIsImhhc05vTWFyZ2UiLCJfZWwkIiwiX3RtcGwkIiwiX3JlZiQiLCJyb3dSZWYiLCJfJHVzZSIsIl8kaW5zZXJ0IiwiY2hpbGRyZW4iLCJfJGVmZmVjdCIsIl8kcCIsIl8kY2xhc3NMaXN0Iiwicm93IiwiaGFzTm9NYXJnaW4iLCJsb2NhdGlvbiIsImltcG9ydCIsImhvdCIsIl8kJHJlZnJlc2giLCJhY2NlcHQiXSwiaWdub3JlTGlzdCI6W10sInNvdXJjZXMiOlsiZm9ybS1yb3cudHN4Il0sInNvdXJjZXNDb250ZW50IjpbIi8vIGFkYXB0ZWQgZnJvbSBodHRwczovL2dpdGh1Yi5jb20vbWV0YWJyYWluei9tdXNpY2JyYWluei1zZXJ2ZXIvYmxvYi85ZDY2MzFhYzZkNGVhY2IyY2FlNGZlNTFkZDI4OGZhZTU2NDIwYjVmL3Jvb3Qvc3RhdGljL3NjcmlwdHMvZWRpdC9jb21wb25lbnRzL0Zvcm1Sb3cuanNcclxuXHJcbi8qXHJcbiAqIENvcHlyaWdodCAoQykgMjAxNyBNZXRhQnJhaW56IEZvdW5kYXRpb25cclxuICpcclxuICogVGhpcyBmaWxlIGlzIHBhcnQgb2YgTXVzaWNCcmFpbnosIHRoZSBvcGVuIGludGVybmV0IG11c2ljIGRhdGFiYXNlLFxyXG4gKiBhbmQgaXMgbGljZW5zZWQgdW5kZXIgdGhlIEdQTCB2ZXJzaW9uIDIsIG9yIChhdCB5b3VyIG9wdGlvbikgYW55XHJcbiAqIGxhdGVyIHZlcnNpb246IGh0dHA6Ly93d3cuZ251Lm9yZy9saWNlbnNlcy9ncGwtMi4wLnR4dFxyXG4gKi9cclxuXHJcbmltcG9ydCBjbGFzc2VzIGZyb20gJyN1aS93b3JrLWVkaXQtZGlhbG9nLm1vZHVsZS5jc3MnO1xyXG5pbXBvcnQge21lcmdlUHJvcHMsIFBhcmVudFByb3BzfSBmcm9tICdzb2xpZC1qcyc7XHJcblxyXG5leHBvcnQgZnVuY3Rpb24gRm9ybVJvdyhcclxuICBwcm9wczogUGFyZW50UHJvcHMgJiB7XHJcbiAgICBoYXNOb0xhYmVsPzogYm9vbGVhbjtcclxuICAgIGhhc05vTWFyZ2luPzogYm9vbGVhbjtcclxuICAgIHJvd1JlZj86IEhUTUxEaXZFbGVtZW50O1xyXG4gIH1cclxuKSB7XHJcbiAgcHJvcHMgPSBtZXJnZVByb3BzKHtoYXNOb0xhYmVsOiBmYWxzZSwgaGFzTm9NYXJnZTogZmFsc2V9LCBwcm9wcyk7XHJcbiAgcmV0dXJuIChcclxuICAgIDxkaXZcclxuICAgICAgY2xhc3NMaXN0PXt7XHJcbiAgICAgICAgcm93OiB0cnVlLFxyXG4gICAgICAgIFtjbGFzc2VzLnJvdyFdOiB0cnVlLFxyXG4gICAgICAgICduby1sYWJlbCc6IHByb3BzLmhhc05vTGFiZWwsXHJcbiAgICAgICAgJ25vLW1hcmdpbic6IHByb3BzLmhhc05vTWFyZ2luLFxyXG4gICAgICB9fVxyXG4gICAgICByZWY9e3Byb3BzLnJvd1JlZn1cclxuICAgID5cclxuICAgICAge3Byb3BzLmNoaWxkcmVufVxyXG4gICAgPC9kaXY+XHJcbiAgKTtcclxufVxyXG4iXSwiZmlsZSI6IkM6L1VzZXJzL2R5aXR6Y2hha2kvR2l0SHViL21ldGFicmFpbnovbXVzaWNicmFpbnotc2NyaXB0cy9zY3JpcHRzL2FjdW0td29yay1pbXBvcnQvc3JjL3VpL2Zvcm0tcm93LnRzeCJ9
