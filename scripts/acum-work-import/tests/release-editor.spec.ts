@@ -14,7 +14,7 @@ import {WsJsEditRelationshipCreateT, WsJsRelationshipCommonT} from 'typedbrainz/
 const base = mergeTests(testRelease, musicbrainzTest);
 
 const test = base.extend({
-  testRelease: async ({page, musicbrainzPage, userscriptPage, testRelease, baseURL}, use) => {
+  testRelease: async ({page, musicbrainzPage, userscriptPage, testRelease}, use) => {
     await testRelease.editRelationships(musicbrainzPage);
 
     // turn off existing work search
@@ -37,10 +37,10 @@ const test = base.extend({
       musicbrainzPage.expectWorkCreateToMatch(postData, work);
 
       await route.fulfill({
-        status: 302,
-        headers: {
-          Location: `${baseURL}/work/${work.id}`,
-        },
+        status: 200,
+        body: JSON.stringify({
+          mbid: work.id,
+        }),
       });
     });
 

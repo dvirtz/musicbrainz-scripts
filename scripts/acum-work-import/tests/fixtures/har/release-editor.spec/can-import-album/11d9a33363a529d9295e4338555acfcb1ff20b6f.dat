@@ -1,0 +1,49 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/ui/field-errors.tsx");import { template as _$template } from "/node_modules/.vite/deps/solid-js_web.js?v=c2a67b83";
+import { insert as _$insert } from "/node_modules/.vite/deps/solid-js_web.js?v=c2a67b83";
+import { createComponent as _$createComponent } from "/node_modules/.vite/deps/solid-js_web.js?v=c2a67b83";
+import { $$registry as _$$registry, $$refresh as _$$refresh, $$component as _$$component } from "/@solid-refresh";
+const _REGISTRY = _$$registry();
+var _tmpl$ = /* @__PURE__ */ _$template(`<ul class=errors>`), _tmpl$2 = /* @__PURE__ */ _$template(`<li>`);
+var FieldErrorsList = _$$component(_REGISTRY, "FieldErrorsList", function FieldErrorsList2(props) {
+  if (props.errors?.length) {
+    return (() => {
+      var _el$ = _tmpl$();
+      _$insert(_el$, _$createComponent(For, {
+        get each() {
+          return props.errors;
+        },
+        children: (error) => (() => {
+          var _el$2 = _tmpl$2();
+          _$insert(_el$2, error);
+          return _el$2;
+        })()
+      }));
+      return _el$;
+    })();
+  }
+  return null;
+}, {
+  location: "src\\ui\\field-errors.tsx:14:0"
+});
+import { subfieldErrors } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/musicbrainz-ext/src/subfield-errors.ts";
+import { For, mergeProps } from "/node_modules/.vite/deps/solid-js.js?v=c2a67b83";
+export const FieldErrors = _$$component(_REGISTRY, "FieldErrors", function FieldErrors2(props) {
+  if (!props.field) {
+    return null;
+  }
+  props = mergeProps({
+    includeSubFields: true
+  }, props);
+  const errors = props.includeSubFields ? subfieldErrors(props.field) : props.field.errors;
+  return _$createComponent(FieldErrorsList, {
+    errors
+  });
+}, {
+  location: "src\\ui\\field-errors.tsx:25:7"
+});
+if (import.meta.hot) {
+  _$$refresh("vite", import.meta.hot, _REGISTRY);
+  import.meta.hot.accept();
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6Ijs7Ozs7O0lBYVNBLGtCQUFlQyxhQUFBQyxXQUFBLDRCQUFmRixpQkFBZ0JHLE9BQXlDO0FBQ2hFLE1BQUlBLE1BQU1DLFFBQVFDLFFBQVE7QUFDeEI7QUFBQSxVQUFBQyxPQUFBQyxPQUFBO0FBQUFDLGVBQUFGLE1BQUFHLGtCQUVLQyxLQUFHO0FBQUEsWUFBQ0MsT0FBSTtBQUFBLGlCQUFFUixNQUFNQztBQUFBQSxRQUFNO0FBQUEsUUFBQVEsVUFBR0MsWUFBSztBQUFBLGNBQUFDLFFBQUFDLFFBQUE7QUFBQVAsbUJBQUFNLE9BQVNELEtBQUs7QUFBQSxpQkFBQUM7QUFBQUEsUUFBQTtBQUFBLE1BQU07QUFBQSxhQUFBUjtBQUFBQSxJQUFBO0FBQUEsRUFHekQ7QUFDQSxTQUFPO0FBQ1QsR0FBQztBQUFBLEVBQUFVLFVBQUE7QUFBQTtBQVpELFNBQW1CQyxzQkFBcUI7QUFDeEMsU0FBUVAsS0FBS1Esa0JBQWlCO0FBYTlCLGFBQWdCQyxjQUFXbEIsYUFBQUMsV0FBQSx3QkFBWGlCLGFBQVloQixPQUF1RDtBQUNqRixNQUFJLENBQUNBLE1BQU1pQixPQUFPO0FBQ2hCLFdBQU87QUFBQSxFQUNUO0FBRUFqQixVQUFRZSxXQUFXO0FBQUEsSUFBQ0csa0JBQWtCO0FBQUEsRUFBSSxHQUFHbEIsS0FBSztBQUVsRCxRQUFNQyxTQUFTRCxNQUFNa0IsbUJBQW1CSixlQUFlZCxNQUFNaUIsS0FBSyxJQUFJakIsTUFBTWlCLE1BQU1oQjtBQUNsRixTQUFBSyxrQkFBUVQsaUJBQWU7QUFBQSxJQUFDSTtBQUFBQSxFQUFjO0FBQ3hDLEdBQUM7QUFBQSxFQUFBWSxVQUFBO0FBQUE7QUFBQSxJQUFBTSxZQUFBQyxLQUFBO0FBQUFDLGFBQUEsUUFBQUYsWUFBQUMsS0FBQXJCLFNBQUE7QUFBQW9CLGNBQUFDLElBQUFFLE9BQUE7QUFBQSIsIm5hbWVzIjpbIkZpZWxkRXJyb3JzTGlzdCIsIl8kJGNvbXBvbmVudCIsIl9SRUdJU1RSWSIsInByb3BzIiwiZXJyb3JzIiwibGVuZ3RoIiwiX2VsJCIsIl90bXBsJCIsIl8kaW5zZXJ0IiwiXyRjcmVhdGVDb21wb25lbnQiLCJGb3IiLCJlYWNoIiwiY2hpbGRyZW4iLCJlcnJvciIsIl9lbCQyIiwiX3RtcGwkMiIsImxvY2F0aW9uIiwic3ViZmllbGRFcnJvcnMiLCJtZXJnZVByb3BzIiwiRmllbGRFcnJvcnMiLCJmaWVsZCIsImluY2x1ZGVTdWJGaWVsZHMiLCJpbXBvcnQiLCJob3QiLCJfJCRyZWZyZXNoIiwiYWNjZXB0Il0sImlnbm9yZUxpc3QiOltdLCJzb3VyY2VzIjpbImZpZWxkLWVycm9ycy50c3giXSwic291cmNlc0NvbnRlbnQiOlsiLy8gYWRhcHRlZCBmcm9tIGh0dHBzOi8vZ2l0aHViLmNvbS9tZXRhYnJhaW56L211c2ljYnJhaW56LXNlcnZlci9ibG9iL2NhOGZjZTkyMWYyMWVlMDI0YWNjMWIyNjE2ZTU5Y2I2ODEyN2U5NzAvcm9vdC9zdGF0aWMvc2NyaXB0cy9lZGl0L2NvbXBvbmVudHMvRmllbGRFcnJvcnMuanNcclxuXHJcbi8qXHJcbiAqIENvcHlyaWdodCAoQykgMjAxOCBNZXRhQnJhaW56IEZvdW5kYXRpb25cclxuICpcclxuICogVGhpcyBmaWxlIGlzIHBhcnQgb2YgTXVzaWNCcmFpbnosIHRoZSBvcGVuIGludGVybmV0IG11c2ljIGRhdGFiYXNlLFxyXG4gKiBhbmQgaXMgbGljZW5zZWQgdW5kZXIgdGhlIEdQTCB2ZXJzaW9uIDIsIG9yIChhdCB5b3VyIG9wdGlvbikgYW55XHJcbiAqIGxhdGVyIHZlcnNpb246IGh0dHA6Ly93d3cuZ251Lm9yZy9saWNlbnNlcy9ncGwtMi4wLnR4dFxyXG4gKi9cclxuXHJcbmltcG9ydCB7QW55RmllbGRULCBzdWJmaWVsZEVycm9yc30gZnJvbSAnQHJlcG8vbXVzaWNicmFpbnotZXh0L3N1YmZpZWxkLWVycm9ycyc7XHJcbmltcG9ydCB7Rm9yLCBtZXJnZVByb3BzfSBmcm9tICdzb2xpZC1qcyc7XHJcblxyXG5mdW5jdGlvbiBGaWVsZEVycm9yc0xpc3QocHJvcHM6IHtlcnJvcnM/OiBSZWFkb25seUFycmF5PHN0cmluZz59KSB7XHJcbiAgaWYgKHByb3BzLmVycm9ycz8ubGVuZ3RoKSB7XHJcbiAgICByZXR1cm4gKFxyXG4gICAgICA8dWwgY2xhc3M9XCJlcnJvcnNcIj5cclxuICAgICAgICA8Rm9yIGVhY2g9e3Byb3BzLmVycm9yc30+e2Vycm9yID0+IDxsaT57ZXJyb3J9PC9saT59PC9Gb3I+XHJcbiAgICAgIDwvdWw+XHJcbiAgICApO1xyXG4gIH1cclxuICByZXR1cm4gbnVsbDtcclxufVxyXG5cclxuZXhwb3J0IGZ1bmN0aW9uIEZpZWxkRXJyb3JzKHByb3BzOiB7ZmllbGQ6IEFueUZpZWxkVDsgaW5jbHVkZVN1YkZpZWxkcz86IGJvb2xlYW59KSB7XHJcbiAgaWYgKCFwcm9wcy5maWVsZCkge1xyXG4gICAgcmV0dXJuIG51bGw7XHJcbiAgfVxyXG5cclxuICBwcm9wcyA9IG1lcmdlUHJvcHMoe2luY2x1ZGVTdWJGaWVsZHM6IHRydWV9LCBwcm9wcyk7XHJcblxyXG4gIGNvbnN0IGVycm9ycyA9IHByb3BzLmluY2x1ZGVTdWJGaWVsZHMgPyBzdWJmaWVsZEVycm9ycyhwcm9wcy5maWVsZCkgOiBwcm9wcy5maWVsZC5lcnJvcnM7XHJcbiAgcmV0dXJuIDxGaWVsZEVycm9yc0xpc3QgZXJyb3JzPXtlcnJvcnN9IC8+O1xyXG59XHJcbiJdLCJmaWxlIjoiQzovVXNlcnMvZHlpdHpjaGFraS9HaXRIdWIvbWV0YWJyYWluei9tdXNpY2JyYWluei1zY3JpcHRzL3NjcmlwdHMvYWN1bS13b3JrLWltcG9ydC9zcmMvdWkvZmllbGQtZXJyb3JzLnRzeCJ9
