@@ -1,3 +1,8 @@
+## @dvirtz/single-language-tracklist-v1.3.1 (2026-07-08)
+
+* fix(single-language-tracklist): change medium title ([112313f](https://github.com/dvirtz/musicbrainz-scripts/commit/112313f)), closes [#203](https://github.com/dvirtz/musicbrainz-scripts/issues/203)
+* test: support new MB login page ([1f34f25](https://github.com/dvirtz/musicbrainz-scripts/commit/1f34f25)), closes [#198](https://github.com/dvirtz/musicbrainz-scripts/issues/198)
+
 ## @dvirtz/single-language-tracklist-v1.3.0 (2026-05-31)
 
 * feat(release-artist-toolkit): rename and enhance release editor artist credit tools ([7fa126d](https://github.com/dvirtz/musicbrainz-scripts/commit/7fa126d))
