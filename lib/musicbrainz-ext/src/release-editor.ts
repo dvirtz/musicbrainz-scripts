@@ -9,7 +9,7 @@ import {assertMBReleaseEditor} from '#asserts.ts';
 import {ArtistCreditT, MediumT, TrackT} from 'typedbrainz/types';
 
 // Knockout observable shape used by MusicBrainz release editor
-type Observable<T> = {
+export type Observable<T> = {
   (): T;
   (value: T): void;
 };

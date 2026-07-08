@@ -3,7 +3,7 @@
  * by directly modifying the page observables instead of manipulating the DOM
  */
 
-import {getRelease} from '@repo/musicbrainz-ext/release-editor';
+import {getRelease, Observable} from '@repo/musicbrainz-ext/release-editor';
 import {ArtistCreditT} from 'typedbrainz/types';
 
 type Side = 'left' | 'right';
@@ -35,23 +35,24 @@ function keepArtistCreditSide(artistCredit: ArtistCreditT, side: Side, sep: stri
   };
 }
 
+function keepNameSide(name: Observable<string>, sep: string, index: 0 | 1) {
+  const parts = name().split(sep);
+  if (parts.length > 1 && index < parts.length) {
+    name(parts[index]!.trim());
+  }
+}
+
 function keepTitleSide(side: Side, sep: string) {
   const release = getRelease();
   const index = side === 'left' ? 0 : 1;
 
-  const releaseNameParts = release.name().split(sep);
-  if (releaseNameParts.length > 1 && index < releaseNameParts.length) {
-    release.name(releaseNameParts[index]!.trim());
-  }
+  keepNameSide(release.name, sep, index);
 
-  for (const track of release.allTracks()) {
-    const currentName = track.name();
-    const parts = currentName.split(sep);
+  for (const medium of release.mediums()) {
+    keepNameSide(medium.name, sep, index);
 
-    if (parts.length > 1) {
-      if (index < parts.length) {
-        track.name(parts[index]!.trim());
-      }
+    for (const track of medium.tracks()) {
+      keepNameSide(track.name, sep, index);
     }
   }
 }

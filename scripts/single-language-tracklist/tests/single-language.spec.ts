@@ -24,6 +24,7 @@ import {test} from '@repo/test-support/musicbrainz-test';
       'urls.0.url': 'https://www.discogs.com/release/13155647',
       'urls.0.link_type': '76',
       'mediums.0.format': 'CD',
+      'mediums.0.name': 'דיסק 1 = Disc 1',
       'mediums.0.track.0.name': 'סודות גדולים = Big Secrets',
       'mediums.0.track.0.length': '233000',
       'mediums.0.track.1.name': 'שיר געגועים = Longing',
@@ -88,6 +89,9 @@ import {test} from '@repo/test-support/musicbrainz-test';
 
     const releaseArtistInput = page.locator('.release-artist input');
     await expect(releaseArtistInput).toHaveValue(withSeparator[`artist_credit.names.${keptIndex}.name`]!.trim());
+
+    const mediumName = page.getByRole('textbox', {name: 'Medium title:'});
+    await expect(mediumName).toHaveValue(withSeparator['mediums.0.name']!.split(actualSeparator)[keptIndex]!.trim());
 
     for (let i = 0; i < 10; i++) {
       const trackInput = page.locator(`input.track-name`).nth(i);
