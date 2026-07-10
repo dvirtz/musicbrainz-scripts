@@ -79,7 +79,7 @@ export async function scaffoldFestivalDays(params: {
 
     return `${trimmedCustomEditNote}\n\n${formattedGeneratedScriptNote}`;
   };
-  const parentEventGid = event.gid || event.id;
+  const parentEventGid = event.id;
   const dates = deriveDates(event);
   const allowedDayPlaceKeys = selectedDayPlaceKeys ? new Set(selectedDayPlaceKeys) : null;
 
@@ -91,7 +91,7 @@ export async function scaffoldFestivalDays(params: {
     return false;
   }
 
-  const placeByGid = new Map(places.map(place => [place.gid, place]));
+  const placeByGid = new Map(places.map(place => [place.id, place]));
   const selectedPlaces = selectedPlaceIds.map(gid => placeByGid.get(gid)).filter(Boolean) as MBPlace[];
 
   if (dates.length === 1) {
@@ -125,10 +125,10 @@ export async function scaffoldFestivalDays(params: {
       const venueRelationshipCreated = await createEventRelationships({
         childEventGid: venueEventGid,
         parentEventGid,
-        placeGid: place.gid,
+        placeGid: place.id,
         placeCreditName: place.creditName,
         editNote: buildEditNote(
-          `Scaffold festival days: linked place event ${venueEventGid} to festival ${parentEventGid} and place ${place.gid}`
+          `Scaffold festival days: linked place event ${venueEventGid} to festival ${parentEventGid} and place ${place.id}`
         ),
       });
       if (!venueRelationshipCreated) {
@@ -145,7 +145,7 @@ export async function scaffoldFestivalDays(params: {
 
   for (const date of dates) {
     const dayPlaces = selectedPlaces.filter(place => {
-      const dayPlaceKey = `${date.dayNumber}|${place.gid}`;
+      const dayPlaceKey = `${date.dayNumber}|${place.id}`;
       return !allowedDayPlaceKeys || allowedDayPlaceKeys.has(dayPlaceKey);
     });
 
@@ -194,10 +194,10 @@ export async function scaffoldFestivalDays(params: {
       const venueRelationshipCreated = await createEventRelationships({
         childEventGid: venueEventGid,
         parentEventGid: dayEventGid,
-        placeGid: place.gid,
+        placeGid: place.id,
         placeCreditName: place.creditName,
         editNote: buildEditNote(
-          `Scaffold festival days: linked venue event ${venueEventGid} to day ${dayEventGid} and place ${place.gid}`
+          `Scaffold festival days: linked venue event ${venueEventGid} to day ${dayEventGid} and place ${place.id}`
         ),
       });
       if (!venueRelationshipCreated) {

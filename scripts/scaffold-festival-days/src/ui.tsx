@@ -37,7 +37,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
   const [searchResults, setSearchResults] = createSignal<MBPlace[]>([]);
   const [draftCreditNames, setDraftCreditNames] = createSignal<Record<string, string>>({});
   const [placeInput, setPlaceInput] = createSignal('');
-  const [selectedPlaces, setSelectedPlaces] = createSignal<Set<string>>(new Set(props.places.map(place => place.gid)));
+  const [selectedPlaces, setSelectedPlaces] = createSignal<Set<string>>(new Set(props.places.map(place => place.id)));
   const [isCreating, setIsCreating] = createSignal(false);
   const [isSearching, setIsSearching] = createSignal(false);
   const [isMatrixDialogOpen, setIsMatrixDialogOpen] = createSignal(false);
@@ -50,7 +50,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
   const eventDates = createMemo<DateParts[]>(() => deriveDates(props.event));
   const singleDayMode = createMemo(() => isSingleDayFestival(props.event));
   const selectedPlacesForMatrix = createMemo<MBPlace[]>(() => {
-    const placeByGid = new Map(availablePlaces().map(place => [place.gid, place] as const));
+    const placeByGid = new Map(availablePlaces().map(place => [place.id, place] as const));
     return selectedPlaceIds()
       .map(gid => placeByGid.get(gid))
       .filter(Boolean) as MBPlace[];
@@ -67,9 +67,9 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
   };
 
   const addPlaces = (placesToAdd: MBPlace[]) => {
-    const merged = new Map(availablePlaces().map(place => [place.gid, place] as const));
+    const merged = new Map(availablePlaces().map(place => [place.id, place] as const));
     for (const place of placesToAdd) {
-      merged.set(place.gid, place);
+      merged.set(place.id, place);
     }
     setAvailablePlaces(Array.from(merged.values()));
   };
@@ -77,17 +77,17 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
   const addAndSelectPlace = (place: MBPlace) => {
     addPlaces([place]);
     const nextSelected = new Set(selectedPlaces());
-    nextSelected.add(place.gid);
+    nextSelected.add(place.id);
     setSelectedPlaces(nextSelected);
   };
 
   const removePlace = (placeGid: string) => {
-    const place = availablePlaces().find(p => p.gid === placeGid);
-    setAvailablePlaces(prev => prev.filter(p => p.gid !== placeGid));
+    const place = availablePlaces().find(p => p.id === placeGid);
+    setAvailablePlaces(prev => prev.filter(p => p.id !== placeGid));
     const next = new Set(selectedPlaces());
     next.delete(placeGid);
     setSelectedPlaces(next);
-    if (place && !searchResults().some(r => r.gid === placeGid)) {
+    if (place && !searchResults().some(r => r.id === placeGid)) {
       setSearchResults(prev => [...prev, place]);
     }
   };
@@ -207,7 +207,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
             {(place, index) => (
               <div class={classes.searchResultRow}>
                 <span class={classes.searchResultPlaceName}>
-                  <a href={`/place/${place.gid}`}>
+                  <a href={`/place/${place.id}`}>
                     {place.name}
                     <Show when={place.disambiguation}>{disambiguation => <span>{` (${disambiguation()})`}</span>}</Show>
                   </a>
@@ -216,10 +216,10 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
                   class={classes.creditNameInput}
                   type="text"
                   placeholder="Credited as"
-                  value={draftCreditNames()[place.gid] ?? ''}
+                  value={draftCreditNames()[place.id] ?? ''}
                   onInput={e => {
                     const value = (e.currentTarget as HTMLInputElement).value;
-                    setDraftCreditNames(prev => ({...prev, [place.gid]: value}));
+                    setDraftCreditNames(prev => ({...prev, [place.id]: value}));
                   }}
                   disabled={isCreating()}
                 />
@@ -227,7 +227,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
                   class={'icon add-item'}
                   title={'Add'}
                   onClick={() => {
-                    const draft = draftCreditNames()[place.gid] ?? '';
+                    const draft = draftCreditNames()[place.id] ?? '';
                     const creditName = draft.trim() || undefined;
                     addAndSelectPlace({...place, creditName});
                     setSearchResults(prev => prev.filter((_, i) => i !== index()));
@@ -258,15 +258,15 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
                   <input
                     type="checkbox"
                     aria-label={place.creditName ?? place.name}
-                    checked={selectedPlaces().has(place.gid)}
-                    onChange={() => togglePlace(place.gid)}
+                    checked={selectedPlaces().has(place.id)}
+                    onChange={() => togglePlace(place.id)}
                     disabled={isCreating()}
                   />
-                  <a href={`/place/${place.gid}`}>{place.creditName ?? place.name}</a>
+                  <a href={`/place/${place.id}`}>{place.creditName ?? place.name}</a>
                 </span>
                 <button
                   class={`nobutton icon remove-item`}
-                  onClick={() => removePlace(place.gid)}
+                  onClick={() => removePlace(place.id)}
                   disabled={isCreating()}
                   aria-label={`Remove ${place.creditName ?? place.name}`}
                 />
@@ -384,7 +384,7 @@ export async function createUI(eventGid: string) {
   const container = (<div id={CONTAINER_ID}></div>) as HTMLDivElement;
   theToolbox.appendChild(container);
 
-  const places = getLinkedPlacesFromEvent(event);
+  const places = await getLinkedPlacesFromEvent(event);
 
   const dayWord = await GM.getValue(DAY_WORD_STORAGE_KEY, DEFAULT_DAY_WORD);
 

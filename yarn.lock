@@ -1301,6 +1301,7 @@ __metadata:
     cross-env: "npm:*"
     dom-mutations: "npm:*"
     eslint: "npm:*"
+    p-lazy: "npm:*"
     rxjs: "npm:*"
     semantic-release: "npm:*"
     solid-js: "npm:*"

@@ -51,7 +51,7 @@ export class EventForm {
     return this;
   }
 
-  urlRelationship(index: number, relationship: {url: string; linkTypeId: string | number}): this {
+  urlRelationship(index: number, relationship: {url: string; linkTypeId: number}): this {
     const base = `edit-event.url.${index}`;
     this.searchParams.append(`${base}.text`, relationship.url);
     this.searchParams.append(`${base}.link_type_id`, String(relationship.linkTypeId));

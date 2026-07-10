@@ -1,12 +1,11 @@
 type MBRelatedEntity = {
-  id?: string;
-  name?: string;
+  id: string;
+  name: string;
   disambiguation?: string;
 };
 
 export interface MBEvent {
   id: string;
-  gid?: string;
   name: string;
   type?: string;
   'type-id'?: string;
@@ -20,7 +19,7 @@ export interface MBEvent {
   };
   relations?: ReadonlyArray<{
     type?: string;
-    'type-id'?: string;
+    'type-id': string;
     direction?: string;
     begin?: string | null;
     end?: string | null;
@@ -35,7 +34,6 @@ export interface MBEvent {
     artist?: MBRelatedEntity;
     event?: {
       id?: string;
-      gid?: string;
       name?: string;
       type?: string;
       'type-id'?: string;

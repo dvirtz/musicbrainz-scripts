@@ -1,0 +1,42 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/ui.module.css");import { updateStyle as __vite__updateStyle, removeStyle as __vite__removeStyle } from "/@vite/client"
+const __vite__id = "C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/scripts/scaffold-festival-days/src/ui.module.css"
+const __vite__css = "/* ── shared base classes ─────────────────────────────────────── */\r\n\r\n/* vertical flex list */\r\n._columnList_1j11p_7 {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 0.35rem;\r\n}\r\n\r\n/* three-column place-row grid: name | credit | action */\r\n._placeRow_1j11p_21 {\r\n  display: grid;\r\n  grid-template-columns: minmax(0, 1fr) 10em auto;\r\n  align-items: center;\r\n}\r\n\r\n/* vertical label + control stack */\r\n._columnControl_1j11p_35 {\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 0.25rem;\r\n}\r\n\r\n/* ── component classes ───────────────────────────────────────── */\r\n\r\n._placesList_1j11p_51 {\r\n  gap: 0.25rem;\r\n}\r\n\r\n._placeSearchBox_1j11p_61 {\r\n  display: flex;\r\n  gap: 0.5rem;\r\n}\r\n\r\n._placeSearchInput_1j11p_71 {\r\n  flex: 1;\r\n  min-width: 0;\r\n}\r\n\r\n._searchResultRow_1j11p_81 {\r\n  gap: 0.5rem;\r\n}\r\n\r\n._searchResultPlaceName_1j11p_91 {\r\n  min-width: 0;\r\n}\r\n\r\n._creditNameInput_1j11p_99 {\r\n  box-sizing: border-box;\r\n  min-width: 0;\r\n}\r\n\r\n._addPlaceButton_1j11p_109 {\r\n  width: 4.5em;\r\n  margin-left: 0 !important;\r\n  justify-self: start;\r\n}\r\n\r\n._placeOptionContent_1j11p_121 {\r\n  grid-column: 1 / span 2;\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 0.35rem;\r\n}\r\n\r\n._actionsRow_1j11p_135 {\r\n  display: flex;\r\n  align-items: flex-start;\r\n  flex-wrap: wrap;\r\n  gap: 0.75rem;\r\n}\r\n\r\n._customEditNoteControl_1j11p_149 {\r\n  flex: 1;\r\n  min-width: 16rem;\r\n}\r\n\r\n._customEditNoteInput_1j11p_161 {\r\n  box-sizing: border-box;\r\n  width: 100%;\r\n}\r\n\r\n._dayWordControl_1j11p_171 {\r\n  align-items: flex-start;\r\n}\r\n\r\n._customDayWordInput_1j11p_181 {\r\n  width: 6em;\r\n}\r\n\r\n._actionsButtons_1j11p_189 {\r\n  margin-left: auto;\r\n  align-self: flex-end;\r\n}\r\n"
+__vite__updateStyle(__vite__id, __vite__css)
+export const columnList = "_columnList_1j11p_7";
+export const placeRow = "_placeRow_1j11p_21";
+export const columnControl = "_columnControl_1j11p_35";
+export const placesList = "_placesList_1j11p_51 _columnList_1j11p_7";
+export const placeSearchBox = "_placeSearchBox_1j11p_61";
+export const placeSearchInput = "_placeSearchInput_1j11p_71";
+export const searchResultRow = "_searchResultRow_1j11p_81 _placeRow_1j11p_21";
+export const searchResultPlaceName = "_searchResultPlaceName_1j11p_91";
+export const creditNameInput = "_creditNameInput_1j11p_99";
+export const addPlaceButton = "_addPlaceButton_1j11p_109";
+export const placeOptionContent = "_placeOptionContent_1j11p_121";
+export const actionsRow = "_actionsRow_1j11p_135";
+export const customEditNoteControl = "_customEditNoteControl_1j11p_149 _columnControl_1j11p_35";
+export const customEditNoteInput = "_customEditNoteInput_1j11p_161";
+export const dayWordControl = "_dayWordControl_1j11p_171 _columnControl_1j11p_35";
+export const customDayWordInput = "_customDayWordInput_1j11p_181";
+export const actionsButtons = "_actionsButtons_1j11p_189";
+export default {
+	columnList: columnList,
+	placeRow: placeRow,
+	columnControl: columnControl,
+	placesList: placesList,
+	placeSearchBox: placeSearchBox,
+	placeSearchInput: placeSearchInput,
+	searchResultRow: searchResultRow,
+	searchResultPlaceName: searchResultPlaceName,
+	creditNameInput: creditNameInput,
+	addPlaceButton: addPlaceButton,
+	placeOptionContent: placeOptionContent,
+	actionsRow: actionsRow,
+	customEditNoteControl: customEditNoteControl,
+	customEditNoteInput: customEditNoteInput,
+	dayWordControl: dayWordControl,
+	customDayWordInput: customDayWordInput,
+	actionsButtons: actionsButtons
+};
+
+import.meta.hot.prune(() => __vite__removeStyle(__vite__id))

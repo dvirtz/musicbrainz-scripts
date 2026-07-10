@@ -34,7 +34,7 @@ import {
 } from 'rxjs';
 
 enum TypeID {
-  SetlistFmUrl = '811', // MB.linkedEntities.link_type['027fce0c-c621-4fd1-b728-1678ae08f280'].id
+  SetlistFmUrl = 811, // MB.linkedEntities.link_type['027fce0c-c621-4fd1-b728-1678ae08f280'].id
 }
 
 const artistMBIDCache = new Map<string, Promise<string | undefined>>();

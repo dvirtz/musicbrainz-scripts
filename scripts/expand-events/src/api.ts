@@ -129,9 +129,8 @@ export async function fetchEventDetails(eventGid: string): Promise<EventDetails 
     return null;
   }
 
-  const gid = event.gid ?? event.id;
   const seedData = extractParentEventSeedData(event);
-  if (!gid || !seedData) {
+  if (!seedData) {
     return null;
   }
 
@@ -144,8 +143,8 @@ export async function fetchEventDetails(eventGid: string): Promise<EventDetails 
   }
 
   return {
-    gid,
-    name: event.name ?? gid,
+    gid: event.id,
+    name: event.name,
     type: event.type,
     status: formatStatus(event),
     beginDate: event['life-span']?.begin,
