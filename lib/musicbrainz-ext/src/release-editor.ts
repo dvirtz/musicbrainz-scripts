@@ -23,7 +23,7 @@ declare class EditorMedium {
   release: EditorRelease;
   formatID: Observable<string>;
   position: Observable<number>;
-  name: Observable<string>;
+  name: Observable<string | undefined>;
   tracks: ObservableArray<EditorTrack>;
   pushTrack(data: Partial<TrackT>): void;
 
