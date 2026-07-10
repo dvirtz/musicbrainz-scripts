@@ -1,12 +1,20 @@
 import type {MBEvent, MBPlace} from '#types.ts';
-import {fetchResponse, tryFetchJSON} from '@repo/fetch/fetch';
+import {fetchResponse} from '@repo/fetch/fetch';
 import {
   EDIT_RELATIONSHIP_CREATE,
   EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
   EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
   MBID_REGEXP,
+  PLACE_PART_OF_RELATIONSHIP_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
 import {EventForm} from '@repo/musicbrainz-ext/event-form';
+import {tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
+import {linkTypeGid} from '@repo/musicbrainz-ext/type-info';
+import PLazy from 'p-lazy';
+import {filter, firstValueFrom, from, map, mergeAll, mergeMap, Observable, startWith, toArray} from 'rxjs';
+
+const heldAtTypeGid = PLazy.from(async () => linkTypeGid(EVENT_HELD_AT_RELATIONSHIP_TYPE_ID));
+const partOfTypeGid = PLazy.from(async () => linkTypeGid(PLACE_PART_OF_RELATIONSHIP_TYPE_ID));
 
 const PLACE_URL_REGEXP = new RegExp(`/place/(${MBID_REGEXP.source})`, 'i');
 
@@ -22,38 +30,60 @@ type MBPlaceLookupResponse = {
   id?: string;
   name?: string;
   disambiguation?: string;
+  relations?: Array<{
+    'type-id'?: number | string;
+    type?: string;
+    direction?: string;
+    'target-type'?: string;
+    'target-credit': string;
+    place?: {
+      id: string;
+      name: string;
+      disambiguation?: string;
+    };
+  }>;
 };
+
+function toMBPlace(place: {id: string; name: string; disambiguation?: string; creditName?: string}): MBPlace {
+  return {
+    ...place,
+  };
+}
 
 export async function fetchEvent(eventGid: string): Promise<MBEvent | null> {
   return await tryFetchJSON<MBEvent>(`/ws/2/event/${eventGid}?fmt=json&inc=event-rels%20place-rels`);
 }
 
-export function getLinkedPlacesFromEvent(event: MBEvent): MBPlace[] {
-  const uniquePlaces = new Map<string, MBPlace>();
+async function getSubPlaces(place: MBPlace): Promise<Observable<MBPlace>> {
+  const response = await tryFetchJSON<MBPlaceLookupResponse>(`/ws/2/place/${place.id}?fmt=json&inc=place-rels`);
 
-  for (const relation of event.relations ?? []) {
-    if (relation['target-type'] !== 'place' || !relation.place) {
-      continue;
-    }
+  const partOfId = await partOfTypeGid;
 
-    const place = relation.place;
-    if (!place.id || !place.name) {
-      continue;
-    }
+  return from(response?.relations ?? []).pipe(
+    filter(relation => relation['type-id'] == partOfId),
+    map(relation => toMBPlace({...relation.place!, creditName: relation['target-credit']})),
+    mergeMap(async place => (await getSubPlaces(place)).pipe(startWith(place))),
+    mergeAll()
+  );
+}
 
-    // Deduplicate by gid in case the event has multiple relations to the same place.
-    const creditName = relation['target-credit']?.trim() || undefined;
+export async function getLinkedPlacesFromEvent(event: MBEvent): Promise<MBPlace[]> {
+  const heldAtId = await heldAtTypeGid;
 
-    uniquePlaces.set(place.id, {
-      id: place.id,
-      gid: place.id,
-      name: place.name,
-      disambiguation: typeof place.disambiguation === 'string' ? place.disambiguation : undefined,
-      creditName: creditName,
-    });
-  }
-
-  return Array.from(uniquePlaces.values());
+  return firstValueFrom(
+    from(event.relations ?? []).pipe(
+      filter(relation => relation['type-id'] == heldAtId),
+      map(relation =>
+        toMBPlace({
+          ...relation.place!,
+          creditName: relation['target-credit'],
+        })
+      ),
+      mergeMap(async place => (await getSubPlaces(place)).pipe(startWith(place))),
+      mergeAll(),
+      toArray()
+    )
+  );
 }
 
 export function extractPlaceGid(input: string): string | null {
@@ -75,7 +105,6 @@ export async function fetchPlaceByGid(placeGid: string): Promise<MBPlace | null>
 
   return {
     id: response.id,
-    gid: response.id,
     name: response.name,
     disambiguation: response.disambiguation,
   };

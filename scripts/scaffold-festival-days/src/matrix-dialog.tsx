@@ -1,7 +1,7 @@
-import {Button} from '@kobalte/core/button';
-import {createEffect, createSignal, For, Show} from 'solid-js';
 import classes from '#matrix-dialog.module.css';
 import type {DateParts, MBPlace} from '#types.ts';
+import {Button} from '@kobalte/core/button';
+import {createEffect, createSignal, For, Show} from 'solid-js';
 
 export function MatrixDialog(props: {
   open: boolean;
@@ -24,7 +24,7 @@ export function MatrixDialog(props: {
     const initial = new Set<string>();
     for (const day of props.dates) {
       for (const place of props.places) {
-        initial.add(dayPlaceKey(day.dayNumber, place.gid));
+        initial.add(dayPlaceKey(day.dayNumber, place.id));
       }
     }
     setSelectedDayPlaceKeys(initial);
@@ -44,7 +44,7 @@ export function MatrixDialog(props: {
   const setDaySelected = (dayNumber: number, selected: boolean) => {
     const next = new Set(selectedDayPlaceKeys());
     for (const place of props.places) {
-      const key = dayPlaceKey(dayNumber, place.gid);
+      const key = dayPlaceKey(dayNumber, place.id);
       if (selected) {
         next.add(key);
       } else {
@@ -86,7 +86,7 @@ export function MatrixDialog(props: {
                     <For each={props.places}>
                       {place => {
                         const isColumnChecked = () =>
-                          props.dates.every(day => selectedDayPlaceKeys().has(dayPlaceKey(day.dayNumber, place.gid)));
+                          props.dates.every(day => selectedDayPlaceKeys().has(dayPlaceKey(day.dayNumber, place.id)));
 
                         return (
                           <th>
@@ -94,7 +94,7 @@ export function MatrixDialog(props: {
                               <input
                                 type="checkbox"
                                 checked={isColumnChecked()}
-                                onChange={event => setPlaceSelected(place.gid, event.currentTarget.checked)}
+                                onChange={event => setPlaceSelected(place.id, event.currentTarget.checked)}
                               />
                               <span>{place.creditName ?? place.name}</span>
                             </label>
@@ -108,7 +108,7 @@ export function MatrixDialog(props: {
                   <For each={props.dates}>
                     {day => {
                       const isRowChecked = () =>
-                        props.places.every(place => selectedDayPlaceKeys().has(dayPlaceKey(day.dayNumber, place.gid)));
+                        props.places.every(place => selectedDayPlaceKeys().has(dayPlaceKey(day.dayNumber, place.id)));
 
                       return (
                         <tr>
@@ -127,8 +127,8 @@ export function MatrixDialog(props: {
                               <td>
                                 <input
                                   type="checkbox"
-                                  checked={selectedDayPlaceKeys().has(dayPlaceKey(day.dayNumber, place.gid))}
-                                  onChange={() => toggleDayPlaceCell(day.dayNumber, place.gid)}
+                                  checked={selectedDayPlaceKeys().has(dayPlaceKey(day.dayNumber, place.id))}
+                                  onChange={() => toggleDayPlaceCell(day.dayNumber, place.id)}
                                 />
                               </td>
                             )}

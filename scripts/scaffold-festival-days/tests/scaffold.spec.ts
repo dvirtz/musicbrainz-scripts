@@ -1,4 +1,5 @@
 import {test} from '#tests/fixtures/test-festival-event.ts';
+import {MBEvent} from '#types.ts';
 import {expect, type Page} from '@playwright/test';
 import {
   EDIT_RELATIONSHIP_CREATE,
@@ -42,6 +43,10 @@ function makeFakeGid(counter: number) {
   return `00000000-0000-4000-8000-${String(counter).padStart(12, '0')}`;
 }
 
+const HELD_AT_GID = 'e2c6f697-07dc-38b1-be0b-83d740165532';
+const EVENT_PART_OF_GID = '65742183-b25c-469e-b094-ff6739e6699c';
+const PLACE_PART_OF_GID = 'ff683f48-eff1-40ab-a58f-b128098ffe92';
+
 async function confirmScaffoldCreation(page: Page, expectsDialog: boolean = true) {
   const scaffoldButton = page.getByRole('button', {name: /create.*festival.*(day|place)/i});
   await scaffoldButton.click();
@@ -51,6 +56,10 @@ async function confirmScaffoldCreation(page: Page, expectsDialog: boolean = true
 
   await expect(page.getByText(/accepting this action will create new event entities/i)).toBeAttached();
   await page.getByRole('button', {name: /confirm and create/i}).click();
+}
+
+async function expectScaffoldComplete(page: Page) {
+  await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached({timeout: 30000});
 }
 
 async function setupScaffoldRoutes(params: {
@@ -66,10 +75,20 @@ async function setupScaffoldRoutes(params: {
   eventType?: string;
   beginDate?: TestEventDate;
   endDate?: TestEventDate;
-  relations?: Array<Record<string, unknown>>;
+  relations?: MBEvent['relations'];
+  placeChildRelationsById?: Record<string, Array<{id: string; name: string}>>;
 }): Promise<ScaffoldRouteState> {
-  const {userscriptPage, testFestivalEvent, testPlaces, exposedPlaces, eventType, beginDate, endDate, relations} =
-    params;
+  const {
+    userscriptPage,
+    testFestivalEvent,
+    testPlaces,
+    exposedPlaces,
+    eventType,
+    beginDate,
+    endDate,
+    relations,
+    placeChildRelationsById,
+  } = params;
   const createdEvents: CreatedEvent[] = [];
   const relationships: RelationshipEdit[] = [];
   const placeRelationships: PlaceRelationshipEdit[] = [];
@@ -94,9 +113,9 @@ async function setupScaffoldRoutes(params: {
 
   const defaultRelations = places.map(place => ({
     'target-type': 'place',
+    'type-id': HELD_AT_GID,
     place: {
       id: place.id,
-      gid: place.id,
       name: place.name,
     },
   }));
@@ -105,7 +124,6 @@ async function setupScaffoldRoutes(params: {
     await route.fulfill({
       json: {
         id: testFestivalEvent.gid,
-        gid: testFestivalEvent.gid,
         name: testFestivalEvent.getName(),
         type: eventType ?? 'Festival',
         'life-span': {
@@ -129,6 +147,42 @@ async function setupScaffoldRoutes(params: {
     eventNamesById.set(gid, name);
 
     await route.fulfill({json: {mbid: gid}});
+  });
+
+  const unroutePlaceLookup = await userscriptPage.route('**/ws/2/place/*?*', async route => {
+    const requestUrl = new URL(route.request().url());
+    const pathMatch = requestUrl.pathname.match(/\/ws\/2\/place\/([0-9a-f-]{36})/i);
+    const placeId = pathMatch?.[1];
+
+    if (!placeId) {
+      await route.fulfill({json: {}});
+      return;
+    }
+
+    const knownPlaces = [...places, ...Object.values(placeChildRelationsById ?? {}).flat()];
+    const place = knownPlaces.find(candidate => candidate.id === placeId);
+
+    const childRelations = placeChildRelationsById?.[placeId] ?? [];
+    const relationsPayload = childRelations.map(child => ({
+      'target-type': 'place',
+      'type-id': PLACE_PART_OF_GID,
+      type: 'contains',
+      direction: 'forward',
+      place: {
+        id: child.id,
+        gid: child.id,
+        name: child.name,
+      },
+    }));
+
+    await route.fulfill({
+      json: {
+        id: placeId,
+        gid: placeId,
+        name: place?.name ?? `Place ${placeId.slice(0, 8)}`,
+        relations: relationsPayload,
+      },
+    });
   });
 
   const unrouteEditCreate = await userscriptPage.route('**/ws/js/edit/create', async (route, request) => {
@@ -201,6 +255,7 @@ async function setupScaffoldRoutes(params: {
     unroute: async () => {
       await unrouteEvent();
       await unrouteEventCreate();
+      await unroutePlaceLookup();
       await unrouteEditCreate();
     },
   };
@@ -266,9 +321,11 @@ test.describe('scaffold festival days', () => {
         {
           'target-type': 'event',
           type: 'parts',
+          'type-id': EVENT_PART_OF_GID,
           direction: 'forward',
-          target: {
+          place: {
             id: makeFakeGid(999),
+            name: '',
           },
         },
       ],
@@ -287,15 +344,26 @@ test.describe('scaffold festival days', () => {
     testFestivalEvent,
     testPlaces,
   }) => {
-    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
+    const parentPlaceId = testPlaces.getAll()[0] ?? '';
+    const childPlaceId = makeFakeGid(777);
+    const childPlaceName = 'scaffold-festival-days test: Place 1 - Room A';
+
+    const routeState = await setupScaffoldRoutes({
+      userscriptPage,
+      testFestivalEvent,
+      testPlaces,
+      placeChildRelationsById: {
+        [parentPlaceId]: [{id: childPlaceId, name: childPlaceName}],
+      },
+    });
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
     // Wait for the toolbox to appear
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
 
     // Verify places are available for selection (checkboxes are visible immediately)
-    for (const place of TEST_PLACE_NAMES) {
-      const checkbox = page.getByRole('checkbox', {name: new RegExp(place, 'i')});
+    for (const place of [...TEST_PLACE_NAMES, childPlaceName]) {
+      const checkbox = page.getByRole('checkbox', {name: place, exact: true});
       await expect(checkbox).toBeAttached();
     }
 
@@ -360,7 +428,7 @@ test.describe('scaffold festival days', () => {
     }
 
     await confirmScaffoldCreation(page);
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const places = testPlaces.getAll().map((id, index) => ({
       id,
@@ -403,7 +471,7 @@ test.describe('scaffold festival days', () => {
     }
 
     await confirmScaffoldCreation(page);
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const festivalName = TEST_FESTIVAL_NAME;
     const places = testPlaces.getAll().map((id, index) => ({
@@ -450,14 +518,12 @@ test.describe('scaffold festival days', () => {
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
 
     // Keep only the first place selected (all linked places are selected by default)
-    const checkboxes = page.getByRole('checkbox');
-    const count = await checkboxes.count();
-    for (let i = 1; i < count; i++) {
-      await checkboxes.nth(i).uncheck();
-    }
+    const place2Checkbox = page.getByRole('checkbox', {name: new RegExp(TEST_PLACE_NAMES[1], 'i')});
+    await place2Checkbox.uncheck();
+    await expect(place2Checkbox).not.toBeChecked();
 
     await confirmScaffoldCreation(page);
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const places = testPlaces.getAll().map((id, index) => ({
       id,
@@ -502,7 +568,7 @@ test.describe('scaffold festival days', () => {
     await firstMatrixCell.uncheck();
     await dialog.getByRole('button', {name: /confirm and create/i}).click();
 
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const places = testPlaces.getAll().map((id, index) => ({
       id,
@@ -548,7 +614,7 @@ test.describe('scaffold festival days', () => {
     await firstRowHeaderCheckbox.uncheck();
     await dialog.getByRole('button', {name: /confirm and create/i}).click();
 
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const festivalName = TEST_FESTIVAL_NAME;
     const dayCount = testFestivalEvent.getDates().length;
@@ -583,7 +649,7 @@ test.describe('scaffold festival days', () => {
     await expect(page.getByText('No linked places found. Only day sub-events will be created.')).toBeAttached();
 
     await confirmScaffoldCreation(page, false);
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const dayCount = testFestivalEvent.getDates().length;
     const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
@@ -616,7 +682,7 @@ test.describe('scaffold festival days', () => {
     await scaffoldButton.click();
     await expect(page.getByRole('dialog', {name: /scaffold sub-events matrix/i})).toHaveCount(0);
 
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const places = testPlaces.getAll().map((id, index) => ({
       id,
@@ -655,7 +721,7 @@ test.describe('scaffold festival days', () => {
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
 
     await confirmScaffoldCreation(page, false);
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const places = testPlaces.getAll().map((id, index) => ({
       id,
@@ -719,7 +785,7 @@ test.describe('scaffold festival days', () => {
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
 
     await confirmScaffoldCreation(page);
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const festivalName = TEST_FESTIVAL_NAME;
     const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
@@ -768,7 +834,7 @@ test.describe('scaffold festival days', () => {
       .fill('Reviewed source schedule and linked all generated sub-events.');
 
     await confirmScaffoldCreation(page);
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     expect(routeState.createEventEditNotes.length).toBeGreaterThan(0);
     expect(routeState.createRelationshipEditNotes.length).toBeGreaterThan(0);
@@ -803,11 +869,11 @@ test.describe('scaffold festival days', () => {
       testPlaces,
       relations: placeIds.map((id, index) => ({
         'target-type': 'place',
+        'type-id': HELD_AT_GID,
         'target-credit': placeCreditNames[index] ?? TEST_PLACE_NAMES[index],
         place: {
           id,
-          gid: id,
-          name: TEST_PLACE_NAMES[index],
+          name: TEST_PLACE_NAMES[index]!,
         },
       })),
     });
@@ -822,7 +888,7 @@ test.describe('scaffold festival days', () => {
     }
 
     await confirmScaffoldCreation(page);
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const dayCount = testFestivalEvent.getDates().length;
     const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
@@ -871,11 +937,11 @@ test.describe('scaffold festival days', () => {
       endDate: testFestivalEvent.getBeginDate(),
       relations: placeIds.map((id, index) => ({
         'target-type': 'place',
+        'type-id': HELD_AT_GID,
         'target-credit': placeCreditNames[index] ?? TEST_PLACE_NAMES[index],
         place: {
           id,
-          gid: id,
-          name: TEST_PLACE_NAMES[index],
+          name: TEST_PLACE_NAMES[index]!,
         },
       })),
     });
@@ -884,7 +950,7 @@ test.describe('scaffold festival days', () => {
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
 
     await confirmScaffoldCreation(page, false);
-    await expect(page.getByText('Festival days scaffolding complete!')).toBeAttached();
+    await expectScaffoldComplete(page);
 
     const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
 

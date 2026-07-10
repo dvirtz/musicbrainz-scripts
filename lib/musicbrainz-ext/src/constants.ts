@@ -29,6 +29,7 @@ export const EVENT_GUEST_PERFORMER_RELATIONSHIP_TYPE_ID = 800;
 export const EVENT_HELD_AT_RELATIONSHIP_TYPE_ID = 794;
 export const EVENT_PART_OF_RELATIONSHIP_TYPE_ID = 818;
 export const EVENT_PERFORMANCE_TIME_RELATIONSHIP_ATTRIBUTE_TYPE_ID = 830;
+export const PLACE_PART_OF_RELATIONSHIP_TYPE_ID = 717;
 export const REL_STATUS_NOOP = 0 as RelationshipEditStatusT;
 export const REL_STATUS_ADD = 1 as RelationshipEditStatusT;
 export const REL_STATUS_EDIT = 2 as RelationshipEditStatusT;
