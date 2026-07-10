@@ -49,7 +49,9 @@ function keepTitleSide(side: Side, sep: string) {
   keepNameSide(release.name, sep, index);
 
   for (const medium of release.mediums()) {
-    keepNameSide(medium.name, sep, index);
+    if (medium.name()) {
+      keepNameSide(medium.name as Observable<string>, sep, index);
+    }
 
     for (const track of medium.tracks()) {
       keepNameSide(track.name, sep, index);
