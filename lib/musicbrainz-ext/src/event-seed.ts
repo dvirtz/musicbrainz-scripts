@@ -3,7 +3,7 @@ import {editNoteFormat} from '#edit-note.ts';
 import type {EventDateParts} from '#event-form.ts';
 import {EventForm} from '#event-form.ts';
 import type {MBEvent} from '#event-types.ts';
-import {urlTypes} from '#type-info.ts';
+import {linkTypeId} from '#type-info.ts';
 import {tryFetchJSON} from '@repo/fetch/fetch';
 
 type MBEventRelation = NonNullable<MBEvent['relations']>[number];
@@ -56,11 +56,6 @@ function resolveEventTypeId(typeName: string | undefined): string | undefined {
 }
 
 export function extractParentEventSeedData(event: MBEvent): ParentEventSeedData | null {
-  const parentEventGid = event.gid ?? event.id;
-  if (!parentEventGid) {
-    return null;
-  }
-
   const seenIds = new Set<string>();
   const places: PlaceSeedData[] = [];
   for (const relation of event.relations ?? []) {
@@ -77,7 +72,7 @@ export function extractParentEventSeedData(event: MBEvent): ParentEventSeedData 
   }
 
   return {
-    parentEventGid,
+    parentEventGid: event.id,
     beginDate: parseDateParts(event['life-span']?.begin),
     endDate: parseDateParts(event['life-span']?.end ?? event['life-span']?.begin),
     places,
@@ -286,11 +281,11 @@ export async function seedCloneEvent(seedData: CloneEventSeedData): Promise<stri
 
   for (const rel of seedData.relationships) {
     if (rel.kind === 'url') {
-      const urlType = Object.values(await urlTypes).find(v => v.gid == rel.typeId);
-      if (urlType) {
+      const urlTypeId = await linkTypeId(rel.typeId);
+      if (urlTypeId) {
         eventForm.urlRelationship(urlRelationshipIndex, {
           url: rel.url,
-          linkTypeId: urlType.id,
+          linkTypeId: urlTypeId,
         });
         urlRelationshipIndex += 1;
       }

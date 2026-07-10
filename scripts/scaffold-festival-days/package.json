@@ -23,6 +23,7 @@
     "@repo/musicbrainz-ext": "workspace:*",
     "@repo/rxjs-ext": "workspace:*",
     "dom-mutations": "*",
+    "p-lazy": "*",
     "rxjs": "*",
     "solid-js": "*"
   },

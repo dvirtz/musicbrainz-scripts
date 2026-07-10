@@ -1,0 +1,24 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/matrix-dialog.module.css");import { updateStyle as __vite__updateStyle, removeStyle as __vite__removeStyle } from "/@vite/client"
+const __vite__id = "C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/scripts/scaffold-festival-days/src/matrix-dialog.module.css"
+const __vite__css = "._dialogOverlay_tkzn2_1 {\r\n  position: fixed;\r\n  inset: 0;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  background: rgb(0 0 0 / 45%);\r\n  z-index: 1000;\r\n}\r\n\r\n._dialogPanel_tkzn2_21 {\r\n  background: #fff;\r\n  border: 1px solid #c8c8c8;\r\n  border-radius: 6px;\r\n  box-shadow: 0 10px 30px rgb(0 0 0 / 20%);\r\n  padding: 1rem;\r\n  width: min(95vw, 900px);\r\n  max-height: 85vh;\r\n  overflow: auto;\r\n  display: flex;\r\n  flex-direction: column;\r\n  gap: 0.75rem;\r\n}\r\n\r\n._dialogTitle_tkzn2_49 {\r\n  margin: 0;\r\n}\r\n\r\n._dialogWarning_tkzn2_57 {\r\n  margin: 0;\r\n  font-weight: 600;\r\n}\r\n\r\n._matrixTableWrap_tkzn2_67 {\r\n  overflow: auto;\r\n}\r\n\r\n._headerToggle_tkzn2_75 {\r\n  display: inline-flex;\r\n  align-items: center;\r\n  gap: 0.35rem;\r\n}\r\n\r\n._matrixTable_tkzn2_67 {\r\n  border-collapse: collapse;\r\n  width: 100%;\r\n\r\n  th,\r\n  td {\r\n    border: 1px solid #c8c8c8;\r\n    padding: 0.4rem;\r\n    text-align: center;\r\n  }\r\n\r\n  th {\r\n    white-space: nowrap;\r\n  }\r\n}\r\n\r\n._dialogActions_tkzn2_119 {\r\n  display: flex;\r\n  justify-content: flex-end;\r\n  gap: 0.5rem;\r\n}\r\n"
+__vite__updateStyle(__vite__id, __vite__css)
+export const dialogOverlay = "_dialogOverlay_tkzn2_1";
+export const dialogPanel = "_dialogPanel_tkzn2_21";
+export const dialogTitle = "_dialogTitle_tkzn2_49";
+export const dialogWarning = "_dialogWarning_tkzn2_57";
+export const matrixTableWrap = "_matrixTableWrap_tkzn2_67";
+export const headerToggle = "_headerToggle_tkzn2_75";
+export const matrixTable = "_matrixTable_tkzn2_67";
+export const dialogActions = "_dialogActions_tkzn2_119";
+export default {
+	dialogOverlay: dialogOverlay,
+	dialogPanel: dialogPanel,
+	dialogTitle: dialogTitle,
+	dialogWarning: dialogWarning,
+	matrixTableWrap: matrixTableWrap,
+	headerToggle: headerToggle,
+	matrixTable: matrixTable,
+	dialogActions: dialogActions
+};
+
+import.meta.hot.prune(() => __vite__removeStyle(__vite__id))

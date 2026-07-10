@@ -42,4 +42,12 @@ export const workTypes = fetchOrGetFromCache('/ws/js/type-info/work_type', 'work
 
 export const workLanguages = fetchOrGetFromCache('/ws/js/type-info/language', 'language_list', 'language');
 
-export const urlTypes = fetchOrGetFromCache('/ws/js/type-info/link_type', 'link_type_list', 'link_type');
+const linkTypes = fetchOrGetFromCache('/ws/js/type-info/link_type', 'link_type_list', 'link_type');
+
+export async function linkTypeGid(id: number) {
+  return Object.values(await linkTypes).find(linkType => linkType.id === id)?.gid;
+}
+
+export async function linkTypeId(gid: string) {
+  return Object.values(await linkTypes).find(linkType => linkType.gid === gid)?.id;
+}
