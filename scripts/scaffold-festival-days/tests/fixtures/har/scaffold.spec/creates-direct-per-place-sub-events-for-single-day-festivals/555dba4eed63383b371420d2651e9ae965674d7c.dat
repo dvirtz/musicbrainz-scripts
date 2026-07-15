@@ -1,0 +1,25 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/common-ui/src/tool-line.tsx");import { template as _$template } from "/node_modules/.vite/deps/solid-js_web.js?v=479f4018";
+import { insert as _$insert } from "/node_modules/.vite/deps/solid-js_web.js?v=479f4018";
+import { className as _$className } from "/node_modules/.vite/deps/solid-js_web.js?v=479f4018";
+import { $$registry as _$$registry, $$refresh as _$$refresh, $$component as _$$component } from "/@solid-refresh";
+const _REGISTRY = _$$registry();
+var _tmpl$ = /* @__PURE__ */ _$template(`<div><h4>`);
+import classes from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/lib/common-ui/src/tool-line.module.css";
+export const ToolLine = _$$component(_REGISTRY, "ToolLine", function ToolLine2(props) {
+  const className = props.direction === "vertical" ? `${classes["tool__line"]} ${classes["tool__line--vertical"]}` : classes["tool__line"];
+  return (() => {
+    var _el$ = _tmpl$(), _el$2 = _el$.firstChild;
+    _$className(_el$, className);
+    _$insert(_el$2, () => props.title);
+    _$insert(_el$, () => props.children, null);
+    return _el$;
+  })();
+}, {
+  location: "..\\..\\lib\\common-ui\\src\\tool-line.tsx:4:7"
+});
+if (import.meta.hot) {
+  _$$refresh("vite", import.meta.hot, _REGISTRY);
+  import.meta.hot.accept();
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBQUEsT0FBT0EsYUFBYTtBQUdwQixhQUFnQkMsV0FBUUMsYUFBQUMsV0FBQSxxQkFBUkYsVUFBU0csT0FBNEU7QUFDbkcsUUFBTUMsWUFDSkQsTUFBTUUsY0FBYyxhQUNoQixHQUFHTixRQUFRLFlBQVksQ0FBQyxJQUFJQSxRQUFRLHNCQUFzQixDQUFDLEtBQzNEQSxRQUFRLFlBQVk7QUFFMUI7QUFBQSxRQUFBTyxPQUFBQyxPQUFBLEdBQUFDLFFBQUFGLEtBQUFHO0FBQUFDLGdCQUFBSixNQUNjRixTQUFTO0FBQUFPLGFBQUFILE9BQUEsTUFDZEwsTUFBTVMsS0FBSztBQUFBRCxhQUFBTCxNQUFBLE1BQ2ZILE1BQU1VLFVBQVE7QUFBQSxXQUFBUDtBQUFBQSxFQUFBO0FBR3JCLEdBQUM7QUFBQSxFQUFBUSxVQUFBO0FBQUE7QUFBQSxJQUFBQyxZQUFBQyxLQUFBO0FBQUFDLGFBQUEsUUFBQUYsWUFBQUMsS0FBQWQsU0FBQTtBQUFBYSxjQUFBQyxJQUFBRSxPQUFBO0FBQUEiLCJuYW1lcyI6WyJjbGFzc2VzIiwiVG9vbExpbmUiLCJfJCRjb21wb25lbnQiLCJfUkVHSVNUUlkiLCJwcm9wcyIsImNsYXNzTmFtZSIsImRpcmVjdGlvbiIsIl9lbCQiLCJfdG1wbCQiLCJfZWwkMiIsImZpcnN0Q2hpbGQiLCJfJGNsYXNzTmFtZSIsIl8kaW5zZXJ0IiwidGl0bGUiLCJjaGlsZHJlbiIsImxvY2F0aW9uIiwiaW1wb3J0IiwiaG90IiwiXyQkcmVmcmVzaCIsImFjY2VwdCJdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJ0b29sLWxpbmUudHN4Il0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBjbGFzc2VzIGZyb20gJyN0b29sLWxpbmUubW9kdWxlLmNzcyc7XHJcbmltcG9ydCB7UGFyZW50UHJvcHN9IGZyb20gJ3NvbGlkLWpzJztcclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBUb29sTGluZShwcm9wczogUGFyZW50UHJvcHM8e3RpdGxlOiBzdHJpbmc7IGRpcmVjdGlvbj86ICdob3Jpem9udGFsJyB8ICd2ZXJ0aWNhbCd9Pikge1xyXG4gIGNvbnN0IGNsYXNzTmFtZSA9XHJcbiAgICBwcm9wcy5kaXJlY3Rpb24gPT09ICd2ZXJ0aWNhbCdcclxuICAgICAgPyBgJHtjbGFzc2VzWyd0b29sX19saW5lJ119ICR7Y2xhc3Nlc1sndG9vbF9fbGluZS0tdmVydGljYWwnXX1gXHJcbiAgICAgIDogY2xhc3Nlc1sndG9vbF9fbGluZSddO1xyXG5cclxuICByZXR1cm4gKFxyXG4gICAgPGRpdiBjbGFzcz17Y2xhc3NOYW1lfT5cclxuICAgICAgPGg0Pntwcm9wcy50aXRsZX08L2g0PlxyXG4gICAgICB7cHJvcHMuY2hpbGRyZW59XHJcbiAgICA8L2Rpdj5cclxuICApO1xyXG59XHJcbiJdLCJmaWxlIjoiQzovVXNlcnMvZHlpdHpjaGFraS9HaXRIdWIvbWV0YWJyYWluei9tdXNpY2JyYWluei1zY3JpcHRzL2xpYi9jb21tb24tdWkvc3JjL3Rvb2wtbGluZS50c3gifQ==

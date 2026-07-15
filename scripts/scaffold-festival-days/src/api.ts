@@ -1,7 +1,6 @@
 import type {MBEvent, MBPlace} from '#types.ts';
 import {fetchResponse} from '@repo/fetch/fetch';
 import {
-  EDIT_RELATIONSHIP_CREATE,
   EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
   EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
   MBID_REGEXP,
@@ -132,15 +131,16 @@ export async function searchPlaces(query: string): Promise<MBPlace[]> {
     }));
 }
 
-export async function createSubEvent(params: {
-  name: string;
-  begin: {year: string; month: string; day: string};
-  end: {year: string; month: string; day: string};
-  editNote: string;
-}): Promise<string | null> {
-  const {name, begin, end, editNote} = params;
-
-  const formData = new EventForm()
+export async function createSubEvent(
+  name: string,
+  begin: {year: string; month: string; day: string},
+  end: {year: string; month: string; day: string},
+  editNote: string,
+  seedOnly: boolean,
+  parentGid?: string,
+  place?: {gid: string; creditName: string | undefined}
+): Promise<string | null> {
+  let formData = new EventForm()
     .name(name)
     .comment('')
     .setlist('')
@@ -150,13 +150,37 @@ export async function createSubEvent(params: {
     })
     .ended(end !== undefined)
     .cancelled(false)
-    .editNote(editNote)
-    .build();
+    .editNote(editNote);
+
+  let relationshipIndex = 0;
+
+  if (parentGid) {
+    formData = formData.relationship(relationshipIndex, {
+      type: EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
+      target: parentGid,
+      direction: 'backward',
+    });
+    relationshipIndex++;
+  }
+
+  if (place) {
+    formData = formData.relationship(relationshipIndex, {
+      type: EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
+      target: place.gid,
+      targetCredit: place.creditName,
+    });
+    relationshipIndex++;
+  }
+
+  if (seedOnly) {
+    await GM.openInTab(`${location.origin}/event/create?${formData.build().toString()}`);
+    return null;
+  }
 
   try {
     const response = await fetchResponse('/event/create', {
       method: 'POST',
-      body: formData,
+      body: formData.build(),
     });
 
     const mbidFromUrl = response.url.match(MBID_REGEXP)?.[0];
@@ -179,86 +203,4 @@ export async function createSubEvent(params: {
 
   console.error('Failed to parse created event MBID from response');
   return null;
-}
-
-export async function createEventRelationships(params: {
-  childEventGid: string;
-  parentEventGid?: string;
-  placeGid?: string;
-  placeCreditName?: string;
-  editNote: string;
-}): Promise<boolean> {
-  const {childEventGid, parentEventGid, placeGid, placeCreditName, editNote} = params;
-
-  const edits: Array<{
-    edit_type: number;
-    linkTypeID: number;
-    entities: Array<{entityType: 'event' | 'place'; gid: string; name: string}>;
-    attributes: never[];
-    entity0_credit: string;
-    entity1_credit: string;
-    ended: boolean;
-  }> = [];
-
-  if (parentEventGid) {
-    edits.push({
-      edit_type: EDIT_RELATIONSHIP_CREATE,
-      linkTypeID: EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
-      entities: [
-        {entityType: 'event', gid: parentEventGid, name: ''},
-        {entityType: 'event', gid: childEventGid, name: ''},
-      ],
-      attributes: [],
-      entity0_credit: '',
-      entity1_credit: '',
-      ended: false,
-    });
-  }
-
-  if (placeGid) {
-    edits.push({
-      edit_type: EDIT_RELATIONSHIP_CREATE,
-      linkTypeID: EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
-      entities: [
-        {entityType: 'event', gid: childEventGid, name: ''},
-        {entityType: 'place', gid: placeGid, name: ''},
-      ],
-      attributes: [],
-      entity0_credit: '',
-      entity1_credit: placeCreditName ?? '',
-      ended: false,
-    });
-  }
-
-  if (edits.length === 0) {
-    return true;
-  }
-
-  const payload = {
-    edits,
-    makeVotable: false,
-    editNote,
-  };
-
-  try {
-    await fetchResponse('/ws/js/edit/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-    return true;
-  } catch (error) {
-    console.error('Failed to create event relationships:', error);
-    return false;
-  }
-}
-
-export async function createPartOfRelationship(params: {
-  childEventGid: string;
-  parentEventGid: string;
-  editNote: string;
-}): Promise<boolean> {
-  return await createEventRelationships(params);
 }

@@ -14,6 +14,8 @@ This userscript adds a toolbox to eligible festival event pages and scaffolds:
 - optional venue sub-events (per selected day/place combination)
 - direct per-place sub-events for single-day festivals
 
+You can either create the sub-events immediately or use seed-only mode to open prefilled MusicBrainz event editor pages for manual review and submission.
+
 ## When the Tool Appears
 
 The toolbox is shown only when all of these are true:
@@ -39,8 +41,13 @@ The toolbox is shown only when all of these are true:
 
 1. Click `Create Festival Day Sub-events`.
 2. In the confirmation matrix, choose exactly which day/place combinations should create venue sub-events.
-3. Click `Confirm and Create`.
-4. When creation finishes, optionally refresh to see new sub-events.
+3. Choose one of the confirmation actions:
+
+- `Confirm and Create` submits the new sub-events immediately through MusicBrainz edit endpoints.
+- `Confirm and Seed` opens one prefilled MusicBrainz event editor page per sub-event so you can review and submit them manually.
+
+1. When direct creation finishes, optionally refresh to see new sub-events.
+2. When using seed-only mode, submit the opened editor pages yourself.
 
 For single-day festivals, the toolbox skips the day-term selector and creates direct per-place child events instead.
 
@@ -53,6 +60,16 @@ Selecting `Custom…` reveals an input field:
 ![custom day term](assets/day-word-custom.png)
 
 The selected day term is saved in userscript storage and reused the next time you run the script.
+
+## Seed-Only Mode
+
+Use `Confirm and Seed` when you want MusicBrainz's event editor to open with all fields prefilled instead of creating the sub-events immediately.
+
+- Day events open with the festival set as their parent.
+- Venue events open with the selected place already linked.
+- Venue events seeded under newly seeded day events use a placeholder parent relationship target, so you must replace that parent with the actual created day event before submitting the venue edit.
+
+This mode is useful when you want to adjust names, edit notes, or relationships before saving each sub-event.
 
 ## Naming Convention
 
@@ -73,6 +90,7 @@ Examples:
 
 - If no places are selected, only day sub-events are created.
 - Single-day festivals require at least one selected place.
+- Seed-only mode opens multiple event creation tabs or windows, depending on your browser settings.
 - Status messages in the toolbox show progress and any failure point.
 - The script submits event creation and relationship edits through MusicBrainz edit endpoints.
 
