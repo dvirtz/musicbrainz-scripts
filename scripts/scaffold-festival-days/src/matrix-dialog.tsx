@@ -9,7 +9,7 @@ export function MatrixDialog(props: {
   dates: DateParts[];
   places: MBPlace[];
   onCancel: () => void;
-  onConfirm: (selectedDayPlaceKeys: string[]) => void;
+  onConfirm: (selectedDayPlaceKeys: string[], seedOnly: boolean) => void;
 }) {
   const [selectedDayPlaceKeys, setSelectedDayPlaceKeys] = createSignal<Set<string>>(new Set());
 
@@ -147,7 +147,14 @@ export function MatrixDialog(props: {
             </Button>
             <Button
               class="button"
-              onClick={() => props.onConfirm(Array.from(selectedDayPlaceKeys()))}
+              onClick={() => props.onConfirm(Array.from(selectedDayPlaceKeys()), true)}
+              disabled={props.isCreating}
+            >
+              Confirm and Seed
+            </Button>
+            <Button
+              class="button"
+              onClick={() => props.onConfirm(Array.from(selectedDayPlaceKeys()), false)}
               disabled={props.isCreating}
             >
               Confirm and Create
