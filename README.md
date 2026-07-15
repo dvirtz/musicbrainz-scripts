@@ -61,7 +61,7 @@ See the script [README](scripts/single-language-tracklist/README.md) for more in
 [![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/scaffold-festival-days.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/scaffold-festival-days.user.js)
 [![source][badge-source]](scripts/scaffold-festival-days/src/index.ts)
 
-Scaffolds and stage sub-events for festival event hierarchies.
+Scaffolds festival day and stage sub-events, either by creating them directly or by opening prefilled seeded event editors for manual submission.
 
 ![toolbox](scripts/scaffold-festival-days/assets/toolbox.png)
 

@@ -123,7 +123,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
     setIsSearching(false);
   };
 
-  const startScaffold = async (selectedDayPlaceKeys: string[]) => {
+  const startScaffold = async (selectedDayPlaceKeys: string[], seedOnly: boolean) => {
     if (isCreating()) {
       return;
     }
@@ -143,11 +143,12 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
       onStatus: setStatus,
       dayWord: dayWord(),
       customEditNote: customEditNote(),
+      seedOnly,
     });
 
     setIsCreating(false);
 
-    if (didComplete) {
+    if (didComplete && !seedOnly) {
       const shouldRefresh = window.confirm(
         'Festival days scaffolding is complete. Refresh the page now to see the new sub-events?'
       );
@@ -164,11 +165,6 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
 
     if (!isUserLoggedIn(document)) {
       window.location.assign(loginUrlWithReturnTo());
-      return;
-    }
-
-    if (singleDayMode() || selectedPlaceIds().length === 0) {
-      void startScaffold([]);
       return;
     }
 
@@ -348,7 +344,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
         dates={eventDates()}
         places={selectedPlacesForMatrix()}
         onCancel={() => setIsMatrixDialogOpen(false)}
-        onConfirm={(selectedKeys: string[]) => void startScaffold(selectedKeys)}
+        onConfirm={(selectedKeys: string[], seedOnly: boolean) => void startScaffold(selectedKeys, seedOnly)}
       />
       <Show when={status()}>
         {statusValue => <p classList={{error: statusValue().kind === 'error'}}>{statusValue().message}</p>}

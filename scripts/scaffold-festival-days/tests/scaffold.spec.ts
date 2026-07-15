@@ -1,39 +1,20 @@
 import {test} from '#tests/fixtures/test-festival-event.ts';
 import {MBEvent} from '#types.ts';
 import {expect, type Page} from '@playwright/test';
-import {
-  EDIT_RELATIONSHIP_CREATE,
-  EVENT_HELD_AT_RELATIONSHIP_TYPE_ID as HELD_AT_RELATIONSHIP_TYPE_ID,
-  EVENT_PART_OF_RELATIONSHIP_TYPE_ID as PART_OF_RELATIONSHIP_TYPE_ID,
-} from '@repo/musicbrainz-ext/constants';
+import {EVENT_HELD_AT_RELATIONSHIP_TYPE_ID, EVENT_PART_OF_RELATIONSHIP_TYPE_ID} from '@repo/musicbrainz-ext/constants';
 import {UserscriptPage} from '@repo/test-support/userscript-page';
 
-type CreatedEvent = {name: string; placeId: string | null; placeCreditName: string | null};
+type CreatedEvent = {name: string; placeId: string | null; placeCreditName: string | null; parentId: string | null};
 
 const TEST_FESTIVAL_NAME = 'scaffold-festival-days test: Test Festival';
 const TEST_PLACE_NAMES = ['scaffold-festival-days test: Place 1', 'scaffold-festival-days test: Place 2'] as const;
 
-type RelationshipEdit = {
-  child: string;
-  parent: string;
-  linkTypeID: number;
-};
-
-type PlaceRelationshipEdit = {
-  event: string;
-  place: string;
-  linkTypeID: number;
-  placeCreditName: string | null;
-};
-
 type ScaffoldRouteState = {
   createdEvents: CreatedEvent[];
-  relationships: RelationshipEdit[];
-  placeRelationships: PlaceRelationshipEdit[];
   eventIdsByName: Map<string, string>;
   eventNamesById: Map<string, string>;
   createEventEditNotes: string[];
-  createRelationshipEditNotes: string[];
+  syncCreatedEventsFromWindowOpenLog: () => void;
   unroute: () => Promise<void>;
 };
 
@@ -47,15 +28,18 @@ const HELD_AT_GID = 'e2c6f697-07dc-38b1-be0b-83d740165532';
 const EVENT_PART_OF_GID = '65742183-b25c-469e-b094-ff6739e6699c';
 const PLACE_PART_OF_GID = 'ff683f48-eff1-40ab-a58f-b128098ffe92';
 
-async function confirmScaffoldCreation(page: Page, expectsDialog: boolean = true) {
+async function confirmScaffoldAction(
+  page: Page,
+  options: {
+    seedOnly?: boolean;
+  } = {}
+) {
+  const {seedOnly = false} = options;
   const scaffoldButton = page.getByRole('button', {name: /create.*festival.*(day|place)/i});
   await scaffoldButton.click();
-  if (!expectsDialog) {
-    return;
-  }
 
   await expect(page.getByText(/accepting this action will create new event entities/i)).toBeAttached();
-  await page.getByRole('button', {name: /confirm and create/i}).click();
+  await page.getByRole('button', {name: seedOnly ? /confirm and seed/i : /confirm and create/i}).click();
 }
 
 async function expectScaffoldComplete(page: Page) {
@@ -90,13 +74,53 @@ async function setupScaffoldRoutes(params: {
     placeChildRelationsById,
   } = params;
   const createdEvents: CreatedEvent[] = [];
-  const relationships: RelationshipEdit[] = [];
-  const placeRelationships: PlaceRelationshipEdit[] = [];
   const eventIdsByName = new Map<string, string>();
   const eventNamesById = new Map<string, string>();
   const createEventEditNotes: string[] = [];
-  const createRelationshipEditNotes: string[] = [];
   let gidCounter = 1;
+
+  const recordCreatedEvent = (postData: {[k: string]: unknown}): null | string => {
+    const name = String(postData['edit-event.name']);
+
+    createEventEditNotes.push(String(postData['edit-event.edit_note'] ?? ''));
+    const gid = makeFakeGid(gidCounter);
+    gidCounter += 1;
+
+    const partOfRelIndex = Object.entries(postData)
+      .find(([key, value]) => key.match(/rels\.\d+\.type/) && value === `${EVENT_PART_OF_RELATIONSHIP_TYPE_ID}`)?.[0]
+      ?.replace(/rels\.(\d+)\.type/, '$1');
+    const parentId = partOfRelIndex ? String(postData[`rels.${partOfRelIndex}.target`] ?? '') || null : null;
+
+    const placeRelIndex = Object.entries(postData)
+      .find(([key, value]) => key.match(/rels\.\d+\.type/) && value === `${EVENT_HELD_AT_RELATIONSHIP_TYPE_ID}`)?.[0]
+      ?.replace(/rels\.(\d+)\.type/, '$1');
+
+    if (placeRelIndex) {
+      createdEvents.push({
+        name,
+        placeId: String(postData[`rels.${placeRelIndex}.target`]),
+        placeCreditName: String(postData[`rels.${placeRelIndex}.target_credit`]),
+        parentId,
+      });
+    } else {
+      createdEvents.push({name, placeId: null, placeCreditName: null, parentId});
+    }
+
+    eventIdsByName.set(name, gid);
+    eventNamesById.set(gid, name);
+    return gid;
+  };
+
+  const syncCreatedEventsFromWindowOpenLog = () => {
+    for (const openedUrl of userscriptPage.windowOpenLog) {
+      if (openedUrl.pathname !== '/event/create') {
+        continue;
+      }
+
+      const postData = Object.fromEntries(openedUrl.searchParams.entries()) as {[k: string]: unknown};
+      recordCreatedEvent(postData);
+    }
+  };
 
   const formatDate = (date: {year: string; month: string; day: string}) => `${date.year}-${date.month}-${date.day}`;
   const resolvedBeginDate = beginDate ?? testFestivalEvent.getBeginDate();
@@ -137,14 +161,7 @@ async function setupScaffoldRoutes(params: {
 
   const unrouteEventCreate = await userscriptPage.route('**/event/create', async (route, request) => {
     const postData = await userscriptPage.postDataJSON(request);
-    const name = String(postData['edit-event.name'] ?? '');
-    createEventEditNotes.push(String(postData['edit-event.edit_note'] ?? ''));
-    const gid = makeFakeGid(gidCounter);
-    gidCounter += 1;
-
-    createdEvents.push({name, placeId: null, placeCreditName: null});
-    eventIdsByName.set(name, gid);
-    eventNamesById.set(gid, name);
+    const gid = recordCreatedEvent(postData) ?? makeFakeGid(gidCounter);
 
     await route.fulfill({json: {mbid: gid}});
   });
@@ -185,73 +202,14 @@ async function setupScaffoldRoutes(params: {
     });
   });
 
-  const unrouteEditCreate = await userscriptPage.route('**/ws/js/edit/create', async (route, request) => {
-    const postData = await userscriptPage.postDataJSON(request);
-    createRelationshipEditNotes.push(String(postData['editNote'] ?? ''));
-    const edits = (postData['edits'] ?? []) as Array<{
-      edit_type?: number;
-      linkTypeID?: number;
-      entities?: Array<{gid?: string; entityType?: string}>;
-      entity1_credit?: string;
-    }>;
-
-    for (const edit of edits) {
-      if (edit.edit_type !== EDIT_RELATIONSHIP_CREATE) {
-        continue;
-      }
-
-      const entities = edit.entities ?? [];
-      const first = entities[0];
-      const second = entities[1];
-      if (!first?.gid || !second?.gid || !edit.linkTypeID) {
-        continue;
-      }
-
-      if (edit.linkTypeID === PART_OF_RELATIONSHIP_TYPE_ID) {
-        relationships.push({
-          child: second.gid,
-          parent: first.gid,
-          linkTypeID: edit.linkTypeID,
-        });
-        continue;
-      }
-
-      if (
-        edit.linkTypeID === HELD_AT_RELATIONSHIP_TYPE_ID &&
-        first.entityType === 'event' &&
-        second.entityType === 'place'
-      ) {
-        placeRelationships.push({
-          event: first.gid,
-          place: second.gid,
-          linkTypeID: edit.linkTypeID,
-          placeCreditName: edit.entity1_credit || null,
-        });
-
-        const eventName = eventNamesById.get(first.gid);
-        if (!eventName) {
-          continue;
-        }
-
-        const createdEvent = createdEvents.find(event => event.name === eventName);
-        if (createdEvent) {
-          createdEvent.placeId = second.gid;
-          createdEvent.placeCreditName = edit.entity1_credit ?? null;
-        }
-      }
-    }
-
-    await route.fulfill({json: {edits: []}});
-  });
+  const unrouteEditCreate = await userscriptPage.rejectRoute('**/ws/js/edit/create');
 
   return {
     createdEvents,
-    relationships,
-    placeRelationships,
     eventIdsByName,
     eventNamesById,
     createEventEditNotes,
-    createRelationshipEditNotes,
+    syncCreatedEventsFromWindowOpenLog,
     unroute: async () => {
       await unrouteEvent();
       await unrouteEventCreate();
@@ -370,86 +328,111 @@ test.describe('scaffold festival days', () => {
     await routeState.unroute();
   });
 
-  test('creates day sub-events with standard naming', async ({
-    page,
-    userscriptPage,
-    musicbrainzPage,
-    testFestivalEvent,
-    testPlaces,
-  }) => {
-    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
-    await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
+  for (const {testName, seedOnly} of [
+    {testName: 'creates day sub-events with standard naming', seedOnly: false},
+    {testName: 'creates day sub-events with standard naming (seed-only)', seedOnly: true},
+  ] as const) {
+    test(testName, async ({page, userscriptPage, musicbrainzPage, testFestivalEvent, testPlaces}) => {
+      const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
+      await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
-    // Wait for the toolbox to appear
-    await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
+      // Wait for the toolbox to appear
+      await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
 
-    // Select all places
-    const checkboxes = page.getByRole('checkbox');
-    const count = await checkboxes.count();
-    for (let i = 0; i < count; i++) {
-      await checkboxes.nth(i).check();
-    }
-
-    // Click the scaffold button
-    const refreshDialogPromise = page.waitForEvent('dialog');
-    await confirmScaffoldCreation(page);
-    const refreshDialog = await refreshDialogPromise;
-    expect(refreshDialog.message()).toContain('Refresh the page now');
-    await refreshDialog.dismiss();
-
-    const festivalName = TEST_FESTIVAL_NAME;
-    const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
-    const expectedDayNames = testFestivalEvent.getDates().map((_, index) => `${festivalName}, Day ${index + 1}`);
-
-    expect(dayEvents).toHaveLength(expectedDayNames.length);
-    expect(dayEvents.map(event => event.name)).toEqual(expectedDayNames);
-
-    await routeState.unroute();
-  });
-
-  test('creates venue sub-events under each day', async ({
-    page,
-    userscriptPage,
-    musicbrainzPage,
-    testFestivalEvent,
-    testPlaces,
-  }) => {
-    const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
-    await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
-
-    // Wait for the toolbox to appear
-    await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
-
-    // Select all places
-    const checkboxes = page.getByRole('checkbox');
-    const count = await checkboxes.count();
-    for (let i = 0; i < count; i++) {
-      await checkboxes.nth(i).check();
-    }
-
-    await confirmScaffoldCreation(page);
-    await expectScaffoldComplete(page);
-
-    const places = testPlaces.getAll().map((id, index) => ({
-      id,
-      name: TEST_PLACE_NAMES[index] ?? `Test Place ${index + 1}`,
-    }));
-    const festivalName = TEST_FESTIVAL_NAME;
-    const dayCount = testFestivalEvent.getDates().length;
-    const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
-
-    expect(venueEvents).toHaveLength(dayCount * places.length);
-
-    for (let dayNumber = 1; dayNumber <= dayCount; dayNumber += 1) {
-      for (const place of places) {
-        const expectedName = `${festivalName}, Day ${dayNumber}: ${place.name}`;
-        const match = venueEvents.find(event => event.name === expectedName && event.placeId === place.id);
-        expect(match).toBeDefined();
+      // Select all places
+      const checkboxes = page.getByRole('checkbox');
+      const count = await checkboxes.count();
+      for (let i = 0; i < count; i++) {
+        await checkboxes.nth(i).check();
       }
-    }
 
-    await routeState.unroute();
-  });
+      if (seedOnly) {
+        await confirmScaffoldAction(page, {seedOnly: true});
+        await expectScaffoldComplete(page);
+      } else {
+        const refreshDialogPromise = page.waitForEvent('dialog');
+        await confirmScaffoldAction(page);
+        const refreshDialog = await refreshDialogPromise;
+        expect(refreshDialog.message()).toContain('Refresh the page now');
+        await refreshDialog.dismiss();
+      }
+
+      const festivalName = TEST_FESTIVAL_NAME;
+      const expectedDayNames = testFestivalEvent.getDates().map((_, index) => `${festivalName}, Day ${index + 1}`);
+
+      if (seedOnly) {
+        routeState.syncCreatedEventsFromWindowOpenLog();
+      }
+
+      const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
+
+      expect(dayEvents).toHaveLength(expectedDayNames.length);
+      expect(dayEvents.map(event => event.name)).toEqual(expectedDayNames);
+
+      await routeState.unroute();
+    });
+  }
+
+  for (const {testName, seedOnly} of [
+    {testName: 'creates venue sub-events under each day', seedOnly: false},
+    {testName: 'creates venue sub-events under each day (seed-only)', seedOnly: true},
+  ] as const) {
+    test(testName, async ({page, userscriptPage, musicbrainzPage, testFestivalEvent, testPlaces}) => {
+      const routeState = await setupScaffoldRoutes({userscriptPage, testFestivalEvent, testPlaces});
+      await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
+
+      // Wait for the toolbox to appear
+      await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
+
+      // Select all places
+      const checkboxes = page.getByRole('checkbox');
+      const count = await checkboxes.count();
+      for (let i = 0; i < count; i++) {
+        await checkboxes.nth(i).check();
+      }
+
+      await confirmScaffoldAction(page, {seedOnly});
+      await expectScaffoldComplete(page);
+
+      const places = testPlaces.getAll().map((id, index) => ({
+        id,
+        name: TEST_PLACE_NAMES[index] ?? `Test Place ${index + 1}`,
+      }));
+      const festivalName = TEST_FESTIVAL_NAME;
+      const dayCount = testFestivalEvent.getDates().length;
+
+      if (seedOnly) {
+        routeState.syncCreatedEventsFromWindowOpenLog();
+      }
+
+      const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
+      const expectedSeedParentId = '0';
+
+      expect(routeState.createdEvents).toHaveLength(dayCount + dayCount * places.length);
+      expect(venueEvents).toHaveLength(dayCount * places.length);
+
+      for (let dayNumber = 1; dayNumber <= dayCount; dayNumber += 1) {
+        expect(routeState.createdEvents).toContainEqual({
+          name: `${festivalName}, Day ${dayNumber}`,
+          placeId: null,
+          placeCreditName: null,
+          parentId: testFestivalEvent.gid,
+        });
+        for (const place of places) {
+          const expectedName = `${festivalName}, Day ${dayNumber}: ${place.name}`;
+          const match = venueEvents.find(event => event.name === expectedName && event.placeId === place.id);
+          expect(match).toBeDefined();
+          expect(match?.parentId).toBe(
+            seedOnly
+              ? expectedSeedParentId
+              : (routeState.eventIdsByName.get(`${festivalName}, Day ${dayNumber}`) ?? null)
+          );
+        }
+      }
+
+      await routeState.unroute();
+    });
+  }
 
   test('links sub-events with part-of relationships', async ({
     page,
@@ -470,7 +453,7 @@ test.describe('scaffold festival days', () => {
       await checkboxes.nth(i).check();
     }
 
-    await confirmScaffoldCreation(page);
+    await confirmScaffoldAction(page);
     await expectScaffoldComplete(page);
 
     const festivalName = TEST_FESTIVAL_NAME;
@@ -483,21 +466,16 @@ test.describe('scaffold festival days', () => {
 
     for (let dayNumber = 1; dayNumber <= dayCount; dayNumber += 1) {
       const dayName = `${festivalName}, Day ${dayNumber}`;
+      const dayEvent = routeState.createdEvents.find(event => event.name === dayName);
+      expect(dayEvent?.parentId).toBe(expectedFestivalParentId);
       const dayId = routeState.eventIdsByName.get(dayName) ?? '';
-      expect(routeState.relationships).toContainEqual({
-        child: dayId,
-        parent: expectedFestivalParentId,
-        linkTypeID: PART_OF_RELATIONSHIP_TYPE_ID,
-      });
 
       for (const place of places) {
         const venueName = `${festivalName}, Day ${dayNumber}: ${place.name}`;
-        const venueId = routeState.eventIdsByName.get(venueName) ?? '';
-        expect(routeState.relationships).toContainEqual({
-          child: venueId,
-          parent: dayId,
-          linkTypeID: PART_OF_RELATIONSHIP_TYPE_ID,
-        });
+        const venueEvent = routeState.createdEvents.find(
+          event => event.name === venueName && event.placeId === place.id
+        );
+        expect(venueEvent?.parentId).toBe(dayId);
       }
     }
 
@@ -522,7 +500,7 @@ test.describe('scaffold festival days', () => {
     await place2Checkbox.uncheck();
     await expect(place2Checkbox).not.toBeChecked();
 
-    await confirmScaffoldCreation(page);
+    await confirmScaffoldAction(page);
     await expectScaffoldComplete(page);
 
     const places = testPlaces.getAll().map((id, index) => ({
@@ -648,7 +626,7 @@ test.describe('scaffold festival days', () => {
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
     await expect(page.getByText('No linked places found. Only day sub-events will be created.')).toBeAttached();
 
-    await confirmScaffoldCreation(page, false);
+    await confirmScaffoldAction(page);
     await expectScaffoldComplete(page);
 
     const dayCount = testFestivalEvent.getDates().length;
@@ -680,7 +658,9 @@ test.describe('scaffold festival days', () => {
 
     const scaffoldButton = page.getByRole('button', {name: /create.*festival.*place/i});
     await scaffoldButton.click();
-    await expect(page.getByRole('dialog', {name: /scaffold sub-events matrix/i})).toHaveCount(0);
+    const dialog = page.getByRole('dialog', {name: /scaffold sub-events matrix/i});
+    await expect(dialog).toBeAttached();
+    await dialog.getByRole('button', {name: /confirm and create/i}).click();
 
     await expectScaffoldComplete(page);
 
@@ -720,24 +700,23 @@ test.describe('scaffold festival days', () => {
 
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
 
-    await confirmScaffoldCreation(page, false);
+    await confirmScaffoldAction(page);
     await expectScaffoldComplete(page);
 
     const places = testPlaces.getAll().map((id, index) => ({
       id,
       name: TEST_PLACE_NAMES[index] ?? `Test Place ${index + 1}`,
     }));
+    const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
+    const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
+
+    expect(dayEvents).toHaveLength(0);
+    expect(venueEvents).toHaveLength(places.length);
 
     for (const place of places) {
       const venueName = `${TEST_FESTIVAL_NAME}: ${place.name}`;
-      const venueId = routeState.eventIdsByName.get(venueName) ?? '';
-      const hasFestivalLink = routeState.relationships.some(
-        rel =>
-          rel.child === venueId &&
-          rel.parent === testFestivalEvent.gid &&
-          rel.linkTypeID === PART_OF_RELATIONSHIP_TYPE_ID
-      );
-      expect(hasFestivalLink).toBe(true);
+      const venueEvent = venueEvents.find(event => event.name === venueName && event.placeId === place.id);
+      expect(venueEvent?.parentId).toBe(testFestivalEvent.gid);
     }
 
     await routeState.unroute();
@@ -784,7 +763,7 @@ test.describe('scaffold festival days', () => {
 
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
 
-    await confirmScaffoldCreation(page);
+    await confirmScaffoldAction(page);
     await expectScaffoldComplete(page);
 
     const festivalName = TEST_FESTIVAL_NAME;
@@ -833,19 +812,12 @@ test.describe('scaffold festival days', () => {
       .getByLabel('Edit note (optional):')
       .fill('Reviewed source schedule and linked all generated sub-events.');
 
-    await confirmScaffoldCreation(page);
+    await confirmScaffoldAction(page);
     await expectScaffoldComplete(page);
 
     expect(routeState.createEventEditNotes.length).toBeGreaterThan(0);
-    expect(routeState.createRelationshipEditNotes.length).toBeGreaterThan(0);
 
     for (const editNote of routeState.createEventEditNotes) {
-      expect(editNote).toContain(
-        'Reviewed source schedule and linked all generated sub-events.\n\n----\nScaffold festival days:'
-      );
-    }
-
-    for (const editNote of routeState.createRelationshipEditNotes) {
       expect(editNote).toContain(
         'Reviewed source schedule and linked all generated sub-events.\n\n----\nScaffold festival days:'
       );
@@ -887,33 +859,28 @@ test.describe('scaffold festival days', () => {
       await checkboxes.nth(i).check();
     }
 
-    await confirmScaffoldCreation(page);
+    await confirmScaffoldAction(page);
     await expectScaffoldComplete(page);
 
     const dayCount = testFestivalEvent.getDates().length;
     const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
+    const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
     const expectedVenueRelationshipCount = dayCount * placeIds.length;
 
+    expect(dayEvents).toHaveLength(dayCount);
     expect(venueEvents).toHaveLength(expectedVenueRelationshipCount);
-    expect(routeState.placeRelationships).toHaveLength(expectedVenueRelationshipCount);
 
     for (let dayNumber = 1; dayNumber <= dayCount; dayNumber += 1) {
       for (let i = 0; i < placeIds.length; i++) {
         const placeCreditName = placeCreditNames[i];
         const venueName = `${TEST_FESTIVAL_NAME}, Day ${dayNumber}: ${placeCreditName}`;
-        const venueId = routeState.eventIdsByName.get(venueName) ?? '';
+        const dayId = routeState.eventIdsByName.get(`${TEST_FESTIVAL_NAME}, Day ${dayNumber}`) ?? '';
 
         expect(venueEvents).toContainEqual({
           name: venueName,
           placeCreditName,
           placeId: placeIds[i],
-        });
-
-        expect(routeState.placeRelationships).toContainEqual({
-          event: venueId,
-          place: placeIds[i],
-          linkTypeID: HELD_AT_RELATIONSHIP_TYPE_ID,
-          placeCreditName,
+          parentId: dayId,
         });
       }
     }
@@ -949,30 +916,24 @@ test.describe('scaffold festival days', () => {
 
     await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
 
-    await confirmScaffoldCreation(page, false);
+    await confirmScaffoldAction(page);
     await expectScaffoldComplete(page);
 
     const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
+    const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
 
+    expect(dayEvents).toHaveLength(0);
     expect(venueEvents).toHaveLength(placeIds.length);
-    expect(routeState.placeRelationships).toHaveLength(placeIds.length);
 
     for (let i = 0; i < placeIds.length; i++) {
       const placeCreditName = placeCreditNames[i];
       const venueName = `${TEST_FESTIVAL_NAME}: ${placeCreditName}`;
-      const venueId = routeState.eventIdsByName.get(venueName) ?? '';
 
       expect(venueEvents).toContainEqual({
         name: venueName,
         placeCreditName,
         placeId: placeIds[i],
-      });
-
-      expect(routeState.placeRelationships).toContainEqual({
-        event: venueId,
-        place: placeIds[i],
-        linkTypeID: HELD_AT_RELATIONSHIP_TYPE_ID,
-        placeCreditName,
+        parentId: testFestivalEvent.gid,
       });
     }
 
