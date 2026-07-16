@@ -7,14 +7,16 @@
     margin-top: 0.66em;
     margin-bottom: 0.66em;
   }
+}
 
+.tool__line__horizontal {
   div {
     display: flex;
     align-items: center;
   }
 }
 
-.tool__line--vertical {
+.tool__line__vertical {
   flex-direction: column;
   align-items: stretch;
 }
