@@ -1,3 +1,12 @@
+## @dvirtz/scaffold-festival-days-v1.2.0-beta.1 (2026-07-16)
+
+* feat(scaffold-festival-days): add sub-places to default stage list ([c9b5780](https://github.com/dvirtz/musicbrainz-scripts/commit/c9b5780))
+* feat(scaffold-festival-days): seed only mode ([d26593f](https://github.com/dvirtz/musicbrainz-scripts/commit/d26593f))
+* test: avoid calling unrouteAll ([16a5201](https://github.com/dvirtz/musicbrainz-scripts/commit/16a5201))
+* test: simplify HAR recording ([7e7926a](https://github.com/dvirtz/musicbrainz-scripts/commit/7e7926a))
+* test: support new MB login page ([1f34f25](https://github.com/dvirtz/musicbrainz-scripts/commit/1f34f25)), closes [#198](https://github.com/dvirtz/musicbrainz-scripts/issues/198)
+* test: use pre-recorded responses for testing ([a746183](https://github.com/dvirtz/musicbrainz-scripts/commit/a746183))
+
 ## @dvirtz/scaffold-festival-days-v1.1.1 (2026-04-03)
 
 * fix(scaffold-festival-days): avoid creating empty day events ([1b24f73](https://github.com/dvirtz/musicbrainz-scripts/commit/1b24f73))
