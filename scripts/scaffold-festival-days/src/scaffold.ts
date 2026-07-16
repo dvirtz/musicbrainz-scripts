@@ -145,10 +145,11 @@ export async function scaffoldFestivalDays(params: {
       const dayPlaceKey = `${date.dayNumber}|${place.id}`;
       return !allowedDayPlaceKeys || allowedDayPlaceKeys.has(dayPlaceKey);
     });
-
     if (selectedPlaces.length > 0 && dayPlaces.length === 0) {
       continue;
     }
+
+    const singleDayPlace = selectedPlaces.length === 1 ? dayPlaces[0] : undefined;
 
     const dayName = `${event.name}, ${dayWord} ${date.dayNumber}`;
     const dayEventGid = await createSubEvent(
@@ -157,7 +158,8 @@ export async function scaffoldFestivalDays(params: {
       date,
       buildEditNote(`Scaffold festival days: created day for festival (${parentEventGid})`),
       seedOnly,
-      parentEventGid
+      parentEventGid,
+      singleDayPlace ? {gid: singleDayPlace.id, creditName: singleDayPlace.creditName} : undefined
     );
 
     if (!dayEventGid && !seedOnly) {
@@ -166,6 +168,10 @@ export async function scaffoldFestivalDays(params: {
     }
 
     onStatus({message: `Created: ${dayName}`, kind: 'info'});
+
+    if (singleDayPlace) {
+      continue;
+    }
 
     for (const place of dayPlaces) {
       const venueName = `${event.name}, ${dayWord} ${date.dayNumber}: ${place.creditName || place.name}`;

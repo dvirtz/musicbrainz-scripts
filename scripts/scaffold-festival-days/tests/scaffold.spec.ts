@@ -509,12 +509,12 @@ test.describe('scaffold festival days', () => {
     }));
     const selectedPlaceId = places[0]?.id ?? '';
     const dayCount = testFestivalEvent.getDates().length;
-    const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
-    const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
+    const dayEvents = routeState.createdEvents.filter(event => !event.name.includes('Place'));
+    const venueEvents = routeState.createdEvents.filter(event => event.name.includes('Place'));
 
     expect(dayEvents).toHaveLength(dayCount);
-    expect(venueEvents).toHaveLength(dayCount);
-    expect(venueEvents.every(event => event.placeId === selectedPlaceId)).toBe(true);
+    expect(dayEvents.every(event => event.placeId === selectedPlaceId)).toBe(true);
+    expect(venueEvents).toHaveLength(0);
 
     await routeState.unroute();
   });
@@ -608,36 +608,53 @@ test.describe('scaffold festival days', () => {
     await routeState.unroute();
   });
 
-  test('creates day sub-events when no places are linked', async ({
-    page,
-    userscriptPage,
-    musicbrainzPage,
-    testFestivalEvent,
-    testPlaces,
-  }) => {
-    const routeState = await setupScaffoldRoutes({
-      userscriptPage,
-      testFestivalEvent,
-      testPlaces,
-      exposedPlaces: [],
+  for (const {testName, exposedPlaces, expectNoPlacesHint} of [
+    {
+      testName: 'creates day sub-events when no places are linked',
+      exposedPlaces: [] as Array<{id: string; name: string}>,
+      expectNoPlacesHint: true,
+    },
+    {
+      testName: 'creates day sub-events and links place directly when a single place is linked',
+      exposedPlaces: [{id: makeFakeGid(880), name: 'scaffold-festival-days test: Place 1'}],
+      expectNoPlacesHint: false,
+    },
+  ] as const) {
+    test(testName, async ({page, userscriptPage, musicbrainzPage, testFestivalEvent, testPlaces}) => {
+      const routeState = await setupScaffoldRoutes({
+        userscriptPage,
+        testFestivalEvent,
+        testPlaces,
+        exposedPlaces: [...exposedPlaces],
+      });
+      await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
+
+      await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
+
+      if (expectNoPlacesHint) {
+        await expect(page.getByText('No linked places found. Only day sub-events will be created.')).toBeAttached();
+      }
+
+      await confirmScaffoldAction(page);
+      await expectScaffoldComplete(page);
+
+      const dayCount = testFestivalEvent.getDates().length;
+      const dayEvents = routeState.createdEvents.filter(event => !event.name.includes('Place'));
+      const venueEvents = routeState.createdEvents.filter(event => event.name.includes('Place'));
+
+      expect(dayEvents).toHaveLength(dayCount);
+      expect(venueEvents).toHaveLength(0);
+
+      if (!expectNoPlacesHint) {
+        const expectedPlaceId = exposedPlaces[0]?.id ?? '';
+        for (const dayEvent of dayEvents) {
+          expect(dayEvent.placeId).toBe(expectedPlaceId);
+        }
+      }
+
+      await routeState.unroute();
     });
-    await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
-
-    await expect(page.getByRole('group', {name: 'dvirtz MusicBrainz scripts'})).toBeAttached();
-    await expect(page.getByText('No linked places found. Only day sub-events will be created.')).toBeAttached();
-
-    await confirmScaffoldAction(page);
-    await expectScaffoldComplete(page);
-
-    const dayCount = testFestivalEvent.getDates().length;
-    const dayEvents = routeState.createdEvents.filter(event => event.placeId === null);
-    const venueEvents = routeState.createdEvents.filter(event => event.placeId !== null);
-
-    expect(dayEvents).toHaveLength(dayCount);
-    expect(venueEvents).toHaveLength(0);
-
-    await routeState.unroute();
-  });
+  }
 
   test('creates direct per-place sub-events for single-day festivals', async ({
     page,
