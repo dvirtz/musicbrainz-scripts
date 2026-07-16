@@ -96,7 +96,7 @@ export function MatrixDialog(props: {
                                 checked={isColumnChecked()}
                                 onChange={event => setPlaceSelected(place.id, event.currentTarget.checked)}
                               />
-                              <span>{place.creditName ?? place.name}</span>
+                              <span>{place.creditName || place.name}</span>
                             </label>
                           </th>
                         );
