@@ -4,8 +4,8 @@ import {ParentProps} from 'solid-js';
 export function ToolLine(props: ParentProps<{title: string; direction?: 'horizontal' | 'vertical'}>) {
   const className =
     props.direction === 'vertical'
-      ? `${classes['tool__line']} ${classes['tool__line--vertical']}`
-      : classes['tool__line'];
+      ? `${classes['tool__line']} ${classes['tool__line__vertical']}`
+      : `${classes['tool__line']} ${classes['tool__line__horizontal']}`;
 
   return (
     <div class={className}>
