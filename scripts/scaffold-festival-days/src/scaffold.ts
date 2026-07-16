@@ -117,7 +117,7 @@ export async function scaffoldFestivalDays(params: {
     }
 
     for (const place of selectedPlaces) {
-      const venueName = `${event.name}: ${place.creditName ?? place.name}`;
+      const venueName = `${event.name}: ${place.creditName || place.name}`;
       const venueEventGid = await createSubEvent(
         venueName,
         singleDate,
@@ -168,7 +168,7 @@ export async function scaffoldFestivalDays(params: {
     onStatus({message: `Created: ${dayName}`, kind: 'info'});
 
     for (const place of dayPlaces) {
-      const venueName = `${event.name}, ${dayWord} ${date.dayNumber}: ${place.creditName ?? place.name}`;
+      const venueName = `${event.name}, ${dayWord} ${date.dayNumber}: ${place.creditName || place.name}`;
       // seed parentId to 0 which to the user to update
       const venueParentGid = dayEventGid ?? (seedOnly ? '0' : undefined);
       const venueEventGid = await createSubEvent(

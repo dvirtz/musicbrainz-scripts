@@ -227,7 +227,7 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
                     const creditName = draft.trim() || undefined;
                     addAndSelectPlace({...place, creditName});
                     setSearchResults(prev => prev.filter((_, i) => i !== index()));
-                    setStatus({message: `Added place: ${creditName ?? place.name}`, kind: 'info'});
+                    setStatus({message: `Added place: ${creditName || place.name}`, kind: 'info'});
                   }}
                   disabled={isCreating()}
                 />
@@ -253,18 +253,18 @@ function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: 
                 <span class={classes.placeOptionContent}>
                   <input
                     type="checkbox"
-                    aria-label={place.creditName ?? place.name}
+                    aria-label={place.creditName || place.name}
                     checked={selectedPlaces().has(place.id)}
                     onChange={() => togglePlace(place.id)}
                     disabled={isCreating()}
                   />
-                  <a href={`/place/${place.id}`}>{place.creditName ?? place.name}</a>
+                  <a href={`/place/${place.id}`}>{place.creditName || place.name}</a>
                 </span>
                 <button
                   class={`nobutton icon remove-item`}
                   onClick={() => removePlace(place.id)}
                   disabled={isCreating()}
-                  aria-label={`Remove ${place.creditName ?? place.name}`}
+                  aria-label={`Remove ${place.creditName || place.name}`}
                 />
               </div>
             )}
