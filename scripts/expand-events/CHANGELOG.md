@@ -1,3 +1,10 @@
+## @dvirtz/expand-events-v1.2.0-beta.1 (2026-07-16)
+
+* feat(scaffold-festival-days): add sub-places to default stage list ([c9b5780](https://github.com/dvirtz/musicbrainz-scripts/commit/c9b5780))
+* test: simplify HAR recording ([7e7926a](https://github.com/dvirtz/musicbrainz-scripts/commit/7e7926a))
+* test: support new MB login page ([1f34f25](https://github.com/dvirtz/musicbrainz-scripts/commit/1f34f25)), closes [#198](https://github.com/dvirtz/musicbrainz-scripts/issues/198)
+* test: use pre-recorded responses for testing ([a746183](https://github.com/dvirtz/musicbrainz-scripts/commit/a746183))
+
 ## @dvirtz/expand-events-v1.1.0 (2026-03-31)
 
 * test: disable parallelism ([a31b298](https://github.com/dvirtz/musicbrainz-scripts/commit/a31b298))
