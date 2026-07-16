@@ -1,3 +1,8 @@
+## @dvirtz/setlistfm-musicbrainz-import-v1.9.0-beta.1 (2026-07-16)
+
+* feat(scaffold-festival-days): add sub-places to default stage list ([c9b5780](https://github.com/dvirtz/musicbrainz-scripts/commit/c9b5780))
+* test: support new MB login page ([1f34f25](https://github.com/dvirtz/musicbrainz-scripts/commit/1f34f25)), closes [#198](https://github.com/dvirtz/musicbrainz-scripts/issues/198)
+
 ## @dvirtz/setlistfm-musicbrainz-import-v1.8.1 (2026-05-29)
 
 * ci: allow failure on setlist.fm tests when recording HAR ([b0b46a1](https://github.com/dvirtz/musicbrainz-scripts/commit/b0b46a1))
