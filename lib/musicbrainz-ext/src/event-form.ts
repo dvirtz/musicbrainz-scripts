@@ -75,10 +75,12 @@ export class EventForm {
 
   relationship(
     index: number,
-    relationship: {type: string | number; target: string; direction?: string; targetCredit?: string}
+    relationship: {type: string | number; target: string; direction?: string; targetCredit?: string},
+    options?: {postSyntax: boolean}
   ): this {
-    const base = `rels.${index}`;
-    this.searchParams.append(`${base}.type`, String(relationship.type));
+    const {postSyntax = false} = options ?? {};
+    const base = `${postSyntax ? 'edit-event.rel' : `rels`}.${index}`;
+    this.searchParams.append(`${base}.${postSyntax ? 'link_type_id' : 'type'}`, String(relationship.type));
     this.searchParams.append(`${base}.target`, relationship.target);
     // event part-of rel direction is not seeded
     // https://tickets.metabrainz.org/browse/MBS-14299
@@ -90,10 +92,12 @@ export class EventForm {
   relationshipAttribute(
     relationshipIndex: number,
     attributeIndex: number,
-    attribute: {type: string | number; textValue?: string}
+    attribute: {type: string | number; textValue?: string},
+    options?: {postSyntax: boolean}
   ): this {
-    const base = `rels.${relationshipIndex}.attributes.${attributeIndex}`;
-    this.searchParams.append(`${base}.type`, String(attribute.type));
+    const {postSyntax = false} = options ?? {};
+    const base = `${postSyntax ? 'edit-event.rel' : 'rels'}.${relationshipIndex}.attributes.${attributeIndex}`;
+    this.searchParams.append(`${base}.${postSyntax ? 'type.gid' : 'type'}`, String(attribute.type));
     appendIfValue(this.searchParams, `${base}.text_value`, attribute.textValue);
     return this;
   }

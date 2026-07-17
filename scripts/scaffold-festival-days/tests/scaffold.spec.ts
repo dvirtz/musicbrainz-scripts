@@ -19,6 +19,7 @@ type ScaffoldRouteState = {
 };
 
 type TestEventDate = {year: string; month: string; day: string};
+type EventCreateMode = 'seed' | 'post';
 
 function makeFakeGid(counter: number) {
   return `00000000-0000-4000-8000-${String(counter).padStart(12, '0')}`;
@@ -79,27 +80,40 @@ async function setupScaffoldRoutes(params: {
   const createEventEditNotes: string[] = [];
   let gidCounter = 1;
 
-  const recordCreatedEvent = (postData: {[k: string]: unknown}): null | string => {
+  const recordCreatedEvent = (postData: {[k: string]: unknown}, mode: EventCreateMode): null | string => {
     const name = String(postData['edit-event.name']);
 
     createEventEditNotes.push(String(postData['edit-event.edit_note'] ?? ''));
     const gid = makeFakeGid(gidCounter);
     gidCounter += 1;
 
-    const partOfRelIndex = Object.entries(postData)
-      .find(([key, value]) => key.match(/rels\.\d+\.type/) && value === `${EVENT_PART_OF_RELATIONSHIP_TYPE_ID}`)?.[0]
-      ?.replace(/rels\.(\d+)\.type/, '$1');
-    const parentId = partOfRelIndex ? String(postData[`rels.${partOfRelIndex}.target`] ?? '') || null : null;
+    const relationshipBase = mode === 'seed' ? 'rels' : 'edit-event.rel';
+    const relationshipTypeKey = mode === 'seed' ? 'type' : 'link_type_id';
 
-    const placeRelIndex = Object.entries(postData)
-      .find(([key, value]) => key.match(/rels\.\d+\.type/) && value === `${EVENT_HELD_AT_RELATIONSHIP_TYPE_ID}`)?.[0]
-      ?.replace(/rels\.(\d+)\.type/, '$1');
+    const findRelationshipIndex = (typeId: number) => {
+      const expectedTypeId = String(typeId);
+
+      return Object.entries(postData)
+        .find(
+          ([key, value]) =>
+            key.match(new RegExp(`${relationshipBase.replace('.', '\\.')}\\.\\d+\\.${relationshipTypeKey}`)) &&
+            value === expectedTypeId
+        )?.[0]
+        ?.match(new RegExp(`${relationshipBase.replace('.', '\\.')}\\.(\\d+)\\.${relationshipTypeKey}`))?.[1];
+    };
+
+    const partOfRelIndex = findRelationshipIndex(EVENT_PART_OF_RELATIONSHIP_TYPE_ID);
+    const parentId = partOfRelIndex
+      ? String(postData[`${relationshipBase}.${partOfRelIndex}.target`] ?? '') || null
+      : null;
+
+    const placeRelIndex = findRelationshipIndex(EVENT_HELD_AT_RELATIONSHIP_TYPE_ID);
 
     if (placeRelIndex) {
       createdEvents.push({
         name,
-        placeId: String(postData[`rels.${placeRelIndex}.target`]),
-        placeCreditName: String(postData[`rels.${placeRelIndex}.target_credit`]),
+        placeId: String(postData[`${relationshipBase}.${placeRelIndex}.target`] ?? ''),
+        placeCreditName: String(postData[`${relationshipBase}.${placeRelIndex}.target_credit`] ?? ''),
         parentId,
       });
     } else {
@@ -118,7 +132,7 @@ async function setupScaffoldRoutes(params: {
       }
 
       const postData = Object.fromEntries(openedUrl.searchParams.entries()) as {[k: string]: unknown};
-      recordCreatedEvent(postData);
+      recordCreatedEvent(postData, 'seed');
     }
   };
 
@@ -161,7 +175,7 @@ async function setupScaffoldRoutes(params: {
 
   const unrouteEventCreate = await userscriptPage.route('**/event/create', async (route, request) => {
     const postData = await userscriptPage.postDataJSON(request);
-    const gid = recordCreatedEvent(postData) ?? makeFakeGid(gidCounter);
+    const gid = recordCreatedEvent(postData, 'post') ?? makeFakeGid(gidCounter);
 
     await route.fulfill({json: {mbid: gid}});
   });
