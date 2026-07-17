@@ -1,3 +1,9 @@
+## @dvirtz/scaffold-festival-days-v1.2.0-beta.2 (2026-07-17)
+
+* fix(scaffold-festival-days): don't create stage events for single-place events ([de7a2d8](https://github.com/dvirtz/musicbrainz-scripts/commit/de7a2d8))
+* fix(scaffold-festival-days): empty place links ([ac34bcf](https://github.com/dvirtz/musicbrainz-scripts/commit/ac34bcf))
+* fix(scaffold-festival-days): match only main page ([be0d681](https://github.com/dvirtz/musicbrainz-scripts/commit/be0d681))
+
 ## @dvirtz/scaffold-festival-days-v1.2.0-beta.1 (2026-07-16)
 
 * feat(scaffold-festival-days): add sub-places to default stage list ([c9b5780](https://github.com/dvirtz/musicbrainz-scripts/commit/c9b5780))
