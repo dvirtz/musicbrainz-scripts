@@ -1,3 +1,7 @@
+## @dvirtz/scaffold-festival-days-v1.2.0-beta.3 (2026-07-17)
+
+* fix(scaffold-festival-days): post relationships syntax ([263bc9a](https://github.com/dvirtz/musicbrainz-scripts/commit/263bc9a))
+
 ## @dvirtz/scaffold-festival-days-v1.2.0-beta.2 (2026-07-17)
 
 * fix(scaffold-festival-days): don't create stage events for single-place events ([de7a2d8](https://github.com/dvirtz/musicbrainz-scripts/commit/de7a2d8))
