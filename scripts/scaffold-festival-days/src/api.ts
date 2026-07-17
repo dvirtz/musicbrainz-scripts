@@ -155,20 +155,32 @@ export async function createSubEvent(
   let relationshipIndex = 0;
 
   if (parentGid) {
-    formData = formData.relationship(relationshipIndex, {
-      type: EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
-      target: parentGid,
-      direction: 'backward',
-    });
+    formData = formData.relationship(
+      relationshipIndex,
+      {
+        type: EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
+        target: parentGid,
+        direction: 'backward',
+      },
+      {
+        postSyntax: !seedOnly,
+      }
+    );
     relationshipIndex++;
   }
 
   if (place) {
-    formData = formData.relationship(relationshipIndex, {
-      type: EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
-      target: place.gid,
-      targetCredit: place.creditName,
-    });
+    formData = formData.relationship(
+      relationshipIndex,
+      {
+        type: EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
+        target: place.gid,
+        targetCredit: place.creditName,
+      },
+      {
+        postSyntax: !seedOnly,
+      }
+    );
     relationshipIndex++;
   }
 
