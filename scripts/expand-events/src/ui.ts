@@ -1,11 +1,8 @@
 // cspell: words eventlink
 import {ChildEventSummary, EventDetails, fetchEventDetails} from '#api.ts';
 import classes from '#ui.module.css';
-import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
 import {getEventGid} from '@repo/musicbrainz-ext/event-path';
-import {seedEvent} from '@repo/musicbrainz-ext/event-seed';
 
-const EVENT_LINK_REGEXP = new RegExp(`/event/(${MBID_REGEXP.source})`, 'i');
 const GLOBAL_CONTROLS_ID = 'expand-events-global-controls';
 const TOGGLE_CLASS_NAME = 'expand-events-toggle';
 
@@ -20,11 +17,6 @@ type ControllerContext = {
   detailsCache: Map<string, Promise<EventDetails | null>>;
   allControllers: Set<ToggleController>;
 };
-
-function getEventGidFromHref(href: string): string | null {
-  const match = href.match(EVENT_LINK_REGEXP);
-  return match?.[1] ?? null;
-}
 
 function insertAfter(newNode: Node, referenceNode: Node) {
   const parent = referenceNode.parentNode;
@@ -41,7 +33,7 @@ function insertAfter(newNode: Node, referenceNode: Node) {
 
 function createAddSubEventLink(details: EventDetails): HTMLAnchorElement {
   const link = document.createElement('a');
-  link.href = seedEvent(details.seedData);
+  link.href = details.subEventSeed;
   link.textContent = 'add sub-event';
   return link;
 }
@@ -342,7 +334,7 @@ function findTopLevelChildLinks(currentEventGid: string, childEventIds: Set<stri
 
   const links = Array.from(content.querySelectorAll<HTMLAnchorElement>('a[href*="/event/"]'));
   return links.filter(link => {
-    const gid = getEventGidFromHref(link.href);
+    const gid = getEventGid(link.href);
     if (!gid || gid === currentEventGid || !childEventIds.has(gid)) {
       return false;
     }
@@ -435,7 +427,7 @@ export async function initializeExpandEvents() {
   };
 
   for (const link of targetLinks) {
-    const eventGid = getEventGidFromHref(link.href);
+    const eventGid = getEventGid(link.href);
     if (!eventGid) {
       continue;
     }

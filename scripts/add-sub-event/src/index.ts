@@ -1,7 +1,7 @@
 import {injectAddSubEventLink} from '#sidebar-link.ts';
 import {mountDeprecationBanner} from '@repo/common-ui/deprecation-banner';
 import {getEventGid} from '@repo/musicbrainz-ext/event-path';
-import {extractParentEventSeedData, seedEvent} from '@repo/musicbrainz-ext/event-seed';
+import {seedSubEvent} from '@repo/musicbrainz-ext/event-seed';
 import type {MBEvent} from '@repo/musicbrainz-ext/event-types';
 import {tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
 
@@ -22,12 +22,7 @@ async function main() {
     return null;
   }
 
-  const seedData = extractParentEventSeedData(event);
-  if (!seedData) {
-    return;
-  }
-
-  const createUrl = seedEvent(seedData);
+  const createUrl = seedSubEvent(event);
   injectAddSubEventLink(createUrl);
 }
 
