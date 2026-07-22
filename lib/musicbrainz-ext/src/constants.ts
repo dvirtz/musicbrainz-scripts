@@ -17,19 +17,23 @@ import {
  * later version: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-export const COMPOSER_LINK_TYPE_ID = 168;
-export const LYRICIST_LINK_TYPE_ID = 165;
 export const ARRANGER_LINK_TYPE_ID = 297;
-export const TRANSLATOR_LINK_TYPE_ID = 872;
-export const MEDLEY_OF_LINK_TYPE_ID = 239;
-export const WRITER_LINK_TYPE_ID = 167;
-export const MEDLEY_LINK_TYPE_ID = 750;
-export const EVENT_MAIN_PERFORMER_RELATIONSHIP_TYPE_ID = 798;
+export const COMPOSER_LINK_TYPE_ID = 168;
 export const EVENT_GUEST_PERFORMER_RELATIONSHIP_TYPE_ID = 800;
 export const EVENT_HELD_AT_RELATIONSHIP_TYPE_ID = 794;
+export const EVENT_HELD_IN_RELATIONSHIP_TYPE_ID = 793;
+export const EVENT_IN_SERIES_RELATIONSHIP_TYPE_ID = 802;
+export const EVENT_MAIN_PERFORMER_RELATIONSHIP_TYPE_ID = 798;
 export const EVENT_PART_OF_RELATIONSHIP_TYPE_ID = 818;
 export const EVENT_PERFORMANCE_TIME_RELATIONSHIP_ATTRIBUTE_TYPE_ID = 830;
+export const LYRICIST_LINK_TYPE_ID = 165;
+export const MEDLEY_LINK_TYPE_ID = 750;
+export const MEDLEY_OF_LINK_TYPE_ID = 239;
 export const PLACE_PART_OF_RELATIONSHIP_TYPE_ID = 717;
+export const SERIES_HELD_AT_RELATIONSHIP_TYPE_ID = 995;
+export const TRANSLATOR_LINK_TYPE_ID = 872;
+export const WRITER_LINK_TYPE_ID = 167;
+
 export const REL_STATUS_NOOP = 0 as RelationshipEditStatusT;
 export const REL_STATUS_ADD = 1 as RelationshipEditStatusT;
 export const REL_STATUS_EDIT = 2 as RelationshipEditStatusT;

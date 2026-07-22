@@ -5,6 +5,8 @@ export type EventDateParts = {
 };
 
 export class EventForm {
+  private relationshipCount: number = 0;
+  private urlCount: number = 0;
   private searchParams: URLSearchParams;
 
   constructor(searchParams?: URLSearchParams) {
@@ -51,8 +53,8 @@ export class EventForm {
     return this;
   }
 
-  urlRelationship(index: number, relationship: {url: string; linkTypeId: number}): this {
-    const base = `edit-event.url.${index}`;
+  urlRelationship(relationship: {url: string; linkTypeId: number}): this {
+    const base = `edit-event.url.${this.urlCount++}`;
     this.searchParams.append(`${base}.text`, relationship.url);
     this.searchParams.append(`${base}.link_type_id`, String(relationship.linkTypeId));
     return this;
@@ -74,31 +76,23 @@ export class EventForm {
   }
 
   relationship(
-    index: number,
     relationship: {type: string | number; target: string; direction?: string; targetCredit?: string},
+    attributes?: readonly {type: string | number; textValue?: string}[],
     options?: {postSyntax: boolean}
   ): this {
     const {postSyntax = false} = options ?? {};
-    const base = `${postSyntax ? 'edit-event.rel' : `rels`}.${index}`;
+    const base = `${postSyntax ? 'edit-event.rel' : `rels`}.${this.relationshipCount++}`;
     this.searchParams.append(`${base}.${postSyntax ? 'link_type_id' : 'type'}`, String(relationship.type));
     this.searchParams.append(`${base}.target`, relationship.target);
     // event part-of rel direction is not seeded
     // https://tickets.metabrainz.org/browse/MBS-14299
     appendIfValue(this.searchParams, `${base}.backward`, relationship.direction === 'backward' ? '1' : undefined);
     appendIfValue(this.searchParams, `${base}.target_credit`, relationship.targetCredit);
-    return this;
-  }
-
-  relationshipAttribute(
-    relationshipIndex: number,
-    attributeIndex: number,
-    attribute: {type: string | number; textValue?: string},
-    options?: {postSyntax: boolean}
-  ): this {
-    const {postSyntax = false} = options ?? {};
-    const base = `${postSyntax ? 'edit-event.rel' : 'rels'}.${relationshipIndex}.attributes.${attributeIndex}`;
-    this.searchParams.append(`${base}.${postSyntax ? 'type.gid' : 'type'}`, String(attribute.type));
-    appendIfValue(this.searchParams, `${base}.text_value`, attribute.textValue);
+    attributes?.forEach((attribute, index) => {
+      const attrBase = `${base}.attributes.${index}`;
+      this.searchParams.append(`${attrBase}.${postSyntax ? 'type.gid' : 'type'}`, String(attribute.type));
+      appendIfValue(this.searchParams, `${attrBase}.text_value`, attribute.textValue);
+    });
     return this;
   }
 

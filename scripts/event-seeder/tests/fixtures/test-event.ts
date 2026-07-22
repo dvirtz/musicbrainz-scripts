@@ -154,8 +154,10 @@ export class TestEvent {
       },
       baseURL,
     });
-    if (existingEventJson?.events && existingEventJson.events.length > 0) {
-      return existingEventJson.events[0]!.id;
+    const existingEvents = existingEventJson?.events ?? [];
+    if (existingEvents.length > 0) {
+      expect(existingEvents).toHaveLength(1);
+      return existingEvents[0]!.id;
     }
 
     const eventForm = new EventForm()
@@ -166,16 +168,9 @@ export class TestEvent {
       .dates({begin: this.beginDate, end: this.endDate})
       .setlist(this.setlist);
 
-    this.entityRelationships.forEach((relationship, relationshipIndex) => {
-      eventForm.relationship(relationshipIndex, relationship);
-      relationship.attributes?.forEach((attribute, attributeIndex) => {
-        eventForm.relationshipAttribute(relationshipIndex, attributeIndex, attribute);
-      });
-    });
+    this.entityRelationships.forEach(relationship => eventForm.relationship(relationship, relationship.attributes));
 
-    this.urlRelationships.forEach((relationship, relationshipIndex) => {
-      eventForm.urlRelationship(relationshipIndex, relationship);
-    });
+    this.urlRelationships.forEach(relationship => eventForm.urlRelationship(relationship));
 
     const searchParams = eventForm.build();
 

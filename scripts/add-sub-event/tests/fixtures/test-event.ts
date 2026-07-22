@@ -24,19 +24,19 @@ export class TestParentEvent {
 
   private constructor(public readonly gid: string) {}
 
-  static async create(musicbrainzPage: MusicbrainzPage) {
-    const eventGid = await TestParentEvent.createEvent(musicbrainzPage);
+  static async create(musicbrainzPage: MusicbrainzPage, baseURL: string | undefined) {
+    const eventGid = await TestParentEvent.createEvent(musicbrainzPage, baseURL);
     return new TestParentEvent(eventGid);
   }
 
-  private static async createEvent(musicbrainzPage: MusicbrainzPage): Promise<string> {
-    const existingEvent = await musicbrainzPage.page.request.get('/ws/2/event', {
+  private static async createEvent(musicbrainzPage: MusicbrainzPage, baseURL: string | undefined): Promise<string> {
+    const existingEventJson = await musicbrainzPage.userscriptPage.requestJSON<EventSearchResultsT>('/ws/2/event', {
       params: {
         query: `event:"${this.eventName}"`,
         fmt: 'json',
       },
+      baseURL,
     });
-    const existingEventJson = (await existingEvent.json()) as EventSearchResultsT;
     if (existingEventJson?.events && existingEventJson.events.length > 0) {
       return existingEventJson.events[0]!.id;
     }
@@ -68,8 +68,8 @@ export const test = base.extend<{
   testParentEvent: TestParentEvent;
   musicbrainzPage: MusicbrainzPage;
 }>({
-  testParentEvent: async ({musicbrainzPage}, use) => {
-    const testParentEvent = await TestParentEvent.create(musicbrainzPage);
+  testParentEvent: async ({musicbrainzPage, baseURL}, use) => {
+    const testParentEvent = await TestParentEvent.create(musicbrainzPage, baseURL);
     await use(testParentEvent);
   },
 });

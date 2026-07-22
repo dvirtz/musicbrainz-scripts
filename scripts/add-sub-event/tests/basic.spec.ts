@@ -21,6 +21,7 @@ test.describe('add-sub-event', () => {
           },
           relations: [
             {
+              'type': 'held at',
               'target-type': 'place',
               place: {
                 id: PLACE_GID,
@@ -94,6 +95,7 @@ test.describe('add-sub-event', () => {
           },
           relations: [
             {
+              'type': 'held at',
               'target-type': 'place',
               'target-credit': PLACE_CREDIT,
               place: {

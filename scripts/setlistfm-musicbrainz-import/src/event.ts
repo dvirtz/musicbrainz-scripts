@@ -25,12 +25,10 @@ import {
   mergeMap,
   of,
   pairwise,
-  range,
   reduce,
   startWith,
   tap,
   toArray,
-  zip,
 } from 'rxjs';
 
 enum TypeID {
@@ -252,35 +250,39 @@ async function submitEvent(placeMBID: string, eventMBID?: string) {
 
   eventForm.editNote(editNoteFormat(`Imported from ${document.location.href}`));
 
-  eventForm.urlRelationship(0, {
+  eventForm.urlRelationship({
     url: document.location.href,
     linkTypeId: TypeID.SetlistFmUrl,
   });
 
-  eventForm.relationship(0, {
-    type: EVENT_MAIN_PERFORMER_RELATIONSHIP_TYPE_ID,
-    target: artistMBID,
-    direction: 'backward',
-  });
   const startTime = parseTime('.start');
-  if (startTime) {
-    eventForm.relationshipAttribute(0, 0, {
-      type: EVENT_PERFORMANCE_TIME_RELATIONSHIP_ATTRIBUTE_TYPE_ID,
-      textValue: startTime,
-    });
-  }
+  eventForm.relationship(
+    {
+      type: EVENT_MAIN_PERFORMER_RELATIONSHIP_TYPE_ID,
+      target: artistMBID,
+      direction: 'backward',
+    },
+    startTime
+      ? [
+          {
+            type: EVENT_PERFORMANCE_TIME_RELATIONSHIP_ATTRIBUTE_TYPE_ID,
+            textValue: startTime,
+          },
+        ]
+      : []
+  );
 
-  eventForm.relationship(1, {
+  eventForm.relationship({
     type: EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
     target: placeMBID,
   });
 
   await executePipeline(
-    zip(artistMBIDCache.values(), range(0, artistMBIDCache.size)).pipe(
-      mergeMap(async ([mbidPromise, index]) => [await mbidPromise, index + 2] as const),
-      filter((pair): pair is [string, number] => pair[0] !== undefined),
-      tap(([mbid, index]) => {
-        eventForm.relationship(index, {
+    from(artistMBIDCache.values()).pipe(
+      mergeMap(async mbidPromise => await mbidPromise),
+      filter(mbid => typeof mbid !== 'undefined'),
+      tap(mbid => {
+        eventForm.relationship({
           type: EVENT_GUEST_PERFORMER_RELATIONSHIP_TYPE_ID,
           target: mbid,
         });

@@ -1,13 +1,16 @@
-const ADD_SUB_EVENT_LINK_ID = 'add-sub-event-link';
-const CLONE_EVENT_LINK_ID = 'clone-event-link';
+export type SidebarLink = {
+  id: string;
+  url: string;
+  text: string;
+};
 
-function createListItem(documentRef: Document, id: string, href: string, text: string): HTMLLIElement {
+function createListItem(documentRef: Document, link: SidebarLink): HTMLLIElement {
   const listItem = documentRef.createElement('li');
-  const link = documentRef.createElement('a');
-  link.id = id;
-  link.href = href;
-  link.textContent = text;
-  listItem.appendChild(link);
+  const anchor = documentRef.createElement('a');
+  anchor.id = link.id;
+  anchor.href = link.url;
+  anchor.textContent = link.text;
+  listItem.appendChild(anchor);
   return listItem;
 }
 
@@ -18,34 +21,23 @@ function createSeparator(documentRef: Document) {
   return listItem;
 }
 
-export function injectEventSidebarLinks(
-  addSubEventUrl: string,
-  cloneEventUrl: string,
-  documentRef: Document = document
-): boolean {
-  if (documentRef.getElementById(ADD_SUB_EVENT_LINK_ID)) {
-    return true;
-  }
-
-  const sidebarLinks = documentRef.querySelector<HTMLAnchorElement>('div#sidebar ul.links');
+export function injectEventSidebarLinks(links: Array<SidebarLink>) {
+  const sidebarLinks = document.querySelector<HTMLAnchorElement>('div#sidebar ul.links');
   if (!sidebarLinks) {
-    return false;
+    console.debug('no sidebar links');
+    return;
   }
   const firstListItem = sidebarLinks.querySelector<HTMLLIElement>('li');
   if (!firstListItem) {
-    return false;
+    console.debug('sidebar links empty');
+    return;
   }
 
-  // Insert order: [add-sub-event] [clone-event] [separator] ... existing items
-  sidebarLinks.insertBefore(
-    createListItem(documentRef, ADD_SUB_EVENT_LINK_ID, addSubEventUrl, 'Add sub-event'),
-    firstListItem
-  );
-  sidebarLinks.insertBefore(
-    createListItem(documentRef, CLONE_EVENT_LINK_ID, cloneEventUrl, 'Clone event'),
-    firstListItem
-  );
-  sidebarLinks.insertBefore(createSeparator(documentRef), firstListItem);
-
-  return true;
+  const missing = links.filter(link => !document.getElementById(link.id));
+  if (missing.length > 0) {
+    for (const link of missing) {
+      sidebarLinks.insertBefore(createListItem(document, link), firstListItem);
+    }
+    sidebarLinks.insertBefore(createSeparator(document), firstListItem);
+  }
 }
