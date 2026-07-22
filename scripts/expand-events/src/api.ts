@@ -1,4 +1,4 @@
-import {extractParentEventSeedData, ParentEventSeedData} from '@repo/musicbrainz-ext/event-seed';
+import {seedSubEvent} from '@repo/musicbrainz-ext/event-seed';
 import type {MBEvent} from '@repo/musicbrainz-ext/event-types';
 import {tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
 
@@ -22,7 +22,7 @@ export type EventDetails = {
   endDate?: string;
   time?: string;
   places: string[];
-  seedData: ParentEventSeedData;
+  subEventSeed: string;
   childEvents: ChildEventSummary[];
 };
 
@@ -129,11 +129,6 @@ export async function fetchEventDetails(eventGid: string): Promise<EventDetails 
     return null;
   }
 
-  const seedData = extractParentEventSeedData(event);
-  if (!seedData) {
-    return null;
-  }
-
   const places = new Set<string>();
   for (const relation of event.relations ?? []) {
     const label = normalizePlaceLabel(relation);
@@ -151,7 +146,7 @@ export async function fetchEventDetails(eventGid: string): Promise<EventDetails 
     endDate: event['life-span']?.end,
     time: normalizeTime(event.time),
     places: Array.from(places),
-    seedData,
+    subEventSeed: seedSubEvent(event),
     childEvents: parseChildEvents(event.relations ?? []),
   };
 }

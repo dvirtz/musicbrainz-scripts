@@ -5,6 +5,6 @@ export default defineConfig('event-seeder', {
   description: 'Seeds sub-events or clones events from event pages',
   version: '1.0.0',
 
-  match: ['http*://*.musicbrainz.org/event/*'],
+  match: ['http*://*.musicbrainz.org/event/*', 'http*://*.musicbrainz.org/series/*'],
   'run-at': 'document-end',
 });
