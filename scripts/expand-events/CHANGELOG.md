@@ -1,3 +1,7 @@
+## @dvirtz/expand-events-v1.2.0-beta.2 (2026-07-26)
+
+* feat(event-seeder): seed event from event series ([c1ab379](https://github.com/dvirtz/musicbrainz-scripts/commit/c1ab379))
+
 ## @dvirtz/expand-events-v1.2.0-beta.1 (2026-07-16)
 
 * feat(scaffold-festival-days): add sub-places to default stage list ([c9b5780](https://github.com/dvirtz/musicbrainz-scripts/commit/c9b5780))
