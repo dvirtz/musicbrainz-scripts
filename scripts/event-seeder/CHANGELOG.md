@@ -1,3 +1,12 @@
+## @dvirtz/event-seeder-v1.1.0-beta.1 (2026-07-26)
+
+* feat(event-seeder): seed event from event series ([c1ab379](https://github.com/dvirtz/musicbrainz-scripts/commit/c1ab379))
+* test: simplify HAR recording ([7e7926a](https://github.com/dvirtz/musicbrainz-scripts/commit/7e7926a))
+* test: support new MB login page ([1f34f25](https://github.com/dvirtz/musicbrainz-scripts/commit/1f34f25)), closes [#198](https://github.com/dvirtz/musicbrainz-scripts/issues/198)
+* test: use pre-recorded responses for testing ([a746183](https://github.com/dvirtz/musicbrainz-scripts/commit/a746183))
+* test(event-seeder): fix external link locator ([4d9e595](https://github.com/dvirtz/musicbrainz-scripts/commit/4d9e595))
+* test(event-seeder): verify relationships before submitting ([761d7c7](https://github.com/dvirtz/musicbrainz-scripts/commit/761d7c7))
+
 ## @dvirtz/event-seeder-v1.0.0 (2026-03-31)
 
 * feat(event-seeder): clone an event ([6f72397](https://github.com/dvirtz/musicbrainz-scripts/commit/6f72397))
