@@ -1,3 +1,7 @@
+## @dvirtz/scaffold-festival-days-v1.2.0-beta.4 (2026-07-26)
+
+* feat(event-seeder): seed event from event series ([c1ab379](https://github.com/dvirtz/musicbrainz-scripts/commit/c1ab379))
+
 ## @dvirtz/scaffold-festival-days-v1.2.0-beta.3 (2026-07-17)
 
 * fix(scaffold-festival-days): post relationships syntax ([263bc9a](https://github.com/dvirtz/musicbrainz-scripts/commit/263bc9a))
