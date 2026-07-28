@@ -1,0 +1,9 @@
+import { initializeExpandEvents } from "/src/ui.ts?t=1785273872973";
+function main() {
+  void initializeExpandEvents().catch((error) => {
+    console.error("[expand-events] Error:", error);
+  });
+}
+main();
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7aW5pdGlhbGl6ZUV4cGFuZEV2ZW50c30gZnJvbSAnI3VpLnRzJztcclxuXHJcbmZ1bmN0aW9uIG1haW4oKSB7XHJcbiAgdm9pZCBpbml0aWFsaXplRXhwYW5kRXZlbnRzKCkuY2F0Y2goZXJyb3IgPT4ge1xyXG4gICAgY29uc29sZS5lcnJvcignW2V4cGFuZC1ldmVudHNdIEVycm9yOicsIGVycm9yKTtcclxuICB9KTtcclxufVxyXG5cclxubWFpbigpO1xyXG4iXSwibWFwcGluZ3MiOiJBQUFBLFNBQVEsOEJBQTZCO0FBRXJDLFNBQVMsT0FBTztBQUNkLE9BQUssdUJBQXVCLEVBQUUsTUFBTSxXQUFTO0FBQzNDLFlBQVEsTUFBTSwwQkFBMEIsS0FBSztBQUFBLEVBQy9DLENBQUM7QUFDSDtBQUVBLEtBQUs7IiwibmFtZXMiOltdfQ==

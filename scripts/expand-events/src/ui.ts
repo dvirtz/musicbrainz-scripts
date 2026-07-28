@@ -1,7 +1,9 @@
 // cspell: words eventlink
 import {ChildEventSummary, EventDetails, fetchEventDetails} from '#api.ts';
 import classes from '#ui.module.css';
+import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
 import {getEventGid} from '@repo/musicbrainz-ext/event-path';
+import {fetchEntityWithRelations} from '@repo/musicbrainz-ext/event-seed';
 
 const GLOBAL_CONTROLS_ID = 'expand-events-global-controls';
 const TOGGLE_CLASS_NAME = 'expand-events-toggle';
@@ -154,7 +156,7 @@ class EventToggle implements ToggleController {
     this.detailsContainer.dataset.expandEventsDetailsFor = this.eventGid;
 
     const hostRow = params.link.closest('tr');
-    const eventLinkCountInRow = hostRow ? hostRow.querySelectorAll('a[href*="/event/"]').length : 0;
+    const eventLinkCountInRow = hostRow ? hostRow.querySelectorAll('a.wrap-anywhere[href*="/event/"]').length : 0;
     const useRowHost = Boolean(hostRow?.parentElement) && eventLinkCountInRow <= 1;
 
     if (useRowHost && hostRow) {
@@ -335,7 +337,7 @@ function findTopLevelChildLinks(currentEventGid: string, childEventIds: Set<stri
   const links = Array.from(content.querySelectorAll<HTMLAnchorElement>('a[href*="/event/"]'));
   return links.filter(link => {
     const gid = getEventGid(link.href);
-    if (!gid || gid === currentEventGid || !childEventIds.has(gid)) {
+    if (!gid || gid === currentEventGid || !childEventIds.has(gid) || link.querySelector('.artwork-icon')) {
       return false;
     }
 
@@ -401,22 +403,25 @@ function injectGlobalControls(anchor: Element, controllers: Set<ToggleController
 }
 
 export async function initializeExpandEvents() {
-  const currentEventGid = getEventGid();
-  if (!currentEventGid) {
+  const match = location.pathname.match(new RegExp(`/(event|series)/(${MBID_REGEXP.source})`));
+  if (!match) {
     return;
   }
 
-  const currentEventDetails = await fetchEventDetails(currentEventGid);
-  if (!currentEventDetails) {
+  const entityType = match[1]!;
+  const entity = await fetchEntityWithRelations(entityType, match[2]!);
+  if (!entity) {
     return;
   }
 
-  const childEventIds = new Set(currentEventDetails.childEvents.map(child => child.gid));
+  const childEventIds = new Set(
+    entity.relations?.filter(rel => typeof rel.event !== 'undefined').map(rel => rel.event!.id)
+  );
   if (childEventIds.size === 0) {
     return;
   }
 
-  const targetLinks = findTopLevelChildLinks(currentEventGid, childEventIds);
+  const targetLinks = findTopLevelChildLinks(entity.id, childEventIds);
   if (targetLinks.length === 0) {
     return;
   }
@@ -437,7 +442,7 @@ export async function initializeExpandEvents() {
       eventGid,
       link,
       context,
-      ancestorPath: new Set([currentEventGid]),
+      ancestorPath: new Set([entity.id]),
     });
     context.allControllers.add(controller);
   }
