@@ -1,36 +1,5 @@
 .detailsWrapper {
   margin-top: 0.25em;
-
-  .detailsTable {
-    margin-top: 0.5em;
-    margin-left: 1em;
-    width: calc(100% - 1em);
-    box-sizing: border-box;
-    table-layout: fixed;
-
-    td:first-child {
-      word-break: normal;
-      overflow-wrap: normal;
-      hyphens: none;
-    }
-
-    td:last-child {
-      width: 8em;
-    }
-
-    .detailsCell {
-      padding: 0;
-    }
-
-    .quickLinksCell {
-      padding: 0.75em 0;
-    }
-
-    .errorCell {
-      color: #f00;
-    }
-
-  }
 }
 
 .toggleButton {
@@ -42,4 +11,35 @@
   background: transparent;
   font-size: 1em;
   line-height: 1;
+}
+
+table.detailsTable {
+  margin-top: 0.5em;
+  margin-left: 1em;
+  width: calc(100% - 1em);
+  box-sizing: border-box;
+  table-layout: fixed;
+
+  td:first-child {
+    word-break: normal;
+    overflow-wrap: normal;
+    hyphens: none;
+  }
+
+  td:last-child {
+    width: 8em;
+  }
+
+  .detailsCell {
+    padding: 0;
+  }
+
+  .quickLinksCell {
+    padding: 0.75em 0;
+  }
+
+  .errorCell {
+    color: #f00;
+  }
+
 }

@@ -1,64 +1,66 @@
 import {expect} from '@playwright/test';
 import {test} from '@repo/test-support/musicbrainz-test';
 
-const LIVE_EVENT_GID = '6d5e8ba6-2e4c-44e6-b990-506eb50b4faa';
-const LIVE_CHILD_EVENT_GID = '0d422c29-e2c7-4946-9d47-031c792f4fa8';
-const LIVE_GRANDCHILD_EVENT_GID = 'e5f279e2-c595-40cf-9ccc-aa15356c4cb4';
+const FESTIVAL_GID = '6d5e8ba6-2e4c-44e6-b990-506eb50b4faa';
+const DAY_EVENT_GID = '0d422c29-e2c7-4946-9d47-031c792f4fa8';
+const STAGE_EVENT_GID = 'e5f279e2-c595-40cf-9ccc-aa15356c4cb4';
+const SERIES_GID = '03ba1e1e-0b0b-4f64-a197-f7138c04dc49';
 
 test.describe('expand-events', () => {
   test.describe.configure({mode: 'serial'});
 
-  test('injects toggles on a real event page and shows quick links on expand', async ({userscriptPage, page}) => {
-    await userscriptPage.goto(`/event/${LIVE_EVENT_GID}`);
+  [
+    {entity: 'event', gid: FESTIVAL_GID},
+    {entity: 'series', gid: SERIES_GID},
+  ].forEach(({entity, gid}) =>
+    test(`injects toggles on ${entity} page and shows quick links on expand`, async ({userscriptPage, page}) => {
+      await userscriptPage.goto(`${entity}/${gid}`);
 
-    const childToggle = page.locator(`.expand-events-toggle[data-event-gid="${LIVE_CHILD_EVENT_GID}"]`).first();
-    await expect(childToggle).toBeVisible();
-    await childToggle.click();
-    await expect(page.locator(`[data-expand-events-row-for="${LIVE_CHILD_EVENT_GID}"]`)).not.toHaveAttribute(
-      'hidden',
-      ''
-    );
+      if (entity == 'series') {
+        await page.locator(`.expand-events-toggle[data-event-gid="${FESTIVAL_GID}"]`).click();
+      }
 
-    const grandchildToggle = page
-      .locator(
-        `[data-expand-events-details-for="${LIVE_CHILD_EVENT_GID}"] .expand-events-toggle[data-event-gid="${LIVE_GRANDCHILD_EVENT_GID}"]`
-      )
-      .first();
-    await expect(grandchildToggle).toBeVisible();
-    await grandchildToggle.click();
-    await expect(page.locator(`[data-expand-events-row-for="${LIVE_GRANDCHILD_EVENT_GID}"]`)).not.toHaveAttribute(
-      'hidden',
-      ''
-    );
+      const childToggle = page.locator(`.expand-events-toggle[data-event-gid="${DAY_EVENT_GID}"]`);
+      await expect(childToggle).toBeVisible();
+      await childToggle.click();
 
-    await expect(page.locator(`[data-expand-events-quick-links-for="${LIVE_GRANDCHILD_EVENT_GID}"]`)).toBeVisible();
+      const grandchildToggle = page.locator(
+        `[data-expand-events-details-for="${DAY_EVENT_GID}"] .expand-events-toggle[data-event-gid="${STAGE_EVENT_GID}"]`
+      );
+      await expect(grandchildToggle).toBeVisible();
+      await grandchildToggle.click();
 
-    const childRows = page.locator(
-      `[data-expand-events-details-for="${LIVE_GRANDCHILD_EVENT_GID}"] tr:has(td a[href*="/event/"]):not(:has([data-expand-events-quick-links-for]))`
-    );
-    await expect(childRows).toHaveCount(3);
+      await expect(page.locator(`[data-expand-events-quick-links-for="${STAGE_EVENT_GID}"]`)).toBeVisible({
+        timeout: 10_000,
+      });
 
-    const actualOrder = await childRows.evaluateAll(rows =>
-      rows.map(row => {
-        const cells = row.querySelectorAll('td');
-        const link = cells[0]?.querySelector('a');
-        const name = link?.textContent?.trim() ?? '';
-        const time = cells[1]?.textContent?.trim() ?? '';
-        return {name, time};
-      })
-    );
+      const childRows = page.locator(
+        `[data-expand-events-details-for="${STAGE_EVENT_GID}"] tr:has(td a[href*="/event/"]):not(:has([data-expand-events-quick-links-for]))`
+      );
+      await expect(childRows).toHaveCount(3);
 
-    expect(actualOrder.map(x => x.time)).toEqual(['20:00', '22:30', '00:45']);
+      const actualOrder = await childRows.evaluateAll(rows =>
+        rows.map(row => {
+          const cells = row.querySelectorAll('td');
+          const link = cells[0]?.querySelector('a');
+          const name = link?.textContent?.trim() ?? '';
+          const time = cells[1]?.textContent?.trim() ?? '';
+          return {name, time};
+        })
+      );
 
-    const quickLinks = page.locator(`[data-expand-events-quick-links-for="${LIVE_GRANDCHILD_EVENT_GID}"]`);
-    await expect(quickLinks).toContainText('edit');
-    await expect(quickLinks).toContainText('editing history');
-    await expect(quickLinks).toContainText('add event art');
-    await expect(quickLinks).not.toContainText('edit relationships');
-  });
+      expect(actualOrder.map(x => x.time)).toEqual(['20:00', '22:30', '00:45']);
+
+      const quickLinks = page.locator(`[data-expand-events-quick-links-for="${STAGE_EVENT_GID}"]`);
+      await expect(quickLinks).toContainText('edit');
+      await expect(quickLinks).toContainText('editing history');
+      await expect(quickLinks).toContainText('add event art');
+      await expect(quickLinks).not.toContainText('edit relationships');
+    })
+  );
 
   test('shows add sub-event quick link when event-seeder script is present', async ({userscriptPage, page}) => {
-    await userscriptPage.goto(`/event/${LIVE_EVENT_GID}`);
+    await userscriptPage.goto(`/event/${FESTIVAL_GID}`);
 
     await page.addScriptTag({
       content: `
@@ -90,36 +92,30 @@ test.describe('expand-events', () => {
   });
 
   test('supports recursive expansion on a real event page and shows leaf metadata', async ({userscriptPage, page}) => {
-    await userscriptPage.goto(`/event/${LIVE_EVENT_GID}`);
+    await userscriptPage.goto(`/event/${FESTIVAL_GID}`);
 
-    const childToggle = page.locator(`.expand-events-toggle[data-event-gid="${LIVE_CHILD_EVENT_GID}"]`).first();
+    const childToggle = page.locator(`.expand-events-toggle[data-event-gid="${DAY_EVENT_GID}"]`).first();
     await expect(childToggle).toBeVisible();
     await childToggle.click();
-    await expect(page.locator(`[data-expand-events-row-for="${LIVE_CHILD_EVENT_GID}"]`)).not.toHaveAttribute(
-      'hidden',
-      ''
-    );
+    await expect(page.locator(`[data-expand-events-row-for="${DAY_EVENT_GID}"]`)).not.toHaveAttribute('hidden', '');
 
     const grandchildToggle = page
       .locator(
-        `[data-expand-events-details-for="${LIVE_CHILD_EVENT_GID}"] .expand-events-toggle[data-event-gid="${LIVE_GRANDCHILD_EVENT_GID}"]`
+        `[data-expand-events-details-for="${DAY_EVENT_GID}"] .expand-events-toggle[data-event-gid="${STAGE_EVENT_GID}"]`
       )
       .first();
     await expect(grandchildToggle).toBeVisible();
     await grandchildToggle.click();
 
-    await expect(page.locator(`[data-expand-events-row-for="${LIVE_GRANDCHILD_EVENT_GID}"]`)).not.toHaveAttribute(
-      'hidden',
-      ''
-    );
+    await expect(page.locator(`[data-expand-events-row-for="${STAGE_EVENT_GID}"]`)).not.toHaveAttribute('hidden', '');
 
     const childRows = page.locator(
-      `[data-expand-events-details-for="${LIVE_GRANDCHILD_EVENT_GID}"] tr:has(td a[href*="/event/"]):not(:has([data-expand-events-quick-links-for]))`
+      `[data-expand-events-details-for="${STAGE_EVENT_GID}"] tr:has(td a[href*="/event/"]):not(:has([data-expand-events-quick-links-for]))`
     );
     await expect(childRows).toHaveCount(3);
 
     const firstLeafToggle = page
-      .locator(`[data-expand-events-details-for="${LIVE_GRANDCHILD_EVENT_GID}"] .expand-events-toggle`)
+      .locator(`[data-expand-events-details-for="${STAGE_EVENT_GID}"] .expand-events-toggle`)
       .first();
     await expect(firstLeafToggle).toBeVisible();
 
@@ -140,7 +136,7 @@ test.describe('expand-events', () => {
   });
 
   test('expand all and collapse all work on the real event page', async ({userscriptPage, page}) => {
-    await userscriptPage.goto(`/event/${LIVE_EVENT_GID}`);
+    await userscriptPage.goto(`/event/${FESTIVAL_GID}`);
 
     await page.getByRole('button', {name: 'Expand all'}).click();
     await expect(page.locator('[data-expand-events-row-for]:not([hidden])').first()).toBeVisible();
