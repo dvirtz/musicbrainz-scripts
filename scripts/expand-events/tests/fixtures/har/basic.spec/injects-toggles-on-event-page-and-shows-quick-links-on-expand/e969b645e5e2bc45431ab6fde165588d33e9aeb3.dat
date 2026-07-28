@@ -1,0 +1,20 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/ui.module.css");import { updateStyle as __vite__updateStyle, removeStyle as __vite__removeStyle } from "/@vite/client"
+const __vite__id = "C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/scripts/expand-events/src/ui.module.css"
+const __vite__css = "._detailsWrapper_101qz_1 {\r\n  margin-top: 0.25em;\r\n}\r\n\r\n._toggleButton_101qz_9 {\r\n  cursor: pointer;\r\n  margin-right: 4px;\r\n  color: #777;\r\n  border: 0;\r\n  padding: 0;\r\n  background: transparent;\r\n  font-size: 1em;\r\n  line-height: 1;\r\n}\r\n\r\ntable._detailsTable_101qz_31 {\r\n  margin-top: 0.5em;\r\n  margin-left: 1em;\r\n  width: calc(100% - 1em);\r\n  box-sizing: border-box;\r\n  table-layout: fixed;\r\n\r\n  td:first-child {\r\n    word-break: normal;\r\n    overflow-wrap: normal;\r\n    hyphens: none;\r\n  }\r\n\r\n  td:last-child {\r\n    width: 8em;\r\n  }\r\n\r\n  ._detailsCell_101qz_65 {\r\n    padding: 0;\r\n  }\r\n\r\n  ._quickLinksCell_101qz_73 {\r\n    padding: 0.75em 0;\r\n  }\r\n\r\n  ._errorCell_101qz_81 {\r\n    color: #f00;\r\n  }\r\n\r\n}\r\n"
+__vite__updateStyle(__vite__id, __vite__css)
+export const detailsWrapper = "_detailsWrapper_101qz_1";
+export const toggleButton = "_toggleButton_101qz_9";
+export const detailsTable = "_detailsTable_101qz_31";
+export const detailsCell = "_detailsCell_101qz_65";
+export const quickLinksCell = "_quickLinksCell_101qz_73";
+export const errorCell = "_errorCell_101qz_81";
+export default {
+	detailsWrapper: detailsWrapper,
+	toggleButton: toggleButton,
+	detailsTable: detailsTable,
+	detailsCell: detailsCell,
+	quickLinksCell: quickLinksCell,
+	errorCell: errorCell
+};
+
+import.meta.hot.prune(() => __vite__removeStyle(__vite__id))

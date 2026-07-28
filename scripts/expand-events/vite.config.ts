@@ -6,6 +6,6 @@ export default defineConfig('expand-events', {
     "See what's inside sub-events without having to follow their URL. Also adds convenient edit links for it.",
   version: '1.2.0-beta.2',
 
-  match: ['http*://*.musicbrainz.org/event/*'],
+  match: ['http*://*.musicbrainz.org/event/*', 'http*://*.musicbrainz.org/series/*'],
   'run-at': 'document-end',
 });
