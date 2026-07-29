@@ -1,3 +1,7 @@
+## @dvirtz/expand-events-v1.2.0-beta.3 (2026-07-29)
+
+* feat(expand-events): expand event series ([77f0814](https://github.com/dvirtz/musicbrainz-scripts/commit/77f0814))
+
 ## @dvirtz/expand-events-v1.2.0-beta.2 (2026-07-26)
 
 * feat(event-seeder): seed event from event series ([c1ab379](https://github.com/dvirtz/musicbrainz-scripts/commit/c1ab379))
