@@ -1,3 +1,8 @@
+## @dvirtz/add-sub-event-v1.2.0 (2026-07-30)
+
+* feat(event-seeder): seed event from event series ([af13bc9](https://github.com/dvirtz/musicbrainz-scripts/commit/af13bc9))
+* test: support new MB login page ([1f34f25](https://github.com/dvirtz/musicbrainz-scripts/commit/1f34f25)), closes [#198](https://github.com/dvirtz/musicbrainz-scripts/issues/198)
+
 ## @dvirtz/add-sub-event-v1.1.0 (2026-06-07)
 
 * feat(add-sub-event,remember-change-all-artists): deprecate scripts ([b4663a4](https://github.com/dvirtz/musicbrainz-scripts/commit/b4663a4))
