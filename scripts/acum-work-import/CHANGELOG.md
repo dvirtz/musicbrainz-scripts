@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.22.0-beta.1 (2026-07-30)
+
+* feat(acum-work-import): localize and enrich warnings ([cd954c3](https://github.com/dvirtz/musicbrainz-scripts/commit/cd954c3))
+
 ## @dvirtz/acum-work-import-v1.21.3 (2026-07-08)
 
 * test: support new MB login page ([1f34f25](https://github.com/dvirtz/musicbrainz-scripts/commit/1f34f25)), closes [#198](https://github.com/dvirtz/musicbrainz-scripts/issues/198)
