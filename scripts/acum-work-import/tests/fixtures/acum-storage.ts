@@ -47,6 +47,9 @@ function sourceEntityFromUrl(url: string): SourceEntity {
 }
 
 export async function seedAcumStorageFromUrl(userscriptPage: UserscriptPage, fixtureName: string, sourceUrl: string) {
+  // clear so that import will take stored works
+  await userscriptPage.page.getByPlaceholder('ID or URL').clear();
+
   const sourceEntity = sourceEntityFromUrl(sourceUrl);
   const fixtureUrl = new URL(`./acum-data/${fixtureName}`, import.meta.url);
   const fixtureText = await readFile(fixtureUrl, 'utf8');
