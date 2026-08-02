@@ -6,7 +6,7 @@ import {ImportForm} from '#ui/import-form.tsx';
 import {ProgressBar} from '#ui/progressbar.tsx';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
 import {toolbox} from '@repo/common-ui/toolbox';
-import {assertMBTree, assertNonReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
+import {assertMBTree, assertRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {REL_STATUS_EDIT} from '@repo/musicbrainz-ext/constants';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
@@ -101,7 +101,7 @@ export async function createWorkEditorUI() {
 
 async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Promise<void> {
   assertMBTree(MB?.tree);
-  assertNonReleaseRelationshipEditor(MB.relationshipEditor);
+  assertRelationshipEditor(MB.relationshipEditor);
 
   setProgress([0, 'Submitting works']);
 

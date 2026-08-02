@@ -14,7 +14,7 @@ import {
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
 import {createEffect, createSignal, onCleanup, Show} from 'solid-js';
 import {render} from 'solid-js/web';
-import {WorkT} from 'typedbrainz/types';
+import {RecordingT, WorkT} from 'typedbrainz/types';
 
 type SubmitWorkRequestDetail = {
   reject: (reason?: unknown) => void;
@@ -45,7 +45,7 @@ export async function hasChanges(trackRaw: Element) {
   });
 }
 
-function WorkEditor(props: {work: WorkT; track: WorkBean; parent: Element}) {
+function WorkEditor(props: {work: WorkT; track: WorkBean; parent: Element; recording?: RecordingT}) {
   const isNew = isNewWork(props.work);
   const {isLoading, isModified, warnings, workName, resetEditData, refetch} = useWorkEditData();
   const [isSubmitting, setIsSubmitting] = createSignal(false);
@@ -111,7 +111,7 @@ function WorkEditor(props: {work: WorkT; track: WorkBean; parent: Element}) {
         </span>
       </Show>
 
-      <WorkWarnings track={props.track} warnings={warnings()} />
+      <WorkWarnings track={props.track} warnings={warnings()} work={props.work} recording={props.recording} />
     </>
   );
 }
@@ -151,7 +151,7 @@ export async function addWorkEditor(
   render(
     () => (
       <WorkEditDataProvider typeInfo={workTypeInfo} {...props}>
-        <WorkEditor work={props.work} parent={parent} track={props.track} />
+        <WorkEditor work={props.work} parent={parent} track={props.track} recording={props.recording} />
       </WorkEditDataProvider>
     ),
     container
