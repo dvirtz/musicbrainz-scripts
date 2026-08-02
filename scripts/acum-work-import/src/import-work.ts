@@ -80,7 +80,7 @@ export async function importWork(
     },
     version
   );
-  editDataWarnings.forEach(warning => addWarning(renderWarning(warning, version)));
+  editDataWarnings.forEach(warning => addWarning(renderWarning(warning, version, work)));
 
   if (version.isMedley === '1') {
     const workCount = version.list!.length + 1;
@@ -139,7 +139,7 @@ export async function importWork(
     work,
     findTargetTypeGroups(MB?.relationshipEditor.state?.existingRelationshipsBySource ?? null, work)
   );
-  writerWarnings.forEach(warning => addWarning(renderWarning(warning, version)));
+  writerWarnings.forEach(warning => addWarning(renderWarning(warning, version, work)));
 
   setProgress([1, 'Done']);
   addEditNote(`Imported from ${entityUrl(entity)}`, form.ownerDocument);
