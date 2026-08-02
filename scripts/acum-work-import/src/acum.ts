@@ -293,7 +293,7 @@ function serializeEntity(entity: Entity): StoredEntity {
   };
 }
 
-function deserializeEntity(entity: StoredEntity): Entity | undefined {
+function deserializeEntity<T extends EntityT>(entity: StoredEntity): Entity<T> | undefined {
   if (!entity.id || !['Work', 'Album', 'Version'].includes(entity.entityType)) {
     return;
   }
@@ -302,7 +302,7 @@ function deserializeEntity(entity: StoredEntity): Entity | undefined {
     return new Version(entity.id, entity.workId ?? versionWorkId(entity.id));
   }
 
-  return new Entity(entity.id, entity.entityType);
+  return new Entity(entity.id, entity.entityType) as Entity<T>;
 }
 
 async function readStoredAcumData(): Promise<StoredAcumData | undefined> {
@@ -350,13 +350,15 @@ export async function saveLatestEntityData(entity: Entity): Promise<number> {
   return works.length;
 }
 
-export async function loadLatestEntityData(entityTypes?: ReadonlyArray<EntityT>): Promise<Entity | undefined> {
+export async function loadLatestEntityData<T extends EntityT>(
+  entityTypes?: ReadonlyArray<EntityT>
+): Promise<Entity<T> | undefined> {
   const stored = await readStoredAcumData();
   if (!stored) {
     return;
   }
 
-  const entity = deserializeEntity(stored.sourceEntity);
+  const entity = deserializeEntity<T>(stored.sourceEntity);
   if (!entity) {
     return;
   }

@@ -1,4 +1,4 @@
-import {Entity, loadLatestEntityData} from '#acum.ts';
+import {Entity, EntityT, loadLatestEntityData} from '#acum.ts';
 import {importAlbum as tryImportWorks} from '#import-album.ts';
 import {replaceSubmitButton, submitWork} from '#submit.ts';
 import {ImportForm} from '#ui/import-form.tsx';
@@ -58,8 +58,12 @@ function AcumImporter() {
   }
 
   async function importFromPreferredSource(entity: Entity) {
-    const storedEntity = await loadLatestEntityData(['Album', 'Version', 'Work']);
-    await importWorks(storedEntity ?? entity);
+    const importEntity = entity.id ? entity : await loadLatestEntityData<EntityT>(['Album', 'Work', 'Version']);
+    if (!importEntity) {
+      addWarning(`Import failed: no saved works found`);
+      return;
+    }
+    await importWorks(importEntity);
   }
 
   async function submitWorks(originalSubmitButton: HTMLButtonElement) {
