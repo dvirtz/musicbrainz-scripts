@@ -4,11 +4,30 @@ import {tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {ArtistSearchResultsT, UrlRelsSearchResultsT} from '@repo/musicbrainz-ext/search-results';
 import {ArtistT} from 'typedbrainz/types';
 
+type MissingArtistWarningBase = {
+  linkTypeID: number;
+  role: string;
+  ipi: string;
+  ipBaseNumber: string;
+  creatorHebName: string;
+  creatorEngName: string;
+};
+
 export type ArtistWarning =
   | {type: 'creator-not-found'; ipi: string}
-  | {type: 'found-by-name'; role: string; artistId: string; artistName: string; ipi: string; ipBaseNumber: string}
-  | {type: 'found-by-alias'; role: string; artistId: string; artistName: string; ipi: string; ipBaseNumber: string}
-  | {type: 'failed-to-find'; role: string; creatorName: string; ipi: string; ipBaseNumber: string};
+  | (MissingArtistWarningBase & {
+      type: 'found-by-name';
+      artistId: string;
+      artistName: string;
+    })
+  | (MissingArtistWarningBase & {
+      type: 'found-by-alias';
+      artistId: string;
+      artistName: string;
+    })
+  | (MissingArtistWarningBase & {
+      type: 'failed-to-find';
+    });
 
 export type ArtistLookupResult = {artist: ArtistT | null; warnings: ArtistWarning[]};
 export type ArtistLookupCache = Map<IPBaseNumber, Promise<ArtistLookupResult>>;
@@ -23,6 +42,7 @@ function nameMatch(creator: CreatorFull, artistName: string): boolean {
 const artistCache = new Map<string, ArtistT>();
 
 export async function findArtist(
+  linkTypeID: number,
   ipBaseNumber: IPBaseNumber,
   creators: Creators | undefined
 ): Promise<ArtistLookupResult> {
@@ -71,10 +91,13 @@ export async function findArtist(
       warnings.push({
         type: 'found-by-name',
         role,
+        linkTypeID,
         artistId: byName.artists[0]!.id,
         artistName: byName.artists[0]!.name,
         ipi: creator.number,
         ipBaseNumber: creator.creatorIpBaseNumber,
+        creatorHebName: creator.creatorHebName,
+        creatorEngName: creator.creatorEngName,
       });
       return byName.artists[0]!.id;
     }
@@ -90,21 +113,25 @@ export async function findArtist(
       warnings.push({
         type: 'found-by-alias',
         role,
+        linkTypeID,
         artistId: byAlias.artists[0]!.id,
         artistName: byAlias.artists[0]!.name,
         ipi: creator.number,
         ipBaseNumber: creator.creatorIpBaseNumber,
+        creatorHebName: creator.creatorHebName,
+        creatorEngName: creator.creatorEngName,
       });
       return byAlias.artists[0]!.id;
     }
 
-    const creatorName = creator.creatorHebName || creator.creatorEngName || creator.number;
     warnings.push({
       type: 'failed-to-find',
       role,
-      creatorName,
+      linkTypeID,
       ipi: creator.number,
       ipBaseNumber: creator.creatorIpBaseNumber,
+      creatorHebName: creator.creatorHebName,
+      creatorEngName: creator.creatorEngName,
     });
     return null;
   })();

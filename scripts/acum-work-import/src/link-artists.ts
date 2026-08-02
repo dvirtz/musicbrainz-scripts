@@ -4,6 +4,7 @@ import {ArtistLookupCache, ArtistWarning, findArtist} from '#artists.ts';
 import {addArrangerRelationship, addWriterRelationship} from '#relationships.ts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {
+  ARRANGER_LINK_TYPE_ID,
   COMPOSER_LINK_TYPE_ID,
   LYRICIST_LINK_TYPE_ID,
   TRANSLATOR_LINK_TYPE_ID,
@@ -46,7 +47,8 @@ async function linkArtists(
   pendingArtistCache: ArtistLookupCache,
   writers: readonly Creator[] | undefined,
   creators: Creators | undefined,
-  doLink: (artist: ArtistT) => void
+  linkTypeID: number,
+  doLink: (linkTypeID: number, artist: ArtistT) => void
 ): Promise<ArtistWarning[]> {
   return await firstValueFrom(
     from(writers || []).pipe(
@@ -54,7 +56,7 @@ async function linkArtists(
         async author =>
           await (pendingArtistCache.get(author.creatorIpBaseNumber) ||
             pendingArtistCache
-              .set(author.creatorIpBaseNumber, findArtist(author.creatorIpBaseNumber, creators))
+              .set(author.creatorIpBaseNumber, findArtist(linkTypeID, author.creatorIpBaseNumber, creators))
               .get(author.creatorIpBaseNumber)!)
       ),
       connect(shared =>
@@ -62,7 +64,7 @@ async function linkArtists(
           shared.pipe(
             map(result => result.artist),
             filter((artist): artist is ArtistT => !!artist),
-            tap(doLink),
+            tap(artist => doLink(linkTypeID, artist)),
             ignoreElements()
           ),
           shared.pipe(
@@ -82,7 +84,9 @@ export async function linkArrangers(
   arrangers: ReadonlyArray<Creator> | undefined,
   creators: Creators | undefined
 ): Promise<ArtistWarning[]> {
-  return await linkArtists(artistCache, arrangers, creators, artist => addArrangerRelationship(recording, artist));
+  return await linkArtists(artistCache, arrangers, creators, ARRANGER_LINK_TYPE_ID, (linkTypeID, artist) =>
+    addArrangerRelationship(recording, artist)
+  );
 }
 
 export async function linkWriters(
@@ -93,7 +97,7 @@ export async function linkWriters(
 ): Promise<WriterLinkWarning[]> {
   const authors = (workTargetTypeGroups && workAuthors(workTargetTypeGroups)) ?? [];
   const doLinkWarnings: WriterLinkWarning[] = [];
-  const doLink = (linkTypeID: number) => (artist: ArtistT) => {
+  const doLink = (linkTypeID: number, artist: ArtistT) => {
     if (SPECIAL_PURPOSE_ARTISTS.includes(artist.gid) && authors.length > 0) {
       doLinkWarnings.push({type: 'skipping-special-purpose', artistName: artist.name});
       return;
@@ -118,19 +122,22 @@ export async function linkWriters(
     artistCache,
     [...(track.authors ?? []), ...(track.composersAndAuthors ?? [])],
     track.creators,
-    doLink(authorLinkTypeId)
+    authorLinkTypeId,
+    doLink
   );
   const composerWarnings = await linkArtists(
     artistCache,
     [...(track.composers ?? []), ...(track.composersAndAuthors ?? [])],
     track.creators,
-    doLink(COMPOSER_LINK_TYPE_ID)
+    COMPOSER_LINK_TYPE_ID,
+    doLink
   );
   const translatorWarnings = await linkArtists(
     artistCache,
     track.translators,
     track.creators,
-    doLink(TRANSLATOR_LINK_TYPE_ID)
+    TRANSLATOR_LINK_TYPE_ID,
+    doLink
   );
   return [...doLinkWarnings, ...authorWarnings, ...composerWarnings, ...translatorWarnings];
 }

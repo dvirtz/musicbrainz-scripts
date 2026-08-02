@@ -1,8 +1,10 @@
 import {creatorUrl, Entity, entityUrl, WorkBean} from '#acum.ts';
 import {WriterLinkWarning} from '#link-artists.ts';
+import {openArtistDialogFromWarning} from '#ui/relationship-dialog-actions.ts';
 import {WorkEditDataWarning} from '#work-edit-data.ts';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
 import {For} from 'solid-js';
+import {RecordingT, WorkT} from 'typedbrainz/types';
 
 export type PerWorkWarning =
   | WorkEditDataWarning
@@ -10,7 +12,7 @@ export type PerWorkWarning =
   | {type: 'work-name-different'; recordingName: string};
 
 function artistActionUrl(
-  action: 'edit' | 'create',
+  action: 'edit',
   track: WorkBean,
   options: {artistMBID?: string; name?: string; ipi: string; ipBaseNumber: string}
 ) {
@@ -25,33 +27,55 @@ function artistActionUrl(
     params.set('edit-artist.url.0.text', creatorUrl(options.ipBaseNumber));
   }
 
-  params.set(
-    'edit-artist.edit_note',
-    editNoteFormat(
-      `matched from ${entityUrl(track.versionId ? new Entity(track.versionId, 'Version') : new Entity(track.workId!, 'Work'))}`
-    )
-  );
+  params.set('edit-artist.edit_note', warningEditNote(track));
 
-  const href =
-    action === 'edit'
-      ? `/artist/${options.artistMBID!}/edit?${params.toString()}`
-      : `/artist/create?${params.toString()}`;
-  return <a href={href}>{action === 'edit' ? 'update' : 'create'}</a>;
+  const href = `/artist/${options.artistMBID!}/edit?${params.toString()}`;
+  return <a href={href}>update</a>;
 }
 
-function artistSearchUrl(name: string) {
-  const params = new URLSearchParams();
-  params.set('query', name);
-  params.set('type', 'artist');
-  params.set('method', 'indexed');
-  return <a href={`/search?${params.toString()}`}>search</a>;
+function artistAction(
+  action: 'search' | 'create',
+  options: {
+    linkType: number;
+    name: string;
+    creatorHebName: string;
+    creatorEngName: string;
+    editNote: string;
+    ipi?: string;
+    ipBaseNumber?: string;
+    work: WorkT;
+    recording?: RecordingT;
+  }
+) {
+  return (
+    <button
+      type="button"
+      class="as-link"
+      onClick={() => {
+        void openArtistDialogFromWarning({
+          action,
+          ...options,
+        }).catch((error: unknown) => {
+          console.error(`Failed to ${action} artist from warning`, error);
+        });
+      }}
+    >
+      {action}
+    </button>
+  );
 }
 
 function capitalizeFirst(text: string) {
   return text ? text[0]!.toUpperCase() + text.slice(1) : text;
 }
 
-export function renderWarning(warning: PerWorkWarning, track: WorkBean) {
+function warningEditNote(track: WorkBean) {
+  return editNoteFormat(
+    `matched from ${entityUrl(track.versionId ? new Entity(track.versionId, 'Version') : new Entity(track.workId!, 'Work'))}`
+  );
+}
+
+export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: WorkT, recording?: RecordingT) {
   switch (warning.type) {
     case 'work-name-different':
       return <>Work name is different from recording name {warning.recordingName}, please verify.</>;
@@ -76,11 +100,27 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean) {
             ipi: warning.ipi,
             ipBaseNumber: warning.ipBaseNumber,
           })}
-          |{artistSearchUrl(warning.artistName)}|
-          {artistActionUrl('create', track, {
+          |
+          {artistAction('search', {
+            linkType: warning.linkTypeID,
             name: warning.artistName,
+            creatorHebName: warning.creatorHebName,
+            creatorEngName: warning.creatorEngName,
+            editNote: warningEditNote(track),
+            work,
+            recording,
+          })}
+          |
+          {artistAction('create', {
+            linkType: warning.linkTypeID,
+            name: warning.artistName,
+            creatorHebName: warning.creatorHebName,
+            creatorEngName: warning.creatorEngName,
+            editNote: warningEditNote(track),
             ipi: warning.ipi,
             ipBaseNumber: warning.ipBaseNumber,
+            work,
+            recording,
           })}
         </>
       );
@@ -94,23 +134,55 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean) {
             ipi: warning.ipi,
             ipBaseNumber: warning.ipBaseNumber,
           })}
-          |{artistSearchUrl(warning.artistName)}|
-          {artistActionUrl('create', track, {
+          |
+          {artistAction('search', {
+            linkType: warning.linkTypeID,
             name: warning.artistName,
+            creatorHebName: warning.creatorHebName,
+            creatorEngName: warning.creatorEngName,
+            editNote: warningEditNote(track),
+            work,
+            recording,
+          })}
+          |
+          {artistAction('create', {
+            linkType: warning.linkTypeID,
+            name: warning.artistName,
+            creatorHebName: warning.creatorHebName,
+            creatorEngName: warning.creatorEngName,
+            editNote: warningEditNote(track),
             ipi: warning.ipi,
             ipBaseNumber: warning.ipBaseNumber,
+            work,
+            recording,
           })}
         </>
       );
     case 'failed-to-find':
       return (
         <>
-          Failed to find {warning.role} {warning.creatorName} (IPI = {warning.ipi}).{' '}
-          {artistSearchUrl(warning.creatorName)}|
-          {artistActionUrl('create', track, {
-            name: warning.creatorName,
+          Failed to find {warning.role} {warning.creatorHebName || warning.creatorEngName || warning.ipi} (IPI ={' '}
+          {warning.ipi}).{' '}
+          {artistAction('search', {
+            linkType: warning.linkTypeID,
+            name: warning.creatorEngName || warning.creatorHebName || warning.ipi,
+            creatorHebName: warning.creatorHebName,
+            creatorEngName: warning.creatorEngName,
+            editNote: warningEditNote(track),
+            work,
+            recording,
+          })}
+          |
+          {artistAction('create', {
+            linkType: warning.linkTypeID,
+            name: warning.creatorEngName || warning.creatorHebName || warning.ipi,
+            creatorHebName: warning.creatorHebName,
+            creatorEngName: warning.creatorEngName,
+            editNote: warningEditNote(track),
             ipi: warning.ipi,
             ipBaseNumber: warning.ipBaseNumber,
+            work,
+            recording,
           })}
         </>
       );
@@ -119,12 +191,17 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean) {
   }
 }
 
-export function WorkWarnings(props: {track: WorkBean; warnings: ReadonlyArray<PerWorkWarning>}) {
+export function WorkWarnings(props: {
+  track: WorkBean;
+  warnings: ReadonlyArray<PerWorkWarning>;
+  work: WorkT;
+  recording?: RecordingT;
+}) {
   return (
     <For each={props.warnings}>
       {workWarning => (
         <p class="error" style={{margin: '2px 0 0 1.8rem'}}>
-          {renderWarning(workWarning, props.track)}
+          {renderWarning(workWarning, props.track, props.work, props.recording)}
         </p>
       )}
     </For>
