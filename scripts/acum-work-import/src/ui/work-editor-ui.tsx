@@ -30,11 +30,11 @@ function AcumImporter(props: {form: HTMLFormElement}) {
   }
 
   async function importFromPreferredSource(entity: Entity<'Work' | 'Version'>) {
-    const storedEntity = await loadLatestEntityData(['Work', 'Version']);
-    const importEntity =
-      storedEntity && (storedEntity.entityType === 'Work' || storedEntity.entityType === 'Version')
-        ? (storedEntity as Entity<'Work' | 'Version'>)
-        : entity;
+    const importEntity = entity.id ? entity : await loadLatestEntityData<'Work' | 'Version'>(['Work', 'Version']);
+    if (!importEntity) {
+      addWarning(`Import failed: no saved work found`);
+      return;
+    }
 
     await importWork(importEntity);
   }
