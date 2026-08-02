@@ -2,8 +2,10 @@ $schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell
 version: "0.2"
 import: ../../cspell.config.yaml
 words:
+  - albumid
+  - guesscase
   - nocs
   - searchdb
+  - sortname
   - versionid
   - workid
-  - albumid
