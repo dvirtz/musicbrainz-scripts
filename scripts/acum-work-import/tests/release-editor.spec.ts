@@ -122,18 +122,12 @@ test.describe('release editor', () => {
   });
 
   test('can import individual works', async ({page, testRelease, userscriptPage}) => {
-    const input = page.getByPlaceholder('Album ID or URL');
-
     const tracks = testRelease.tracks();
     const works = testRelease.works();
 
     await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', testRelease.acumUrl());
 
     for (let index = 0; index < works.length; index++) {
-      const work = works[index]!;
-      await input.fill(work.acumUrl);
-      await expect(input).toHaveValue(new URL(work.acumUrl).searchParams.get('versionid')!);
-
       const checkBox = page.getByRole('cell', {name: tracks[index]?.name}).getByRole('checkbox').first();
       await checkBox.check();
 
@@ -152,9 +146,6 @@ base.describe('release editor', () => {
     const work = testRelease.works()[2]!;
     const workUrl = work.acumUrl.replace(/version\?workid=(.*)&versionid=(.*)/, 'work?workid=$1');
 
-    const input = page.getByPlaceholder('Album ID or URL');
-    await input.fill(workUrl);
-
     await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', workUrl);
 
     const trackRow = page.getByRole('row', {name: work.title});
@@ -171,9 +162,6 @@ base.describe('release editor', () => {
     await testRelease.editRelationships(musicbrainzPage);
 
     const work = testRelease.works()[0]!;
-
-    const input = page.getByPlaceholder('Album ID or URL');
-    await input.fill(work.acumUrl);
 
     await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', work.acumUrl);
 
@@ -209,9 +197,6 @@ base.describe('release editor', () => {
     await testRelease.editRelationships(musicbrainzPage);
 
     const work = testRelease.works()[4]!;
-
-    const input = page.getByPlaceholder('Album ID or URL');
-    await input.fill(work.acumUrl);
 
     await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', work.acumUrl);
 

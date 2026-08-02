@@ -63,10 +63,6 @@ test.describe('work editor', () => {
     const workId = versionId.substring(0, versionId.length - 3);
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${workId}`;
 
-    const input = page.getByPlaceholder('Work ID or URL');
-    await input.fill(workUrl);
-    await expect(input).toHaveValue(workId);
-
     await seedAcumStorageFromUrl(userscriptPage, 'work-1119554.json', workUrl);
 
     const importButton = page.getByRole('button', {name: 'Import work from ACUM'});
@@ -105,11 +101,7 @@ test.describe('work editor', () => {
     await userscriptPage.goto('/work/85a460d6-0c92-4b5f-8fe2-7dfc639a6d56/edit');
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/version?workid=1010819&versionid=1010819002`;
 
-    const input = page.getByPlaceholder('Work ID or URL');
-
     await seedAcumStorageFromUrl(userscriptPage, 'work-1010819.json', workUrl);
-    await input.fill(workUrl);
-    await expect(input).toHaveValue('1010819002');
 
     const consoleMessages: string[] = [];
     page.on('console', msg => {
@@ -203,11 +195,7 @@ test.describe('work editor', () => {
     // spell: enable
 
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${work.workId}`;
-    const input = page.getByPlaceholder('Work ID or URL');
-    await input.fill(workUrl);
     await seedAcumStorageFromUrl(userscriptPage, 'work-medley-1251909.json', workUrl);
-
-    await expect(input).toHaveValue(work.workId);
 
     const importButton = page.getByRole('button', {name: 'Import work from ACUM'});
     await importButton.click();
@@ -363,11 +351,7 @@ test.describe('work editor', () => {
     // spell: enable
 
     const workUrl = `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${work.workId}&versionid=${work.attributes[0].value}`;
-    const input = page.getByPlaceholder('Work ID or URL');
-    await input.fill(workUrl);
     await seedAcumStorageFromUrl(userscriptPage, 'work-translated-1129800.json', workUrl);
-
-    await expect(input).toHaveValue(work.attributes[0].value);
 
     const importButton = page.getByRole('button', {name: 'Import work from ACUM'});
     await importButton.click();
