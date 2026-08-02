@@ -4,6 +4,7 @@
 
   .ui-progressbar {
     position: relative;
+    isolation: isolate;
     height: 17px;
     line-height: 17px;
 
