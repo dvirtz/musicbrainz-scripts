@@ -3,7 +3,7 @@ import {ArtistLookupCache} from '#artists.ts';
 import {createRelationshipState} from '#relationships.ts';
 import {AddWarning} from '#ui/warnings.tsx';
 import {addWorkEditor, hasChanges} from '#ui/work-editor.tsx';
-import {createNewWork, workLink} from '#works.ts';
+import {createNewWork} from '#works.ts';
 import {head} from '@repo/common/head';
 import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareInsensitive, compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
@@ -86,7 +86,7 @@ async function importSelectedWorks(
     }
 
     const newWork = await createNewWork(workBean);
-    await linkNewWork(index, newWork, recordingState);
+    linkNewWork(index, newWork, recordingState);
 
     return {work: newWork, workBean, recordingState} as const;
   };
@@ -102,22 +102,27 @@ async function importSelectedWorks(
     recordingState: MediumRecordingStateT;
     trackRow: Element;
   }) => {
-    const header = trackRow?.querySelector<HTMLHeadingElement>(
-      `.works h3:has(a[href="${workLink(work)}"]):not(:has(div.edit-work-button-container))`
-    );
-    if (header) {
-      await addWorkEditor(
-        header,
-        {
-          work,
-          track,
-          recording: recordingState.recording,
-          artistCache,
-          shouldLinkArrangers: entity.entityType !== 'Work',
-        },
-        [header.querySelector('button.edit-item')].filter(x => x !== null)
-      );
-    }
+    await addWorkEditor({
+      getParent: async (href: string) => {
+        const trackWorks = trackRow.querySelector('.works')!;
+        const anchor =
+          trackWorks.querySelector<HTMLAnchorElement>(`a[href="${href}"]`) ??
+          (await waitForElement(
+            (node): node is HTMLAnchorElement =>
+              node instanceof HTMLAnchorElement && node.getAttribute('href') === href,
+            undefined,
+            trackWorks
+          ));
+        return anchor!.closest('h3') ?? anchor!.parentElement!;
+      },
+      work,
+      track,
+      recording: recordingState.recording,
+      artistCache,
+      shouldLinkArrangers: entity.entityType !== 'Work',
+      getElementsToReplace: parent =>
+        [parent.querySelector('button.edit-item')].filter((x): x is Element => x !== null),
+    });
   };
 
   return await lastValueFrom(
@@ -286,7 +291,7 @@ function relatedWork(relatedWorks: MediumWorkStateTreeT): MediumWorkStateT | und
   }
 }
 
-async function linkNewWork(index: number | undefined, work: WorkT, recordingState: MediumRecordingStateT) {
+function linkNewWork(index: number | undefined, work: WorkT, recordingState: MediumRecordingStateT) {
   assertMBTree(MB?.tree);
   assertReleaseRelationshipEditor(MB.relationshipEditor);
 
@@ -319,11 +324,6 @@ async function linkNewWork(index: number | undefined, work: WorkT, recordingStat
         : {}),
     }),
     oldRelationshipState: null,
-  });
-  // wait for the work link to be added
-  const href = workLink(work);
-  await waitForElement((node): node is HTMLAnchorElement => {
-    return node instanceof HTMLAnchorElement && node.getAttribute('href') === href;
   });
 }
 

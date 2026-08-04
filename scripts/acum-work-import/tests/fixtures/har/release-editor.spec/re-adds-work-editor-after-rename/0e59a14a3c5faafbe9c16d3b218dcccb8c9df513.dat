@@ -1,0 +1,30 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/ui/work-edit-dialog.module.css");import { updateStyle as __vite__updateStyle, removeStyle as __vite__removeStyle } from "/@vite/client"
+const __vite__id = "C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/scripts/acum-work-import/src/ui/work-edit-dialog.module.css"
+const __vite__css = "._replaced_lxm0v_1._pending_lxm0v_1 {\r\n  display: none;\r\n}\r\n\r\n._loading-message_lxm0v_9 {\r\n  display: inline-block;\r\n  margin-left: 0.5rem;\r\n  vertical-align: baseline;\r\n  font-style: italic;\r\n}\r\n\r\n._loading-dots_lxm0v_23 {\r\n  display: inline-block;\r\n  width: 3ch;\r\n  vertical-align: text-bottom;\r\n  line-height: 1;\r\n}\r\n\r\n._loading-dots_lxm0v_23::after {\r\n  content: '.';\r\n  white-space: pre;\r\n  animation: _loading-dots-content_lxm0v_1 1s step-end infinite;\r\n}\r\n\r\n@keyframes _loading-dots-content_lxm0v_1 {\r\n\r\n  0%,\r\n  33% {\r\n    content: '.';\r\n  }\r\n\r\n  34%,\r\n  66% {\r\n    content: '..';\r\n  }\r\n\r\n  67%,\r\n  100% {\r\n    content: '...';\r\n  }\r\n}\r\n\r\n._edit-work-button-container_lxm0v_85 {\r\n  display: inline;\r\n\r\n  ._work-dialog_lxm0v_91 {\r\n    display: none;\r\n    z-index: 50;\r\n    transform-origin: var(--kb-popover-content-transform-origin);\r\n    animation: _contentHide_lxm0v_1 250ms ease-in forwards;\r\n\r\n    div._half-width_lxm0v_103 {\r\n      width: 100%;\r\n\r\n      fieldset {\r\n        label._row_lxm0v_111 {\r\n          width: 100%;\r\n        }\r\n\r\n        select {\r\n          width: 100%;\r\n        }\r\n\r\n        input {\r\n          width: 100%;\r\n        }\r\n\r\n        div._text-list-row_lxm0v_135,\r\n        div._select-list-row_lxm0v_137 {\r\n          display: flex;\r\n        }\r\n\r\n        div._row_lxm0v_111 {\r\n          display: flex;\r\n          margin: 6px;\r\n        }\r\n\r\n        div._form-row-add_lxm0v_155 {\r\n          width: 100%;\r\n        }\r\n\r\n        div._form-row-select-list_lxm0v_163,\r\n        div._form-row-text-list_lxm0v_165 {\r\n          margin-left: 0;\r\n          flex: 1;\r\n        }\r\n      }\r\n    }\r\n\r\n    table._row-form_lxm0v_179 {\r\n\r\n      >tbody>tr,\r\n      >thead>tr {\r\n\r\n        >td:first-child,\r\n        >th:first-child {\r\n          padding: 0 6px;\r\n        }\r\n\r\n        >td,\r\n        >th {\r\n          background-color: unset;\r\n        }\r\n      }\r\n    }\r\n  }\r\n\r\n  ._work-dialog_lxm0v_91[data-expanded] {\r\n    display: inherit;\r\n    animation: _contentShow_lxm0v_1 250ms ease-out;\r\n  }\r\n}\r\n"
+__vite__updateStyle(__vite__id, __vite__css)
+export const replaced = "_replaced_lxm0v_1";
+export const pending = "_pending_lxm0v_1";
+export const contentHide = "_contentHide_lxm0v_1";
+export const contentShow = "_contentShow_lxm0v_1";
+export const row = "_row_lxm0v_111";
+export default {
+	replaced: replaced,
+	pending: pending,
+	"loading-message": "_loading-message_lxm0v_9",
+	"loading-dots": "_loading-dots_lxm0v_23",
+	"loading-dots-content": "_loading-dots-content_lxm0v_1",
+	"edit-work-button-container": "_edit-work-button-container_lxm0v_85",
+	contentHide: contentHide,
+	contentShow: contentShow,
+	"work-dialog": "_work-dialog_lxm0v_91",
+	"half-width": "_half-width_lxm0v_103",
+	row: row,
+	"text-list-row": "_text-list-row_lxm0v_135",
+	"select-list-row": "_select-list-row_lxm0v_137",
+	"form-row-add": "_form-row-add_lxm0v_155",
+	"form-row-select-list": "_form-row-select-list_lxm0v_163",
+	"form-row-text-list": "_form-row-text-list_lxm0v_165",
+	"row-form": "_row-form_lxm0v_179"
+};
+
+import.meta.hot.prune(() => __vite__removeStyle(__vite__id))

@@ -158,6 +158,34 @@ base.describe('release editor', () => {
     await expect(arrangerLabels).toHaveCount(0);
   });
 
+  base('re-adds work editor after rename', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
+    await testRelease.editRelationships(musicbrainzPage);
+
+    const work = testRelease.works()[2]!;
+    const workUrl = work.acumUrl.replace(/version\?workid=(.*)&versionid=(.*)/, 'work?workid=$1');
+
+    await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', workUrl);
+
+    const trackRow = page.getByRole('row', {name: work.title});
+    const checkBox = trackRow.getByRole('checkbox').first();
+    await checkBox.check();
+
+    await testRelease.importAlbum(page);
+
+    const container = trackRow.locator('[class*="edit-work-button-container"]');
+    await container.locator('button.edit-item').click();
+
+    const newName = 'Renamed Work';
+    const nameInput = page.locator('#id-edit-work\\.name');
+    await nameInput.fill(newName);
+
+    await page.locator('#submit-work-8994687').getByText('Done', {exact: true}).click();
+
+    // the editor should re-appear near the new work's anchor
+    await expect(container).toBeVisible();
+    await expect(container.getByRole('link', {name: 'Renamed Work'})).toBeVisible();
+  });
+
   base('retries fetching missing artists', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
     await testRelease.editRelationships(musicbrainzPage);
 
