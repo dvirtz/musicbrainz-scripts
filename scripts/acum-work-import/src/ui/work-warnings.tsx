@@ -1,6 +1,7 @@
 import {creatorUrl, Entity, entityUrl, WorkBean} from '#acum.ts';
 import {WriterLinkWarning} from '#link-artists.ts';
 import {openArtistDialogFromWarning} from '#ui/relationship-dialog-actions.ts';
+import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
 import {WorkEditDataWarning} from '#work-edit-data.ts';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
 import {For} from 'solid-js';
@@ -50,7 +51,7 @@ function artistAction(
   return (
     <button
       type="button"
-      class="as-link"
+      class="btn-link"
       onClick={() => {
         void openArtistDialogFromWarning({
           action,
@@ -75,10 +76,29 @@ function warningEditNote(track: WorkBean) {
   );
 }
 
+function WorkNameDifferentWarning(props: {recordingName: string}) {
+  const {setLiveEditData, saveEditData} = useWorkEditData();
+  return (
+    <>
+      Work name is different from recording name {props.recordingName}, please verify.{' '}
+      <button
+        type="button"
+        class="btn-link"
+        onClick={() => {
+          setLiveEditData('name', props.recordingName);
+          saveEditData();
+        }}
+      >
+        update
+      </button>
+    </>
+  );
+}
+
 export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: WorkT, recording?: RecordingT) {
   switch (warning.type) {
     case 'work-name-different':
-      return <>Work name is different from recording name {warning.recordingName}, please verify.</>;
+      return <WorkNameDifferentWarning recordingName={warning.recordingName} />;
     case 'unknown-language':
       return <>Unknown language {warning.workLanguage}.</>;
     case 'unknown-work-type':

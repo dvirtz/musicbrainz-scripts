@@ -7,7 +7,7 @@ import {AddWarning} from '#ui/warnings.tsx';
 import {addWorkEditor} from '#ui/work-editor.tsx';
 import {renderWarning} from '#ui/work-warnings.tsx';
 import {workEditData} from '#work-edit-data.ts';
-import {createNewWork, createWork, findWork, workLink} from '#works.ts';
+import {createNewWork, createWork, findWork} from '#works.ts';
 import {compareInsensitive, compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {MEDLEY_OF_LINK_TYPE_ID, REL_STATUS_ADD} from '@repo/musicbrainz-ext/constants';
 import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
@@ -180,14 +180,8 @@ async function ensureRowCount(parent: HTMLElement, rowSelector: string, count: n
   await observer;
 }
 
-async function linkMedleyWork(work: WorkT, medleyWork: WorkT, linkOrder: number) {
+function linkMedleyWork(work: WorkT, medleyWork: WorkT, linkOrder: number) {
   updateMedleyWorkRelationship(REL_STATUS_ADD, linkOrder, work, medleyWork);
-
-  // wait for the work link to be added
-  const href = workLink(medleyWork);
-  await waitForElement((node): node is HTMLAnchorElement => {
-    return node instanceof HTMLAnchorElement && node.getAttribute('href') === href;
-  });
 }
 
 export function medleyWorkRelationships(): RelationshipStateT[] | undefined {
@@ -214,17 +208,22 @@ async function addMedleyWork(work: WorkT, medleyWork: WorkBean, linkOrder: numbe
       return linkedWork.entity1 as WorkT;
     }
     const newWork = await createNewWork(medleyWork);
-    await linkMedleyWork(work, newWork, linkOrder);
+    linkMedleyWork(work, newWork, linkOrder);
     return newWork;
   })();
-  const parent = document.querySelector(`.medley-of .relationship-item:nth-child(${linkOrder})`);
-  if (parent) {
-    await addWorkEditor(parent, {
-      work: newWork,
-      track: medleyWork,
-      artistCache,
-      shouldLinkArrangers: false,
-    });
-  }
-  return parent;
+  await addWorkEditor({
+    getParent: async (href: string) => {
+      const anchor =
+        document.querySelector<HTMLAnchorElement>(`a[href="${href}"]`) ??
+        (await waitForElement(
+          (node): node is HTMLAnchorElement => node instanceof HTMLAnchorElement && node.getAttribute('href') === href
+        ));
+      return anchor!.closest('.relationship-item')!;
+    },
+    getElementsToReplace: () => [],
+    work: newWork,
+    track: medleyWork,
+    artistCache,
+    shouldLinkArrangers: false,
+  });
 }

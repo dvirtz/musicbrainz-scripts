@@ -1,4 +1,3 @@
-import {WorkBean} from '#acum.ts';
 import {submitWork} from '#submit.ts';
 import {useWorkEditData, WorkEditDataProvider, WorkEditDataProviderProps} from '#ui/work-edit-data-provider.tsx';
 import classes from '#ui/work-edit-dialog.module.css';
@@ -11,10 +10,10 @@ import {
   workLanguages,
   workTypes,
 } from '@repo/musicbrainz-ext/type-info';
-import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
+import {waitForElement, waitForMutation} from '@repo/rxjs-ext/wait-for-element';
 import {createEffect, createSignal, onCleanup, Show} from 'solid-js';
 import {render} from 'solid-js/web';
-import {RecordingT, WorkT} from 'typedbrainz/types';
+import {WorkT} from 'typedbrainz/types';
 
 type SubmitWorkRequestDetail = {
   reject: (reason?: unknown) => void;
@@ -45,13 +44,30 @@ export async function hasChanges(trackRaw: Element) {
   });
 }
 
-function WorkEditor(props: {work: WorkT; track: WorkBean; parent: Element; recording?: RecordingT}) {
+type AddWorkEditorOptions = Omit<WorkEditDataProviderProps, 'typeInfo'> & {
+  getParent: (href: string) => Promise<Element>;
+  getElementsToReplace: (parent: Element) => Element[];
+};
+
+function WorkEditor(props: AddWorkEditorOptions & {parent: Element}) {
   const isNew = isNewWork(props.work);
-  const {isLoading, isModified, warnings, workName, resetEditData, refetch} = useWorkEditData();
+  const {isLoading, isModified, warnings, resetEditData, refetch, replacedWork, captureState} = useWorkEditData();
   const [isSubmitting, setIsSubmitting] = createSignal(false);
 
-  props.parent.addEventListener(refetchWorkEventName, refetch);
-  onCleanup(() => props.parent.removeEventListener(refetchWorkEventName, refetch));
+  const {parent, ...editorProps} = props;
+
+  parent.addEventListener(refetchWorkEventName, refetch);
+  onCleanup(() => parent.removeEventListener(refetchWorkEventName, refetch));
+
+  onCleanup(() => {
+    const newWork = replacedWork();
+    if (!newWork) return;
+    void addWorkEditor({
+      ...editorProps,
+      work: newWork,
+      initialState: captureState(),
+    });
+  });
 
   const setSubmitForm = (form: HTMLFormElement) => {
     const onSubmitWorkRequest = (event: Event) => {
@@ -72,19 +88,19 @@ function WorkEditor(props: {work: WorkT; track: WorkBean; parent: Element; recor
   };
 
   createEffect(() => {
-    const workLinkElement = props.parent.querySelector<HTMLAnchorElement>('a[href^="/work/"]');
+    const workLinkElement = parent.querySelector<HTMLAnchorElement>('a[href^="/work/"]');
     workLinkElement?.classList.toggle('rel-edit', isModified());
   });
 
   createEffect(() => {
-    props.parent.querySelectorAll<HTMLElement>(`.${classes.replaced}`).forEach(el => {
+    parent.querySelectorAll<HTMLElement>(`.${classes.replaced}`).forEach(el => {
       el.classList.toggle(classes.pending!, isLoading() || isModified());
     });
   });
 
   createEffect(() => {
     if (!isLoading()) {
-      props.parent.dispatchEvent(new CustomEvent(workReadyEventName, {bubbles: true}));
+      parent.dispatchEvent(new CustomEvent(workReadyEventName, {bubbles: true}));
     }
   });
 
@@ -100,7 +116,7 @@ function WorkEditor(props: {work: WorkT; track: WorkBean; parent: Element; recor
             'rel-edit': !isNew,
           }}
         >
-          {workName()}
+          {props.work.name}
         </a>
       </Show>
 
@@ -116,11 +132,10 @@ function WorkEditor(props: {work: WorkT; track: WorkBean; parent: Element; recor
   );
 }
 
-export async function addWorkEditor(
-  parent: Element,
-  props: Omit<WorkEditDataProviderProps, 'typeInfo'>,
-  elementsToReplace?: Element[]
-) {
+export async function addWorkEditor(props: AddWorkEditorOptions) {
+  const href = workLink(props.work);
+  const parent = await props.getParent(href);
+
   if (parent.querySelector(`div.${classes['edit-work-button-container']}`)) {
     parent.dispatchEvent(new CustomEvent(refetchWorkEventName, {bubbles: false}));
     return;
@@ -131,12 +146,12 @@ export async function addWorkEditor(
   removeButton?.addEventListener('click', () => {
     container.remove();
   });
-  elementsToReplace?.forEach(element => element.classList.add(classes.replaced!));
+  props.getElementsToReplace(parent).forEach(element => element.classList.add(classes.replaced!));
   const anchor =
-    parent.querySelector<HTMLAnchorElement>(`a[href="${workLink(props.work)}"]`) ||
+    parent.querySelector<HTMLAnchorElement>(`a[href="${href}"]`) ??
     (await waitForElement(
       (element): element is HTMLAnchorElement =>
-        element instanceof HTMLAnchorElement && element.getAttribute('href') === workLink(props.work),
+        element instanceof HTMLAnchorElement && element.getAttribute('href') === href,
       undefined,
       parent
     ));
@@ -148,12 +163,17 @@ export async function addWorkEditor(
     workAttributeTypes: Object.values(await workAttributeTypes),
     workAttributeAllowedValues: Object.values(await workAttributeAllowedValues),
   };
-  render(
+  const dispose = render(
     () => (
       <WorkEditDataProvider typeInfo={workTypeInfo} {...props}>
-        <WorkEditor work={props.work} parent={parent} track={props.track} recording={props.recording} />
+        <WorkEditor {...props} parent={parent} />
       </WorkEditDataProvider>
     ),
     container
   );
+
+  // SolidJS doesn't know when React removes the container — dispose explicitly to trigger onCleanup
+  waitForMutation(document.body, () => !container.isConnected)
+    .then(dispose)
+    .catch(console.error);
 }

@@ -22,18 +22,9 @@ import {parseIntegerOrNull} from '@repo/musicbrainz-ext/parse-integer-or-null';
 import {createSignal, onCleanup} from 'solid-js';
 
 export function WorkEditDialog(props: {onSubmit: () => void; setSubmitForm: (form: HTMLFormElement) => void}) {
-  const {
-    liveEditData,
-    setLiveEditData,
-    isModified,
-    workName,
-    submitUrl,
-    saveEditData,
-    restoreEditData,
-    workId,
-    workTypes,
-  } = useWorkEditData();
-  const isNameBlank = () => /^\s*$/.test(workName());
+  const {liveEditData, setLiveEditData, isModified, submitUrl, saveEditData, restoreEditData, workId, workTypes} =
+    useWorkEditData();
+  const isNameBlank = () => /^\s*$/.test(liveEditData.name);
   const [open, setOpen] = createSignal(false);
 
   // need forceMount to keep forms in the DOM even when the dialog is closed so they can be submitted
@@ -107,10 +98,10 @@ export function WorkEditDialog(props: {onSubmit: () => void; setSubmitForm: (for
             <WorkAttributes />
           </div>
           <div class="buttons" style={{'margin-top': '1em'}}>
-            <Popover.CloseButton class="negative" onClick={restoreEditData}>
+            <Popover.CloseButton type="button" class="negative" onClick={restoreEditData}>
               {'Cancel'}{' '}
             </Popover.CloseButton>
-            <Popover.CloseButton class="positive" disabled={isNameBlank()} onClick={saveEditData}>
+            <Popover.CloseButton type="button" class="positive" disabled={isNameBlank()} onClick={saveEditData}>
               {'Done'}
             </Popover.CloseButton>
           </div>

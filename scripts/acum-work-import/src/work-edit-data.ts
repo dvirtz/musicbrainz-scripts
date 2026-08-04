@@ -47,7 +47,7 @@ async function fetchWorkEditParams(mbid: string): Promise<WorkEditData> {
 }
 
 export function workEditDataEqual(lhs: WorkEditData, rhs: WorkEditData) {
-  return (
+  const res =
     lhs.name === rhs.name &&
     lhs.comment === rhs.comment &&
     lhs.type_id === rhs.type_id &&
@@ -58,8 +58,8 @@ export function workEditDataEqual(lhs: WorkEditData, rhs: WorkEditData) {
     lhs.iswcs.every((iswc, idx) => iswc === rhs.iswcs[idx]) &&
     lhs.attributes.every(
       (attr, idx) => attr.type_id === rhs.attributes[idx]?.type_id && attr.value === rhs.attributes[idx]?.value
-    )
-  );
+    );
+  return res;
 }
 
 export async function workEditData(

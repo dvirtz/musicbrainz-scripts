@@ -1,0 +1,5 @@
+export function formatISWC(iswc) {
+  return iswc.replace(/T(\d{3})(\d{3})(\d{3})(\d)/, "T-$1.$2.$3-$4");
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImZvcm1hdC1pc3djLnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIGFkYXB0ZWQgZnJvbSBodHRwczovL2dpdGh1Yi5jb20vbWV0YWJyYWluei9tdXNpY2JyYWluei1zZXJ2ZXIvYmxvYi9mNDNiZmFlMDM1NjkwMDJiZWYyNDRlN2Y2YjBhODZhOWQ0OWQxNWM5L2xpYi9NdXNpY0JyYWluei9TZXJ2ZXIvVmFsaWRhdGlvbi5wbVxyXG5cclxuZXhwb3J0IGZ1bmN0aW9uIGZvcm1hdElTV0MoaXN3Yzogc3RyaW5nKSB7XHJcbiAgcmV0dXJuIGlzd2MucmVwbGFjZSgvVChcXGR7M30pKFxcZHszfSkoXFxkezN9KShcXGQpLywgJ1QtJDEuJDIuJDMtJDQnKTtcclxufVxyXG4iXSwibWFwcGluZ3MiOiJBQUVPLGdCQUFTLFdBQVcsTUFBYztBQUN2QyxTQUFPLEtBQUssUUFBUSw4QkFBOEIsZUFBZTtBQUNuRTsiLCJuYW1lcyI6W119
