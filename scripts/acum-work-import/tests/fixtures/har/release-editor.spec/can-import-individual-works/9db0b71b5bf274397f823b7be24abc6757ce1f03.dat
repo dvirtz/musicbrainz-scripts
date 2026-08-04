@@ -1,0 +1,5 @@
+export function mergeArrays(array1, array2) {
+  return [.../* @__PURE__ */ new Set([...array1, ...array2])];
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcmdlLWFycmF5cy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgZnVuY3Rpb24gbWVyZ2VBcnJheXM8VD4oYXJyYXkxOiBUW10sIGFycmF5MjogVFtdKTogVFtdIHtcclxuICByZXR1cm4gWy4uLm5ldyBTZXQoWy4uLmFycmF5MSwgLi4uYXJyYXkyXSldO1xyXG59XHJcbiJdLCJtYXBwaW5ncyI6IkFBQU8sZ0JBQVMsWUFBZSxRQUFhLFFBQWtCO0FBQzVELFNBQU8sQ0FBQyxHQUFHLG9CQUFJLElBQUksQ0FBQyxHQUFHLFFBQVEsR0FBRyxNQUFNLENBQUMsQ0FBQztBQUM1QzsiLCJuYW1lcyI6W119
