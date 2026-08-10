@@ -1,4 +1,4 @@
-import {trackName, WorkBean} from '#acum.ts';
+import {WorkBean} from '#acum.ts';
 import {ArtistLookupCache} from '#artists.ts';
 import {linkArrangers, linkWriters} from '#link-artists.ts';
 import {PerWorkWarning} from '#ui/work-warnings.tsx';
@@ -256,7 +256,7 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
       const {editData, originalEditData, warnings: editWarnings} = await workEditData(work, track);
       if (recording) {
         const workNameWarnings: PerWorkWarning[] =
-          compareInsensitive(trackName(track), recording.name) !== 0
+          compareInsensitive(props.work.name, recording.name) !== 0
             ? [{type: 'work-name-different', recordingName: recording.name}]
             : [];
         const workState = refreshWorkState(recording, work);
@@ -270,12 +270,7 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
           warnings: [...workNameWarnings, ...editWarnings, ...writerWarnings, ...arrangerWarnings] as PerWorkWarning[],
         };
       } else {
-        const writerWarnings = await linkWriters(
-          artistCache,
-          track,
-          work,
-          findTargetTypeGroups(MB?.relationshipEditor.state?.existingRelationshipsBySource ?? null, work)
-        );
+        const writerWarnings = await linkWriters(artistCache, track, work);
         return {
           editData,
           originalEditData,
