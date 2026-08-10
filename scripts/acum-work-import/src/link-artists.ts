@@ -2,6 +2,7 @@ import {AcumWorkType} from '#acum-work-type.ts';
 import {Creator, Creators, WorkBean, workType} from '#acum.ts';
 import {ArtistLookupCache, ArtistWarning, findArtist} from '#artists.ts';
 import {addArrangerRelationship, addWriterRelationship} from '#relationships.ts';
+import {assertRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {
   ARRANGER_LINK_TYPE_ID,
@@ -10,7 +11,7 @@ import {
   TRANSLATOR_LINK_TYPE_ID,
   WRITER_LINK_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
-import {iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
+import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {
   connect,
   filter,
@@ -33,7 +34,10 @@ const SPECIAL_PURPOSE_ARTISTS = [
   'f731ccc4-e22a-43af-a747-64213329e088', // [unknown]
 ];
 
-function workAuthors(targetTypeGroups: RelationshipTargetTypeGroupsT): readonly ArtistT[] | undefined {
+function linkedArtists(targetTypeGroups: RelationshipTargetTypeGroupsT | null): readonly ArtistT[] | undefined {
+  if (!targetTypeGroups) {
+    return;
+  }
   const targetTypeGroup = MB?.tree?.find(targetTypeGroups, 'artist', compareTargetTypeWithGroup, null);
   if (targetTypeGroup) {
     return iterateRelationshipsInTargetTypeGroup(targetTypeGroup)
@@ -106,9 +110,14 @@ export async function linkWriters(
   artistCache: ArtistLookupCache,
   track: WorkBean,
   work: WorkT,
-  workTargetTypeGroups: RelationshipTargetTypeGroupsT
+  workTargetTypeGroups?: RelationshipTargetTypeGroupsT
 ): Promise<WriterLinkWarning[]> {
-  const authors = (workTargetTypeGroups && workAuthors(workTargetTypeGroups)) ?? [];
+  assertRelationshipEditor(MB?.relationshipEditor);
+
+  const authors =
+    linkedArtists(
+      workTargetTypeGroups ?? findTargetTypeGroups(MB.relationshipEditor.state.existingRelationshipsBySource, work)
+    ) ?? [];
   const doLinkWarnings: WriterLinkWarning[] = [];
   const doLink = (linkTypeID: number, artist: ArtistT) => {
     if (SPECIAL_PURPOSE_ARTISTS.includes(artist.gid) && authors.length > 0) {

@@ -133,12 +133,7 @@ export async function importWork(
     setInput(form, `attributes.${index}.value`, attr.value, addWarning);
   });
 
-  const writerWarnings = await linkWriters(
-    artistCache,
-    version,
-    work,
-    findTargetTypeGroups(MB?.relationshipEditor.state?.existingRelationshipsBySource ?? null, work)
-  );
+  const writerWarnings = await linkWriters(artistCache, version, work);
   writerWarnings.forEach(warning => addWarning(renderWarning(warning, version, work)));
 
   setProgress([1, 'Done']);
