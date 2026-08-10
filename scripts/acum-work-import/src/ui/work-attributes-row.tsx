@@ -59,6 +59,7 @@ export function WorkAttributeRow(props: {
         <button
           class="nobutton icon remove-item"
           onClick={() => props.setEditData('attributes', attributes => removeAtIndex(attributes, props.index()))}
+          type="button"
           title="Remove attribute"
         />
       </td>
