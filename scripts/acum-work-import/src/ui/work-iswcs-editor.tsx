@@ -24,6 +24,7 @@ export function WorkISWCsEditor() {
               <button
                 class="nobutton icon remove-item"
                 onClick={() => setLiveEditData('iswcs', iswcs => removeAtIndex(iswcs, index()))}
+                type="button"
                 title="Remove ISWC"
               />
             </div>
