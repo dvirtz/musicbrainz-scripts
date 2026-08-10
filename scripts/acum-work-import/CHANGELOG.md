@@ -1,3 +1,14 @@
+## @dvirtz/acum-work-import-v1.22.0-beta.2 (2026-08-10)
+
+* fix(acum-work-import): avoid progress bar getting over dialogs ([0b1695d](https://github.com/dvirtz/musicbrainz-scripts/commit/0b1695d))
+* fix(acum-work-import): avoid removing elements on Enter press ([30e4138](https://github.com/dvirtz/musicbrainz-scripts/commit/30e4138))
+* fix(acum-work-import): prefer input value over saved works ([9960bf2](https://github.com/dvirtz/musicbrainz-scripts/commit/9960bf2))
+* fix(acum-work-import): warn on arrangers, create artist guess case ([e0e1e26](https://github.com/dvirtz/musicbrainz-scripts/commit/e0e1e26))
+* feat(acum-work-import): search existing artists ([942fd11](https://github.com/dvirtz/musicbrainz-scripts/commit/942fd11))
+* feat(acum-work-import): search/create missing artists in relationship dialog ([ccd19d6](https://github.com/dvirtz/musicbrainz-scripts/commit/ccd19d6))
+* feat(acum-work-import): update work object ([17e087c](https://github.com/dvirtz/musicbrainz-scripts/commit/17e087c))
+* chore: upgrade typedbrainz ([0a9b9f8](https://github.com/dvirtz/musicbrainz-scripts/commit/0a9b9f8))
+
 ## @dvirtz/acum-work-import-v1.22.0-beta.1 (2026-07-30)
 
 * feat(acum-work-import): localize and enrich warnings ([cd954c3](https://github.com/dvirtz/musicbrainz-scripts/commit/cd954c3))
