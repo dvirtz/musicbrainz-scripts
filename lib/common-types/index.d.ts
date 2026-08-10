@@ -11,3 +11,6 @@ declare module '*.css?inline' {
 }
 
 type NonEmptyArray<T> = [T, ...T[]] | [...T[], T];
+
+// typedbrainz@0.3 declares Window.MB but no global MB identifier.
+declare const MB: Window['MB'];

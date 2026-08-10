@@ -172,9 +172,9 @@ async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Pr
 
   const worksToSubmit = await firstValueFrom(
     from(MB.tree.iterate(MB.relationshipEditor.state.mediums)).pipe(
-      mergeMap(([, mediumState]) => from(MB!.tree!.iterate(mediumState))),
+      mergeMap(([, mediumState]) => from(MB.tree!.iterate(mediumState))),
       mergeMap((recordingState: MediumRecordingStateT) =>
-        zip(from(MB!.tree!.iterate(recordingState.relatedWorks)), of(recordingState).pipe(repeat()))
+        zip(from(MB.tree!.iterate(recordingState.relatedWorks)), of(recordingState).pipe(repeat()))
       ),
       distinct(([relatedWork]) => relatedWork.work.id),
       map(
@@ -234,7 +234,7 @@ async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Pr
       edits: addWorkRelationships.map(([, newWork]) => ({
         edit_type: EDIT_WORK_CREATE,
         entity: newWork,
-        response: MB!.constants.WS_EDIT_RESPONSE_OK,
+        response: MB.constants.WS_EDIT_RESPONSE_OK,
       })),
     },
   });
