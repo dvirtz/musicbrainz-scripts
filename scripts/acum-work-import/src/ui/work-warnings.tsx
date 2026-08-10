@@ -2,6 +2,7 @@ import {creatorUrl, Entity, entityUrl, WorkBean} from '#acum.ts';
 import {WriterLinkWarning} from '#link-artists.ts';
 import {openArtistDialogFromWarning} from '#ui/relationship-dialog-actions.ts';
 import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
+import classes from '#ui/work-edit-dialog.module.css';
 import {WorkEditDataWarning} from '#work-edit-data.ts';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
 import {For} from 'solid-js';
@@ -51,7 +52,7 @@ function artistAction(
   return (
     <button
       type="button"
-      class="btn-link"
+      class={`btn-link ${classes['btn-link']}`}
       onClick={() => {
         void openArtistDialogFromWarning({
           action,
@@ -76,6 +77,48 @@ function warningEditNote(track: WorkBean) {
   );
 }
 
+function renderFoundArtistWarning(
+  warning: Extract<PerWorkWarning, {type: 'found-by-name' | 'found-by-alias'}>,
+  track: WorkBean,
+  work: WorkT,
+  recording?: RecordingT
+) {
+  const description = warning.type.replaceAll('-', ' ');
+  return (
+    <>
+      {capitalizeFirst(warning.role)} <a href={`/artist/${warning.artistId}`}>{warning.artistName}</a> {description},
+      please verify (IPI = {warning.ipi}).{' '}
+      {artistActionUrl('edit', track, {
+        artistMBID: warning.artistId,
+        ipi: warning.ipi,
+        ipBaseNumber: warning.ipBaseNumber,
+      })}
+      |
+      {artistAction('search', {
+        linkType: warning.linkTypeID,
+        name: warning.artistName,
+        creatorHebName: warning.creatorHebName,
+        creatorEngName: warning.creatorEngName,
+        editNote: warningEditNote(track),
+        work,
+        recording,
+      })}
+      |
+      {artistAction('create', {
+        linkType: warning.linkTypeID,
+        name: warning.artistName,
+        creatorHebName: warning.creatorHebName,
+        creatorEngName: warning.creatorEngName,
+        editNote: warningEditNote(track),
+        ipi: warning.ipi,
+        ipBaseNumber: warning.ipBaseNumber,
+        work,
+        recording,
+      })}
+    </>
+  );
+}
+
 function WorkNameDifferentWarning(props: {recordingName: string}) {
   const {setLiveEditData, saveEditData} = useWorkEditData();
   return (
@@ -83,7 +126,7 @@ function WorkNameDifferentWarning(props: {recordingName: string}) {
       Work name is different from recording name {props.recordingName}, please verify.{' '}
       <button
         type="button"
-        class="btn-link"
+        class={`btn-link ${classes['btn-link']}`}
         onClick={() => {
           setLiveEditData('name', props.recordingName);
           saveEditData();
@@ -111,73 +154,9 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: Wo
     case 'creator-not-found':
       return <>Failed to find creator with IPI {warning.ipi}.</>;
     case 'found-by-name':
-      return (
-        <>
-          {capitalizeFirst(warning.role)} <a href={`/artist/${warning.artistId}`}>{warning.artistName}</a> found by name
-          search, please verify (IPI = {warning.ipi}).{' '}
-          {artistActionUrl('edit', track, {
-            artistMBID: warning.artistId,
-            ipi: warning.ipi,
-            ipBaseNumber: warning.ipBaseNumber,
-          })}
-          |
-          {artistAction('search', {
-            linkType: warning.linkTypeID,
-            name: warning.artistName,
-            creatorHebName: warning.creatorHebName,
-            creatorEngName: warning.creatorEngName,
-            editNote: warningEditNote(track),
-            work,
-            recording,
-          })}
-          |
-          {artistAction('create', {
-            linkType: warning.linkTypeID,
-            name: warning.artistName,
-            creatorHebName: warning.creatorHebName,
-            creatorEngName: warning.creatorEngName,
-            editNote: warningEditNote(track),
-            ipi: warning.ipi,
-            ipBaseNumber: warning.ipBaseNumber,
-            work,
-            recording,
-          })}
-        </>
-      );
+      return renderFoundArtistWarning(warning, track, work, recording);
     case 'found-by-alias':
-      return (
-        <>
-          {capitalizeFirst(warning.role)} <a href={`/artist/${warning.artistId}`}>{warning.artistName}</a> found by
-          alias search, please verify (IPI = {warning.ipi}).{' '}
-          {artistActionUrl('edit', track, {
-            artistMBID: warning.artistId,
-            ipi: warning.ipi,
-            ipBaseNumber: warning.ipBaseNumber,
-          })}
-          |
-          {artistAction('search', {
-            linkType: warning.linkTypeID,
-            name: warning.artistName,
-            creatorHebName: warning.creatorHebName,
-            creatorEngName: warning.creatorEngName,
-            editNote: warningEditNote(track),
-            work,
-            recording,
-          })}
-          |
-          {artistAction('create', {
-            linkType: warning.linkTypeID,
-            name: warning.artistName,
-            creatorHebName: warning.creatorHebName,
-            creatorEngName: warning.creatorEngName,
-            editNote: warningEditNote(track),
-            ipi: warning.ipi,
-            ipBaseNumber: warning.ipBaseNumber,
-            work,
-            recording,
-          })}
-        </>
-      );
+      return renderFoundArtistWarning(warning, track, work, recording);
     case 'failed-to-find':
       return (
         <>
@@ -185,7 +164,7 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: Wo
           {warning.ipi}).{' '}
           {artistAction('search', {
             linkType: warning.linkTypeID,
-            name: warning.creatorEngName || warning.creatorHebName || warning.ipi,
+            name: warning.creatorHebName || warning.creatorEngName,
             creatorHebName: warning.creatorHebName,
             creatorEngName: warning.creatorEngName,
             editNote: warningEditNote(track),
@@ -195,7 +174,7 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: Wo
           |
           {artistAction('create', {
             linkType: warning.linkTypeID,
-            name: warning.creatorEngName || warning.creatorHebName || warning.ipi,
+            name: warning.creatorHebName || warning.creatorEngName,
             creatorHebName: warning.creatorHebName,
             creatorEngName: warning.creatorEngName,
             editNote: warningEditNote(track),

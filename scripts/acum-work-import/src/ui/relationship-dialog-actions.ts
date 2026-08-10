@@ -6,10 +6,13 @@ import {
   assertReleaseRelationshipEditor,
 } from '@repo/musicbrainz-ext/asserts';
 import {compareNumbers} from '@repo/musicbrainz-ext/compare';
+import {ARRANGER_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
 import {linkTypes} from '@repo/musicbrainz-ext/type-info';
 import {waitForRelationshipDialogDispatch} from '@repo/musicbrainz-ext/wait-for';
 import {waitForElement, waitForMutation} from '@repo/rxjs-ext/wait-for-element';
-import {RecordingT, WorkT} from 'typedbrainz/types';
+import {RecordingT, RelatableEntityT, WorkT} from 'typedbrainz/types';
+
+// cspell: ignore keepuppercase
 
 type ArtistWarningAction = 'search' | 'create';
 
@@ -25,6 +28,13 @@ type OpenArtistDialogParams = {
   ipBaseNumber?: string;
   recording?: RecordingT;
 };
+
+function warningSourceEntity(params: OpenArtistDialogParams): RelatableEntityT {
+  if (params.recording && params.linkType === ARRANGER_LINK_TYPE_ID) {
+    return params.recording;
+  }
+  return params.work;
+}
 
 function delay(ms: number) {
   return new Promise(resolve => {
@@ -52,6 +62,25 @@ function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, value: str
   input.dispatchEvent(new Event('change', {bubbles: true}));
 }
 
+function getCookieValue(doc: Document, name: string): string | null {
+  const encodedName = `${encodeURIComponent(name)}=`;
+  for (const cookiePart of doc.cookie.split(';')) {
+    const cookie = cookiePart.trim();
+    if (cookie.startsWith(encodedName)) {
+      return decodeURIComponent(cookie.slice(encodedName.length));
+    }
+  }
+  return null;
+}
+
+function setCookieValue(doc: Document, name: string, value: string) {
+  doc.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; path=/`;
+}
+
+function deleteCookie(doc: Document, name: string) {
+  doc.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+}
+
 async function waitForArtistCreateForm() {
   const addArtistDialog = await waitForElement(
     (node): node is HTMLDivElement => node instanceof HTMLDivElement && node.id == 'add-artist-dialog'
@@ -73,14 +102,15 @@ async function waitForArtistCreateForm() {
   throw new Error('Failed to open Add a new artist form.');
 }
 
-async function runCreateFlow(params: OpenArtistDialogParams) {
+async function runCreateFlow(params: OpenArtistDialogParams, sourceEntity: RelatableEntityT) {
   assertRelationshipEditor(MB?.relationshipEditor);
+
   MB.relationshipEditor.relationshipDialogDispatch({
     type: 'update-target-entity',
-    source: params.work,
+    source: sourceEntity,
     action: {
       type: 'update-autocomplete',
-      source: params.work,
+      source: sourceEntity,
       action: {
         type: 'toggle-add-entity-dialog',
         isOpen: true,
@@ -118,7 +148,19 @@ async function runCreateFlow(params: OpenArtistDialogParams) {
 
   // Required sequence: English name -> Guess case -> Guess sort name -> Hebrew name.
   setInputValue(nameInput, params.creatorEngName);
-  guessCaseButton.click();
+  const keepUpperCaseCookieName = 'guesscase_keepuppercase';
+  const previousKeepUpperCaseCookie = getCookieValue(artistForm, keepUpperCaseCookieName);
+  // Guess Case reads this cookie on each run; force disabled for this automated flow.
+  setCookieValue(artistForm, keepUpperCaseCookieName, 'false');
+  try {
+    guessCaseButton.click();
+  } finally {
+    if (previousKeepUpperCaseCookie === null) {
+      deleteCookie(artistForm, keepUpperCaseCookieName);
+    } else {
+      setCookieValue(artistForm, keepUpperCaseCookieName, previousKeepUpperCaseCookie);
+    }
+  }
   guessSortButton.click();
   setInputValue(nameInput, params.creatorHebName);
   setInputValue(editNoteInput, params.editNote);
@@ -141,7 +183,7 @@ async function runCreateFlow(params: OpenArtistDialogParams) {
 }
 
 // based on https://github.com/loujine/musicbrainz-scripts/blob/master/mb-reledit-set_rec_artist_as_writer.user.js
-async function fillWriterDialog(params: OpenArtistDialogParams) {
+async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: RelatableEntityT) {
   assertRelationshipEditor(MB?.relationshipEditor);
 
   const writerLinkType = (await linkTypes)[params.linkType];
@@ -153,7 +195,7 @@ async function fillWriterDialog(params: OpenArtistDialogParams) {
     type: 'update-dialog-location',
     location: {
       batchSelection: false,
-      source: params.work,
+      source: sourceEntity,
       track: params.recording ? getTrackForRecording(params.recording) : undefined,
     },
   });
@@ -161,10 +203,10 @@ async function fillWriterDialog(params: OpenArtistDialogParams) {
 
   MB.relationshipEditor.relationshipDialogDispatch({
     type: 'update-link-type',
-    source: params.work,
+    source: sourceEntity,
     action: {
       type: 'update-autocomplete',
-      source: params.work,
+      source: sourceEntity,
       action: {
         type: 'select-item',
         item: {
@@ -178,10 +220,10 @@ async function fillWriterDialog(params: OpenArtistDialogParams) {
   });
   MB.relationshipEditor.relationshipDialogDispatch({
     type: 'update-target-entity',
-    source: params.work,
+    source: sourceEntity,
     action: {
       type: 'update-autocomplete',
-      source: params.work,
+      source: sourceEntity,
       action: {
         type: 'type-value',
         value: params.name,
@@ -194,15 +236,16 @@ async function fillWriterDialog(params: OpenArtistDialogParams) {
 
 export async function openArtistDialogFromWarning(params: OpenArtistDialogParams) {
   assertRelationshipEditor(MB?.relationshipEditor);
-  await fillWriterDialog(params);
+  const sourceEntity = warningSourceEntity(params);
+  await fillWriterDialog(params, sourceEntity);
 
   if (params.action === 'search') {
     MB.relationshipEditor.relationshipDialogDispatch({
       type: 'update-target-entity',
-      source: params.work,
+      source: sourceEntity,
       action: {
         type: 'update-autocomplete',
-        source: params.work,
+        source: sourceEntity,
         linkType: null,
         action: {
           type: 'search-after-timeout',
@@ -212,5 +255,5 @@ export async function openArtistDialogFromWarning(params: OpenArtistDialogParams
     return;
   }
 
-  await runCreateFlow(params);
+  await runCreateFlow(params, sourceEntity);
 }

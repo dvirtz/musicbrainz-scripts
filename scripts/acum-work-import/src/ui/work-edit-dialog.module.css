@@ -109,4 +109,9 @@
     display: inherit;
     animation: contentShow 250ms ease-out;
   }
+
+  .btn-link {
+    font-weight: inherit;
+    font-family: inherit;
+  }
 }
