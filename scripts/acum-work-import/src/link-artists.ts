@@ -52,7 +52,6 @@ async function linkArtists(
   writers: readonly Creator[] | undefined,
   creators: Creators | undefined,
   linkTypeID: number,
-  linkedArtists: readonly ArtistT[],
   doLink: (linkTypeID: number, artist: ArtistT) => void
 ): Promise<ArtistWarning[]> {
   return await firstValueFrom(
@@ -61,22 +60,19 @@ async function linkArtists(
         async author =>
           await (pendingArtistCache.get(author.creatorIpBaseNumber) ||
             pendingArtistCache
-              .set(
-                author.creatorIpBaseNumber,
-                findArtist(linkTypeID, author.creatorIpBaseNumber, creators, linkedArtists)
-              )
+              .set(author.creatorIpBaseNumber, findArtist(linkTypeID, author.creatorIpBaseNumber, creators))
               .get(author.creatorIpBaseNumber)!)
       ),
       connect(shared =>
         merge(
           shared.pipe(
-            map(([artist]) => artist),
+            map(result => result.artist),
             filter((artist): artist is ArtistT => !!artist),
             tap(artist => doLink(linkTypeID, artist)),
             ignoreElements()
           ),
           shared.pipe(
-            map(([, warnings]) => warnings),
+            map(result => result.warnings),
             mergeAll(),
             toArray()
           )
@@ -92,17 +88,8 @@ export async function linkArrangers(
   arrangers: ReadonlyArray<Creator> | undefined,
   creators: Creators | undefined
 ): Promise<ArtistWarning[]> {
-  assertRelationshipEditor(MB?.relationshipEditor);
-  const existingRecordingArtists =
-    linkedArtists(findTargetTypeGroups(MB.relationshipEditor.state.existingRelationshipsBySource, recording)) ?? [];
-
-  return await linkArtists(
-    artistCache,
-    arrangers,
-    creators,
-    ARRANGER_LINK_TYPE_ID,
-    existingRecordingArtists,
-    (linkTypeID, artist) => addArrangerRelationship(recording, artist)
+  return await linkArtists(artistCache, arrangers, creators, ARRANGER_LINK_TYPE_ID, (linkTypeID, artist) =>
+    addArrangerRelationship(recording, artist)
   );
 }
 
@@ -145,7 +132,6 @@ export async function linkWriters(
     [...(track.authors ?? []), ...(track.composersAndAuthors ?? [])],
     track.creators,
     authorLinkTypeId,
-    authors,
     doLink
   );
   const composerWarnings = await linkArtists(
@@ -153,7 +139,6 @@ export async function linkWriters(
     [...(track.composers ?? []), ...(track.composersAndAuthors ?? [])],
     track.creators,
     COMPOSER_LINK_TYPE_ID,
-    authors,
     doLink
   );
   const translatorWarnings = await linkArtists(
@@ -161,7 +146,6 @@ export async function linkWriters(
     track.translators,
     track.creators,
     TRANSLATOR_LINK_TYPE_ID,
-    authors,
     doLink
   );
   return [...doLinkWarnings, ...authorWarnings, ...composerWarnings, ...translatorWarnings];
