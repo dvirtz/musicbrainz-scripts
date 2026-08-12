@@ -7,6 +7,7 @@ import {
 } from '@repo/musicbrainz-ext/asserts';
 import {compareNumbers} from '@repo/musicbrainz-ext/compare';
 import {ARRANGER_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
+import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {linkTypes} from '@repo/musicbrainz-ext/type-info';
 import {waitForRelationshipDialogDispatch} from '@repo/musicbrainz-ext/wait-for';
 import {waitForElement, waitForMutation} from '@repo/rxjs-ext/wait-for-element';
@@ -16,7 +17,7 @@ import {RecordingT, RelatableEntityT, WorkT} from 'typedbrainz/types';
 
 type ArtistWarningAction = 'search' | 'create';
 
-type OpenArtistDialogParams = {
+export type OpenArtistDialogParams = {
   action: ArtistWarningAction;
   linkType: number;
   name: string;
@@ -27,6 +28,7 @@ type OpenArtistDialogParams = {
   ipi?: string;
   ipBaseNumber?: string;
   recording?: RecordingT;
+  artistId?: string;
 };
 
 function warningSourceEntity(params: OpenArtistDialogParams): RelatableEntityT {
@@ -54,6 +56,22 @@ function getTrackForRecording(recording: RecordingT) {
     null
   )![0];
   return medium.tracks?.find(track => track.recording == recording);
+}
+
+function getRelationship(sourceEntity: RelatableEntityT, artistId: string) {
+  assertMBTree(MB?.tree);
+  assertRelationshipEditor(MB?.relationshipEditor);
+
+  const typeGroups = findTargetTypeGroups(MB.relationshipEditor.state.relationshipsBySource, sourceEntity);
+  if (typeGroups) {
+    for (const typeGroup of MB.tree.iterate(typeGroups)) {
+      for (const relationship of iterateRelationshipsInTargetTypeGroup(typeGroup)) {
+        if (relationship.entity0.gid === artistId || relationship.entity1.gid === artistId) {
+          return relationship;
+        }
+      }
+    }
+  }
 }
 
 function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, value: string) {
@@ -191,12 +209,19 @@ async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: Re
     throw new Error(`Failed to find link type ${params.linkType}`);
   }
 
+  const existingRelationship = params.artistId ? getRelationship(sourceEntity, params.artistId) : undefined;
+
   MB.relationshipEditor.dispatch({
     type: 'update-dialog-location',
     location: {
       batchSelection: false,
       source: sourceEntity,
       track: params.recording ? getTrackForRecording(params.recording) : undefined,
+      relationshipId: existingRelationship ? existingRelationship.id : undefined,
+      linkTypeId: existingRelationship ? existingRelationship.linkTypeID : undefined,
+      backward: existingRelationship ? existingRelationship.entity0.gid === params.artistId : undefined,
+      targetType: existingRelationship ? 'artist' : undefined,
+      textPhrase: existingRelationship ? writerLinkType.name : undefined,
     },
   });
   await waitForRelationshipDialogDispatch();
