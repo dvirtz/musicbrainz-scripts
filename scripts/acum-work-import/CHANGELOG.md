@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.22.0-beta.3 (2026-08-12)
+
+* Revert "feat(acum-work-import): search existing artists" ([aca8c11](https://github.com/dvirtz/musicbrainz-scripts/commit/aca8c11))
+
 ## @dvirtz/acum-work-import-v1.22.0-beta.2 (2026-08-10)
 
 * fix(acum-work-import): avoid progress bar getting over dialogs ([0b1695d](https://github.com/dvirtz/musicbrainz-scripts/commit/0b1695d))
