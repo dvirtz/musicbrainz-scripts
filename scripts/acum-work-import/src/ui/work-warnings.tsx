@@ -1,6 +1,6 @@
 import {creatorUrl, Entity, entityUrl, WorkBean} from '#acum.ts';
 import {WriterLinkWarning} from '#link-artists.ts';
-import {openArtistDialogFromWarning} from '#ui/relationship-dialog-actions.ts';
+import {openArtistDialogFromWarning, OpenArtistDialogParams} from '#ui/relationship-dialog-actions.ts';
 import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
 import classes from '#ui/work-edit-dialog.module.css';
 import {WorkEditDataWarning} from '#work-edit-data.ts';
@@ -35,34 +35,18 @@ function artistActionUrl(
   return <a href={href}>update</a>;
 }
 
-function artistAction(
-  action: 'search' | 'create',
-  options: {
-    linkType: number;
-    name: string;
-    creatorHebName: string;
-    creatorEngName: string;
-    editNote: string;
-    ipi?: string;
-    ipBaseNumber?: string;
-    work: WorkT;
-    recording?: RecordingT;
-  }
-) {
+function artistAction(params: OpenArtistDialogParams) {
   return (
     <button
       type="button"
       class={`btn-link ${classes['btn-link']}`}
       onClick={() => {
-        void openArtistDialogFromWarning({
-          action,
-          ...options,
-        }).catch((error: unknown) => {
-          console.error(`Failed to ${action} artist from warning`, error);
+        void openArtistDialogFromWarning(params).catch((error: unknown) => {
+          console.error(`Failed to ${params.action} artist from warning`, error);
         });
       }}
     >
-      {action}
+      {params.action}
     </button>
   );
 }
@@ -94,7 +78,8 @@ function renderFoundArtistWarning(
         ipBaseNumber: warning.ipBaseNumber,
       })}
       |
-      {artistAction('search', {
+      {artistAction({
+        action: 'search',
         linkType: warning.linkTypeID,
         name: warning.artistName,
         creatorHebName: warning.creatorHebName,
@@ -102,9 +87,11 @@ function renderFoundArtistWarning(
         editNote: warningEditNote(track),
         work,
         recording,
+        artistId: warning.artistId,
       })}
       |
-      {artistAction('create', {
+      {artistAction({
+        action: 'create',
         linkType: warning.linkTypeID,
         name: warning.artistName,
         creatorHebName: warning.creatorHebName,
@@ -114,6 +101,7 @@ function renderFoundArtistWarning(
         ipBaseNumber: warning.ipBaseNumber,
         work,
         recording,
+        artistId: warning.artistId,
       })}
     </>
   );
@@ -162,7 +150,8 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: Wo
         <>
           Failed to find {warning.role} {warning.creatorHebName || warning.creatorEngName || warning.ipi} (IPI ={' '}
           {warning.ipi}).{' '}
-          {artistAction('search', {
+          {artistAction({
+            action: 'search',
             linkType: warning.linkTypeID,
             name: warning.creatorHebName || warning.creatorEngName,
             creatorHebName: warning.creatorHebName,
@@ -172,7 +161,8 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: Wo
             recording,
           })}
           |
-          {artistAction('create', {
+          {artistAction({
+            action: 'create',
             linkType: warning.linkTypeID,
             name: warning.creatorHebName || warning.creatorEngName,
             creatorHebName: warning.creatorHebName,

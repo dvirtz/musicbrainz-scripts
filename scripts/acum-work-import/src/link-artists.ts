@@ -103,7 +103,7 @@ export async function linkWriters(
 
   const authors =
     linkedArtists(
-      workTargetTypeGroups ?? findTargetTypeGroups(MB.relationshipEditor.state.existingRelationshipsBySource, work)
+      workTargetTypeGroups ?? findTargetTypeGroups(MB.relationshipEditor.state.relationshipsBySource, work)
     ) ?? [];
   const doLinkWarnings: WriterLinkWarning[] = [];
   const doLink = (linkTypeID: number, artist: ArtistT) => {
