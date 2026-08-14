@@ -1,3 +1,8 @@
+## @dvirtz/acum-work-import-v1.22.0-beta.4 (2026-08-14)
+
+* feat(acum-work-import): apply warning fix to all entities and remove fixed warnings ([fd0662d](https://github.com/dvirtz/musicbrainz-scripts/commit/fd0662d))
+* feat(acum-work-import): apply warning to found artist relationship ([d70d1aa](https://github.com/dvirtz/musicbrainz-scripts/commit/d70d1aa))
+
 ## @dvirtz/acum-work-import-v1.22.0-beta.3 (2026-08-12)
 
 * Revert "feat(acum-work-import): search existing artists" ([aca8c11](https://github.com/dvirtz/musicbrainz-scripts/commit/aca8c11))
