@@ -1,22 +1,22 @@
 import {creatorUrl, Entity, entityUrl, WorkBean} from '#acum.ts';
 import {WriterLinkWarning} from '#link-artists.ts';
-import {openArtistDialogFromWarning, OpenArtistDialogParams} from '#ui/relationship-dialog-actions.ts';
+import {openArtistDialogFromWarning, OpenArtistDialogParams, updateArtist} from '#ui/relationship-dialog-actions.ts';
 import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
 import classes from '#ui/work-edit-dialog.module.css';
 import {WorkEditDataWarning} from '#work-edit-data.ts';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
 import {For} from 'solid-js';
-import {RecordingT, WorkT} from 'typedbrainz/types';
+import {ArtistT, RecordingT, WorkT} from 'typedbrainz/types';
 
 export type PerWorkWarning =
   | WorkEditDataWarning
   | WriterLinkWarning
   | {type: 'work-name-different'; recordingName: string};
 
-function artistActionUrl(
-  action: 'edit',
+function artistUpdateAction(
   track: WorkBean,
-  options: {artistMBID?: string; name?: string; ipi: string; ipBaseNumber: string}
+  options: {artistMBID: string; name?: string; ipi: string; ipBaseNumber: string},
+  onVerified: (artist: ArtistT) => void
 ) {
   const params = new URLSearchParams();
   if (options.name) {
@@ -31,8 +31,18 @@ function artistActionUrl(
 
   params.set('edit-artist.edit_note', warningEditNote(track));
 
-  const href = `/artist/${options.artistMBID!}/edit?${params.toString()}`;
-  return <a href={href}>update</a>;
+  const href = `/artist/${options.artistMBID}/edit?${params.toString()}`;
+  return (
+    <button
+      type="button"
+      class={`btn-link ${classes['btn-link']}`}
+      onClick={() => {
+        updateArtist(href, onVerified);
+      }}
+    >
+      update
+    </button>
+  );
 }
 
 function artistAction(params: OpenArtistDialogParams) {
@@ -65,18 +75,23 @@ function renderFoundArtistWarning(
   warning: Extract<PerWorkWarning, {type: 'found-by-name' | 'found-by-alias'}>,
   track: WorkBean,
   work: WorkT,
-  recording?: RecordingT
+  recording: RecordingT | undefined,
+  resolveArtistWarnings?: (ipBaseNumber: string, artist: ArtistT) => void
 ) {
   const description = warning.type.replaceAll('-', ' ');
   return (
     <>
       {capitalizeFirst(warning.role)} <a href={`/artist/${warning.artistId}`}>{warning.artistName}</a> {description},
       please verify (IPI = {warning.ipi}).{' '}
-      {artistActionUrl('edit', track, {
-        artistMBID: warning.artistId,
-        ipi: warning.ipi,
-        ipBaseNumber: warning.ipBaseNumber,
-      })}
+      {artistUpdateAction(
+        track,
+        {
+          artistMBID: warning.artistId,
+          ipi: warning.ipi,
+          ipBaseNumber: warning.ipBaseNumber,
+        },
+        artist => resolveArtistWarnings?.(warning.ipBaseNumber, artist)
+      )}
       |
       {artistAction({
         action: 'search',
@@ -88,6 +103,7 @@ function renderFoundArtistWarning(
         work,
         recording,
         artistId: warning.artistId,
+        onConfirmed: artist => resolveArtistWarnings?.(warning.ipBaseNumber, artist),
       })}
       |
       {artistAction({
@@ -102,6 +118,7 @@ function renderFoundArtistWarning(
         work,
         recording,
         artistId: warning.artistId,
+        onConfirmed: artist => resolveArtistWarnings?.(warning.ipBaseNumber, artist),
       })}
     </>
   );
@@ -126,7 +143,13 @@ function WorkNameDifferentWarning(props: {recordingName: string}) {
   );
 }
 
-export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: WorkT, recording?: RecordingT) {
+export function renderWarning(
+  warning: PerWorkWarning,
+  track: WorkBean,
+  work: WorkT,
+  recording?: RecordingT,
+  resolveArtistWarnings?: (ipBaseNumber: string, artist: ArtistT) => void
+) {
   switch (warning.type) {
     case 'work-name-different':
       return <WorkNameDifferentWarning recordingName={warning.recordingName} />;
@@ -142,9 +165,9 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: Wo
     case 'creator-not-found':
       return <>Failed to find creator with IPI {warning.ipi}.</>;
     case 'found-by-name':
-      return renderFoundArtistWarning(warning, track, work, recording);
+      return renderFoundArtistWarning(warning, track, work, recording, resolveArtistWarnings);
     case 'found-by-alias':
-      return renderFoundArtistWarning(warning, track, work, recording);
+      return renderFoundArtistWarning(warning, track, work, recording, resolveArtistWarnings);
     case 'failed-to-find':
       return (
         <>
@@ -159,6 +182,7 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: Wo
             editNote: warningEditNote(track),
             work,
             recording,
+            onConfirmed: artist => resolveArtistWarnings?.(warning.ipBaseNumber, artist),
           })}
           |
           {artistAction({
@@ -172,6 +196,7 @@ export function renderWarning(warning: PerWorkWarning, track: WorkBean, work: Wo
             ipBaseNumber: warning.ipBaseNumber,
             work,
             recording,
+            onConfirmed: artist => resolveArtistWarnings?.(warning.ipBaseNumber, artist),
           })}
         </>
       );
@@ -186,11 +211,12 @@ export function WorkWarnings(props: {
   work: WorkT;
   recording?: RecordingT;
 }) {
+  const {resolveArtistWarnings} = useWorkEditData();
   return (
     <For each={props.warnings}>
       {workWarning => (
         <p class="error" style={{margin: '2px 0 0 1.8rem'}}>
-          {renderWarning(workWarning, props.track, props.work, props.recording)}
+          {renderWarning(workWarning, props.track, props.work, props.recording, resolveArtistWarnings)}
         </p>
       )}
     </For>
