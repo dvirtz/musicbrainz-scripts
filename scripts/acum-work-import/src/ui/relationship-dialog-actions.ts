@@ -1,4 +1,5 @@
 import {creatorUrl} from '#acum.ts';
+import {openArtistUpdateDialog} from '#ui/artist-update-dialog.tsx';
 import {
   assertMB,
   assertMBTree,
@@ -11,7 +12,7 @@ import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo
 import {linkTypes} from '@repo/musicbrainz-ext/type-info';
 import {waitForRelationshipDialogDispatch} from '@repo/musicbrainz-ext/wait-for';
 import {waitForElement, waitForMutation} from '@repo/rxjs-ext/wait-for-element';
-import {RecordingT, RelatableEntityT, WorkT} from 'typedbrainz/types';
+import {ArtistT, RecordingT, RelatableEntityT, WorkT} from 'typedbrainz/types';
 
 // cspell: ignore keepuppercase
 
@@ -29,7 +30,36 @@ export type OpenArtistDialogParams = {
   ipBaseNumber?: string;
   recording?: RecordingT;
   artistId?: string;
+  onConfirmed: (artist: ArtistT) => void;
 };
+
+export function updateArtist(href: string, onSubmitted: (artist: ArtistT) => void) {
+  openArtistUpdateDialog(href, onSubmitted);
+}
+
+function observeRelationshipConfirmation(params: OpenArtistDialogParams) {
+  type RelationshipDialogCloseEvent = Event & {
+    closeEventType?: 'accept' | 'cancel';
+    dialogState?: {
+      linkType: {autocomplete: {selectedItem: {entity: {id: number}} | null}};
+      targetEntity: {target: RelatableEntityT};
+    };
+  };
+
+  const onClose = (event: Event) => {
+    const relationshipDialogEvent = event as RelationshipDialogCloseEvent;
+    const artist = relationshipDialogEvent.dialogState?.targetEntity.target;
+    if (
+      relationshipDialogEvent.closeEventType === 'accept' &&
+      relationshipDialogEvent.dialogState?.linkType.autocomplete.selectedItem?.entity.id === params.linkType &&
+      artist?.entityType === 'artist'
+    ) {
+      params.onConfirmed(artist);
+    }
+  };
+
+  document.addEventListener('mb-close-relationship-dialog', onClose, {once: true});
+}
 
 function warningSourceEntity(params: OpenArtistDialogParams): RelatableEntityT {
   if (params.recording && params.linkType === ARRANGER_LINK_TYPE_ID) {
@@ -58,7 +88,7 @@ function getTrackForRecording(recording: RecordingT) {
   return medium.tracks?.find(track => track.recording == recording);
 }
 
-function getRelationship(sourceEntity: RelatableEntityT, artistId: string) {
+function getRelationship(sourceEntity: RelatableEntityT, artistId: string, linkTypeID: number) {
   assertMBTree(MB?.tree);
   assertRelationshipEditor(MB?.relationshipEditor);
 
@@ -66,7 +96,10 @@ function getRelationship(sourceEntity: RelatableEntityT, artistId: string) {
   if (typeGroups) {
     for (const typeGroup of MB.tree.iterate(typeGroups)) {
       for (const relationship of iterateRelationshipsInTargetTypeGroup(typeGroup)) {
-        if (relationship.entity0.gid === artistId || relationship.entity1.gid === artistId) {
+        if (
+          relationship.linkTypeID === linkTypeID &&
+          (relationship.entity0.gid === artistId || relationship.entity1.gid === artistId)
+        ) {
           return relationship;
         }
       }
@@ -209,7 +242,9 @@ async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: Re
     throw new Error(`Failed to find link type ${params.linkType}`);
   }
 
-  const existingRelationship = params.artistId ? getRelationship(sourceEntity, params.artistId) : undefined;
+  const existingRelationship = params.artistId
+    ? getRelationship(sourceEntity, params.artistId, params.linkType)
+    : undefined;
 
   MB.relationshipEditor.dispatch({
     type: 'update-dialog-location',
@@ -262,6 +297,7 @@ async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: Re
 export async function openArtistDialogFromWarning(params: OpenArtistDialogParams) {
   assertRelationshipEditor(MB?.relationshipEditor);
   const sourceEntity = warningSourceEntity(params);
+  observeRelationshipConfirmation(params);
   await fillWriterDialog(params, sourceEntity);
 
   if (params.action === 'search') {

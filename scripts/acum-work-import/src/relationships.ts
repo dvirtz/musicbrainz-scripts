@@ -1,10 +1,7 @@
-import {
-  ARRANGER_LINK_TYPE_ID,
-  MEDLEY_OF_LINK_TYPE_ID,
-  REL_STATUS_ADD,
-  REL_STATUS_NOOP,
-} from '@repo/musicbrainz-ext/constants';
-import {ArtistT, RecordingT, RelationshipEditStatusT, RelationshipStateT, WorkT} from 'typedbrainz/types';
+import {assertMBTree, assertRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
+import {MEDLEY_OF_LINK_TYPE_ID, REL_STATUS_ADD, REL_STATUS_NOOP} from '@repo/musicbrainz-ext/constants';
+import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
+import {ArtistT, RelatableEntityT, RelationshipEditStatusT, RelationshipStateT, WorkT} from 'typedbrainz/types';
 
 export function createRelationshipState<Fields extends Pick<RelationshipStateT, 'entity0' | 'entity1'>>(
   fields: Fields
@@ -27,42 +24,50 @@ export function createRelationshipState<Fields extends Pick<RelationshipStateT, 
   };
 }
 
-export function addWriterRelationship(work: WorkT, artist: ArtistT, linkTypeID: number) {
-  if (MB?.relationshipEditor.dispatch) {
-    MB.relationshipEditor.dispatch({
-      type: 'update-relationship-state',
-      sourceEntity: work,
-      batchSelectionCount: undefined,
-      creditsToChangeForSource: '',
-      creditsToChangeForTarget: '',
-      newRelationshipState: createRelationshipState({
-        _status: REL_STATUS_ADD,
-        entity0: artist,
-        entity1: work,
-        linkTypeID: linkTypeID,
-      }),
-      oldRelationshipState: null,
-    });
-  }
-}
+export function addArtistRelationship(
+  sourceEntity: RelatableEntityT,
+  linkTypeID: number,
+  newArtist: ArtistT,
+  oldArtistID?: string
+) {
+  assertMBTree(MB?.tree);
+  assertRelationshipEditor(MB?.relationshipEditor);
 
-export function addArrangerRelationship(recording: RecordingT, artist: ArtistT) {
-  if (MB?.relationshipEditor.dispatch) {
-    MB.relationshipEditor.dispatch({
-      type: 'update-relationship-state',
-      sourceEntity: recording,
-      batchSelectionCount: undefined,
-      creditsToChangeForSource: '',
-      creditsToChangeForTarget: '',
-      newRelationshipState: createRelationshipState({
-        _status: REL_STATUS_ADD,
-        entity0: artist,
-        entity1: recording,
-        linkTypeID: ARRANGER_LINK_TYPE_ID,
-      }),
-      oldRelationshipState: null,
-    });
+  if (oldArtistID) {
+    const targetTypeGroups = findTargetTypeGroups(MB.relationshipEditor.state.relationshipsBySource, sourceEntity);
+    const relationships = targetTypeGroups
+      ? MB.tree
+          .iterate(targetTypeGroups)
+          .flatMap(typeGroup => iterateRelationshipsInTargetTypeGroup(typeGroup))
+          .filter(relationship => relationship.linkTypeID === linkTypeID)
+          .toArray()
+      : [];
+    const matchingRelationship = relationships.find(
+      relationship => relationship.entity0.gid === oldArtistID || relationship.entity1.gid === oldArtistID
+    );
+
+    if (matchingRelationship) {
+      MB.relationshipEditor.dispatch({
+        type: 'remove-relationship',
+        relationship: matchingRelationship,
+      });
+    }
   }
+
+  MB.relationshipEditor.dispatch({
+    type: 'update-relationship-state',
+    sourceEntity,
+    batchSelectionCount: undefined,
+    creditsToChangeForSource: '',
+    creditsToChangeForTarget: '',
+    newRelationshipState: createRelationshipState({
+      _status: REL_STATUS_ADD,
+      entity0: newArtist,
+      entity1: sourceEntity,
+      linkTypeID,
+    }),
+    oldRelationshipState: null,
+  });
 }
 
 export function updateMedleyWorkRelationship(

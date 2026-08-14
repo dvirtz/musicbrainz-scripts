@@ -1,18 +1,21 @@
-import {WorkBean} from '#acum.ts';
+import {IPBaseNumber, WorkBean} from '#acum.ts';
 import {ArtistLookupCache} from '#artists.ts';
 import {linkArrangers, linkWriters} from '#link-artists.ts';
+import {addArtistRelationship} from '#relationships.ts';
 import {PerWorkWarning} from '#ui/work-warnings.tsx';
 import {WorkEditData, workEditData, workEditDataEqual} from '#work-edit-data.ts';
 import {createWork} from '#works.ts';
 import {assertMBTree, assertRelationshipEditor, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {buildOptionList, buildOptionListFromKeys} from '@repo/musicbrainz-ext/build-options-list';
 import {compareInsensitive, compareNumbers, compareWorks} from '@repo/musicbrainz-ext/compare';
+import {ARRANGER_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
 import {urlFromMbid} from '@repo/musicbrainz-ext/edits';
 import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {WorkAttributeTypeAllowedValueT} from '@repo/musicbrainz-ext/type-info';
-import {createContext, createEffect, createResource, createSignal, ParentProps, useContext} from 'solid-js';
+import {createContext, createEffect, createResource, createSignal, onCleanup, ParentProps, useContext} from 'solid-js';
 import {createStore, reconcile, unwrap} from 'solid-js/store';
 import {
+  ArtistT,
   IswcT,
   LanguageT,
   RecordingT,
@@ -181,6 +184,7 @@ function makeWorkEditDataContext(
   setSavedEditData: (value: WorkEditData) => void,
   originalEditData: () => WorkEditData,
   warnings: () => readonly PerWorkWarning[],
+  resolveArtistWarnings: (ipBaseNumber: string, artist: ArtistT) => void,
   isLoading: () => boolean,
   workTypeInfo: WorkTypeInfo,
   refetch: () => void
@@ -216,6 +220,7 @@ function makeWorkEditDataContext(
           .map(([typeId, children]) => [typeId, buildOptionListFromKeys(children, 'value', 'id')])
       ),
     warnings,
+    resolveArtistWarnings,
     isLoading,
     refetch,
     replacedWork,
@@ -238,12 +243,56 @@ export function useWorkEditData() {
   return context;
 }
 
+const artistResolvedEventName = 'acum:artist-resolved';
+
+type ArtistResolvedEventDetail = {
+  ipBaseNumber: IPBaseNumber;
+  artist: ArtistT;
+};
+
 export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
   const [liveEditData, setLiveEditData] = createStore(props.initialState?.liveEditData ?? emptyEditData());
   const [savedEditData, setSavedEditData] = createSignal(props.initialState?.savedEditData ?? emptyEditData());
   const [originalEditData, setOriginalEditData] = createSignal(props.initialState?.originalEditData ?? emptyEditData());
   const [warnings, setWarnings] = createSignal<readonly PerWorkWarning[]>(props.initialState?.warnings ?? []);
   const [isLoading, setIsLoading] = createSignal(!props.initialState);
+
+  const resolveArtistWarnings = (ipBaseNumber: IPBaseNumber, artist: ArtistT) =>
+    document.dispatchEvent(
+      new CustomEvent<ArtistResolvedEventDetail>(artistResolvedEventName, {
+        detail: {
+          ipBaseNumber,
+          artist,
+        },
+      })
+    );
+
+  const onArtistResolved = (event: Event) => {
+    const {ipBaseNumber, artist} = (event as CustomEvent<ArtistResolvedEventDetail>).detail;
+    const matchingWarnings = warnings().filter(
+      warning => 'ipBaseNumber' in warning && warning.ipBaseNumber === ipBaseNumber && 'linkTypeID' in warning
+    );
+    for (const warning of matchingWarnings) {
+      if (!('linkTypeID' in warning)) {
+        continue;
+      }
+      const sourceEntity =
+        warning.linkTypeID === ARRANGER_LINK_TYPE_ID && props.recording ? props.recording : props.work;
+      addArtistRelationship(
+        sourceEntity,
+        warning.linkTypeID,
+        artist,
+        'artistId' in warning ? warning.artistId : undefined
+      );
+    }
+    if (matchingWarnings.length > 0) {
+      setWarnings(currentWarnings =>
+        currentWarnings.filter(warning => !('ipBaseNumber' in warning && warning.ipBaseNumber === ipBaseNumber))
+      );
+    }
+  };
+  document.addEventListener(artistResolvedEventName, onArtistResolved);
+  onCleanup(() => document.removeEventListener(artistResolvedEventName, onArtistResolved));
 
   const [resource, {refetch}] = createResource(
     () =>
@@ -305,6 +354,7 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
         setSavedEditData,
         originalEditData,
         warnings,
+        resolveArtistWarnings,
         isLoading,
         props.typeInfo,
         () => void refetch()

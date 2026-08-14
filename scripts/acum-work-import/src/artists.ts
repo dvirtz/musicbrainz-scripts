@@ -39,18 +39,11 @@ function nameMatch(creator: CreatorFull, artistName: string): boolean {
   );
 }
 
-const artistCache = new Map<string, ArtistT>();
-
 export async function findArtist(
   linkTypeID: number,
   ipBaseNumber: IPBaseNumber,
   creators: Creators | undefined
 ): Promise<ArtistLookupResult> {
-  const cached = artistCache.get(ipBaseNumber);
-  if (cached) {
-    return {artist: cached, warnings: []};
-  }
-
   const warnings: ArtistWarning[] = [];
   const artistMBID = await (async () => {
     const creator = creators?.find(creator => creator.creatorIpBaseNumber === ipBaseNumber);
@@ -138,10 +131,7 @@ export async function findArtist(
 
   if (artistMBID) {
     const artist = await tryFetchJSON<ArtistT>(`/ws/js/entity/${artistMBID}`);
-    if (artist) {
-      artistCache.set(ipBaseNumber, artist);
-      return {artist, warnings};
-    }
+    return {artist, warnings};
   }
 
   return {artist: null, warnings};

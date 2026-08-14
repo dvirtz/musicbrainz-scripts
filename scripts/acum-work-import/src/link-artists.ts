@@ -1,7 +1,7 @@
 import {AcumWorkType} from '#acum-work-type.ts';
 import {Creator, Creators, WorkBean, workType} from '#acum.ts';
 import {ArtistLookupCache, ArtistWarning, findArtist} from '#artists.ts';
-import {addArrangerRelationship, addWriterRelationship} from '#relationships.ts';
+import {addArtistRelationship} from '#relationships.ts';
 import {assertRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {
@@ -89,7 +89,7 @@ export async function linkArrangers(
   creators: Creators | undefined
 ): Promise<ArtistWarning[]> {
   return await linkArtists(artistCache, arrangers, creators, ARRANGER_LINK_TYPE_ID, (linkTypeID, artist) =>
-    addArrangerRelationship(recording, artist)
+    addArtistRelationship(recording, linkTypeID, artist)
   );
 }
 
@@ -115,7 +115,7 @@ export async function linkWriters(
       console.log(`skipping adding existing author ${artist.name} to work ${work.name}`);
       return;
     }
-    addWriterRelationship(work, artist, linkTypeID);
+    addArtistRelationship(work, linkTypeID, artist);
   };
 
   const authorLinkTypeId = await (async () => {
