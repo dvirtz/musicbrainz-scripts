@@ -1,0 +1,13 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/buttons.module.css");import { updateStyle as __vite__updateStyle, removeStyle as __vite__removeStyle } from "/@vite/client"
+const __vite__id = "C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/scripts/medium-merge-split/src/buttons.module.css"
+const __vite__css = "button._merge-medium-up_12iog_1,\r\nbutton._merge-medium-down_12iog_3,\r\nbutton._medium-split-here_12iog_5 {\r\n  display: none;\r\n  margin-right: 4px;\r\n  background-repeat: no-repeat;\r\n  background-position: center;\r\n  background-size: 16px;\r\n}\r\n\r\n._merge-medium-up_12iog_1:disabled,\r\n._merge-medium-down_12iog_3:disabled,\r\n._medium-split-here_12iog_5:disabled {\r\n  cursor: default;\r\n  opacity: 0.35;\r\n}\r\n\r\nbutton._merge-medium-up_12iog_1 {\r\n  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cg fill='%237772ae'%3E%3Crect x='2' y='1' width='12' height='2.5' rx='1'/%3E%3Cpath d='M8 5l5 5.5h-2.8V15H5.8v-4.5H3z'/%3E%3C/g%3E%3C/svg%3E\");\r\n}\r\n\r\nbutton._merge-medium-down_12iog_3 {\r\n  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cg fill='%237772ae'%3E%3Crect x='2' y='12.5' width='12' height='2.5' rx='1'/%3E%3Cpath d='M8 11L3 5.5h2.8V1h4.4v4.5H13z'/%3E%3C/g%3E%3C/svg%3E\");\r\n}\r\n\r\nbutton._medium-split-here_12iog_5 {\r\n  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cg fill='%237772ae'%3E%3Cpath d='M8 0.5l3.2 4H4.8z'/%3E%3Crect x='1' y='7' width='3.5' height='2' rx='0.6'/%3E%3Crect x='6.2' y='7' width='3.5' height='2' rx='0.6'/%3E%3Crect x='11.4' y='7' width='3.5' height='2' rx='0.6'/%3E%3Cpath d='M8 15.5l-3.2-4h6.4z'/%3E%3C/g%3E%3C/svg%3E\");\r\n}\r\n\r\nbutton._medium-split-here_12iog_5[hidden] {\r\n  display: none;\r\n}\r\n\r\n/* keeps the split button on the same line as the move track buttons */\r\ntd._reorderCell_12iog_69 {\r\n  white-space: nowrap;\r\n}\r\n"
+__vite__updateStyle(__vite__id, __vite__css)
+export const reorderCell = "_reorderCell_12iog_69";
+export default {
+	"merge-medium-up": "_merge-medium-up_12iog_1",
+	"merge-medium-down": "_merge-medium-down_12iog_3",
+	"medium-split-here": "_medium-split-here_12iog_5",
+	reorderCell: reorderCell
+};
+
+import.meta.hot.prune(() => __vite__removeStyle(__vite__id))

@@ -12,46 +12,81 @@ import {ArtistCreditT, MediumT, TrackT} from 'typedbrainz/types';
 export type Observable<T> = {
   (): T;
   (value: T): void;
+  subscribe(callback: (value: T) => void): {dispose(): void};
 };
 type ObservableArray<T> = {
   (): T[];
   (value: T[]): void;
+  subscribe(callback: (value: T[]) => void): {dispose(): void};
+  peek(): T[];
+  push(...values: T[]): void;
+  remove(value: T): T[];
+  removeAll(): T[];
+  splice(start: number, deleteCount: number, ...values: T[]): T[];
+  indexOf(value: T): number;
+  notifySubscribers(values?: T[]): void;
 };
 type Computed<T> = () => T;
 
-declare class EditorMedium {
+export type EditorMedium = {
   release: EditorRelease;
   formatID: Observable<string>;
   position: Observable<number>;
   name: Observable<string | undefined>;
   tracks: ObservableArray<EditorTrack>;
-  pushTrack(data: Partial<TrackT>): void;
-
-  constructor(medium: Partial<MediumT>, release: EditorRelease);
-}
-
-declare class EditorTrack {
+  audioTracks: Computed<EditorTrack[]>;
+  dataTracks: Computed<EditorTrack[]>;
+  hasPregap: Computed<boolean>;
+  loaded: Observable<boolean>;
+  loading: Observable<boolean>;
+  collapsed: Observable<boolean>;
+  toc: Observable<unknown>;
   uniqueID: number | string;
+  originalID?: number;
+  id?: number;
+  /** set by `MB.releaseEditor.removeMedium` */
+  removed?: boolean;
+  hasTracks(): boolean;
+  hasToc(): boolean;
+  hasExistingTocs(): boolean;
+  loadTracks(): void;
+  formattedName(): string;
+  pushTrack(data: Partial<TrackT>): void;
+};
+
+export type EditorTrack = {
+  uniqueID: number | string;
+  elementID: string;
+  id?: number;
+  gid?: string;
   name: Observable<string>;
+  /** plain property, not an observable: must be reassigned when moving a track between mediums */
   medium: EditorMedium;
+  position: Observable<number>;
+  number: Observable<string | number>;
+  isDataTrack: Observable<boolean>;
   /// milliseconds
   length: Observable<number | null>;
   artistCredit: Observable<ArtistCreditT>;
   recording: Observable<{
+    gid?: string;
     artistCredit: ArtistCreditT;
   }>;
-}
+  hasExistingRecording(): boolean;
+  previous(): EditorTrack | undefined;
+  next(): EditorTrack | undefined;
+};
 
-declare class EditorBarcode {
+type EditorBarcode = {
   value: Computed<string>;
-}
+};
 
-declare class EditorReleaseLabel {
+type EditorReleaseLabel = {
   label: Observable<{name: string}>;
   catalogNumber: Observable<string>;
-}
+};
 
-declare class EditorReleaseEvent {
+type EditorReleaseEvent = {
   date: {
     year: Observable<string | null>;
     month: Observable<string | null>;
@@ -59,14 +94,14 @@ declare class EditorReleaseEvent {
   };
   countryID: Observable<string | null>;
   hasInvalidDate: Computed<boolean>;
-}
+};
 
 type EditorReleaseGroup = {
   artistCredit: ArtistCreditT;
   [key: string]: unknown;
 };
 
-export declare class EditorRelease {
+export type EditorRelease = {
   uniqueID: number | string;
   name: Observable<string>;
   statusID: Observable<string>;
@@ -80,13 +115,22 @@ export declare class EditorRelease {
   releaseGroup: Observable<EditorReleaseGroup>;
   mediums: ObservableArray<EditorMedium>;
   allTracks(): Iterable<EditorTrack>;
-}
+};
 
-export interface MBReleaseEditor {
+export type MBReleaseEditor = {
   rootField: {
     release: Observable<EditorRelease>;
     editNote: Observable<string>;
   };
+  fields: {
+    Medium: new (medium: Partial<MediumT>, release: EditorRelease) => EditorMedium;
+    Track: new (track: Partial<TrackT>, medium: EditorMedium) => EditorTrack;
+  };
+  moveMediumUp(medium: EditorMedium): void;
+  moveMediumDown(medium: EditorMedium): void;
+  changeMediumPosition(medium: EditorMedium, delta: number): void;
+  removeMedium(medium: EditorMedium): void;
+  resetTrackNumbers(medium: EditorMedium): void;
   externalLinks?: {
     byType: Record<string, unknown>;
   };
@@ -115,14 +159,18 @@ export interface MBReleaseEditor {
   nextMedium(): void;
   checkFormatAndShowWarning(): void;
   _mediaSelectable(): boolean;
-}
+};
 
 export function getRelease() {
-  assertMBReleaseEditor(MB);
-  const release = MB.releaseEditor.rootField.release();
+  const release = getReleaseEditor().rootField.release();
   if (!release) {
     throw new Error('Release data not available');
   }
 
   return release;
+}
+
+export function getReleaseEditor() {
+  assertMBReleaseEditor(MB);
+  return MB.releaseEditor;
 }
