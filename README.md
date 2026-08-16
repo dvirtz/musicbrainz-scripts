@@ -89,6 +89,17 @@ Expands and collapses child sub-events inline on event pages, with recursive det
 
 See the script [README](scripts/expand-events/README.md) for more information.
 
+### Medium Merge Split
+
+[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/medium-merge-split.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/medium-merge-split.user.js)
+[![source][badge-source]](scripts/medium-merge-split/src/index.ts)
+
+Adds buttons to the release editor tracklist for merging a medium with an adjacent one and for splitting a medium before a track, keeping the recordings attached to the moved tracks.
+
+![merge buttons](scripts/medium-merge-split/assets/merge-buttons.png?raw=1)
+
+See the script [README](scripts/medium-merge-split/README.md) for more information.
+
 ## Deprecated Userscripts
 
 - [Add Sub-event](scripts/add-sub-event/README.md) is deprecated. Use [Event Seeder](scripts/event-seeder/README.md).

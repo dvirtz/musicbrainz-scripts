@@ -28,11 +28,16 @@ words:
   - metabrainz
   - musicbrainz
   - pwdebug
+  - Pregap
   - rels
+  - repointed
   - setlist
   - setlistfm
+  - splittable
   - tampermonkey
+  - Tocs
   - tracklist
+  - tracklists
   - Turborepo
   - typedbrainz
   - userscript

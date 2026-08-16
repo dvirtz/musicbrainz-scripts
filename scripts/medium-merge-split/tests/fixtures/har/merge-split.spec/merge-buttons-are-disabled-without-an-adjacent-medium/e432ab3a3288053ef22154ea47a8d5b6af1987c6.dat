@@ -1,0 +1,43 @@
+// ../../node_modules/dom-mutations/index.js
+function domMutations(target, options = {}) {
+  return {
+    async *[Symbol.asyncIterator]() {
+      for await (const mutations of batchedDomMutations(target, options)) {
+        yield* mutations;
+      }
+    }
+  };
+}
+function batchedDomMutations(target, { signal, ...options } = {}) {
+  return {
+    async *[Symbol.asyncIterator]() {
+      signal == null ? void 0 : signal.throwIfAborted();
+      let resolveMutations;
+      let rejectMutations;
+      const observer = new globalThis.MutationObserver((mutations) => {
+        resolveMutations == null ? void 0 : resolveMutations(mutations);
+      });
+      observer.observe(target, options);
+      signal == null ? void 0 : signal.addEventListener("abort", () => {
+        rejectMutations == null ? void 0 : rejectMutations(signal.reason);
+        observer.disconnect();
+      }, { once: true });
+      try {
+        while (true) {
+          signal == null ? void 0 : signal.throwIfAborted();
+          yield await new Promise((resolve, reject) => {
+            resolveMutations = resolve;
+            rejectMutations = reject;
+          });
+        }
+      } finally {
+        observer.disconnect();
+      }
+    }
+  };
+}
+export {
+  batchedDomMutations,
+  domMutations as default
+};
+//# sourceMappingURL=dom-mutations.js.map
