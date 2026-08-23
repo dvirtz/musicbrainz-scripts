@@ -83,5 +83,11 @@ export default tsEslint.config(
         },
       ],
     },
+  },
+  {
+    files: ['**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', {argsIgnorePattern: '^_', varsIgnorePattern: '^_'}],
+    },
   }
 );

@@ -35,19 +35,17 @@ function mergeMediums(target: EditorMedium, source: EditorMedium): void {
   }
 
   const releaseEditor = getReleaseEditor();
-  const targetHasDataTracks = target.dataTracks().length > 0;
-  const movedTracks = source.tracks.removeAll();
-
-  for (const track of movedTracks) {
-    // `medium` is a plain property, so it has to be repointed explicitly.
-    track.medium = target;
-    if (!targetHasDataTracks) {
-      track.isDataTrack(false);
-    }
+  for (const track of source.tracks()) {
+    target.pushTrack({
+      gid: track.gid,
+      name: track.name(),
+      length: track.length(),
+      artistCredit: track.artistCredit(),
+      isDataTrack: track.isDataTrack(),
+      recording: track.recording(),
+    });
   }
 
-  target.tracks.push(...movedTracks);
-  releaseEditor.resetTrackNumbers(target);
   releaseEditor.removeMedium(source);
 
   addEditNote('Medium merge');
@@ -79,21 +77,24 @@ export function splitMedium(medium: EditorMedium, track: EditorTrack): void {
   const mediumIndex = mediums.indexOf(medium);
   const trackIndex = medium.tracks.indexOf(track);
 
+  const movedTracks = medium.tracks.splice(trackIndex, medium.tracks.peek().length - trackIndex);
   const created = new releaseEditor.fields.Medium(
-    {position: medium.position() + 1, format_id: medium.formatID() ? Number(medium.formatID()) : null},
+    {
+      position: medium.position() + 1,
+      format_id: medium.formatID() ? Number(medium.formatID()) : undefined,
+      tracks: movedTracks.map((track, index) => ({
+        gid: track.gid,
+        name: track.name(),
+        length: track.length(),
+        artistCredit: track.artistCredit(),
+        position: index + 1,
+        number: track.number() == track.position() ? index + 1 : track.number(),
+        isDataTrack: track.isDataTrack(),
+        recording: track.recording(),
+      })),
+    },
     release
   );
-  created.loaded(true);
-  created.collapsed(false);
-
-  const movedTracks = medium.tracks.splice(trackIndex, medium.tracks.peek().length - trackIndex);
-  for (const moved of movedTracks) {
-    moved.medium = created;
-  }
-  created.tracks.push(...movedTracks);
-
-  releaseEditor.resetTrackNumbers(medium);
-  releaseEditor.resetTrackNumbers(created);
 
   for (const following of mediums.slice(mediumIndex + 1)) {
     following.position(following.position() + 1);
