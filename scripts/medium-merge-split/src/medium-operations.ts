@@ -1,3 +1,4 @@
+import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
 import {EditorMedium, EditorTrack, getRelease, getReleaseEditor} from '@repo/musicbrainz-ext/release-editor';
 
 export function siblingMedium(medium: EditorMedium, offset: number): EditorMedium | undefined {
@@ -48,6 +49,8 @@ function mergeMediums(target: EditorMedium, source: EditorMedium): void {
   target.tracks.push(...movedTracks);
   releaseEditor.resetTrackNumbers(target);
   releaseEditor.removeMedium(source);
+
+  addEditNote('Medium merge');
 }
 
 export function mergeUp(medium: EditorMedium): void {
@@ -96,4 +99,6 @@ export function splitMedium(medium: EditorMedium, track: EditorTrack): void {
     following.position(following.position() + 1);
   }
   release.mediums.splice(mediumIndex + 1, 0, created);
+
+  addEditNote('Medium split');
 }
