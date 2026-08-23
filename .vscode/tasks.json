@@ -62,7 +62,10 @@
 			"problemMatcher": [],
 			"windows": {
 				"command": "start chrome -ArgumentList --user-data-dir=${workspaceFolder}/.vscode/chrome-user-data,${input:debug-url}",
-			}
+			},
+			"dependsOn": [
+				"npm: dev"
+			]
 		},
 		{
 			"type": "npm",
