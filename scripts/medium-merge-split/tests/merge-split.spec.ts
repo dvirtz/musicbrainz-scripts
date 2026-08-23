@@ -5,7 +5,12 @@ import type {MBReleaseEditor} from '@repo/musicbrainz-ext/release-editor';
 import {test} from '@repo/test-support/musicbrainz-test';
 
 declare const MB: {releaseEditor: MBReleaseEditor};
-type TaggedRecording = {tag?: string};
+
+declare global {
+  interface Window {
+    mockRecordingGid(index: number): Promise<string>;
+  }
+}
 
 const releaseFormData = {
   'name': 'Merge Split Test',
@@ -24,12 +29,25 @@ function mediumForm(mediumIndex: number, trackNames: string[]): Record<string, s
   ]);
 }
 
-/** Tags every recording instance so we can tell whether merging/splitting reuses the same objects. */
-async function tagRecordings(page: Page) {
-  await page.evaluate(() => {
+function mockRecordingGid(index: number): string {
+  return `00000000-0000-0000-0000-${String(index).padStart(12, '0')}`;
+}
+
+/** Assigns every recording a stable identity so we can verify merge/split preserves them. */
+async function assignRecordingGid(page: Page) {
+  await page.exposeFunction('mockRecordingGid', mockRecordingGid);
+  await page.evaluate(async () => {
     let index = 0;
     for (const track of MB.releaseEditor.rootField.release().allTracks()) {
-      (track.recording() as TaggedRecording).tag = `recording-${index++}`;
+      track.recording().gid = await window.mockRecordingGid(index++);
+    }
+  });
+}
+
+async function resetRecordingGid(page: Page) {
+  await page.evaluate(() => {
+    for (const track of MB.releaseEditor.rootField.release().allTracks()) {
+      track.recording().gid = undefined;
     }
   });
 }
@@ -44,10 +62,23 @@ async function tracklistState(page: Page) {
         tracks: medium.tracks().map(track => ({
           name: track.name(),
           number: String(track.number()),
-          recordingTag: (track.recording() as TaggedRecording).tag,
+          recordingGid: track.recording().gid,
         })),
       }))
   );
+}
+
+async function expectEditNotePreview(page: Page, action: string, trackNames: string[]) {
+  await resetRecordingGid(page);
+
+  await page.getByRole('link', {name: 'Edit note'}).click();
+
+  await expect(page.getByRole('textbox', {name: 'Edit note:'})).toHaveValue(
+    `\n----\nMedium ${action} using userscript version 1.0.0 from https://homepage.com.`
+  );
+
+  const tracks = page.locator('div.edit-list table.medium td:nth-child(2)');
+  await expect(tracks).toHaveText(trackNames);
 }
 
 test('merge with next medium', async ({page, baseURL, userscriptPage}) => {
@@ -57,9 +88,9 @@ test('merge with next medium', async ({page, baseURL, userscriptPage}) => {
   );
   await page.getByRole('link', {name: 'Tracklist'}).click();
   await page.getByRole('button', {name: 'Show'}).click();
-  await tagRecordings(page);
+  await assignRecordingGid(page);
 
-  await page.locator('fieldset.advanced-medium').first().getByRole('button', {name: 'Merge with next medium'}).click();
+  await page.getByRole('group', {name: 'Medium 1'}).getByLabel('Merge with next medium').click();
 
   expect(await tracklistState(page)).toEqual([
     {
@@ -67,10 +98,11 @@ test('merge with next medium', async ({page, baseURL, userscriptPage}) => {
       tracks: ['One', 'Two', 'Three', 'Four', 'Five'].map((name, index) => ({
         name,
         number: String(index + 1),
-        recordingTag: `recording-${index}`,
+        recordingGid: mockRecordingGid(index),
       })),
     },
   ]);
+  await expectEditNotePreview(page, 'merge', ['One', 'Two', 'Three', 'Four', 'Five']);
 });
 
 test('merge with previous medium', async ({page, baseURL, userscriptPage}) => {
@@ -80,13 +112,9 @@ test('merge with previous medium', async ({page, baseURL, userscriptPage}) => {
   );
   await page.getByRole('link', {name: 'Tracklist'}).click();
   await page.getByRole('button', {name: 'Show'}).click();
-  await tagRecordings(page);
+  await assignRecordingGid(page);
 
-  await page
-    .locator('fieldset.advanced-medium')
-    .nth(1)
-    .getByRole('button', {name: 'Merge with previous medium'})
-    .click();
+  await page.getByRole('group', {name: 'Medium 2'}).getByLabel('Merge with previous medium').click();
 
   expect(await tracklistState(page)).toEqual([
     {
@@ -94,10 +122,11 @@ test('merge with previous medium', async ({page, baseURL, userscriptPage}) => {
       tracks: ['One', 'Two', 'Three', 'Four'].map((name, index) => ({
         name,
         number: String(index + 1),
-        recordingTag: `recording-${index}`,
+        recordingGid: mockRecordingGid(index),
       })),
     },
   ]);
+  await expectEditNotePreview(page, 'merge', ['One', 'Two', 'Three', 'Four']);
 });
 
 test('split medium before a track', async ({page, baseURL, userscriptPage}) => {
@@ -107,7 +136,7 @@ test('split medium before a track', async ({page, baseURL, userscriptPage}) => {
   );
   await page.getByRole('link', {name: 'Tracklist'}).click();
   await page.getByRole('button', {name: 'Show'}).click();
-  await tagRecordings(page);
+  await assignRecordingGid(page);
 
   await page
     .locator('tr.track')
@@ -121,7 +150,7 @@ test('split medium before a track', async ({page, baseURL, userscriptPage}) => {
       tracks: ['One', 'Two'].map((name, index) => ({
         name,
         number: String(index + 1),
-        recordingTag: `recording-${index}`,
+        recordingGid: mockRecordingGid(index),
       })),
     },
     {
@@ -129,10 +158,11 @@ test('split medium before a track', async ({page, baseURL, userscriptPage}) => {
       tracks: ['Three', 'Four'].map((name, index) => ({
         name,
         number: String(index + 1),
-        recordingTag: `recording-${index + 2}`,
+        recordingGid: mockRecordingGid(index + 2),
       })),
     },
   ]);
+  await expectEditNotePreview(page, 'split', ['One', 'Two', 'Three', 'Four']);
 });
 
 test('merge buttons are disabled without an adjacent medium', async ({page, baseURL, userscriptPage}) => {

@@ -1,14 +1,16 @@
+import {getReleaseEditor} from '#release-editor.ts';
 import dedent from 'dedent';
 
 import {isReleaseRelationshipEditor} from 'typedbrainz';
 
 export function addEditNote(message: string, document: Document = window.document) {
   const textArea = document.querySelector<HTMLTextAreaElement>('textarea.edit-note');
-  const note = editNoteFormat(message);
   if (textArea && !textArea?.value.includes(message)) {
-    const newNote = `${textArea?.value}\n${note}`;
+    const newNote = `${textArea?.value}\n${editNoteFormat(message)}`;
     if (MB?.relationshipEditor && isReleaseRelationshipEditor(MB?.relationshipEditor)) {
       MB?.relationshipEditor?.dispatch({type: 'update-edit-note', editNote: newNote});
+    } else if (typeof MB !== 'undefined' && 'releaseEditor' in MB) {
+      getReleaseEditor().rootField.editNote(newNote);
     } else {
       textArea.value = newNote;
       textArea.dispatchEvent(new Event('change', {bubbles: true}));

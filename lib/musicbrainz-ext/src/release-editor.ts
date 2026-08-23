@@ -114,13 +114,16 @@ export type EditorRelease = {
   artistCredit: Observable<ArtistCreditT>;
   releaseGroup: Observable<EditorReleaseGroup>;
   mediums: ObservableArray<EditorMedium>;
-  allTracks(): Iterable<EditorTrack>;
+  allTracks(): Generator<EditorTrack>;
 };
 
 export type MBReleaseEditor = {
   rootField: {
     release: Observable<EditorRelease>;
+    makeVotable: () => void;
     editNote: Observable<string>;
+    missingEditNote: Computed<boolean>;
+    invalidEditNote: Computed<boolean>;
   };
   fields: {
     Medium: new (medium: Partial<MediumT>, release: EditorRelease) => EditorMedium;
@@ -131,34 +134,6 @@ export type MBReleaseEditor = {
   changeMediumPosition(medium: EditorMedium, delta: number): void;
   removeMedium(medium: EditorMedium): void;
   resetTrackNumbers(medium: EditorMedium): void;
-  externalLinks?: {
-    byType: Record<string, unknown>;
-  };
-  confirmSubmit(event: Event): Promise<'success' | 'error' | 'unloadpage' | 'failed-submission' | undefined>;
-  _parseLanguageScript(languageID: string): {
-    language: Observable<string | null>;
-    script: Observable<string | null>;
-  };
-  getEditNote(): string;
-  setEditNote(editNote: string): void;
-  _editNoteDiff(): string;
-  addArtistCredit(): void;
-  editArtistCredit(index: number): void;
-  removeArtistCredit(index: number): void;
-  toggleEditNote(): void;
-  toggleArtistCredit(): void;
-  trackSelectable(index: number): void;
-  switchBothSides(): void;
-  openGuessCase(): void;
-  openGuessCase(index: number): void;
-  closeGuessCase(): void;
-  guessCase(index: number, ...args: unknown[]): unknown;
-  jumpToVisibleElement(): void;
-  jumpToFirstError(): void;
-  previousMedium(): void;
-  nextMedium(): void;
-  checkFormatAndShowWarning(): void;
-  _mediaSelectable(): boolean;
 };
 
 export function getRelease() {
