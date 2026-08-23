@@ -1,0 +1,7 @@
+import { createUI } from "/src/ui.tsx?t=1787516210608";
+async function main() {
+  await createUI();
+}
+main().catch(console.error);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGV4LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7Y3JlYXRlVUl9IGZyb20gJyN1aS50c3gnO1xyXG5cclxuYXN5bmMgZnVuY3Rpb24gbWFpbigpIHtcclxuICBhd2FpdCBjcmVhdGVVSSgpO1xyXG59XHJcblxyXG5tYWluKCkuY2F0Y2goY29uc29sZS5lcnJvcik7XHJcbiJdLCJtYXBwaW5ncyI6IkFBQUEsU0FBUSxnQkFBZTtBQUV2QixlQUFlLE9BQU87QUFDcEIsUUFBTSxTQUFTO0FBQ2pCO0FBRUEsS0FBSyxFQUFFLE1BQU0sUUFBUSxLQUFLOyIsIm5hbWVzIjpbXX0=

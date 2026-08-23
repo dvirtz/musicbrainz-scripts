@@ -1,4 +1,4 @@
-// cspell:ignore unloadpage
+// cspell:ignore unloadpage,cdtocs
 
 /**
  * Type definitions for MusicBrainz Release Editor
@@ -6,7 +6,7 @@
  */
 
 import {assertMBReleaseEditor} from '#asserts.ts';
-import {ArtistCreditT, MediumT, TrackT} from 'typedbrainz/types';
+import {ArtistCreditT} from 'typedbrainz/types';
 
 // Knockout observable shape used by MusicBrainz release editor
 export type Observable<T> = {
@@ -51,7 +51,12 @@ export type EditorMedium = {
   hasExistingTocs(): boolean;
   loadTracks(): void;
   formattedName(): string;
-  pushTrack(data: Partial<TrackT>): void;
+  pushTrack(data: Partial<EditorTrackData>): void;
+};
+
+type EditorRecording = {
+  gid?: string;
+  artistCredit: ArtistCreditT;
 };
 
 export type EditorTrack = {
@@ -68,10 +73,7 @@ export type EditorTrack = {
   /// milliseconds
   length: Observable<number | null>;
   artistCredit: Observable<ArtistCreditT>;
-  recording: Observable<{
-    gid?: string;
-    artistCredit: ArtistCreditT;
-  }>;
+  recording: Observable<EditorRecording>;
   hasExistingRecording(): boolean;
   previous(): EditorTrack | undefined;
   next(): EditorTrack | undefined;
@@ -117,6 +119,18 @@ export type EditorRelease = {
   allTracks(): Generator<EditorTrack>;
 };
 
+type EditorTrackData = {
+  id?: number;
+  gid?: string;
+  name?: string;
+  length?: number | null;
+  artistCredit?: ArtistCreditT;
+  position?: number;
+  number?: number | string;
+  isDataTrack?: boolean;
+  recording?: EditorRecording;
+};
+
 export type MBReleaseEditor = {
   rootField: {
     release: Observable<EditorRelease>;
@@ -126,14 +140,30 @@ export type MBReleaseEditor = {
     invalidEditNote: Computed<boolean>;
   };
   fields: {
-    Medium: new (medium: Partial<MediumT>, release: EditorRelease) => EditorMedium;
-    Track: new (track: Partial<TrackT>, medium: EditorMedium) => EditorTrack;
+    Medium: new (
+      data: {
+        name?: string;
+        position?: number;
+        format_id?: number;
+        id?: number;
+        tracks?: EditorTrackData[];
+        originalID?: number;
+        cdtocs?: string[];
+        toc?: string;
+      },
+      release: EditorRelease
+    ) => EditorMedium;
+    Track: new (data: EditorTrackData, medium: EditorMedium) => EditorTrack;
   };
   moveMediumUp(medium: EditorMedium): void;
   moveMediumDown(medium: EditorMedium): void;
   changeMediumPosition(medium: EditorMedium, delta: number): void;
   removeMedium(medium: EditorMedium): void;
   resetTrackNumbers(medium: EditorMedium): void;
+};
+
+export type MB = NonNullable<typeof MB> & {
+  releaseEditor: MBReleaseEditor;
 };
 
 export function getRelease() {
