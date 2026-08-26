@@ -28,4 +28,5 @@
   "search.exclude": {
     "**/fixtures/har": true
   },
+  "chat.permissions.default": "autoApprove",
 }
