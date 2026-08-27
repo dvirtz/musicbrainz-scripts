@@ -4,7 +4,7 @@ import {SourceTrackArtistCredit} from '#release-artist-actions.ts';
 import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
 import {fetchJSON, fetchResponse, tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {EditorRelease, getRelease} from '@repo/musicbrainz-ext/release-editor';
-import {ArtistCreditNameT, ArtistCreditT, MediumT, ReleaseT} from 'typedbrainz/types';
+import {ArtistCreditT, MediumT, ReleaseT} from 'typedbrainz/types';
 
 type Ws2Track = {
   artistCredit?: ArtistCreditT;
@@ -18,7 +18,7 @@ type Ws2Medium = {
 };
 
 export type Ws2Release = {
-  'artist-credit'?: ArtistCreditNameT[];
+  'artist-credit'?: Ws2ArtistCreditName[];
   country?: string;
   date?: string;
   disambiguation?: string;
@@ -28,9 +28,17 @@ export type Ws2Release = {
   'track-count'?: number;
 };
 
-export function formatArtistCredit(names: ArtistCreditNameT[] | undefined) {
+type Ws2ArtistCreditName = {
+  artist?: {
+    name?: string;
+  };
+  joinphrase?: string;
+  name?: string;
+};
+
+export function formatArtistCredit(names: Ws2ArtistCreditName[] | undefined) {
   return (names ?? [])
-    .map(name => `${name.name ?? name.artist?.name ?? ''}${name.joinPhrase ?? ''}`)
+    .map(name => `${name.name ?? name.artist?.name ?? ''}${name.joinphrase ?? ''}`)
     .join('')
     .trim();
 }
