@@ -1,3 +1,10 @@
+## @dvirtz/release-artist-toolkit-v1.1.0 (2026-08-27)
+
+* feat(release-artist-toolkit): allow toggling settings without saving ([12e8c68](https://github.com/dvirtz/musicbrainz-scripts/commit/12e8c68))
+* feat(release-artist-toolkit): copy credits from other sources ([336917b](https://github.com/dvirtz/musicbrainz-scripts/commit/336917b))
+* chore: auto approve AI tool calls ([026eccc](https://github.com/dvirtz/musicbrainz-scripts/commit/026eccc))
+* test: support new MB login page ([1f34f25](https://github.com/dvirtz/musicbrainz-scripts/commit/1f34f25)), closes [#198](https://github.com/dvirtz/musicbrainz-scripts/issues/198)
+
 ## @dvirtz/release-artist-toolkit-v1.0.0 (2026-05-31)
 
 * feat(release-artist-toolkit): rename and enhance release editor artist credit tools ([7fa126d](https://github.com/dvirtz/musicbrainz-scripts/commit/7fa126d))
