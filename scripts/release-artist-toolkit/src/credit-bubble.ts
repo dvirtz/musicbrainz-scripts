@@ -1,5 +1,6 @@
 import {getEditedArtistCredit, propagateChangedTrackArtistCredits} from '#release-artist-actions.ts';
 import {addCopyFromReleaseGroupButton} from '#release-artist-copy-button.ts';
+import {getSetting} from '#settings.ts';
 import {asyncTap} from '@repo/rxjs-ext/async-tap';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {newElements, waitForMutation} from '@repo/rxjs-ext/wait-for-element';
@@ -39,7 +40,7 @@ async function modifyArtistCreditBubble(bubble: HTMLElement) {
     const beforeSnapshot = editorId ? getEditedArtistCredit(editorId) : undefined;
 
     const applyMatchingChanges = async () => {
-      if (!(await GM.getValue('change-partially-matching', false))) {
+      if (!(await getSetting('change-partially-matching'))) {
         return;
       }
 
@@ -66,7 +67,7 @@ async function modifyArtistCreditBubble(bubble: HTMLElement) {
   if (!changeMatching) {
     // release artist
     addCopyFromReleaseGroupButton(bubble);
-  } else if ((await GM.getValue('change-matching-artists', false)) && !changeMatching.checked) {
+  } else if ((await getSetting('change-matching-artists')) && !changeMatching.checked) {
     changeMatching.click();
   }
 }

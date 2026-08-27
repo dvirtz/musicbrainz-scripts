@@ -23,7 +23,9 @@ for (const {name, close} of closeMethods) {
   test(`propagates partially matching credits when closing by ${name}`, async ({musicbrainzPage, page}) => {
     await musicbrainzPage.editTracklist(release);
 
-    const changePartiallyMatchingCheckbox = page.locator('#checkbox-cl-2-control > input');
+    const changePartiallyMatchingCheckbox = page.getByRole('checkbox', {
+      name: /^Change partially matching credits/,
+    });
     await expect(changePartiallyMatchingCheckbox).not.toBeChecked();
     await changePartiallyMatchingCheckbox.check();
 
