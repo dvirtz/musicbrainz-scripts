@@ -1,3 +1,7 @@
+## @dvirtz/release-artist-toolkit-v1.1.1 (2026-08-27)
+
+* fix(release-artist-toolkit): artist join expression rendering ([dc49b7e](https://github.com/dvirtz/musicbrainz-scripts/commit/dc49b7e))
+
 ## @dvirtz/release-artist-toolkit-v1.1.0 (2026-08-27)
 
 * feat(release-artist-toolkit): allow toggling settings without saving ([12e8c68](https://github.com/dvirtz/musicbrainz-scripts/commit/12e8c68))
