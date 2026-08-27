@@ -15,6 +15,7 @@ Toolkit for efficiently managing release editor artist credits. Provides batch o
   - Copy from recordings (per-track source)
   - Copy from another release (with MusicBrainz ID or URL)
 - **Copy from Release Group**: Copy release group artist credit to individual track credits
+- **Session-only settings**: Alt-click either checkbox to change it for the current page only, without saving it
 
 ![release artist toolkit controls](assets/toolkit-controls.png)
 
@@ -36,6 +37,9 @@ Import track credits from a different release in the same release group or by pr
 2. In the "Release artist toolkit" box:
    - Enable **"Change all artists default"** to pre-check the release-wide propagation option
    - Enable **"Change partially matching credits"** to match artists by ID across different credit structures
+   - Both checkboxes are saved and restored on the next page load. Alt-click one instead to apply it
+     to the current page only; an asterisk appears next to it and the saved value is left untouched,
+     so reloading the page restores it
 3. Click **"Manage artist credits"** to access bulk operations:
    - **Reset credits to artist names**: Restore canonical artist names on both release and tracks
    - **Reset credits to release artist**: Apply the release-level artist credit to every track

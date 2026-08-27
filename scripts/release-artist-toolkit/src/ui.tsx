@@ -1,56 +1,58 @@
 // cspell: ignore guesscase
 
 import {ManageArtistCreditsDialog} from '#manage-artist-credits-dialog.tsx';
-import {Checkbox} from '@kobalte/core/checkbox';
+import {SettingKey, setSetting} from '#settings.ts';
 import {ToolLine} from '@repo/common-ui/tool-line';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
-import {createEffect, createSignal} from 'solid-js';
+import {createSignal} from 'solid-js';
 import {render} from 'solid-js/web';
 
+function SettingCheckbox(props: {label: string; settingKey: SettingKey; initialValue: boolean}) {
+  const [checked, setChecked] = createSignal(props.initialValue);
+  const [sessionOnly, setSessionOnly] = createSignal(false);
+
+  const onClick = (event: MouseEvent & {currentTarget: HTMLInputElement}) => {
+    const persist = !event.altKey;
+    setChecked(event.currentTarget.checked);
+    setSessionOnly(!persist);
+    setSetting(props.settingKey, checked(), persist).catch(console.error);
+  };
+
+  return (
+    <label
+      style={{display: 'flex', 'align-items': 'center', gap: '4px'}}
+      title="Alt-click to change for this page only"
+    >
+      {props.label}:
+      <input type="checkbox" id={`setting-${props.settingKey}`} checked={checked()} onClick={onClick} />
+      {/* always rendered so toggling it does not shift the line */}
+      <span
+        title={`"${props.label}" is set for this page only`}
+        style={{visibility: sessionOnly() ? 'visible' : 'hidden'}}
+      >
+        *
+      </span>
+    </label>
+  );
+}
+
 function ReleaseArtistToolkitUI(props: {changeAllMatching: boolean; changePartiallyMatching: boolean}) {
-  const [changeAllMatching, setChangeAllMatching] = createSignal(props.changeAllMatching);
-  const [changePartiallyMatching, setChangePartiallyMatching] = createSignal(props.changePartiallyMatching);
-
-  createEffect(async () => {
-    await GM.setValue('change-matching-artists', changeAllMatching());
-  });
-
-  createEffect(async () => {
-    await GM.setValue('change-partially-matching', changePartiallyMatching());
-  });
-
   return (
     <ToolLine title="Release artist toolkit">
       <div class="buttons">
         <ManageArtistCreditsDialog />
       </div>
-      <Checkbox
-        checked={changeAllMatching()}
-        onChange={setChangeAllMatching}
-        children={state => (
-          <>
-            <Checkbox.Input />
-            <Checkbox.Label>Change all artists default:</Checkbox.Label>
-            <Checkbox.Control>
-              <input type="checkbox" checked={state.checked()} />
-            </Checkbox.Control>
-          </>
-        )}
-      ></Checkbox>
-      <Checkbox
-        checked={changePartiallyMatching()}
-        onChange={setChangePartiallyMatching}
-        children={state => (
-          <>
-            <Checkbox.Input />
-            <Checkbox.Label>Change partially matching credits:</Checkbox.Label>
-            <Checkbox.Control>
-              <input type="checkbox" checked={state.checked()} />
-            </Checkbox.Control>
-          </>
-        )}
-      ></Checkbox>
+      <SettingCheckbox
+        label="Change all artists default"
+        settingKey="change-matching-artists"
+        initialValue={props.changeAllMatching}
+      />
+      <SettingCheckbox
+        label="Change partially matching credits"
+        settingKey="change-partially-matching"
+        initialValue={props.changePartiallyMatching}
+      />
     </ToolLine>
   );
 }

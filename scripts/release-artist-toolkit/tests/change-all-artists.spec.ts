@@ -8,7 +8,7 @@ test('change all artists default', async ({musicbrainzPage, page}) => {
 
   const checkbox = page
     .getByRole('group', {name: 'dvirtz MusicBrainz scripts'})
-    .locator('#checkbox-cl-0-control > input');
+    .getByRole('checkbox', {name: /^Change all artists default/});
   await expect(checkbox).not.toBeChecked();
   await checkbox.check();
 
@@ -49,7 +49,7 @@ test('persisted value survives reload', async ({musicbrainzPage, userscriptPage,
 
   const checkbox = page
     .getByRole('group', {name: 'dvirtz MusicBrainz scripts'})
-    .locator('#checkbox-cl-0-control > input');
+    .getByRole('checkbox', {name: /^Change all artists default/});
   await checkbox.check();
 
   // Reload and re-inject the userscript
@@ -58,4 +58,28 @@ test('persisted value survives reload', async ({musicbrainzPage, userscriptPage,
   await musicbrainzPage.editTracklist(release);
 
   await expect(checkbox).toBeChecked();
+});
+
+test('alt-click applies for this page only', async ({musicbrainzPage, userscriptPage, page}) => {
+  await musicbrainzPage.editTracklist(release);
+
+  const checkbox = page
+    .getByRole('group', {name: 'dvirtz MusicBrainz scripts'})
+    .getByRole('checkbox', {name: /^Change all artists default/});
+  await checkbox.click({modifiers: ['Alt']});
+  await expect(checkbox).toBeChecked();
+  await expect(page.getByTitle('"Change all artists default" is set for this page only')).toBeVisible();
+
+  await page.locator('#open-ac-5628185').click();
+  await expect(page.getByRole('checkbox', {name: 'Change all artists on this'})).toBeChecked();
+
+  const stored = await page.evaluate(() => localStorage.getItem('change-matching-artists'));
+  expect(stored).toBeNull();
+
+  // Reload and re-inject the userscript
+  await userscriptPage.reload();
+
+  await musicbrainzPage.editTracklist(release);
+
+  await expect(checkbox).not.toBeChecked();
 });
