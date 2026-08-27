@@ -1,3 +1,7 @@
+## @dvirtz/medium-merge-split-v1.0.2 (2026-08-27)
+
+* fix(medium-merge-split): button appearance ([33a6a91](https://github.com/dvirtz/musicbrainz-scripts/commit/33a6a91))
+
 ## @dvirtz/medium-merge-split-v1.0.1 (2026-08-23)
 
 * fix(medium-merge-split): add edit note ([a030ee4](https://github.com/dvirtz/musicbrainz-scripts/commit/a030ee4))
