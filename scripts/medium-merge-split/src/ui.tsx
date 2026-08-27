@@ -16,16 +16,18 @@ function MediumMergeSplitUI() {
 
   return (
     <ToolLine title="Medium split/merge">
-      <Button
-        type="button"
-        onClick={() => {
-          const nextEnabled = !enabled();
-          setEnabled(nextEnabled);
-          refreshButtons(nextEnabled);
-        }}
-      >
-        {enabled() ? 'Hide' : 'Show'}
-      </Button>
+      <div class="buttons">
+        <Button
+          type="button"
+          onClick={() => {
+            const nextEnabled = !enabled();
+            setEnabled(nextEnabled);
+            refreshButtons(nextEnabled);
+          }}
+        >
+          {enabled() ? 'Hide' : 'Show'}
+        </Button>
+      </div>
     </ToolLine>
   );
 }
