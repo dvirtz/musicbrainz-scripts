@@ -100,11 +100,13 @@ type EditorReleaseEvent = {
 
 type EditorReleaseGroup = {
   artistCredit: ArtistCreditT;
+  gid?: string;
   [key: string]: unknown;
 };
 
 export type EditorRelease = {
   uniqueID: number | string;
+  gid?: string;
   name: Observable<string>;
   statusID: Observable<string>;
   languageID: Observable<string>;

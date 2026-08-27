@@ -1,0 +1,57 @@
+.overlay {
+  background: rgb(0 0 0 / 45%);
+  inset: 0;
+  position: fixed;
+  z-index: 1000;
+}
+
+.positioner {
+  align-items: center;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 1rem;
+  position: fixed;
+  z-index: 1001;
+}
+
+.content {
+  background: var(--background, #fff);
+  border: 1px solid #999;
+  box-shadow: 0 0.25rem 1rem rgb(0 0 0 / 30%);
+  max-width: 32rem;
+  padding: 1rem;
+  width: 100%;
+}
+
+.wideContent {
+  max-width: unset;
+}
+
+.title {
+  margin: 0 0 0.5rem;
+}
+
+.description {
+  margin: 0 0 1rem;
+}
+
+.actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+div.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.sourceInput {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.status {
+  margin: 0.5rem 0 0;
+}

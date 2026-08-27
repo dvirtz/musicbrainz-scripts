@@ -1,3 +1,4 @@
+import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
 import {getRelease} from '@repo/musicbrainz-ext/release-editor';
 import {ArtistCreditT} from 'typedbrainz/types';
 
@@ -25,6 +26,8 @@ export function resetAllArtistCreditsToDefault() {
   for (const track of release.allTracks()) {
     track.artistCredit(normalizeArtistNames(track.artistCredit()));
   }
+
+  addEditNote('Reset artist credits to artist names');
 }
 
 function cloneArtistCredit(artistCredit: ArtistCreditT): ArtistCreditT {
@@ -35,6 +38,80 @@ function cloneArtistCredit(artistCredit: ArtistCreditT): ArtistCreditT {
       artist: name.artist ? {...name.artist} : name.artist,
     })),
   };
+}
+
+export function resetTrackArtistCreditsToReleaseArtist() {
+  const release = getRelease();
+  const artistCredit = release.artistCredit();
+
+  for (const track of release.allTracks()) {
+    track.artistCredit(cloneArtistCredit(artistCredit));
+  }
+
+  addEditNote('Reset track artist credits to release artist');
+}
+
+export function copyTrackArtistCreditsFromRecordings() {
+  const release = getRelease();
+
+  for (const track of release.allTracks()) {
+    track.artistCredit(cloneArtistCredit(track.recording().artistCredit));
+  }
+
+  addEditNote('Copied track artist credits from recordings');
+}
+
+export type SourceTrackArtistCredit = {
+  artistCredit: ArtistCreditT;
+  mediumPosition: number;
+  trackPosition: number;
+};
+
+export type TargetMedium = {
+  position: number;
+  trackCount: number;
+};
+
+export function getTargetMediums(): TargetMedium[] {
+  return getRelease()
+    .mediums()
+    .map(medium => ({position: medium.position(), trackCount: medium.tracks().length}));
+}
+
+export function copyTrackArtistCreditsFromSource(sourceCredits: SourceTrackArtistCredit[], sourceUrl: string) {
+  const sourceCreditByPosition = new Map(
+    sourceCredits.map(source => [`${source.mediumPosition}:${source.trackPosition}`, source.artistCredit])
+  );
+  const release = getRelease();
+  let applied = 0;
+  let unmatched = 0;
+
+  for (const medium of release.mediums()) {
+    for (const track of medium.tracks()) {
+      const sourceCredit = sourceCreditByPosition.get(`${medium.position()}:${track.position()}`);
+      if (!sourceCredit) {
+        unmatched++;
+        continue;
+      }
+
+      track.artistCredit(cloneArtistCredit(sourceCredit));
+      applied++;
+    }
+  }
+
+  addEditNote(`Copied track artist credits from ${sourceUrl}`);
+  return {applied, unmatched};
+}
+
+export function copyTrackArtistCreditsFromSourceMedium(
+  sourceCredits: SourceTrackArtistCredit[],
+  targetMediumPosition: number,
+  sourceUrl: string
+) {
+  return copyTrackArtistCreditsFromSource(
+    sourceCredits.map(source => ({...source, mediumPosition: targetMediumPosition})),
+    sourceUrl
+  );
 }
 
 export function getEditedArtistCredit(editorId: string): ArtistCreditT | undefined {
