@@ -1,0 +1,104 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/manage-artist-credits-dialog.tsx");import { template as _$template } from "/node_modules/.vite/deps/solid-js_web.js?v=211a20a5";
+import { className as _$className } from "/node_modules/.vite/deps/solid-js_web.js?v=211a20a5";
+import { effect as _$effect } from "/node_modules/.vite/deps/solid-js_web.js?v=211a20a5";
+import { insert as _$insert } from "/node_modules/.vite/deps/solid-js_web.js?v=211a20a5";
+import { createComponent as _$createComponent } from "/node_modules/.vite/deps/solid-js_web.js?v=211a20a5";
+import { $$registry as _$$registry, $$refresh as _$$refresh, $$component as _$$component } from "/@solid-refresh";
+const _REGISTRY = _$$registry();
+var _tmpl$ = /* @__PURE__ */ _$template(`<div>`);
+import { CopyArtistCreditsFromRelease } from "/src/copy-artist-credits-from-release.tsx?t=1787783276421";
+import classes from "/src/manage-artist-credits-dialog.module.css?t=1787776206137";
+import { copyTrackArtistCreditsFromRecordings, resetAllArtistCreditsToDefault, resetTrackArtistCreditsToReleaseArtist } from "/src/release-artist-actions.ts";
+import { Button } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/node_modules/@kobalte/core/dist/button/index.jsx";
+import { Dialog } from "/@fs/C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/node_modules/@kobalte/core/dist/dialog/index.jsx";
+import { createSignal } from "/node_modules/.vite/deps/solid-js.js?v=211a20a5";
+export const ManageArtistCreditsDialog = _$$component(_REGISTRY, "ManageArtistCreditsDialog", function ManageArtistCreditsDialog2() {
+  const [open, setOpen] = createSignal(false);
+  return _$createComponent(Dialog, {
+    get open() {
+      return open();
+    },
+    onOpenChange: setOpen,
+    modal: true,
+    get children() {
+      return [_$createComponent(Dialog.Trigger, {
+        "class": "button",
+        children: "Manage artist credits"
+      }), _$createComponent(Dialog.Portal, {
+        get children() {
+          return [_$createComponent(Dialog.Overlay, {
+            get ["class"]() {
+              return classes.overlay;
+            }
+          }), (() => {
+            var _el$ = _tmpl$();
+            _$insert(_el$, _$createComponent(Dialog.Content, {
+              get ["class"]() {
+                return `buttons ${classes.content}`;
+              },
+              get children() {
+                return [_$createComponent(Dialog.Title, {
+                  get ["class"]() {
+                    return classes.title;
+                  },
+                  children: "Manage artist credits"
+                }), _$createComponent(Dialog.Description, {
+                  get ["class"]() {
+                    return classes.description;
+                  },
+                  children: "Choose the artist-credit source to apply."
+                }), (() => {
+                  var _el$2 = _tmpl$();
+                  _$insert(_el$2, _$createComponent(Button, {
+                    "class": "button",
+                    onClick: () => {
+                      resetAllArtistCreditsToDefault();
+                      setOpen(false);
+                    },
+                    children: "Reset credits to artist names"
+                  }), null);
+                  _$insert(_el$2, _$createComponent(Button, {
+                    "class": "button",
+                    onClick: () => {
+                      resetTrackArtistCreditsToReleaseArtist();
+                      setOpen(false);
+                    },
+                    children: "Reset credits to release artist"
+                  }), null);
+                  _$insert(_el$2, _$createComponent(Button, {
+                    "class": "button",
+                    onClick: () => {
+                      copyTrackArtistCreditsFromRecordings();
+                      setOpen(false);
+                    },
+                    children: "Copy credits from recordings"
+                  }), null);
+                  _$insert(_el$2, _$createComponent(CopyArtistCreditsFromRelease, {}), null);
+                  _$effect(() => _$className(_el$2, classes.actions));
+                  return _el$2;
+                })(), (() => {
+                  var _el$3 = _tmpl$();
+                  _$insert(_el$3, _$createComponent(Dialog.CloseButton, {
+                    children: "Cancel"
+                  }));
+                  _$effect(() => _$className(_el$3, classes.footer));
+                  return _el$3;
+                })()];
+              }
+            }));
+            _$effect(() => _$className(_el$, classes.positioner));
+            return _el$;
+          })()];
+        }
+      })];
+    }
+  });
+}, {
+  location: "src\\manage-artist-credits-dialog.tsx:12:7"
+});
+if (import.meta.hot) {
+  _$$refresh("vite", import.meta.hot, _REGISTRY);
+  import.meta.hot.accept();
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7QUFBQSxTQUFRQSxvQ0FBbUM7QUFDM0MsT0FBT0MsYUFBYTtBQUNwQixTQUNFQyxzQ0FDQUMsZ0NBQ0FDLDhDQUNLO0FBQ1AsU0FBUUMsY0FBYTtBQUNyQixTQUFRQyxjQUFhO0FBQ3JCLFNBQVFDLG9CQUFtQjtBQUUzQixhQUFnQkMsNEJBQXlCQyxhQUFBQyxXQUFBLHNDQUF6QkYsNkJBQTRCO0FBQzFDLFFBQU0sQ0FBQ0csTUFBTUMsT0FBTyxJQUFJTCxhQUFhLEtBQUs7QUFFMUMsU0FBQU0sa0JBQ0dQLFFBQU07QUFBQSxRQUFDSyxPQUFJO0FBQUEsYUFBRUEsS0FBSztBQUFBLElBQUM7QUFBQSxJQUFFRyxjQUFjRjtBQUFBQSxJQUFTRyxPQUFPO0FBQUEsSUFBSSxJQUFBQyxXQUFBO0FBQUEsY0FBQUgsa0JBQ3JEUCxPQUFPVyxTQUFPO0FBQUE7QUFBQSxRQUFBRCxVQUFBO0FBQUEsVUFBQUgsa0JBQ2RQLE9BQU9ZLFFBQU07QUFBQSxZQUFBRixXQUFBO0FBQUEsa0JBQUFILGtCQUNYUCxPQUFPYSxTQUFPO0FBQUE7QUFBQSxxQkFBUWxCLFFBQVFtQjtBQUFBQSxZQUFPO0FBQUE7QUFBQSxnQkFBQUMsT0FBQUMsT0FBQTtBQUFBQyxxQkFBQUYsTUFBQVIsa0JBRW5DUCxPQUFPa0IsU0FBTztBQUFBO0FBQUEsdUJBQVEsV0FBV3ZCLFFBQVF3QixPQUFPO0FBQUEsY0FBRTtBQUFBLGtCQUFBVCxXQUFBO0FBQUEsd0JBQUFILGtCQUNoRFAsT0FBT29CLE9BQUs7QUFBQTtBQUFBLDJCQUFRekIsUUFBUTBCO0FBQUFBLGtCQUFLO0FBQUEsa0JBQUFYLFVBQUE7QUFBQSxvQkFBQUgsa0JBQ2pDUCxPQUFPc0IsYUFBVztBQUFBO0FBQUEsMkJBQVEzQixRQUFRNEI7QUFBQUEsa0JBQVc7QUFBQSxrQkFBQWIsVUFBQTtBQUFBO0FBQUEsc0JBQUFjLFFBQUFSLE9BQUE7QUFBQUMsMkJBQUFPLE9BQUFqQixrQkFJM0NSLFFBQU07QUFBQTtBQUFBLG9CQUVMMEIsU0FBU0EsTUFBTTtBQUNiNUIscURBQStCO0FBQy9CUyw4QkFBUSxLQUFLO0FBQUEsb0JBQ2Y7QUFBQSxvQkFBQ0ksVUFBQTtBQUFBO0FBQUFPLDJCQUFBTyxPQUFBakIsa0JBSUZSLFFBQU07QUFBQTtBQUFBLG9CQUVMMEIsU0FBU0EsTUFBTTtBQUNiM0IsNkRBQXVDO0FBQ3ZDUSw4QkFBUSxLQUFLO0FBQUEsb0JBQ2Y7QUFBQSxvQkFBQ0ksVUFBQTtBQUFBO0FBQUFPLDJCQUFBTyxPQUFBakIsa0JBSUZSLFFBQU07QUFBQTtBQUFBLG9CQUVMMEIsU0FBU0EsTUFBTTtBQUNiN0IsMkRBQXFDO0FBQ3JDVSw4QkFBUSxLQUFLO0FBQUEsb0JBQ2Y7QUFBQSxvQkFBQ0ksVUFBQTtBQUFBO0FBQUFPLDJCQUFBTyxPQUFBakIsa0JBSUZiLDhCQUE0QjtBQUFBZ0MsMkJBQUEsTUFBQUMsWUFBQUgsT0E1Qm5CN0IsUUFBUWlDLE9BQU87QUFBQSx5QkFBQUo7QUFBQUEsZ0JBQUE7QUFBQSxzQkFBQUssUUFBQWIsT0FBQTtBQUFBQywyQkFBQVksT0FBQXRCLGtCQStCeEJQLE9BQU84QixhQUFXO0FBQUEsb0JBQUFwQixVQUFBO0FBQUE7QUFBQWdCLDJCQUFBLE1BQUFDLFlBQUFFLE9BRFRsQyxRQUFRb0MsTUFBTTtBQUFBLHlCQUFBRjtBQUFBQSxnQkFBQTtBQUFBO0FBQUE7QUFBQUgscUJBQUEsTUFBQUMsWUFBQVosTUFwQ2xCcEIsUUFBUXFDLFVBQVU7QUFBQSxtQkFBQWpCO0FBQUFBLFVBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQTRDdEMsR0FBQztBQUFBLEVBQUFrQixVQUFBO0FBQUE7QUFBQSxJQUFBQyxZQUFBQyxLQUFBO0FBQUFDLGFBQUEsUUFBQUYsWUFBQUMsS0FBQS9CLFNBQUE7QUFBQThCLGNBQUFDLElBQUFFLE9BQUE7QUFBQSIsIm5hbWVzIjpbIkNvcHlBcnRpc3RDcmVkaXRzRnJvbVJlbGVhc2UiLCJjbGFzc2VzIiwiY29weVRyYWNrQXJ0aXN0Q3JlZGl0c0Zyb21SZWNvcmRpbmdzIiwicmVzZXRBbGxBcnRpc3RDcmVkaXRzVG9EZWZhdWx0IiwicmVzZXRUcmFja0FydGlzdENyZWRpdHNUb1JlbGVhc2VBcnRpc3QiLCJCdXR0b24iLCJEaWFsb2ciLCJjcmVhdGVTaWduYWwiLCJNYW5hZ2VBcnRpc3RDcmVkaXRzRGlhbG9nIiwiXyQkY29tcG9uZW50IiwiX1JFR0lTVFJZIiwib3BlbiIsInNldE9wZW4iLCJfJGNyZWF0ZUNvbXBvbmVudCIsIm9uT3BlbkNoYW5nZSIsIm1vZGFsIiwiY2hpbGRyZW4iLCJUcmlnZ2VyIiwiUG9ydGFsIiwiT3ZlcmxheSIsIm92ZXJsYXkiLCJfZWwkIiwiX3RtcGwkIiwiXyRpbnNlcnQiLCJDb250ZW50IiwiY29udGVudCIsIlRpdGxlIiwidGl0bGUiLCJEZXNjcmlwdGlvbiIsImRlc2NyaXB0aW9uIiwiX2VsJDIiLCJvbkNsaWNrIiwiXyRlZmZlY3QiLCJfJGNsYXNzTmFtZSIsImFjdGlvbnMiLCJfZWwkMyIsIkNsb3NlQnV0dG9uIiwiZm9vdGVyIiwicG9zaXRpb25lciIsImxvY2F0aW9uIiwiaW1wb3J0IiwiaG90IiwiXyQkcmVmcmVzaCIsImFjY2VwdCJdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJtYW5hZ2UtYXJ0aXN0LWNyZWRpdHMtZGlhbG9nLnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge0NvcHlBcnRpc3RDcmVkaXRzRnJvbVJlbGVhc2V9IGZyb20gJyNjb3B5LWFydGlzdC1jcmVkaXRzLWZyb20tcmVsZWFzZS50c3gnO1xyXG5pbXBvcnQgY2xhc3NlcyBmcm9tICcjbWFuYWdlLWFydGlzdC1jcmVkaXRzLWRpYWxvZy5tb2R1bGUuY3NzJztcclxuaW1wb3J0IHtcclxuICBjb3B5VHJhY2tBcnRpc3RDcmVkaXRzRnJvbVJlY29yZGluZ3MsXHJcbiAgcmVzZXRBbGxBcnRpc3RDcmVkaXRzVG9EZWZhdWx0LFxyXG4gIHJlc2V0VHJhY2tBcnRpc3RDcmVkaXRzVG9SZWxlYXNlQXJ0aXN0LFxyXG59IGZyb20gJyNyZWxlYXNlLWFydGlzdC1hY3Rpb25zLnRzJztcclxuaW1wb3J0IHtCdXR0b259IGZyb20gJ0Brb2JhbHRlL2NvcmUvYnV0dG9uJztcclxuaW1wb3J0IHtEaWFsb2d9IGZyb20gJ0Brb2JhbHRlL2NvcmUvZGlhbG9nJztcclxuaW1wb3J0IHtjcmVhdGVTaWduYWx9IGZyb20gJ3NvbGlkLWpzJztcclxuXHJcbmV4cG9ydCBmdW5jdGlvbiBNYW5hZ2VBcnRpc3RDcmVkaXRzRGlhbG9nKCkge1xyXG4gIGNvbnN0IFtvcGVuLCBzZXRPcGVuXSA9IGNyZWF0ZVNpZ25hbChmYWxzZSk7XHJcblxyXG4gIHJldHVybiAoXHJcbiAgICA8RGlhbG9nIG9wZW49e29wZW4oKX0gb25PcGVuQ2hhbmdlPXtzZXRPcGVufSBtb2RhbD17dHJ1ZX0+XHJcbiAgICAgIDxEaWFsb2cuVHJpZ2dlciBjbGFzcz1cImJ1dHRvblwiPk1hbmFnZSBhcnRpc3QgY3JlZGl0czwvRGlhbG9nLlRyaWdnZXI+XHJcbiAgICAgIDxEaWFsb2cuUG9ydGFsPlxyXG4gICAgICAgIDxEaWFsb2cuT3ZlcmxheSBjbGFzcz17Y2xhc3Nlcy5vdmVybGF5fSAvPlxyXG4gICAgICAgIDxkaXYgY2xhc3M9e2NsYXNzZXMucG9zaXRpb25lcn0+XHJcbiAgICAgICAgICA8RGlhbG9nLkNvbnRlbnQgY2xhc3M9e2BidXR0b25zICR7Y2xhc3Nlcy5jb250ZW50fWB9PlxyXG4gICAgICAgICAgICA8RGlhbG9nLlRpdGxlIGNsYXNzPXtjbGFzc2VzLnRpdGxlfT5NYW5hZ2UgYXJ0aXN0IGNyZWRpdHM8L0RpYWxvZy5UaXRsZT5cclxuICAgICAgICAgICAgPERpYWxvZy5EZXNjcmlwdGlvbiBjbGFzcz17Y2xhc3Nlcy5kZXNjcmlwdGlvbn0+XHJcbiAgICAgICAgICAgICAgQ2hvb3NlIHRoZSBhcnRpc3QtY3JlZGl0IHNvdXJjZSB0byBhcHBseS5cclxuICAgICAgICAgICAgPC9EaWFsb2cuRGVzY3JpcHRpb24+XHJcbiAgICAgICAgICAgIDxkaXYgY2xhc3M9e2NsYXNzZXMuYWN0aW9uc30+XHJcbiAgICAgICAgICAgICAgPEJ1dHRvblxyXG4gICAgICAgICAgICAgICAgY2xhc3M9XCJidXR0b25cIlxyXG4gICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4ge1xyXG4gICAgICAgICAgICAgICAgICByZXNldEFsbEFydGlzdENyZWRpdHNUb0RlZmF1bHQoKTtcclxuICAgICAgICAgICAgICAgICAgc2V0T3BlbihmYWxzZSk7XHJcbiAgICAgICAgICAgICAgICB9fVxyXG4gICAgICAgICAgICAgID5cclxuICAgICAgICAgICAgICAgIFJlc2V0IGNyZWRpdHMgdG8gYXJ0aXN0IG5hbWVzXHJcbiAgICAgICAgICAgICAgPC9CdXR0b24+XHJcbiAgICAgICAgICAgICAgPEJ1dHRvblxyXG4gICAgICAgICAgICAgICAgY2xhc3M9XCJidXR0b25cIlxyXG4gICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4ge1xyXG4gICAgICAgICAgICAgICAgICByZXNldFRyYWNrQXJ0aXN0Q3JlZGl0c1RvUmVsZWFzZUFydGlzdCgpO1xyXG4gICAgICAgICAgICAgICAgICBzZXRPcGVuKGZhbHNlKTtcclxuICAgICAgICAgICAgICAgIH19XHJcbiAgICAgICAgICAgICAgPlxyXG4gICAgICAgICAgICAgICAgUmVzZXQgY3JlZGl0cyB0byByZWxlYXNlIGFydGlzdFxyXG4gICAgICAgICAgICAgIDwvQnV0dG9uPlxyXG4gICAgICAgICAgICAgIDxCdXR0b25cclxuICAgICAgICAgICAgICAgIGNsYXNzPVwiYnV0dG9uXCJcclxuICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHtcclxuICAgICAgICAgICAgICAgICAgY29weVRyYWNrQXJ0aXN0Q3JlZGl0c0Zyb21SZWNvcmRpbmdzKCk7XHJcbiAgICAgICAgICAgICAgICAgIHNldE9wZW4oZmFsc2UpO1xyXG4gICAgICAgICAgICAgICAgfX1cclxuICAgICAgICAgICAgICA+XHJcbiAgICAgICAgICAgICAgICBDb3B5IGNyZWRpdHMgZnJvbSByZWNvcmRpbmdzXHJcbiAgICAgICAgICAgICAgPC9CdXR0b24+XHJcbiAgICAgICAgICAgICAgPENvcHlBcnRpc3RDcmVkaXRzRnJvbVJlbGVhc2UgLz5cclxuICAgICAgICAgICAgPC9kaXY+XHJcbiAgICAgICAgICAgIDxkaXYgY2xhc3M9e2NsYXNzZXMuZm9vdGVyfT5cclxuICAgICAgICAgICAgICA8RGlhbG9nLkNsb3NlQnV0dG9uPkNhbmNlbDwvRGlhbG9nLkNsb3NlQnV0dG9uPlxyXG4gICAgICAgICAgICA8L2Rpdj5cclxuICAgICAgICAgIDwvRGlhbG9nLkNvbnRlbnQ+XHJcbiAgICAgICAgPC9kaXY+XHJcbiAgICAgIDwvRGlhbG9nLlBvcnRhbD5cclxuICAgIDwvRGlhbG9nPlxyXG4gICk7XHJcbn1cclxuIl0sImZpbGUiOiJDOi9Vc2Vycy9keWl0emNoYWtpL0dpdEh1Yi9tZXRhYnJhaW56L211c2ljYnJhaW56LXNjcmlwdHMvc2NyaXB0cy9yZWxlYXNlLWFydGlzdC10b29sa2l0L3NyYy9tYW5hZ2UtYXJ0aXN0LWNyZWRpdHMtZGlhbG9nLnRzeCJ9

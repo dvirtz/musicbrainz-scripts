@@ -1,7 +1,6 @@
 // cspell: ignore guesscase
 
-import {resetAllArtistCreditsToDefault} from '#release-artist-actions.ts';
-import {Button} from '@kobalte/core/button';
+import {ManageArtistCreditsDialog} from '#manage-artist-credits-dialog.tsx';
 import {Checkbox} from '@kobalte/core/checkbox';
 import {ToolLine} from '@repo/common-ui/tool-line';
 import {toolbox} from '@repo/common-ui/toolbox';
@@ -24,18 +23,7 @@ function ReleaseArtistToolkitUI(props: {changeAllMatching: boolean; changePartia
   return (
     <ToolLine title="Release artist toolkit">
       <div class="buttons">
-        <Button
-          class="button"
-          onClick={() => {
-            try {
-              resetAllArtistCreditsToDefault();
-            } catch (error) {
-              console.error(error);
-            }
-          }}
-        >
-          Reset artist names
-        </Button>
+        <ManageArtistCreditsDialog />
       </div>
       <Checkbox
         checked={changeAllMatching()}

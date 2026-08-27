@@ -3,7 +3,7 @@ import defineConfig from '@repo/vite-config/userscript-config';
 export default defineConfig('release-artist-toolkit', {
   name: 'Release artist toolkit',
   description:
-    'Release editor tools: change-all default, reset artist names, and copy release credit from release group.',
+    'Release editor tools: change-all default, manage artist credits, and copy release credit from release group.',
   version: '1.0.0',
   // icon: 'https://nocs.acum.org.il/acumsitesearchdb/resources/images/faviconSite.svg',
   match: [

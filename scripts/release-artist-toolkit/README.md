@@ -3,26 +3,64 @@
 [![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/release-artist-toolkit.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/release-artist-toolkit.user.js)
 [![source][badge-source]](src/index.ts)
 
-Toolkit for release editor artist credits.
+Toolkit for efficiently managing release editor artist credits. Provides batch operations to reset and copy artist credits across tracks, with options for canonical names, recording credits, or another release's credits.
 
-- Sets the default value of "Change all artists" check box in the track list edit page.
-- Adds a "Change partially matching credits" mode that propagates edited artist names by artist ID,
-  even when full credits are not identical.
-- Resets edited artist credit names back to canonical artist names on the release and tracks.
-- Adds a "Copy from RG" button in the release artist bubble to copy the release group artist credit.
+## Features
+
+- **Change all artists default**: Pre-checks the "Change all artists" option to propagate edits across all tracks
+- **Change partially matching credits**: Propagates edited artist names by artist ID, even when full credits are not identical
+- **Artist credit actions**: Quick dialogs to reset or copy artist credits in bulk:
+  - Reset to artist names (canonical)
+  - Reset to release artist (uniform)
+  - Copy from recordings (per-track source)
+  - Copy from another release (with MusicBrainz ID or URL)
+- **Copy from Release Group**: Copy release group artist credit to individual track credits
 
 ![release artist toolkit controls](assets/toolkit-controls.png)
 
-![release credit bubble](assets/release-credit-bubble.png)
+### Manage Artist Credits Dialog
+
+Quick-access menu for all artist credit operations:
+
+![manage artist credits dialog](assets/manage-dialog.png)
+
+### Copy from Another Release Dialog
+
+Import track credits from a different release in the same release group or by providing a release/medium ID:
+
+![copy from another release dialog](assets/copy-dialog.png)
 
 ## Usage
 
 1. Open a release edit page.
 2. In the "Release artist toolkit" box:
-3. Enable "Change all artists default" to pre-check the bubble option.
-4. Enable "Change partially matching credits" to propagate by artist ID across different credits.
-5. Click "Reset artist names" to restore canonical names for release and tracks.
-6. In the release artist bubble, click "Copy from RG" to copy the release group credit.
+   - Enable **"Change all artists default"** to pre-check the release-wide propagation option
+   - Enable **"Change partially matching credits"** to match artists by ID across different credit structures
+3. Click **"Manage artist credits"** to access bulk operations:
+   - **Reset credits to artist names**: Restore canonical artist names on both release and tracks
+   - **Reset credits to release artist**: Apply the release-level artist credit to every track
+   - **Copy credits from recordings**: Use each recording's artist credit for its track
+   - **Copy credits from another release**: Select a release or medium (from this release group or by ID/URL) and match credits by position
+4. In the release artist credit bubble, click **"Copy from RG"** to copy the release group credit
+
+### Copy Source Formats
+
+For "Copy credits from another release," accept any of:
+
+- Release MBID: `29fef51a-6c85-4f4d-8274-9fd342fe0a24`
+- MusicBrainz URL: `https://musicbrainz.org/release/29fef51a-6c85-4f4d-8274-9fd342fe0a24`
+- Medium URL: `https://musicbrainz.org/release/29fef51a-6c85-4f4d-8274-9fd342fe0a24/disc/1`
+- Disc URL: `https://musicbrainz.org/release/29fef51a-6c85-4f4d-8274-9fd342fe0a24/disc/1`
+- Or select a release from the same release group in the dialog
+
+## How It Works
+
+All operations record an edit note with the action performed:
+
+- Reset actions note the type of reset applied
+- Copy actions note the source release URL for traceability
+
+Track artist credits are auto-matched by position; if a source medium and target release have the same track count, credits are applied automatically. Otherwise, you can choose which target medium to apply them to.
 
 ## Release Notes
 

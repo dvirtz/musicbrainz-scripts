@@ -1,0 +1,28 @@
+import { createHotContext as __vite__createHotContext } from "/@vite/client";import.meta.hot = __vite__createHotContext("/src/manage-artist-credits-dialog.module.css");import { updateStyle as __vite__updateStyle, removeStyle as __vite__removeStyle } from "/@vite/client"
+const __vite__id = "C:/Users/dyitzchaki/GitHub/metabrainz/musicbrainz-scripts/scripts/release-artist-toolkit/src/manage-artist-credits-dialog.module.css"
+const __vite__css = "._overlay_yqi9e_1 {\r\n  background: rgb(0 0 0 / 45%);\r\n  inset: 0;\r\n  position: fixed;\r\n  z-index: 1000;\r\n}\r\n\r\n._positioner_yqi9e_15 {\r\n  align-items: center;\r\n  display: flex;\r\n  inset: 0;\r\n  justify-content: center;\r\n  padding: 1rem;\r\n  position: fixed;\r\n  z-index: 1001;\r\n}\r\n\r\n._content_yqi9e_35 {\r\n  background: var(--background, #fff);\r\n  border: 1px solid #999;\r\n  box-shadow: 0 0.25rem 1rem rgb(0 0 0 / 30%);\r\n  max-width: 32rem;\r\n  padding: 1rem;\r\n  width: 100%;\r\n}\r\n\r\n._wideContent_yqi9e_53 {\r\n  max-width: unset;\r\n}\r\n\r\n._title_yqi9e_61 {\r\n  margin: 0 0 0.5rem;\r\n}\r\n\r\n._description_yqi9e_69 {\r\n  margin: 0 0 1rem;\r\n}\r\n\r\n._actions_yqi9e_77 {\r\n  display: grid;\r\n  gap: 0.5rem;\r\n}\r\n\r\ndiv._footer_yqi9e_87 {\r\n  display: flex;\r\n  justify-content: flex-end;\r\n  margin-top: 1rem;\r\n}\r\n\r\n._sourceInput_yqi9e_99 {\r\n  box-sizing: border-box;\r\n  width: 100%;\r\n}\r\n\r\n._status_yqi9e_109 {\r\n  margin: 0.5rem 0 0;\r\n}\r\n"
+__vite__updateStyle(__vite__id, __vite__css)
+export const overlay = "_overlay_yqi9e_1";
+export const positioner = "_positioner_yqi9e_15";
+export const content = "_content_yqi9e_35";
+export const wideContent = "_wideContent_yqi9e_53";
+export const title = "_title_yqi9e_61";
+export const description = "_description_yqi9e_69";
+export const actions = "_actions_yqi9e_77";
+export const footer = "_footer_yqi9e_87";
+export const sourceInput = "_sourceInput_yqi9e_99";
+export const status = "_status_yqi9e_109";
+export default {
+	overlay: overlay,
+	positioner: positioner,
+	content: content,
+	wideContent: wideContent,
+	title: title,
+	description: description,
+	actions: actions,
+	footer: footer,
+	sourceInput: sourceInput,
+	status: status
+};
+
+import.meta.hot.prune(() => __vite__removeStyle(__vite__id))
