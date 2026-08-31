@@ -37,7 +37,7 @@ async function modifyArtistCreditBubble(bubble: HTMLElement) {
   if (form.dataset.releaseArtistToolkitBound !== 'true') {
     form.dataset.releaseArtistToolkitBound = 'true';
     const editorId = getEditorId(form);
-    const beforeSnapshot = editorId ? getEditedArtistCredit(editorId) : undefined;
+    const beforeSnapshot = editorId ? await getEditedArtistCredit(editorId) : undefined;
 
     const applyMatchingChanges = async () => {
       if (!(await getSetting('change-partially-matching'))) {
@@ -48,7 +48,7 @@ async function modifyArtistCreditBubble(bubble: HTMLElement) {
         return;
       }
 
-      const afterSnapshot = editorId ? getEditedArtistCredit(editorId) : undefined;
+      const afterSnapshot = editorId ? await getEditedArtistCredit(editorId) : undefined;
       propagateChangedTrackArtistCredits(beforeSnapshot, afterSnapshot);
     };
 
