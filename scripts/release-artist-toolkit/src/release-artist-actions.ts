@@ -1,6 +1,7 @@
 import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
+import {fetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {getRelease} from '@repo/musicbrainz-ext/release-editor';
-import {ArtistCreditT} from 'typedbrainz/types';
+import {ArtistCreditT, ArtistT} from 'typedbrainz/types';
 
 function normalizeArtistNames(artistCredit: ArtistCreditT): ArtistCreditT {
   return {
@@ -30,32 +31,38 @@ export function resetAllArtistCreditsToDefault() {
   addEditNote('Reset artist credits to artist names');
 }
 
-function cloneArtistCredit(artistCredit: ArtistCreditT): ArtistCreditT {
+async function fetchArtist(mbid: string) {
+  return await fetchJSON<ArtistT>(`/ws/js/entity/${mbid}`);
+}
+
+async function cloneArtistCredit(artistCredit: ArtistCreditT): Promise<ArtistCreditT> {
   return {
     ...artistCredit,
-    names: artistCredit.names.map(name => ({
-      ...name,
-      artist: name.artist ? {...name.artist} : name.artist,
-    })),
+    names: await Promise.all(
+      artistCredit.names.map(async name => ({
+        ...name,
+        artist: name.artist.id || !name.artist.gid ? name.artist : await fetchArtist(name.artist.gid),
+      }))
+    ),
   };
 }
 
-export function resetTrackArtistCreditsToReleaseArtist() {
+export async function resetTrackArtistCreditsToReleaseArtist() {
   const release = getRelease();
   const artistCredit = release.artistCredit();
 
   for (const track of release.allTracks()) {
-    track.artistCredit(cloneArtistCredit(artistCredit));
+    track.artistCredit(await cloneArtistCredit(artistCredit));
   }
 
   addEditNote('Reset track artist credits to release artist');
 }
 
-export function copyTrackArtistCreditsFromRecordings() {
+export async function copyTrackArtistCreditsFromRecordings() {
   const release = getRelease();
 
   for (const track of release.allTracks()) {
-    track.artistCredit(cloneArtistCredit(track.recording().artistCredit));
+    track.artistCredit(await cloneArtistCredit(track.recording().artistCredit));
   }
 
   addEditNote('Copied track artist credits from recordings');
@@ -78,7 +85,7 @@ export function getTargetMediums(): TargetMedium[] {
     .map(medium => ({position: medium.position(), trackCount: medium.tracks().length}));
 }
 
-export function copyTrackArtistCreditsFromSource(sourceCredits: SourceTrackArtistCredit[], sourceUrl: string) {
+export async function copyTrackArtistCreditsFromSource(sourceCredits: SourceTrackArtistCredit[], sourceUrl: string) {
   const sourceCreditByPosition = new Map(
     sourceCredits.map(source => [`${source.mediumPosition}:${source.trackPosition}`, source.artistCredit])
   );
@@ -94,7 +101,7 @@ export function copyTrackArtistCreditsFromSource(sourceCredits: SourceTrackArtis
         continue;
       }
 
-      track.artistCredit(cloneArtistCredit(sourceCredit));
+      track.artistCredit(await cloneArtistCredit(sourceCredit));
       applied++;
     }
   }
@@ -114,16 +121,16 @@ export function copyTrackArtistCreditsFromSourceMedium(
   );
 }
 
-export function getEditedArtistCredit(editorId: string): ArtistCreditT | undefined {
+export async function getEditedArtistCredit(editorId: string): Promise<ArtistCreditT | undefined> {
   const release = getRelease();
 
   if (String(release.uniqueID) === editorId) {
-    return cloneArtistCredit(release.artistCredit());
+    return await cloneArtistCredit(release.artistCredit());
   }
 
   for (const track of release.allTracks()) {
     if (String(track.uniqueID) === editorId) {
-      return cloneArtistCredit(track.artistCredit());
+      return await cloneArtistCredit(track.artistCredit());
     }
   }
 

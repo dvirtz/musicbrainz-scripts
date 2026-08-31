@@ -63,7 +63,7 @@ export function CopyArtistCreditsFromRelease(props: {onDone: () => void}) {
       }
 
       if (source.mediumPosition === undefined) {
-        reportResult(copyTrackArtistCreditsFromSource(sourceCredits, source.sourceUrl));
+        reportResult(await copyTrackArtistCreditsFromSource(sourceCredits, source.sourceUrl));
         closeAfterApply();
         return;
       }
@@ -73,7 +73,9 @@ export function CopyArtistCreditsFromRelease(props: {onDone: () => void}) {
       const targetMedium =
         targetMediums.length === 1 ? targetMediums[0] : matchingMediums.length === 1 ? matchingMediums[0] : undefined;
       if (targetMedium) {
-        reportResult(copyTrackArtistCreditsFromSourceMedium(sourceCredits, targetMedium.position, source.sourceUrl));
+        reportResult(
+          await copyTrackArtistCreditsFromSourceMedium(sourceCredits, targetMedium.position, source.sourceUrl)
+        );
         closeAfterApply();
         return;
       }
@@ -87,13 +89,13 @@ export function CopyArtistCreditsFromRelease(props: {onDone: () => void}) {
     }
   };
 
-  const applyToMedium = (position: number) => {
+  const applyToMedium = async (position: number) => {
     const source = pendingSource();
     if (!source) {
       return;
     }
 
-    reportResult(copyTrackArtistCreditsFromSourceMedium(source.credits, position, source.sourceUrl));
+    reportResult(await copyTrackArtistCreditsFromSourceMedium(source.credits, position, source.sourceUrl));
     setPendingSource();
     closeAfterApply();
   };
@@ -168,7 +170,12 @@ export function CopyArtistCreditsFromRelease(props: {onDone: () => void}) {
               {pendingSource() && (
                 <For each={getTargetMediums()}>
                   {medium => (
-                    <Button class="button" onClick={() => applyToMedium(medium.position)}>
+                    <Button
+                      class="button"
+                      onClick={() => {
+                        applyToMedium(medium.position).catch(console.error);
+                      }}
+                    >
                       Apply to medium {medium.position} ({medium.trackCount} tracks)
                     </Button>
                   )}

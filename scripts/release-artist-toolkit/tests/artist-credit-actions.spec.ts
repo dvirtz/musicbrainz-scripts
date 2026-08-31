@@ -1,4 +1,4 @@
-import {expect, Locator, Page} from '@playwright/test';
+import {expect, Locator} from '@playwright/test';
 import {test as baseTest} from '@repo/test-support/musicbrainz-test';
 
 // cspell: disable
@@ -14,9 +14,10 @@ const expectedCopiedCredit = 'Daniela Spector';
 // cspell: enable
 
 type ArtistCreditTool = {
-  openDialog: () => Promise<Locator>;
-  page: Page;
   trackArtistName: Locator;
+  openDialog: () => Promise<Locator>;
+  verifyArtistCredit: (name: string | RegExp) => Promise<void>;
+  verifyEditNoteTab: (message: string) => Promise<void>;
 };
 
 type ArtistCreditToolOptions = {
@@ -24,26 +25,31 @@ type ArtistCreditToolOptions = {
   targetTrackName: string;
 };
 
-async function verifyEditNoteTab(page: Page, message: string) {
-  await page.getByRole('link', {name: 'Edit note'}).click();
-
-  await expect(page.getByRole('textbox', {name: 'Edit note:'})).toHaveValue(
-    `\n----\n${message} using userscript version 1.0.0 from https://homepage.com.`
-  );
-}
-
 const test = baseTest.extend<ArtistCreditToolOptions & {artistCreditTool: ArtistCreditTool}>({
   targetRelease: [release, {option: true}],
   targetTrackName: [trackName, {option: true}],
   artistCreditTool: async ({musicbrainzPage, page, targetRelease, targetTrackName}, use) => {
     await musicbrainzPage.editTracklist(targetRelease);
+    const trackArtistName = page
+      .getByRole('row', {name: targetTrackName})
+      .getByPlaceholder('Type to search, or paste an');
     await use({
+      trackArtistName,
       openDialog: async () => {
         await page.getByRole('button', {name: 'Manage artist credits'}).click();
         return page.getByRole('dialog', {name: 'Manage artist credits'});
       },
-      page,
-      trackArtistName: page.getByRole('row', {name: targetTrackName}).getByPlaceholder('Type to search, or paste an'),
+      verifyArtistCredit: async name => {
+        await expect(trackArtistName).toHaveClass(/lookup-performed/);
+        await expect(trackArtistName).toHaveValue(name);
+      },
+      verifyEditNoteTab: async message => {
+        await page.getByRole('link', {name: 'Edit note'}).click();
+
+        await expect(page.getByRole('textbox', {name: 'Edit note:'})).toHaveValue(
+          `\n----\n${message} using userscript version 1.0.0 from https://homepage.com.`
+        );
+      },
     });
   },
 });
@@ -54,8 +60,8 @@ test('reset action restores canonical artist name', async ({artistCreditTool}) =
 
   await dialog.getByRole('button', {name: 'Reset credits to artist names'}).click();
 
-  await expect(artistCreditTool.trackArtistName).toHaveValue(artistName);
-  await verifyEditNoteTab(artistCreditTool.page, 'Reset artist credits to artist names');
+  await artistCreditTool.verifyArtistCredit(artistName);
+  await artistCreditTool.verifyEditNoteTab('Reset artist credits to artist names');
 });
 
 test('applies the release artist credit to every track', async ({artistCreditTool}) => {
@@ -64,8 +70,8 @@ test('applies the release artist credit to every track', async ({artistCreditToo
 
   await dialog.getByRole('button', {name: 'Reset credits to release artist'}).click();
 
-  await expect(artistCreditTool.trackArtistName).toHaveValue(releaseArtistCredit);
-  await verifyEditNoteTab(artistCreditTool.page, 'Reset track artist credits to release artist');
+  await artistCreditTool.verifyArtistCredit(releaseArtistCredit);
+  await artistCreditTool.verifyEditNoteTab('Reset track artist credits to release artist');
 });
 
 test('copies recording artist credits to tracks', async ({artistCreditTool}) => {
@@ -74,8 +80,8 @@ test('copies recording artist credits to tracks', async ({artistCreditTool}) => 
 
   await dialog.getByRole('button', {name: 'Copy credits from recordings'}).click();
 
-  await expect(artistCreditTool.trackArtistName).toHaveValue(recordingArtistCredit);
-  await verifyEditNoteTab(artistCreditTool.page, 'Copied track artist credits from recordings');
+  await artistCreditTool.verifyArtistCredit(recordingArtistCredit);
+  await artistCreditTool.verifyEditNoteTab('Copied track artist credits from recordings');
 });
 
 const copyFromReleaseTest = test.extend({
@@ -83,37 +89,29 @@ const copyFromReleaseTest = test.extend({
   targetTrackName: copyTargetTrackName,
 });
 
-copyFromReleaseTest('copies credits from a pasted source release', async ({artistCreditTool, baseURL}) => {
+copyFromReleaseTest('copies credits from a pasted source release', async ({artistCreditTool, baseURL, page}) => {
   const dialog = await artistCreditTool.openDialog();
   await dialog.getByRole('button', {name: 'Copy credits from another release'}).click();
-  const sourceDialog = artistCreditTool.page.getByRole('dialog', {name: 'Copy credits from another release'});
-  await artistCreditTool.page.getByLabel('Source release or medium').fill(copySourceRelease);
-  await artistCreditTool.page.getByRole('button', {name: 'Apply'}).click();
+  const sourceDialog = page.getByRole('dialog', {name: 'Copy credits from another release'});
+  await page.getByLabel('Source release or medium').fill(copySourceRelease);
+  await page.getByRole('button', {name: 'Apply'}).click();
   await expect(sourceDialog).not.toBeVisible();
   await expect(dialog).not.toBeVisible();
 
-  await expect(artistCreditTool.trackArtistName).toHaveClass(/lookup-performed/);
-  await expect(artistCreditTool.trackArtistName).toHaveValue(expectedCopiedCredit);
-  await verifyEditNoteTab(
-    artistCreditTool.page,
-    `Copied track artist credits from ${baseURL}/release/${copySourceRelease}`
-  );
+  await artistCreditTool.verifyArtistCredit(expectedCopiedCredit);
+  await artistCreditTool.verifyEditNoteTab(`Copied track artist credits from ${baseURL}/release/${copySourceRelease}`);
 });
 
-copyFromReleaseTest('copies credits from a selected source release', async ({artistCreditTool, baseURL}) => {
+copyFromReleaseTest('copies credits from a selected source release', async ({artistCreditTool, baseURL, page}) => {
   const dialog = await artistCreditTool.openDialog();
   await dialog.getByRole('button', {name: 'Copy credits from another release'}).click();
-  const sourceDialog = artistCreditTool.page.getByRole('dialog', {name: 'Copy credits from another release'});
+  const sourceDialog = page.getByRole('dialog', {name: 'Copy credits from another release'});
   await sourceDialog.getByRole('row', {name: expectedCopiedCredit}).getByRole('radio').check();
   await expect(sourceDialog.getByRole('row', {name: expectedCopiedCredit})).toBeVisible();
   await sourceDialog.getByRole('button', {name: 'Apply'}).click();
   await expect(sourceDialog).not.toBeVisible();
   await expect(dialog).not.toBeVisible();
 
-  await expect(artistCreditTool.trackArtistName).toHaveClass(/lookup-performed/);
-  await expect(artistCreditTool.trackArtistName).toHaveValue(expectedCopiedCredit);
-  await verifyEditNoteTab(
-    artistCreditTool.page,
-    `Copied track artist credits from ${baseURL}/release/${copySourceRelease}`
-  );
+  await artistCreditTool.verifyArtistCredit(expectedCopiedCredit);
+  await artistCreditTool.verifyEditNoteTab(`Copied track artist credits from ${baseURL}/release/${copySourceRelease}`);
 });

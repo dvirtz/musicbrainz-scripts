@@ -36,8 +36,9 @@ export function ManageArtistCreditsDialog() {
               <Button
                 class="button"
                 onClick={() => {
-                  resetTrackArtistCreditsToReleaseArtist();
-                  setOpen(false);
+                  resetTrackArtistCreditsToReleaseArtist()
+                    .then(() => setOpen(false))
+                    .catch(console.error);
                 }}
               >
                 Reset credits to release artist
@@ -45,8 +46,9 @@ export function ManageArtistCreditsDialog() {
               <Button
                 class="button"
                 onClick={() => {
-                  copyTrackArtistCreditsFromRecordings();
-                  setOpen(false);
+                  copyTrackArtistCreditsFromRecordings()
+                    .then(() => setOpen(false))
+                    .catch(console.error);
                 }}
               >
                 Copy credits from recordings
