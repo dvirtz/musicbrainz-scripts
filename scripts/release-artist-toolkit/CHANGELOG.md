@@ -1,3 +1,7 @@
+## @dvirtz/release-artist-toolkit-v1.1.2 (2026-08-31)
+
+* fix(release-artist-toolkit): make sure copied artists are loaded ([8d61080](https://github.com/dvirtz/musicbrainz-scripts/commit/8d61080))
+
 ## @dvirtz/release-artist-toolkit-v1.1.1 (2026-08-27)
 
 * fix(release-artist-toolkit): artist join expression rendering ([dc49b7e](https://github.com/dvirtz/musicbrainz-scripts/commit/dc49b7e))
