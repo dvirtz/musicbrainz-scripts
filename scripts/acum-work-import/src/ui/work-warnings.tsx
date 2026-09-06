@@ -72,13 +72,13 @@ function warningEditNote(track: WorkBean) {
 }
 
 function renderFoundArtistWarning(
-  warning: Extract<PerWorkWarning, {type: 'found-by-name' | 'found-by-alias'}>,
+  warning: Extract<PerWorkWarning, {type: 'found-by-name' | 'found-by-alias' | 'artist-missing-data'}>,
+  description: string,
   track: WorkBean,
   work: WorkT,
   recording: RecordingT | undefined,
   resolveArtistWarnings?: (ipBaseNumber: string, artist: ArtistT) => void
 ) {
-  const description = warning.type.replaceAll('-', ' ');
   return (
     <>
       {capitalizeFirst(warning.role)} <a href={`/artist/${warning.artistId}`}>{warning.artistName}</a> {description},
@@ -165,9 +165,18 @@ export function renderWarning(
     case 'creator-not-found':
       return <>Failed to find creator with IPI {warning.ipi}.</>;
     case 'found-by-name':
-      return renderFoundArtistWarning(warning, track, work, recording, resolveArtistWarnings);
+      return renderFoundArtistWarning(warning, 'was found by name', track, work, recording, resolveArtistWarnings);
     case 'found-by-alias':
-      return renderFoundArtistWarning(warning, track, work, recording, resolveArtistWarnings);
+      return renderFoundArtistWarning(warning, 'was found by an alias', track, work, recording, resolveArtistWarnings);
+    case 'artist-missing-data':
+      return renderFoundArtistWarning(
+        warning,
+        'is missing IPI or ACUM link',
+        track,
+        work,
+        recording,
+        resolveArtistWarnings
+      );
     case 'failed-to-find':
       return (
         <>

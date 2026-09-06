@@ -10,7 +10,7 @@ function mutationElementStream<T extends Element>(
 ): Observable<T> {
   return from(domMutations(target, options)).pipe(
     mergeMap((m: MutationRecord) => nodeListSelector(m)),
-    filter((node): node is Element => node instanceof Element),
+    filter((node): node is Element => node.nodeType === Node.ELEMENT_NODE),
     mergeMap(element => from(element.querySelectorAll('*')).pipe(startWith(element))),
     filter(filterPredicate)
   );

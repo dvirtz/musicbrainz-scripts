@@ -27,6 +27,11 @@ export type ArtistWarning =
     })
   | (MissingArtistWarningBase & {
       type: 'failed-to-find';
+    })
+  | (MissingArtistWarningBase & {
+      type: 'artist-missing-data';
+      artistId: string;
+      artistName: string;
     });
 
 export type ArtistLookupResult = {artist: ArtistT | null; warnings: ArtistWarning[]};
