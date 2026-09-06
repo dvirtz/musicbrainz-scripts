@@ -108,9 +108,23 @@ function getRelationship(sourceEntity: RelatableEntityT, artistId: string, linkT
 }
 
 function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, value: string) {
+  const view = input.ownerDocument.defaultView;
+  if (!view) {
+    throw new Error('Input has no owning window.');
+  }
+
+  const valueDescriptor = Object.getOwnPropertyDescriptor(
+    input.tagName === 'TEXTAREA' ? view.HTMLTextAreaElement.prototype : view.HTMLInputElement.prototype,
+    'value'
+  );
+  if (!valueDescriptor?.set) {
+    throw new Error('Input value setter is unavailable.');
+  }
+
   input.focus();
-  input.value = value;
-  input.dispatchEvent(new Event('change', {bubbles: true}));
+  valueDescriptor.set.call(input, value);
+  input.dispatchEvent(new view.Event('input', {bubbles: true}));
+  input.dispatchEvent(new view.Event('change', {bubbles: true}));
 }
 
 function getCookieValue(doc: Document, name: string): string | null {
@@ -226,7 +240,17 @@ async function runCreateFlow(params: OpenArtistDialogParams, sourceEntity: Relat
       setInputValue(ipiInput, params.ipi);
     }
   } else if (params.ipBaseNumber) {
-    const urlInput = artistForm.querySelector<HTMLInputElement>('input[name="edit-artist.url.0.text"]');
+    const externalLinksContainer = artistForm.querySelector<HTMLDivElement>('div.external-links-editor-container');
+    const urlInput =
+      externalLinksContainer?.querySelector<HTMLInputElement>('input[type="url"]') ||
+      (await waitForElement(
+        (element): element is HTMLInputElement => {
+          const view = element.ownerDocument.defaultView;
+          return view !== null && element instanceof view.HTMLInputElement && element.getAttribute('type') === 'url';
+        },
+        undefined,
+        externalLinksContainer ?? undefined
+      ));
     if (urlInput) {
       setInputValue(urlInput, creatorUrl(params.ipBaseNumber));
     }

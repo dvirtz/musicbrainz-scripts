@@ -1,15 +1,19 @@
-import {IPBaseNumber, WorkBean} from '#acum.ts';
+// cspell: ignore ipis
+
+import {creatorUrl, IPBaseNumber, WorkBean} from '#acum.ts';
 import {ArtistLookupCache} from '#artists.ts';
 import {linkArrangers, linkWriters} from '#link-artists.ts';
 import {addArtistRelationship} from '#relationships.ts';
 import {PerWorkWarning} from '#ui/work-warnings.tsx';
 import {WorkEditData, workEditData, workEditDataEqual} from '#work-edit-data.ts';
 import {createWork} from '#works.ts';
+import {partition} from '@repo/common/parition';
 import {assertMBTree, assertRelationshipEditor, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {buildOptionList, buildOptionListFromKeys} from '@repo/musicbrainz-ext/build-options-list';
 import {compareInsensitive, compareNumbers, compareWorks} from '@repo/musicbrainz-ext/compare';
 import {ARRANGER_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
 import {urlFromMbid} from '@repo/musicbrainz-ext/edits';
+import {fetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {WorkAttributeTypeAllowedValueT} from '@repo/musicbrainz-ext/type-info';
 import {createContext, createEffect, createResource, createSignal, onCleanup, ParentProps, useContext} from 'solid-js';
@@ -250,6 +254,23 @@ type ArtistResolvedEventDetail = {
   artist: ArtistT;
 };
 
+async function artistHasIpiOrAcumLink(artist: ArtistT, ipBaseNumber: string) {
+  type ArtistResponse = {
+    ipis?: string[];
+    relations?: Array<{
+      'target-type'?: string;
+      url?: {id?: string; resource?: string};
+    }>;
+  };
+
+  const {ipis, relations} = await fetchJSON<ArtistResponse>(`/ws/2/artist/${artist.gid}?fmt=json&inc=url-rels`);
+
+  return (
+    ipis?.includes(ipBaseNumber) ||
+    relations?.some(rel => rel['target-type'] === 'url' && rel.url?.resource === creatorUrl(ipBaseNumber))
+  );
+}
+
 export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
   const [liveEditData, setLiveEditData] = createStore(props.initialState?.liveEditData ?? emptyEditData());
   const [savedEditData, setSavedEditData] = createSignal(props.initialState?.savedEditData ?? emptyEditData());
@@ -267,32 +288,47 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
       })
     );
 
-  const onArtistResolved = (event: Event) => {
+  const onArtistResolved = async (event: Event) => {
     const {ipBaseNumber, artist} = (event as CustomEvent<ArtistResolvedEventDetail>).detail;
-    const matchingWarnings = warnings().filter(
-      warning => 'ipBaseNumber' in warning && warning.ipBaseNumber === ipBaseNumber && 'linkTypeID' in warning
-    );
-    for (const warning of matchingWarnings) {
-      if (!('linkTypeID' in warning)) {
-        continue;
+    type MissingArtistWarning = Extract<
+      PerWorkWarning,
+      {type: 'found-by-alias' | 'found-by-name' | 'failed-to-find' | 'artist-missing-data'}
+    >;
+    const [artistWarnings, rest] = partition(
+      warnings(),
+      (warning): warning is MissingArtistWarning =>
+        (warning.type === 'found-by-alias' ||
+          warning.type === 'found-by-name' ||
+          warning.type === 'failed-to-find' ||
+          warning.type === 'artist-missing-data') &&
+        warning.ipBaseNumber === ipBaseNumber
+    ) as [MissingArtistWarning[], PerWorkWarning[]];
+    if (artistWarnings.length > 0) {
+      for (const warning of artistWarnings) {
+        const sourceEntity =
+          warning.linkTypeID === ARRANGER_LINK_TYPE_ID && props.recording ? props.recording : props.work;
+        addArtistRelationship(
+          sourceEntity,
+          warning.linkTypeID,
+          artist,
+          'artistId' in warning ? warning.artistId : undefined
+        );
       }
-      const sourceEntity =
-        warning.linkTypeID === ARRANGER_LINK_TYPE_ID && props.recording ? props.recording : props.work;
-      addArtistRelationship(
-        sourceEntity,
-        warning.linkTypeID,
-        artist,
-        'artistId' in warning ? warning.artistId : undefined
-      );
-    }
-    if (matchingWarnings.length > 0) {
-      setWarnings(currentWarnings =>
-        currentWarnings.filter(warning => !('ipBaseNumber' in warning && warning.ipBaseNumber === ipBaseNumber))
-      );
+      if (!(await artistHasIpiOrAcumLink(artist, ipBaseNumber))) {
+        const previousWarning = artistWarnings[0]!;
+        rest.push({
+          ...previousWarning,
+          artistId: artist.gid,
+          artistName: artist.name,
+          type: 'artist-missing-data',
+        });
+      }
+      setWarnings(rest);
     }
   };
-  document.addEventListener(artistResolvedEventName, onArtistResolved);
-  onCleanup(() => document.removeEventListener(artistResolvedEventName, onArtistResolved));
+  const handler = (event: Event) => void onArtistResolved(event).catch(console.error);
+  document.addEventListener(artistResolvedEventName, handler);
+  onCleanup(() => document.removeEventListener(artistResolvedEventName, handler));
 
   const [resource, {refetch}] = createResource(
     () =>

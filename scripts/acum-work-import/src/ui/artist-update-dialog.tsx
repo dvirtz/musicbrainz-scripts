@@ -8,7 +8,6 @@ import {ArtistT} from 'typedbrainz/types';
 
 function handleOnLoad(
   iframe: HTMLIFrameElement,
-  originalHRef: string,
   onSubmitted: (artist: ArtistT) => void,
   setOpen: (closed: boolean) => void
 ) {
@@ -28,7 +27,8 @@ function handleOnLoad(
   const editForm = frameDocument.querySelector<HTMLFormElement>('form.edit-artist');
   const m = frameDocument.location.href.match(new RegExp(`/artist/(${MBID_REGEXP.source})`));
   if (m) {
-    editForm?.addEventListener('submit', () => {
+    if (iframe.dataset.artistSubmitted === 'true') {
+      delete iframe.dataset.artistSubmitted;
       tryFetchJSON<ArtistT>(`/ws/js/entity/${m[1]}`)
         .then(artist => {
           if (artist) {
@@ -37,7 +37,10 @@ function handleOnLoad(
         })
         .catch(console.error);
       setOpen(false);
-      return;
+    }
+
+    editForm?.addEventListener('submit', () => {
+      iframe.dataset.artistSubmitted = 'true';
     });
   }
 
@@ -100,7 +103,7 @@ function ArtistUpdateDialog(props: {href: string; onClose: () => void; onSubmitt
                 class={classes.frame}
                 src={props.href}
                 title="Update artist"
-                onLoad={event => handleOnLoad(event.currentTarget, props.href, props.onSubmitted, setOpen)}
+                onLoad={event => handleOnLoad(event.currentTarget, props.onSubmitted, setOpen)}
               />
             </div>
           </Dialog.Content>
