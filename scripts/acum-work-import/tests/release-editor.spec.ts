@@ -179,7 +179,7 @@ base.describe('release editor', () => {
     const nameInput = page.locator('#id-edit-work\\.name');
     await nameInput.fill(newName);
 
-    await page.locator('#submit-work-8994687').getByText('Done', {exact: true}).click();
+    await page.getByRole('dialog').getByRole('button', {name: 'Done'}).click();
 
     // the editor should re-appear near the new work's anchor
     await expect(container).toBeVisible();

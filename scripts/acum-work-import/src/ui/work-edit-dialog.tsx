@@ -16,45 +16,34 @@ import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
 import classes from '#ui/work-edit-dialog.module.css';
 import {WorkISWCsEditor} from '#ui/work-iswcs-editor.tsx';
 import {WorkLanguageEditor} from '#ui/work-language-editor.tsx';
+import {formToEditData} from '#work-edit-data.ts';
+import {Button} from '@kobalte/core/button';
 import {Popover} from '@kobalte/core/popover';
 import {buildOptionList} from '@repo/musicbrainz-ext/build-options-list';
-import {parseIntegerOrNull} from '@repo/musicbrainz-ext/parse-integer-or-null';
-import {createSignal, onCleanup} from 'solid-js';
+import {Accessor, createSignal} from 'solid-js';
 
-export function WorkEditDialog(props: {onSubmit: () => void; setSubmitForm: (form: HTMLFormElement) => void}) {
-  const {liveEditData, setLiveEditData, isModified, submitUrl, saveEditData, restoreEditData, workId, workTypes} =
-    useWorkEditData();
-  const isNameBlank = () => /^\s*$/.test(liveEditData.name);
+export function WorkEditDialog() {
+  const {isModified, saveEditData, savedEditData, workId, workTypes} = useWorkEditData();
   const [open, setOpen] = createSignal(false);
-
-  // need forceMount to keep forms in the DOM even when the dialog is closed so they can be submitted
-  // this requires manually handling escape key to close the dialog
-  const onEscapeKeyDown = (ev: KeyboardEvent) => {
-    if (open() && ev.key === 'Escape') {
-      setOpen(false);
-    }
-  };
-
-  document.addEventListener('keydown', onEscapeKeyDown);
-  onCleanup(() => document.removeEventListener('keydown', onEscapeKeyDown));
+  const [name, setName] = createSignal(savedEditData().name);
+  const isNameBlank: Accessor<boolean> = () => /^\s*$/.test(name());
 
   return (
-    <Popover open={open()} onOpenChange={setOpen} forceMount={true}>
+    <Popover open={open()} onOpenChange={setOpen}>
       <Popover.Trigger class="icon edit-item" />
-      <Popover.Content
-        class={`dialog popover work-dialog ${classes['work-dialog']}`}
-        onEscapeKeyDown={ev => {
-          ev.preventDefault();
-        }}
-      >
+      <Popover.Content class={`dialog popover work-dialog ${classes['work-dialog']}`}>
         <Popover.Arrow />
         <form
-          id={`submit-work-${workId()}`}
-          action={submitUrl()}
-          method="post"
+          id={`edit-work-${workId()}`}
           classList={{'modified': isModified()}}
-          onSubmit={props.onSubmit}
-          ref={props.setSubmitForm}
+          onSubmit={event => {
+            event.preventDefault();
+            if (isNameBlank()) {
+              return;
+            }
+            saveEditData(formToEditData(event.currentTarget));
+            setOpen(false);
+          }}
         >
           <h1>{'Edit work'}</h1>
           <div class={`half-width ${classes['half-width']}`}>
@@ -69,15 +58,15 @@ export function WorkEditDialog(props: {onSubmit: () => void; setSubmitForm: (for
                   name="edit-work.name"
                   required={true}
                   type="text"
-                  value={liveEditData.name}
-                  onChange={ev => setLiveEditData('name', ev.target.value)}
+                  value={savedEditData().name}
+                  onInput={ev => setName(ev.currentTarget.value)}
                 />
               </FormRow>
               <FormRow>
                 <label for="id-edit-work.comment" id="label-id-edit-work.comment">
                   Disambiguation:
                 </label>
-                <input id="id-edit-work.comment" name="edit-work.comment" type="text" value={liveEditData.comment} />
+                <input id="id-edit-work.comment" name="edit-work.comment" type="text" value={savedEditData().comment} />
               </FormRow>
               <FormRow>
                 <label class="" for="id-edit-work.type_id" id="label-id-edit-work.type_id">
@@ -88,22 +77,21 @@ export function WorkEditDialog(props: {onSubmit: () => void; setSubmitForm: (for
                   id="id-edit-work.type_id"
                   name="edit-work.type_id"
                   options={buildOptionList(workTypes())}
-                  value={liveEditData.type_id || undefined}
-                  onChange={workType => setLiveEditData('type_id', parseIntegerOrNull(workType))}
+                  value={savedEditData().type_id || undefined}
                 />
               </FormRow>
-              <WorkLanguageEditor />
-              <WorkISWCsEditor />
+              <WorkLanguageEditor languages={savedEditData().languages} />
+              <WorkISWCsEditor iswcs={savedEditData().iswcs} />
             </fieldset>
-            <WorkAttributes />
+            <WorkAttributes attributes={savedEditData().attributes} />
           </div>
           <div class="buttons" style={{'margin-top': '1em'}}>
-            <Popover.CloseButton type="button" class="negative" onClick={restoreEditData}>
+            <Popover.CloseButton type="button" class="negative" aria-label="Cancel">
               {'Cancel'}{' '}
             </Popover.CloseButton>
-            <Popover.CloseButton type="button" class="positive" disabled={isNameBlank()} onClick={saveEditData}>
+            <Button type="submit" class="positive" aria-label="Done" disabled={isNameBlank()}>
               {'Done'}
-            </Popover.CloseButton>
+            </Button>
           </div>
         </form>
       </Popover.Content>

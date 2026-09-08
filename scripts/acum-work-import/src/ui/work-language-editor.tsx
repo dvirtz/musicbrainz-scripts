@@ -1,5 +1,4 @@
 import {FormRowSelectList} from '#ui/form-row-select-list.tsx';
-import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
 import {removeAtIndex} from '@repo/common/remove-at-index';
 import {createField, createRepeatableField} from '@repo/musicbrainz-ext/create-field';
 import {MaybeGroupedOptionsT} from '@repo/musicbrainz-ext/get-select-value';
@@ -7,6 +6,7 @@ import {workLanguages} from '@repo/musicbrainz-ext/type-info';
 import PLazy from 'p-lazy';
 import {identity} from 'rxjs';
 import {createResource} from 'solid-js';
+import {createStore} from 'solid-js/store';
 import {LanguageT} from 'typedbrainz/types';
 
 const FREQUENT_LANGUAGE = 2;
@@ -51,12 +51,12 @@ const lazyLanguageOptions = PLazy.from<MaybeGroupedOptionsT>(async () => {
   };
 });
 
-export function WorkLanguageEditor() {
-  const {liveEditData, setLiveEditData} = useWorkEditData();
+export function WorkLanguageEditor(props: {languages: number[]}) {
+  const [languages, setLanguages] = createStore(props.languages);
   const languagesField = () =>
     createRepeatableField(
       'edit-work.languages',
-      liveEditData.languages.map((language, index) => createField(`edit-work.languages.${index}`, String(language)))
+      languages.map((language, index) => createField(`edit-work.languages.${index}`, String(language)))
     );
 
   const [languageOptions] = createResource(async () => await lazyLanguageOptions, {
@@ -70,14 +70,13 @@ export function WorkLanguageEditor() {
         addLabel={'Add language'}
         getSelectField={identity}
         hideAddButton={
-          liveEditData.languages.find(
-            lang => lang === MB?.constants.LANGUAGE_MUL_ID || lang === MB?.constants.LANGUAGE_ZXX_ID
-          ) !== undefined
+          languages.find(lang => lang === MB?.constants.LANGUAGE_MUL_ID || lang === MB?.constants.LANGUAGE_ZXX_ID) !==
+          undefined
         }
         label={'Lyrics languages:'}
-        onAdd={() => setLiveEditData('languages', liveEditData.languages.length, NaN)}
-        onEdit={(index, value) => setLiveEditData('languages', index, Number(value))}
-        onRemove={index => setLiveEditData('languages', removeAtIndex(liveEditData.languages, index))}
+        onAdd={() => setLanguages(languages.length, NaN)}
+        onEdit={(index, value) => setLanguages(index, value ? Number(value) : NaN)}
+        onRemove={index => setLanguages(removeAtIndex(languages, index))}
         options={languageOptions()}
         removeClassName="remove-language"
         removeLabel={'Remove language'}
