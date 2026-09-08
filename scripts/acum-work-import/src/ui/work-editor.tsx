@@ -3,6 +3,7 @@ import {useWorkEditData, WorkEditDataProvider, WorkEditDataProviderProps} from '
 import classes from '#ui/work-edit-dialog.module.css';
 import {WorkEditDialog} from '#ui/work-edit-dialog.tsx';
 import {WorkWarnings} from '#ui/work-warnings.tsx';
+import {registerWorkSubmitter} from '#work-submitters.ts';
 import {isNewWork, workLink} from '#works.ts';
 import {
   workAttributeAllowedValues,
@@ -13,28 +14,9 @@ import {
 import {waitForElement, waitForMutation} from '@repo/rxjs-ext/wait-for-element';
 import {createEffect, createSignal, onCleanup, Show} from 'solid-js';
 import {render} from 'solid-js/web';
-import {WorkT} from 'typedbrainz/types';
 
-type SubmitWorkRequestDetail = {
-  reject: (reason?: unknown) => void;
-  resolve: (work: WorkT) => void;
-};
-
-const submitWorkEventName = 'acum:submit-work';
 const workReadyEventName = 'acum:work-ready';
 const refetchWorkEventName = 'acum:refetch-work';
-
-export async function requestWorkSubmission(form: HTMLFormElement): Promise<WorkT> {
-  return await new Promise<WorkT>((resolve, reject) => {
-    form.dispatchEvent(
-      new CustomEvent<SubmitWorkRequestDetail>(submitWorkEventName, {
-        bubbles: false,
-        cancelable: false,
-        detail: {resolve, reject},
-      })
-    );
-  });
-}
 
 export async function hasChanges(trackRaw: Element) {
   return await new Promise<boolean>(resolve => {
@@ -51,7 +33,8 @@ type AddWorkEditorOptions = Omit<WorkEditDataProviderProps, 'typeInfo'> & {
 
 function WorkEditor(props: AddWorkEditorOptions & {parent: Element}) {
   const isNew = isNewWork(props.work);
-  const {isLoading, isModified, warnings, resetEditData, refetch, replacedWork, captureState} = useWorkEditData();
+  const {isLoading, isModified, warnings, refetch, replacedWork, captureState, savedEditData, submitUrl} =
+    useWorkEditData();
   const [isSubmitting, setIsSubmitting] = createSignal(false);
 
   const {parent, ...editorProps} = props;
@@ -69,23 +52,18 @@ function WorkEditor(props: AddWorkEditorOptions & {parent: Element}) {
     });
   });
 
-  const setSubmitForm = (form: HTMLFormElement) => {
-    const onSubmitWorkRequest = (event: Event) => {
+  createEffect(() => {
+    if (!isModified()) return;
+    const unregister = registerWorkSubmitter(props.work.id, async () => {
       setIsSubmitting(true);
-      const request = event as CustomEvent<SubmitWorkRequestDetail>;
-      submitWork(form)
-        .then(work => {
-          request.detail.resolve(work);
-        })
-        .catch(request.detail.reject)
-        .finally(() => setIsSubmitting(false));
-    };
-
-    form.addEventListener(submitWorkEventName, onSubmitWorkRequest);
-    onCleanup(() => {
-      form.removeEventListener(submitWorkEventName, onSubmitWorkRequest);
+      try {
+        return await submitWork(submitUrl(), savedEditData());
+      } finally {
+        setIsSubmitting(false);
+      }
     });
-  };
+    onCleanup(unregister);
+  });
 
   createEffect(() => {
     const workLinkElement = parent.querySelector<HTMLAnchorElement>('a[href^="/work/"]');
@@ -107,7 +85,7 @@ function WorkEditor(props: AddWorkEditorOptions & {parent: Element}) {
   return (
     <>
       <Show when={isModified()}>
-        <WorkEditDialog onSubmit={resetEditData} setSubmitForm={setSubmitForm} />{' '}
+        <WorkEditDialog />{' '}
         <a
           href={workLink(props.work)}
           classList={{

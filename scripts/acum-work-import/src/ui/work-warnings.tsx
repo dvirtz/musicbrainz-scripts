@@ -125,17 +125,14 @@ function renderFoundArtistWarning(
 }
 
 function WorkNameDifferentWarning(props: {recordingName: string}) {
-  const {setLiveEditData, saveEditData} = useWorkEditData();
+  const {savedEditData, saveEditData} = useWorkEditData();
   return (
     <>
       Work name is different from recording name {props.recordingName}, please verify.{' '}
       <button
         type="button"
         class={`btn-link ${classes['btn-link']}`}
-        onClick={() => {
-          setLiveEditData('name', props.recordingName);
-          saveEditData();
-        }}
+        onClick={() => saveEditData({...savedEditData(), name: props.recordingName})}
       >
         update
       </button>

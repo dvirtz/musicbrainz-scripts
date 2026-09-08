@@ -5,6 +5,7 @@ import {trackName, WorkBean, workId, workISWCs, workLanguage, WorkLanguage, work
 import {shouldSetLanguage} from '#ui/settings.tsx';
 import {mergeArrays} from '@repo/common/merge-arrays';
 import {fetchEditParams, urlFromMbid} from '@repo/musicbrainz-ext/edits';
+import {parseIntegerOrNull} from '@repo/musicbrainz-ext/parse-integer-or-null';
 import {workAttributeTypes, workLanguages, workTypes} from '@repo/musicbrainz-ext/type-info';
 import PLazy from 'p-lazy';
 import {IswcT, WorkAttributeT, WorkLanguageT, WorkT} from 'typedbrainz/types';
@@ -13,13 +14,20 @@ const ACUM_TYPE_ID = PLazy.from(async () => {
   return Object.values(await workAttributeTypes).find(type => type.name === 'ACUM ID')!.id;
 });
 
+export type WorkEditAttribute = {
+  type_id: number;
+  value: string;
+  // set for attribute types with allowed values, where the form field holds the value id
+  value_id: number | null;
+};
+
 export type WorkEditData = {
   name: string;
   comment: string;
   type_id: number | null;
   languages: Array<number>;
   iswcs: Array<string>;
-  attributes: Array<{type_id: number; value: string}>;
+  attributes: Array<WorkEditAttribute>;
 };
 
 export type WorkEditDataWarning =
@@ -36,8 +44,63 @@ function getWorkEditParams(work: WorkT): WorkEditData {
     attributes: work.attributes.map((attr: WorkAttributeT) => ({
       type_id: attr.typeID,
       value: attr.value,
+      value_id: attr.value_id,
     })),
   };
+}
+
+export function workFormAttributes(form: HTMLFormElement): WorkEditAttribute[] {
+  function rowAttribute(typeElement: HTMLSelectElement): WorkEditAttribute {
+    const valueElement = typeElement
+      .closest('tr')
+      ?.querySelector<HTMLInputElement | HTMLSelectElement>('[name$=".value"]');
+    const allowedValue = valueElement instanceof HTMLSelectElement;
+    return {
+      type_id: Number(typeElement.value),
+      value: allowedValue ? (valueElement.selectedOptions[0]?.textContent ?? '') : (valueElement?.value ?? ''),
+      value_id: allowedValue ? parseIntegerOrNull(valueElement.value) : null,
+    };
+  }
+
+  return Array.from(form.querySelectorAll<HTMLSelectElement>('#work-attributes select[name$=".type_id"]'))
+    .map(rowAttribute)
+    .filter(attribute => attribute.value);
+}
+
+export function formToEditData(form: HTMLFormElement): WorkEditData {
+  const fieldValue = (name: string) =>
+    form.querySelector<HTMLInputElement | HTMLSelectElement>(`[name="edit-work.${name}"]`)?.value ?? '';
+  const fieldValues = (prefix: string) =>
+    Array.from(form.querySelectorAll<HTMLInputElement | HTMLSelectElement>(`[name^="edit-work.${prefix}."]`)).map(
+      element => element.value
+    );
+
+  return {
+    name: fieldValue('name'),
+    comment: fieldValue('comment'),
+    type_id: parseIntegerOrNull(fieldValue('type_id')),
+    // an unselected language is kept as NaN so that it survives until it is sanitized away
+    languages: fieldValues('languages').map(value => (value ? Number(value) : NaN)),
+    iswcs: fieldValues('iswcs'),
+    attributes: workFormAttributes(form),
+  };
+}
+
+export function editDataToFormData(editData: WorkEditData): FormData {
+  const formData = new FormData();
+  formData.append('edit-work.name', editData.name);
+  formData.append('edit-work.comment', editData.comment);
+  formData.append('edit-work.type_id', editData.type_id === null ? '' : String(editData.type_id));
+  editData.languages.forEach((language, index) => formData.append(`edit-work.languages.${index}`, String(language)));
+  editData.iswcs.forEach((iswc, index) => formData.append(`edit-work.iswcs.${index}`, iswc));
+  editData.attributes.forEach((attribute, index) => {
+    formData.append(`edit-work.attributes.${index}.type_id`, String(attribute.type_id));
+    formData.append(
+      `edit-work.attributes.${index}.value`,
+      attribute.value_id === null ? attribute.value : String(attribute.value_id)
+    );
+  });
+  return formData;
 }
 
 async function fetchWorkEditParams(mbid: string): Promise<WorkEditData> {
@@ -57,7 +120,10 @@ export function workEditDataEqual(lhs: WorkEditData, rhs: WorkEditData) {
     lhs.languages.every((lang, idx) => lang === rhs.languages[idx]) &&
     lhs.iswcs.every((iswc, idx) => iswc === rhs.iswcs[idx]) &&
     lhs.attributes.every(
-      (attr, idx) => attr.type_id === rhs.attributes[idx]?.type_id && attr.value === rhs.attributes[idx]?.value
+      (attr, idx) =>
+        attr.type_id === rhs.attributes[idx]?.type_id &&
+        attr.value === rhs.attributes[idx]?.value &&
+        attr.value_id === rhs.attributes[idx]?.value_id
     );
   return res;
 }
@@ -195,6 +261,7 @@ export async function workEditData(
         {
           type_id: acumTypeId,
           value: acumWorkId,
+          value_id: null,
         },
       ],
     },

@@ -1,15 +1,14 @@
 import {SelectBox} from '#ui/select-box.tsx';
 import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
-import {WorkEditData} from '#work-edit-data.ts';
+import {WorkEditAttribute} from '#work-edit-data.ts';
 import {removeAtIndex} from '@repo/common/remove-at-index';
-import {parseIntegerOrNull} from '@repo/musicbrainz-ext/parse-integer-or-null';
 import {Accessor, createMemo, createSignal, Show} from 'solid-js';
 import {SetStoreFunction} from 'solid-js/store';
 
 export function WorkAttributeRow(props: {
-  attribute: {type_id: number; value: string};
+  attribute: WorkEditAttribute;
   index: Accessor<number>;
-  setEditData: SetStoreFunction<WorkEditData>;
+  setAttributes: SetStoreFunction<WorkEditAttribute[]>;
 }) {
   const {workAttributeTypes, workAttributeAllowedValues} = useWorkEditData();
   const [typeId, setTypeId] = createSignal(props.attribute.type_id);
@@ -24,41 +23,37 @@ export function WorkAttributeRow(props: {
           value={workAttributeTypes().find(type => type.value === props.attribute.type_id)?.value}
           onChange={type => {
             setTypeId(type);
-            props.setEditData('attributes', props.index(), 'type_id', parseIntegerOrNull(type) || 0);
+            props.setAttributes(props.index(), 'type_id', type);
           }}
         />
       </td>
       <td>
         <Show
-          when={workAttributeAllowedValues().get(typeId()) !== undefined}
+          when={allowedValues() !== undefined}
           fallback={
             <input
               type="text"
               name={`edit-work.attributes.${props.index()}.value`}
               value={props.attribute.value}
-              onChange={event => props.setEditData('attributes', props.index(), 'value', event.currentTarget.value)}
+              onInput={event => props.setAttributes(props.index(), 'value', event.currentTarget.value)}
             />
           }
         >
           <SelectBox
             name={`edit-work.attributes.${props.index()}.value`}
             options={allowedValues() ?? []}
-            value={allowedValues()?.find(x => x.text === props.attribute.value)?.value}
-            onChange={value =>
-              props.setEditData(
-                'attributes',
-                props.index(),
-                'value',
-                allowedValues()?.find(x => x.value == value)?.text || ''
-              )
-            }
+            value={props.attribute.value_id ?? undefined}
+            onChange={value => {
+              const option = allowedValues()?.find(item => item.value === value);
+              props.setAttributes(props.index(), {value: option?.text ?? '', value_id: value || null});
+            }}
           />
         </Show>
       </td>
       <td>
         <button
           class="nobutton icon remove-item"
-          onClick={() => props.setEditData('attributes', attributes => removeAtIndex(attributes, props.index()))}
+          onClick={() => props.setAttributes(attributes => removeAtIndex(attributes, props.index()))}
           type="button"
           title="Remove attribute"
         />

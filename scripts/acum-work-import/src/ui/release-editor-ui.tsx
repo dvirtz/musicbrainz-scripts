@@ -4,7 +4,7 @@ import {replaceSubmitButton} from '#submit.ts';
 import {ImportForm} from '#ui/import-form.tsx';
 import {ProgressBar} from '#ui/progressbar.tsx';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
-import {requestWorkSubmission} from '#ui/work-editor.tsx';
+import {getWorkSubmitter, WorkSubmitter} from '#work-submitters.ts';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
@@ -181,10 +181,10 @@ async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Pr
         ([relatedWork, recordingState]) =>
           [
             relatedWorkRelationship(relatedWork, recordingState.recording),
-            document.getElementById(`submit-work-${relatedWork.work.id}`),
+            getWorkSubmitter(relatedWork.work.id),
           ] as const
       ),
-      filter((pair): pair is [RelationshipStateT, HTMLFormElement] => pair[0] !== undefined && pair[1] != null),
+      filter((pair): pair is [RelationshipStateT, WorkSubmitter] => pair[0] !== undefined && pair[1] != null),
       toArray()
     )
   );
@@ -201,7 +201,7 @@ async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Pr
 
   const addWorkRelationships = await firstValueFrom(
     from(worksToSubmit).pipe(
-      mergeMap(async ([relationship, form]) => [relationship, await requestWorkSubmission(form)] as const),
+      mergeMap(async ([relationship, submitWork]) => [relationship, await submitWork()] as const),
       connect(shared =>
         merge(
           shared.pipe(toArray()),

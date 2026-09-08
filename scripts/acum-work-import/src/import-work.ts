@@ -6,7 +6,7 @@ import {shouldSearchWorks} from '#ui/settings.tsx';
 import {AddWarning} from '#ui/warnings.tsx';
 import {addWorkEditor} from '#ui/work-editor.tsx';
 import {renderWarning} from '#ui/work-warnings.tsx';
-import {workEditData} from '#work-edit-data.ts';
+import {workEditData, workFormAttributes} from '#work-edit-data.ts';
 import {createNewWork, createWork, findWork} from '#works.ts';
 import {compareInsensitive, compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
 import {MEDLEY_OF_LINK_TYPE_ID, REL_STATUS_ADD} from '@repo/musicbrainz-ext/constants';
@@ -14,7 +14,7 @@ import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
 import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
 import {waitForElement} from '@repo/rxjs-ext/wait-for-element';
-import {filter, from, lastValueFrom, map, mergeMap, scan, tap, toArray, zip} from 'rxjs';
+import {filter, from, map, mergeMap, scan, tap} from 'rxjs';
 import {Setter} from 'solid-js';
 import {isNonReleaseRelationshipEditor} from 'typedbrainz';
 import {RelationshipStateT, WorkAttributeT, WorkT} from 'typedbrainz/types';
@@ -61,21 +61,8 @@ export async function importWork(
     {
       ...work,
       // the attributes are rendered in a different order
-      attributes: await lastValueFrom(
-        zip(
-          from(form.querySelectorAll<HTMLInputElement>('[name^="edit-work.attributes."][name$=type_id]')),
-          from(form.querySelectorAll<HTMLInputElement>('[name^="edit-work.attributes."][name$=value]'))
-        ).pipe(
-          filter(([type, value]) => type.value.length > 0 && value.value.length > 0),
-          map(
-            ([type, value]) =>
-              ({
-                typeID: Number(type.value),
-                value: value.value,
-              }) as WorkAttributeT
-          ),
-          toArray()
-        )
+      attributes: workFormAttributes(form).map(
+        attr => ({typeID: attr.type_id, value: attr.value, value_id: attr.value_id}) as WorkAttributeT
       ),
     },
     version
@@ -130,7 +117,12 @@ export async function importWork(
   );
   editData.attributes.forEach((attr, index) => {
     setInput(form, `attributes.${index}.type_id`, String(attr.type_id), addWarning);
-    setInput(form, `attributes.${index}.value`, attr.value, addWarning);
+    setInput(
+      form,
+      `attributes.${index}.value`,
+      attr.value_id === null ? attr.value : String(attr.value_id),
+      addWarning
+    );
   });
 
   const writerWarnings = await linkWriters(artistCache, version, work);

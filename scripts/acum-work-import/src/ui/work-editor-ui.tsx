@@ -1,10 +1,11 @@
 import {Entity, loadLatestEntityData} from '#acum.ts';
 import {medleyWorkRelationships, importWork as tryImportWork} from '#import-work.ts';
 import {updateMedleyWorkRelationship} from '#relationships.ts';
-import {replaceSubmitButton, submitWork} from '#submit.ts';
+import {replaceSubmitButton} from '#submit.ts';
 import {ImportForm} from '#ui/import-form.tsx';
 import {ProgressBar} from '#ui/progressbar.tsx';
 import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
+import {getWorkSubmitter, WorkSubmitter} from '#work-submitters.ts';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {assertMBTree, assertRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {REL_STATUS_EDIT} from '@repo/musicbrainz-ext/constants';
@@ -111,9 +112,9 @@ async function doSubmitWorks(setProgress: Setter<readonly [number, string]>): Pr
     await executePipeline(
       from(medleyRelationship).pipe(
         map(rel => [rel, rel.entity1 as WorkT] as const),
-        map(([rel, work]) => [rel, document.getElementById(`submit-work-${work.id}`)] as const),
-        filter((relWork): relWork is [RelationshipStateT, HTMLFormElement] => relWork[1] !== null),
-        mergeMap(async ([rel, form]) => [rel, await submitWork(form)] as const),
+        map(([rel, work]) => [rel, getWorkSubmitter(work.id)] as const),
+        filter((relWork): relWork is [RelationshipStateT, WorkSubmitter] => relWork[1] !== undefined),
+        mergeMap(async ([rel, submitWork]) => [rel, await submitWork()] as const),
         mergeMap(async ([rel, submittedWork]) => {
           if (rel.entity1.gid != submittedWork.gid) {
             updateMedleyWorkRelationship(

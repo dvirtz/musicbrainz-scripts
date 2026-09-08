@@ -17,7 +17,6 @@ import {fetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {WorkAttributeTypeAllowedValueT} from '@repo/musicbrainz-ext/type-info';
 import {createContext, createEffect, createResource, createSignal, onCleanup, ParentProps, useContext} from 'solid-js';
-import {createStore, reconcile, unwrap} from 'solid-js/store';
 import {
   ArtistT,
   IswcT,
@@ -38,7 +37,6 @@ type WorkTypeInfo = {
 };
 
 export type WorkEditDataInitialState = {
-  liveEditData: WorkEditData;
   savedEditData: WorkEditData;
   originalEditData: WorkEditData;
   warnings: readonly PerWorkWarning[];
@@ -107,6 +105,7 @@ function applyEditDataToWork(work: WorkT, editData: WorkEditData): WorkT {
         ({
           typeID: attr.type_id,
           value: attr.value,
+          value_id: attr.value_id,
           entityType: 'work-attribute',
         }) as unknown as WorkAttributeT
     ),
@@ -182,8 +181,6 @@ function refreshWorkState(recording: RecordingT, work: WorkT) {
 
 function makeWorkEditDataContext(
   work: WorkT,
-  liveEditData: WorkEditData,
-  setLiveEditData: ReturnType<typeof createStore<WorkEditData>>[1],
   savedEditData: () => WorkEditData,
   setSavedEditData: (value: WorkEditData) => void,
   originalEditData: () => WorkEditData,
@@ -196,22 +193,13 @@ function makeWorkEditDataContext(
   const [replacedWork, setReplacedWork] = createSignal<WorkT | undefined>(undefined);
 
   return {
-    liveEditData,
-    setLiveEditData,
+    savedEditData,
     isModified: () => !workEditDataEqual(originalEditData(), savedEditData()),
     submitUrl: () => (work.gid ? urlFromMbid('work', work.gid) : '/work/create'),
-    saveEditData: () => {
-      const next = sanitizeEditData(unwrap(liveEditData));
+    saveEditData: (editData: WorkEditData) => {
+      const next = sanitizeEditData(editData);
       setSavedEditData(next);
-      const newWork = applyEditDataToWork(work, next);
-      setReplacedWork(newWork);
-      setLiveEditData(reconcile(cloneEditData(next)));
-    },
-    restoreEditData: () => {
-      setLiveEditData(reconcile(cloneEditData(savedEditData())));
-    },
-    resetEditData: () => {
-      setLiveEditData(reconcile(cloneEditData(originalEditData())));
+      setReplacedWork(applyEditDataToWork(work, next));
     },
     workId: () => work.id,
     workTypes: () => workTypeInfo.workTypes,
@@ -229,7 +217,6 @@ function makeWorkEditDataContext(
     refetch,
     replacedWork,
     captureState: (): WorkEditDataInitialState => ({
-      liveEditData: structuredClone(unwrap(liveEditData)),
       savedEditData: savedEditData(),
       originalEditData: originalEditData(),
       warnings: warnings(),
@@ -272,7 +259,6 @@ async function artistHasIpiOrAcumLink(artist: ArtistT, ipBaseNumber: string) {
 }
 
 export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
-  const [liveEditData, setLiveEditData] = createStore(props.initialState?.liveEditData ?? emptyEditData());
   const [savedEditData, setSavedEditData] = createSignal(props.initialState?.savedEditData ?? emptyEditData());
   const [originalEditData, setOriginalEditData] = createSignal(props.initialState?.originalEditData ?? emptyEditData());
   const [warnings, setWarnings] = createSignal<readonly PerWorkWarning[]>(props.initialState?.warnings ?? []);
@@ -371,11 +357,8 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
       return;
     }
 
-    const nextSavedEditData = cloneEditData(result.editData);
-    const nextOriginalEditData = cloneEditData(result.originalEditData);
-    setSavedEditData(nextSavedEditData);
-    setOriginalEditData(nextOriginalEditData);
-    setLiveEditData(reconcile(cloneEditData(nextSavedEditData)));
+    setSavedEditData(cloneEditData(result.editData));
+    setOriginalEditData(cloneEditData(result.originalEditData));
     setWarnings(result.warnings);
     setIsLoading(false);
   });
@@ -384,8 +367,6 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
     <WorkEditDataContext.Provider
       value={makeWorkEditDataContext(
         props.work,
-        liveEditData,
-        setLiveEditData,
         savedEditData,
         setSavedEditData,
         originalEditData,
