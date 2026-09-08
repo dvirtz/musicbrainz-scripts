@@ -96,6 +96,15 @@ function WorkEditor(props: AddWorkEditorOptions & {parent: Element}) {
         >
           {props.work.name}
         </a>
+        <Show when={props.work.comment}>
+          {comment => (
+            <span class="comment">
+              {' ('}
+              <bdi>{comment()}</bdi>
+              {')'}
+            </span>
+          )}
+        </Show>
       </Show>
 
       <Show when={isLoading() || isSubmitting()}>
