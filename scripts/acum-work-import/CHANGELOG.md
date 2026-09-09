@@ -1,3 +1,19 @@
+## @dvirtz/acum-work-import-v1.22.0-beta.1 (2026-09-09)
+
+* feat(acum-work-import): apply warning fix to all entities and remove fixed warnings ([75ad9d9](https://github.com/dvirtz/musicbrainz-scripts/commit/75ad9d9))
+* feat(acum-work-import): apply warning to found artist relationship ([9bca77f](https://github.com/dvirtz/musicbrainz-scripts/commit/9bca77f))
+* feat(acum-work-import): localize and enrich warnings ([760e7f3](https://github.com/dvirtz/musicbrainz-scripts/commit/760e7f3))
+* feat(acum-work-import): refactor edit forms ([ca9bb04](https://github.com/dvirtz/musicbrainz-scripts/commit/ca9bb04))
+* feat(acum-work-import): search/create missing artists in relationship dialog ([9000172](https://github.com/dvirtz/musicbrainz-scripts/commit/9000172))
+* feat(acum-work-import): show work disambiguation comment ([d75a4cb](https://github.com/dvirtz/musicbrainz-scripts/commit/d75a4cb))
+* feat(acum-work-import): update work object ([9aa08cc](https://github.com/dvirtz/musicbrainz-scripts/commit/9aa08cc))
+* fix(acum-work-import): avoid progress bar getting over dialogs ([ae54b4f](https://github.com/dvirtz/musicbrainz-scripts/commit/ae54b4f))
+* fix(acum-work-import): avoid removing elements on Enter press ([dc97598](https://github.com/dvirtz/musicbrainz-scripts/commit/dc97598))
+* fix(acum-work-import): prefer input value over saved works ([9de7d24](https://github.com/dvirtz/musicbrainz-scripts/commit/9de7d24))
+* fix(acum-work-import): update artist action ([20af47a](https://github.com/dvirtz/musicbrainz-scripts/commit/20af47a))
+* fix(acum-work-import): warn on arrangers, create artist guess case ([23b6998](https://github.com/dvirtz/musicbrainz-scripts/commit/23b6998))
+* chore: upgrade typedbrainz ([28d4ba0](https://github.com/dvirtz/musicbrainz-scripts/commit/28d4ba0))
+
 ## @dvirtz/acum-work-import-v1.21.3 (2026-07-08)
 
 * test: support new MB login page ([1f34f25](https://github.com/dvirtz/musicbrainz-scripts/commit/1f34f25)), closes [#198](https://github.com/dvirtz/musicbrainz-scripts/issues/198)
