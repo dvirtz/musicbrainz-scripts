@@ -241,7 +241,7 @@ type ArtistResolvedEventDetail = {
   artist: ArtistT;
 };
 
-async function artistHasIpiOrAcumLink(artist: ArtistT, ipBaseNumber: string) {
+async function artistHasIpiOrAcumLink(artist: ArtistT, ipi: string, ipBaseNumber: string) {
   type ArtistResponse = {
     ipis?: string[];
     relations?: Array<{
@@ -253,7 +253,7 @@ async function artistHasIpiOrAcumLink(artist: ArtistT, ipBaseNumber: string) {
   const {ipis, relations} = await fetchJSON<ArtistResponse>(`/ws/2/artist/${artist.gid}?fmt=json&inc=url-rels`);
 
   return (
-    ipis?.includes(ipBaseNumber) ||
+    ipis?.includes(ipi) ||
     relations?.some(rel => rel['target-type'] === 'url' && rel.url?.resource === creatorUrl(ipBaseNumber))
   );
 }
@@ -300,8 +300,8 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
           'artistId' in warning ? warning.artistId : undefined
         );
       }
-      if (!(await artistHasIpiOrAcumLink(artist, ipBaseNumber))) {
-        const previousWarning = artistWarnings[0]!;
+      const previousWarning = artistWarnings[0]!;
+      if (!(await artistHasIpiOrAcumLink(artist, previousWarning.ipi, ipBaseNumber))) {
         rest.push({
           ...previousWarning,
           artistId: artist.gid,
