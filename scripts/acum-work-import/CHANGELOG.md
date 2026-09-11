@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.22.0-beta.2 (2026-09-11)
+
+* fix(acum-work-import): correct IPI comparison ([5059027](https://github.com/dvirtz/musicbrainz-scripts/commit/5059027))
+
 ## @dvirtz/acum-work-import-v1.22.0-beta.1 (2026-09-09)
 
 * feat(acum-work-import): apply warning fix to all entities and remove fixed warnings ([75ad9d9](https://github.com/dvirtz/musicbrainz-scripts/commit/75ad9d9))
