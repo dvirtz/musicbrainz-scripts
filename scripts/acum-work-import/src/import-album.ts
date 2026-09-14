@@ -1,5 +1,5 @@
 import {Entity, entityUrl, fetchWorks, trackName, Version, WorkBean} from '#acum.ts';
-import {ArtistLookupCache} from '#artists.ts';
+import {ArtistLookupCache} from '#link-artists.ts';
 import {createRelationshipState} from '#relationships.ts';
 import {AddWarning} from '#ui/warnings.tsx';
 import {addWorkEditor, hasChanges} from '#ui/work-editor.tsx';

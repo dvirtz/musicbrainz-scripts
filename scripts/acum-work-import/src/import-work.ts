@@ -1,6 +1,5 @@
 import {Entity, entityUrl, fetchWorks, Version, WorkBean} from '#acum.ts';
-import {ArtistLookupCache} from '#artists.ts';
-import {linkWriters} from '#link-artists.ts';
+import {ArtistLookupCache, linkWriters} from '#link-artists.ts';
 import {updateMedleyWorkRelationship} from '#relationships.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
 import {AddWarning} from '#ui/warnings.tsx';

@@ -1,6 +1,6 @@
 import {AcumWorkType} from '#acum-work-type.ts';
-import {Creator, Creators, WorkBean, workType} from '#acum.ts';
-import {ArtistLookupCache, ArtistWarning, findArtist} from '#artists.ts';
+import {Creator, Creators, IPBaseNumber, WorkBean, workType} from '#acum.ts';
+import {ArtistLinkTypeID, ArtistLookupResult, ArtistWarning, findArtist} from '#artists.ts';
 import {addArtistRelationship} from '#relationships.ts';
 import {assertRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
@@ -47,11 +47,13 @@ function linkedArtists(targetTypeGroups: RelationshipTargetTypeGroupsT | null): 
   }
 }
 
+export type ArtistLookupCache = Map<IPBaseNumber, Promise<ArtistLookupResult>>;
+
 async function linkArtists(
   pendingArtistCache: ArtistLookupCache,
   writers: readonly Creator[] | undefined,
   creators: Creators | undefined,
-  linkTypeID: number,
+  linkTypeID: ArtistLinkTypeID,
   doLink: (linkTypeID: number, artist: ArtistT) => void
 ): Promise<ArtistWarning[]> {
   return await firstValueFrom(
@@ -72,7 +74,16 @@ async function linkArtists(
             ignoreElements()
           ),
           shared.pipe(
-            map(result => result.warnings),
+            map(result =>
+              result.warnings.map(warning =>
+                'linkTypeID' in warning
+                  ? {
+                      ...warning,
+                      linkTypeID,
+                    }
+                  : warning
+              )
+            ),
             mergeAll(),
             toArray()
           )

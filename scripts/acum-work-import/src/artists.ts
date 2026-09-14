@@ -1,12 +1,25 @@
-import {CreatorFull, Creators, creatorUrl, IPBaseNumber, RoleCode} from '#acum.ts';
+import {CreatorFull, Creators, creatorUrl, IPBaseNumber} from '#acum.ts';
 import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
+import {
+  ARRANGER_LINK_TYPE_ID,
+  COMPOSER_LINK_TYPE_ID,
+  LYRICIST_LINK_TYPE_ID,
+  TRANSLATOR_LINK_TYPE_ID,
+  WRITER_LINK_TYPE_ID,
+} from '@repo/musicbrainz-ext/constants';
 import {tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {ArtistSearchResultsT, UrlRelsSearchResultsT} from '@repo/musicbrainz-ext/search-results';
 import {ArtistT} from 'typedbrainz/types';
 
+export type ArtistLinkTypeID =
+  | typeof COMPOSER_LINK_TYPE_ID
+  | typeof LYRICIST_LINK_TYPE_ID
+  | typeof ARRANGER_LINK_TYPE_ID
+  | typeof TRANSLATOR_LINK_TYPE_ID
+  | typeof WRITER_LINK_TYPE_ID;
+
 type MissingArtistWarningBase = {
-  linkTypeID: number;
-  role: string;
+  linkTypeID: ArtistLinkTypeID;
   ipi: string;
   ipBaseNumber: string;
   creatorHebName: string;
@@ -35,7 +48,6 @@ export type ArtistWarning =
     });
 
 export type ArtistLookupResult = {artist: ArtistT | null; warnings: ArtistWarning[]};
-export type ArtistLookupCache = Map<IPBaseNumber, Promise<ArtistLookupResult>>;
 
 function nameMatch(creator: CreatorFull, artistName: string): boolean {
   return (
@@ -45,7 +57,7 @@ function nameMatch(creator: CreatorFull, artistName: string): boolean {
 }
 
 export async function findArtist(
-  linkTypeID: number,
+  linkTypeID: ArtistLinkTypeID,
   ipBaseNumber: IPBaseNumber,
   creators: Creators | undefined
 ): Promise<ArtistLookupResult> {
@@ -56,20 +68,6 @@ export async function findArtist(
       warnings.push({type: 'creator-not-found', ipi: ipBaseNumber});
       return null;
     }
-    const role = (() => {
-      switch (creator.roleCode) {
-        case RoleCode.Composer:
-          return 'composer';
-        case RoleCode.Author:
-          return 'lyricist';
-        case RoleCode.Arranger:
-          return 'arranger';
-        case RoleCode.Translator:
-          return 'translator';
-        case RoleCode.ComposerAndAuthor:
-          return 'composer and lyricist';
-      }
-    })();
     const byIpi = await tryFetchJSON<ArtistSearchResultsT>(`/ws/2/artist?query=ipi:${creator.number}&limit=1&fmt=json`);
     if (byIpi && byIpi.artists.length > 0) {
       return byIpi.artists[0]!.id;
@@ -88,7 +86,6 @@ export async function findArtist(
     if (byName && byName.artists.length > 0 && nameMatch(creator, byName.artists[0]!.name)) {
       warnings.push({
         type: 'found-by-name',
-        role,
         linkTypeID,
         artistId: byName.artists[0]!.id,
         artistName: byName.artists[0]!.name,
@@ -110,7 +107,6 @@ export async function findArtist(
     ) {
       warnings.push({
         type: 'found-by-alias',
-        role,
         linkTypeID,
         artistId: byAlias.artists[0]!.id,
         artistName: byAlias.artists[0]!.name,
@@ -124,7 +120,6 @@ export async function findArtist(
 
     warnings.push({
       type: 'failed-to-find',
-      role,
       linkTypeID,
       ipi: creator.number,
       ipBaseNumber: creator.creatorIpBaseNumber,

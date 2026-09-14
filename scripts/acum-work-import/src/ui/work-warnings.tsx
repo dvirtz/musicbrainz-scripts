@@ -1,10 +1,22 @@
+// cspell: ignore ipis
+
 import {creatorUrl, Entity, entityUrl, WorkBean} from '#acum.ts';
+import {ArtistLinkTypeID} from '#artists.ts';
 import {WriterLinkWarning} from '#link-artists.ts';
+import {addArtistRelationship} from '#relationships.ts';
 import {openArtistDialogFromWarning, OpenArtistDialogParams, updateArtist} from '#ui/relationship-dialog-actions.ts';
-import {useWorkEditData} from '#ui/work-edit-data-provider.tsx';
+import {useWorkEditData, WarningResolutionContext} from '#ui/work-edit-data-provider.tsx';
 import classes from '#ui/work-edit-dialog.module.css';
 import {WorkEditDataWarning} from '#work-edit-data.ts';
+import {
+  ARRANGER_LINK_TYPE_ID,
+  COMPOSER_LINK_TYPE_ID,
+  LYRICIST_LINK_TYPE_ID,
+  TRANSLATOR_LINK_TYPE_ID,
+  WRITER_LINK_TYPE_ID,
+} from '@repo/musicbrainz-ext/constants';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
+import {fetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {For} from 'solid-js';
 import {ArtistT, RecordingT, WorkT} from 'typedbrainz/types';
 
@@ -71,6 +83,52 @@ function warningEditNote(track: WorkBean) {
   );
 }
 
+type MissingArtistWarning = Extract<
+  PerWorkWarning,
+  {type: 'found-by-alias' | 'found-by-name' | 'failed-to-find' | 'artist-missing-data'}
+>;
+
+function isMissingArtistWarning(warning: PerWorkWarning): warning is MissingArtistWarning {
+  return (
+    warning.type === 'found-by-alias' ||
+    warning.type === 'found-by-name' ||
+    warning.type === 'failed-to-find' ||
+    warning.type === 'artist-missing-data'
+  );
+}
+
+async function artistHasIpiOrAcumLink(artist: ArtistT, ipi: string, ipBaseNumber: string) {
+  type ArtistResponse = {
+    ipis?: string[];
+    relations?: Array<{
+      'target-type'?: string;
+      url?: {id?: string; resource?: string};
+    }>;
+  };
+
+  const {ipis, relations} = await fetchJSON<ArtistResponse>(`/ws/2/artist/${artist.gid}?fmt=json&inc=url-rels`);
+
+  return (
+    ipis?.includes(ipi) ||
+    relations?.some(rel => rel['target-type'] === 'url' && rel.url?.resource === creatorUrl(ipBaseNumber))
+  );
+}
+
+function artistLinkTypeName(linkTypeID: ArtistLinkTypeID): string {
+  switch (linkTypeID) {
+    case COMPOSER_LINK_TYPE_ID:
+      return 'composer';
+    case LYRICIST_LINK_TYPE_ID:
+      return 'lyricist';
+    case ARRANGER_LINK_TYPE_ID:
+      return 'arranger';
+    case TRANSLATOR_LINK_TYPE_ID:
+      return 'translator';
+    case WRITER_LINK_TYPE_ID:
+      return 'writer';
+  }
+}
+
 function renderFoundArtistWarning(
   warning: Extract<PerWorkWarning, {type: 'found-by-name' | 'found-by-alias' | 'artist-missing-data'}>,
   description: string,
@@ -81,8 +139,9 @@ function renderFoundArtistWarning(
 ) {
   return (
     <>
-      {capitalizeFirst(warning.role)} <a href={`/artist/${warning.artistId}`}>{warning.artistName}</a> {description},
-      please verify (IPI = {warning.ipi}).{' '}
+      {capitalizeFirst(artistLinkTypeName(warning.linkTypeID))}{' '}
+      <a href={`/artist/${warning.artistId}`}>{warning.artistName}</a> {description}, please verify (IPI = {warning.ipi}
+      ).{' '}
       {artistUpdateAction(
         track,
         {
@@ -125,14 +184,21 @@ function renderFoundArtistWarning(
 }
 
 function WorkNameDifferentWarning(props: {recordingName: string}) {
-  const {savedEditData, saveEditData} = useWorkEditData();
+  const {savedEditData, saveEditData, resolveWarnings} = useWorkEditData();
   return (
     <>
       Work name is different from recording name {props.recordingName}, please verify.{' '}
       <button
         type="button"
         class={`btn-link ${classes['btn-link']}`}
-        onClick={() => saveEditData({...savedEditData(), name: props.recordingName})}
+        onClick={() => {
+          saveEditData({...savedEditData(), name: props.recordingName});
+          const isWorkNameWarning = (
+            warning: PerWorkWarning
+          ): warning is Extract<PerWorkWarning, {type: 'work-name-different'}> =>
+            warning.type === 'work-name-different';
+          resolveWarnings(isWorkNameWarning, () => []).catch(console.error);
+        }}
       >
         update
       </button>
@@ -177,8 +243,8 @@ export function renderWarning(
     case 'failed-to-find':
       return (
         <>
-          Failed to find {warning.role} {warning.creatorHebName || warning.creatorEngName || warning.ipi} (IPI ={' '}
-          {warning.ipi}).{' '}
+          Failed to find {artistLinkTypeName(warning.linkTypeID)}{' '}
+          {warning.creatorHebName || warning.creatorEngName || warning.ipi} (IPI = {warning.ipi}).{' '}
           {artistAction({
             action: 'search',
             linkType: warning.linkTypeID,
@@ -217,7 +283,37 @@ export function WorkWarnings(props: {
   work: WorkT;
   recording?: RecordingT;
 }) {
-  const {resolveArtistWarnings} = useWorkEditData();
+  const {resolveWarnings} = useWorkEditData();
+  const resolveArtistWarnings = (ipBaseNumber: string, artist: ArtistT) => {
+    resolveWarnings(
+      (warning: PerWorkWarning): warning is MissingArtistWarning =>
+        isMissingArtistWarning(warning) && warning.ipBaseNumber === ipBaseNumber,
+      async (artistWarnings, context: WarningResolutionContext) => {
+        for (const warning of artistWarnings) {
+          const sourceEntity =
+            warning.linkTypeID === ARRANGER_LINK_TYPE_ID && context.recording ? context.recording : context.work;
+          addArtistRelationship(
+            sourceEntity,
+            warning.linkTypeID,
+            artist,
+            'artistId' in warning ? warning.artistId : undefined
+          );
+        }
+
+        if (await artistHasIpiOrAcumLink(artist, artistWarnings[0]!.ipi, ipBaseNumber)) {
+          return [];
+        }
+
+        return artistWarnings.map(warning => ({
+          ...warning,
+          artistId: artist.gid,
+          artistName: artist.name,
+          type: 'artist-missing-data' as const,
+        }));
+      },
+      {scope: 'all'}
+    ).catch(console.error);
+  };
   return (
     <For each={props.warnings}>
       {workWarning => (
