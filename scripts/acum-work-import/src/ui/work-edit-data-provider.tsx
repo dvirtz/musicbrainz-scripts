@@ -1,9 +1,5 @@
-// cspell: ignore ipis
-
-import {creatorUrl, IPBaseNumber, WorkBean} from '#acum.ts';
-import {ArtistLookupCache} from '#artists.ts';
-import {linkArrangers, linkWriters} from '#link-artists.ts';
-import {addArtistRelationship} from '#relationships.ts';
+import {WorkBean} from '#acum.ts';
+import {ArtistLookupCache, linkArrangers, linkWriters} from '#link-artists.ts';
 import {PerWorkWarning} from '#ui/work-warnings.tsx';
 import {WorkEditData, workEditData, workEditDataEqual} from '#work-edit-data.ts';
 import {createWork} from '#works.ts';
@@ -11,14 +7,13 @@ import {partition} from '@repo/common/parition';
 import {assertMBTree, assertRelationshipEditor, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {buildOptionList, buildOptionListFromKeys} from '@repo/musicbrainz-ext/build-options-list';
 import {compareInsensitive, compareNumbers, compareWorks} from '@repo/musicbrainz-ext/compare';
-import {ARRANGER_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
 import {urlFromMbid} from '@repo/musicbrainz-ext/edits';
-import {fetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {WorkAttributeTypeAllowedValueT} from '@repo/musicbrainz-ext/type-info';
+import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
+import {from, map} from 'rxjs';
 import {createContext, createEffect, createResource, createSignal, onCleanup, ParentProps, useContext} from 'solid-js';
 import {
-  ArtistT,
   IswcT,
   LanguageT,
   RecordingT,
@@ -51,6 +46,24 @@ export type WorkEditDataProviderProps = ParentProps & {
   shouldLinkArrangers: boolean;
   initialState?: WorkEditDataInitialState;
 };
+
+export type WarningResolutionContext = {
+  work: WorkT;
+  recording?: RecordingT;
+};
+
+type WarningPredicate<T extends PerWorkWarning> = (warning: PerWorkWarning) => warning is T;
+type WarningResolution<T extends PerWorkWarning> = (
+  matching: T[],
+  context: WarningResolutionContext
+) => readonly PerWorkWarning[] | void | Promise<readonly PerWorkWarning[] | void>;
+type ResolveWarnings = <T extends PerWorkWarning>(
+  predicate: WarningPredicate<T>,
+  resolve: WarningResolution<T>,
+  options?: {scope?: 'local' | 'all'}
+) => Promise<void>;
+
+const warningResolvers = new Set<ResolveWarnings>();
 
 function emptyEditData(): WorkEditData {
   return {
@@ -185,7 +198,7 @@ function makeWorkEditDataContext(
   setSavedEditData: (value: WorkEditData) => void,
   originalEditData: () => WorkEditData,
   warnings: () => readonly PerWorkWarning[],
-  resolveArtistWarnings: (ipBaseNumber: string, artist: ArtistT) => void,
+  resolveWarnings: ResolveWarnings,
   isLoading: () => boolean,
   workTypeInfo: WorkTypeInfo,
   refetch: () => void
@@ -212,7 +225,7 @@ function makeWorkEditDataContext(
           .map(([typeId, children]) => [typeId, buildOptionListFromKeys(children, 'value', 'id')])
       ),
     warnings,
-    resolveArtistWarnings,
+    resolveWarnings,
     isLoading,
     refetch,
     replacedWork,
@@ -234,87 +247,32 @@ export function useWorkEditData() {
   return context;
 }
 
-const artistResolvedEventName = 'acum:artist-resolved';
-
-type ArtistResolvedEventDetail = {
-  ipBaseNumber: IPBaseNumber;
-  artist: ArtistT;
-};
-
-async function artistHasIpiOrAcumLink(artist: ArtistT, ipi: string, ipBaseNumber: string) {
-  type ArtistResponse = {
-    ipis?: string[];
-    relations?: Array<{
-      'target-type'?: string;
-      url?: {id?: string; resource?: string};
-    }>;
-  };
-
-  const {ipis, relations} = await fetchJSON<ArtistResponse>(`/ws/2/artist/${artist.gid}?fmt=json&inc=url-rels`);
-
-  return (
-    ipis?.includes(ipi) ||
-    relations?.some(rel => rel['target-type'] === 'url' && rel.url?.resource === creatorUrl(ipBaseNumber))
-  );
-}
-
 export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
   const [savedEditData, setSavedEditData] = createSignal(props.initialState?.savedEditData ?? emptyEditData());
   const [originalEditData, setOriginalEditData] = createSignal(props.initialState?.originalEditData ?? emptyEditData());
   const [warnings, setWarnings] = createSignal<readonly PerWorkWarning[]>(props.initialState?.warnings ?? []);
   const [isLoading, setIsLoading] = createSignal(!props.initialState);
 
-  const resolveArtistWarnings = (ipBaseNumber: IPBaseNumber, artist: ArtistT) =>
-    document.dispatchEvent(
-      new CustomEvent<ArtistResolvedEventDetail>(artistResolvedEventName, {
-        detail: {
-          ipBaseNumber,
-          artist,
-        },
-      })
-    );
-
-  const onArtistResolved = async (event: Event) => {
-    const {ipBaseNumber, artist} = (event as CustomEvent<ArtistResolvedEventDetail>).detail;
-    type MissingArtistWarning = Extract<
-      PerWorkWarning,
-      {type: 'found-by-alias' | 'found-by-name' | 'failed-to-find' | 'artist-missing-data'}
-    >;
-    const [artistWarnings, rest] = partition(
-      warnings(),
-      (warning): warning is MissingArtistWarning =>
-        (warning.type === 'found-by-alias' ||
-          warning.type === 'found-by-name' ||
-          warning.type === 'failed-to-find' ||
-          warning.type === 'artist-missing-data') &&
-        warning.ipBaseNumber === ipBaseNumber
-    ) as [MissingArtistWarning[], PerWorkWarning[]];
-    if (artistWarnings.length > 0) {
-      for (const warning of artistWarnings) {
-        const sourceEntity =
-          warning.linkTypeID === ARRANGER_LINK_TYPE_ID && props.recording ? props.recording : props.work;
-        addArtistRelationship(
-          sourceEntity,
-          warning.linkTypeID,
-          artist,
-          'artistId' in warning ? warning.artistId : undefined
-        );
-      }
-      const previousWarning = artistWarnings[0]!;
-      if (!(await artistHasIpiOrAcumLink(artist, previousWarning.ipi, ipBaseNumber))) {
-        rest.push({
-          ...previousWarning,
-          artistId: artist.gid,
-          artistName: artist.name,
-          type: 'artist-missing-data',
-        });
-      }
-      setWarnings(rest);
+  const resolveLocalWarnings = async <T extends PerWorkWarning>(
+    predicate: WarningPredicate<T>,
+    resolve: WarningResolution<T>
+  ) => {
+    const [matching, remaining] = partition(warnings(), predicate);
+    if (matching.length === 0) {
+      return;
     }
+
+    const replacements = await resolve(matching, {work: props.work, recording: props.recording});
+    setWarnings([...remaining, ...(replacements ?? [])]);
   };
-  const handler = (event: Event) => void onArtistResolved(event).catch(console.error);
-  document.addEventListener(artistResolvedEventName, handler);
-  onCleanup(() => document.removeEventListener(artistResolvedEventName, handler));
+
+  warningResolvers.add(resolveLocalWarnings);
+  onCleanup(() => warningResolvers.delete(resolveLocalWarnings));
+
+  const resolveWarnings: ResolveWarnings = async (predicate, resolve, options) => {
+    const resolvers = options?.scope === 'all' ? warningResolvers : [resolveLocalWarnings];
+    await executePipeline(from(resolvers).pipe(map(resolver => resolver(predicate, resolve))));
+  };
 
   const [resource, {refetch}] = createResource(
     () =>
@@ -371,7 +329,7 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
         setSavedEditData,
         originalEditData,
         warnings,
-        resolveArtistWarnings,
+        resolveWarnings,
         isLoading,
         props.typeInfo,
         () => void refetch()
