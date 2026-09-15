@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.22.0-beta.3 (2026-09-15)
+
+* fix(acum-work-import): warning improvements ([1c57baf](https://github.com/dvirtz/musicbrainz-scripts/commit/1c57baf))
+
 ## @dvirtz/acum-work-import-v1.22.0-beta.2 (2026-09-11)
 
 * fix(acum-work-import): correct IPI comparison ([5059027](https://github.com/dvirtz/musicbrainz-scripts/commit/5059027))
