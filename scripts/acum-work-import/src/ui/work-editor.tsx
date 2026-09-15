@@ -96,7 +96,7 @@ function WorkEditor(props: AddWorkEditorOptions & {parent: Element}) {
         >
           {props.work.name}
         </a>
-        <Show when={props.work.comment}>
+        <Show when={isNew && props.work.comment}>
           {comment => (
             <span class="comment">
               {' ('}
