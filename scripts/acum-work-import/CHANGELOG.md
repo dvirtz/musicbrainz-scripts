@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.22.0-beta.4 (2026-09-19)
+
+* fix(acum-work-import): show disambiguation for new works ([f7960e0](https://github.com/dvirtz/musicbrainz-scripts/commit/f7960e0))
+
 ## @dvirtz/acum-work-import-v1.22.0-beta.3 (2026-09-15)
 
 * fix(acum-work-import): warning improvements ([1c57baf](https://github.com/dvirtz/musicbrainz-scripts/commit/1c57baf))
