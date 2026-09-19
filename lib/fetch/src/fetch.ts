@@ -68,7 +68,7 @@ export async function fetchResponse(url: string, options?: FetchRetryOptions): P
     )
   );
   if (!response.ok) {
-    throw new FetchError(response.status, `HTTP error: ${response.statusText}`);
+    throw new FetchError(response.status, `HTTP error ${response.status} ${await response.text()}`);
   }
   return response;
 }
