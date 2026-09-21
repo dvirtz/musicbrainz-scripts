@@ -1,3 +1,12 @@
+## @dvirtz/acum-work-import-v1.22.0 (2026-09-21)
+
+* feat(acum-work-import): localize and enrich warnings ([4823831](https://github.com/dvirtz/musicbrainz-scripts/commit/4823831))
+* feat(acum-work-import): show work disambiguation comment ([7a29c56](https://github.com/dvirtz/musicbrainz-scripts/commit/7a29c56))
+* fix(acum-work-import): avoid progress bar getting over dialogs ([0d62d23](https://github.com/dvirtz/musicbrainz-scripts/commit/0d62d23))
+* fix(acum-work-import): avoid removing elements on Enter press ([cf38d22](https://github.com/dvirtz/musicbrainz-scripts/commit/cf38d22))
+* fix(acum-work-import): prefer input value over saved works ([c455045](https://github.com/dvirtz/musicbrainz-scripts/commit/c455045))
+* chore: upgrade typedbrainz ([5ab39df](https://github.com/dvirtz/musicbrainz-scripts/commit/5ab39df))
+
 ## @dvirtz/acum-work-import-v1.21.3 (2026-07-08)
 
 * test: support new MB login page ([1f34f25](https://github.com/dvirtz/musicbrainz-scripts/commit/1f34f25)), closes [#198](https://github.com/dvirtz/musicbrainz-scripts/issues/198)
