@@ -1,4 +1,5 @@
 import {creatorUrl} from '#acum.ts';
+import {addExternalLink} from '#ui/add-external-link.ts';
 import {openArtistUpdateDialog} from '#ui/artist-update-dialog.tsx';
 import {
   assertMB,
@@ -8,6 +9,7 @@ import {
 } from '@repo/musicbrainz-ext/asserts';
 import {compareNumbers} from '@repo/musicbrainz-ext/compare';
 import {ARRANGER_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
+import {setInputValue} from '@repo/musicbrainz-ext/set-input-value';
 import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {linkTypes} from '@repo/musicbrainz-ext/type-info';
 import {waitForRelationshipDialogDispatch} from '@repo/musicbrainz-ext/wait-for';
@@ -105,26 +107,6 @@ function getRelationship(sourceEntity: RelatableEntityT, artistId: string, linkT
       }
     }
   }
-}
-
-function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, value: string) {
-  const view = input.ownerDocument.defaultView;
-  if (!view) {
-    throw new Error('Input has no owning window.');
-  }
-
-  const valueDescriptor = Object.getOwnPropertyDescriptor(
-    input.tagName === 'TEXTAREA' ? view.HTMLTextAreaElement.prototype : view.HTMLInputElement.prototype,
-    'value'
-  );
-  if (!valueDescriptor?.set) {
-    throw new Error('Input value setter is unavailable.');
-  }
-
-  input.focus();
-  valueDescriptor.set.call(input, value);
-  input.dispatchEvent(new view.Event('input', {bubbles: true}));
-  input.dispatchEvent(new view.Event('change', {bubbles: true}));
 }
 
 function getCookieValue(doc: Document, name: string): string | null {
@@ -240,20 +222,7 @@ async function runCreateFlow(params: OpenArtistDialogParams, sourceEntity: Relat
       setInputValue(ipiInput, params.ipi);
     }
   } else if (params.ipBaseNumber) {
-    const externalLinksContainer = artistForm.querySelector<HTMLDivElement>('div.external-links-editor-container');
-    const urlInput =
-      externalLinksContainer?.querySelector<HTMLInputElement>('input[type="url"]') ||
-      (await waitForElement(
-        (element): element is HTMLInputElement => {
-          const view = element.ownerDocument.defaultView;
-          return view !== null && element instanceof view.HTMLInputElement && element.getAttribute('type') === 'url';
-        },
-        undefined,
-        externalLinksContainer ?? undefined
-      ));
-    if (urlInput) {
-      setInputValue(urlInput, creatorUrl(params.ipBaseNumber));
-    }
+    await addExternalLink(artistForm, creatorUrl(params.ipBaseNumber));
   }
 }
 

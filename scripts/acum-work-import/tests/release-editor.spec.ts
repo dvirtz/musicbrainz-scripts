@@ -7,6 +7,9 @@ import {
   COMPOSER_LINK_TYPE_ID,
   EDIT_RELATIONSHIP_CREATE,
   LYRICIST_LINK_TYPE_ID,
+  RECORDING_OTHER_DATABASE_LINK_TYPE_ID,
+  RELEASE_GROUP_OTHER_DATABASE_LINK_TYPE_ID,
+  WORK_OTHER_DATABASE_LINK_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
 import {test as musicbrainzTest} from '@repo/test-support/musicbrainz-test';
 import {WsJsEditRelationshipCreateT, WsJsRelationshipCommonT} from 'typedbrainz/types';
@@ -52,6 +55,7 @@ const test = base.extend({
       arrangers: [] as string[],
     }));
     const workIndex = (title: string) => workTitles.findIndex(v => compareInsensitive(v, title) === 0);
+    const urlEdits: WsJsEditRelationshipCreateT[] = [];
     const unrouteEditCreate = await userscriptPage.route('ws/js/edit/create', async (route, request) => {
       const postData = await userscriptPage.postDataJSON(request);
       if ('editNote' in postData) {
@@ -61,6 +65,11 @@ const test = base.extend({
         );
       }
       expect(postData).toHaveProperty('edits');
+      urlEdits.push(
+        ...(postData['edits'] as WsJsEditRelationshipCreateT[]).filter(edit =>
+          edit.entities?.some(entity => entity.entityType === 'url')
+        )
+      );
       (postData['edits'] as (WsJsRelationshipCommonT & {edit_type: number})[])
         .filter((edit): edit is WsJsEditRelationshipCreateT => edit.edit_type === EDIT_RELATIONSHIP_CREATE)
         .forEach(edit => {
@@ -88,12 +97,46 @@ const test = base.extend({
       await route.fulfill({json: {edits: []}});
     });
 
-    // Now click "Enter edit" which will automatically submit works first, then proceed with the edit
+    // The page may split relationship edits into multiple requests.
     const enterEdit = page.getByRole('button', {name: 'Enter edit'});
-    // verify the button has acumReplaced in its dataset
     await expect(enterEdit).toHaveAttribute('data-acum-replaced', 'true');
     await enterEdit.click();
     await expect(page).toHaveURL(`/release/${testRelease.gid}`);
+
+    expect(urlEdits).toHaveLength(testRelease.works().length * 2 + 1);
+    expect(urlEdits).toEqual(
+      expect.arrayContaining([
+        ...testRelease.works().flatMap((work, index) => {
+          const versionUrl = new URL(work.acumUrl);
+          return [
+            expect.objectContaining({
+              linkTypeID: RECORDING_OTHER_DATABASE_LINK_TYPE_ID,
+              entities: [
+                expect.objectContaining({entityType: 'recording', name: trackTitles[index]}),
+                expect.objectContaining({entityType: 'url', name: work.acumUrl}),
+              ],
+            }),
+            expect.objectContaining({
+              linkTypeID: WORK_OTHER_DATABASE_LINK_TYPE_ID,
+              entities: [
+                expect.objectContaining({
+                  entityType: 'url',
+                  name: `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${versionUrl.searchParams.get('workid')}`,
+                }),
+                expect.objectContaining({entityType: 'work', gid: work.id}),
+              ],
+            }),
+          ];
+        }),
+        expect.objectContaining({
+          linkTypeID: RELEASE_GROUP_OTHER_DATABASE_LINK_TYPE_ID,
+          entities: [
+            expect.objectContaining({entityType: 'release_group'}),
+            expect.objectContaining({entityType: 'url', name: testRelease.acumUrl()}),
+          ],
+        }),
+      ])
+    );
 
     expect(
       testRelease.works().map(work => ({
@@ -156,6 +199,11 @@ base.describe('release editor', () => {
 
     const arrangerLabels = trackRow.getByText('arranger:');
     await expect(arrangerLabels).toHaveCount(0);
+
+    await expect(page.getByText(workUrl, {exact: true})).toHaveCount(1);
+    await expect(page.getByText(work.acumUrl, {exact: true})).toHaveCount(0);
+    await expect(page.getByText(testRelease.acumUrl(), {exact: true})).toHaveCount(0);
+    await expect(page.getByText('You must select a relationship type and target entity')).toHaveCount(0);
   });
 
   base('re-adds work editor after rename', async ({page, testRelease, musicbrainzPage, userscriptPage}) => {
