@@ -1,6 +1,6 @@
 import {seedAcumStorageFromUrl} from '#tests/fixtures/acum-storage.ts';
 import {expect, Locator} from '@playwright/test';
-import {MEDLEY_OF_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
+import {MEDLEY_OF_LINK_TYPE_ID, WORK_OTHER_DATABASE_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
 import {test} from '@repo/test-support/musicbrainz-test';
 import {WorkT} from 'typedbrainz/types';
 
@@ -53,6 +53,9 @@ test.describe('work editor', () => {
     const editNote = page.getByRole('textbox', {name: 'Edit note'});
     await expect(editNote).toHaveValue(
       `\n----\nImported from ${workUrl} using userscript version 1.0.0 from https://homepage.com.`
+    );
+    await expect(page.getByRole('group', {name: 'External links'}).getByRole('textbox').first()).toHaveValue(
+      `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${workId}`
     );
   });
 
@@ -232,6 +235,11 @@ test.describe('work editor', () => {
       musicbrainzPage.expectWorkCreateToMatch(postData, expected);
 
       if (title === work.title) {
+        expect(postData).toMatchObject({
+          'edit-work.url.0.text': workUrl,
+          'edit-work.url.0.link_type_id': String(WORK_OTHER_DATABASE_LINK_TYPE_ID),
+          'edit-work.url.0.backward': '1',
+        });
         expect(postData).toEqual(
           expect.objectContaining(
             Object.fromEntries(

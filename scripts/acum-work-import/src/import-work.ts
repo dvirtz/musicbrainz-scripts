@@ -1,4 +1,5 @@
-import {Entity, entityUrl, fetchWorks, Version, WorkBean} from '#acum.ts';
+import {addExternalLink} from '#ui/add-external-link.ts';
+import {Entity, entityUrl, fetchWorks, Version, WorkBean, workEntity} from '#acum.ts';
 import {ArtistLookupCache, linkWriters} from '#link-artists.ts';
 import {updateMedleyWorkRelationship} from '#relationships.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
@@ -127,6 +128,12 @@ export async function importWork(
   const writerWarnings = await linkWriters(artistCache, version, work);
   writerWarnings.forEach(warning => addWarning(renderWarning(warning, version, work)));
 
+  const acumWork = workEntity(version);
+  if (acumWork.entityType === 'Version') {
+    addWarning('The MusicBrainz work editor does not support ACUM version URLs; the translation URL was not added');
+  } else {
+    await addExternalLink(form.ownerDocument, entityUrl(acumWork));
+  }
   setProgress([1, 'Done']);
   addEditNote(`Imported from ${entityUrl(entity)}`, form.ownerDocument);
 }

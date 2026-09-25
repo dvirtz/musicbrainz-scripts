@@ -1,4 +1,5 @@
-import {Entity, entityUrl, fetchWorks, trackName, Version, WorkBean} from '#acum.ts';
+import {Entity, entityUrl, fetchWorks, trackName, Version, versionEntity, WorkBean, workEntity} from '#acum.ts';
+import {addAcumLink} from '#acum-links.ts';
 import {ArtistLookupCache} from '#link-artists.ts';
 import {createRelationshipState} from '#relationships.ts';
 import {AddWarning} from '#ui/warnings.tsx';
@@ -51,6 +52,7 @@ type SelectedRecording = {
   readonly position: number;
   readonly index: number | undefined;
   readonly workBean: WorkBean;
+  readonly version: Version;
   readonly recordingState: MediumRecordingStateT;
 };
 type SelectedRecordings = ReadonlyArray<SelectedRecording>;
@@ -76,19 +78,20 @@ async function importSelectedWorks(
   setProgress: SetProgress
 ) {
   artistCache.clear();
+  let linksAdded = false;
 
-  const getOrCreateWork = async ({index, workBean, recordingState}: SelectedRecording) => {
+  const getOrCreateWork = async ({index, workBean, recordingState, version}: SelectedRecording) => {
     assertMBTree(MB?.tree);
 
-    const existing = relatedWork(recordingState.relatedWorks);
+    const existing = relatedWork(recordingState.relatedWorks, recordingState.recording, index);
     if (existing) {
-      return {work: existing.work, workBean, recordingState} as const;
+      return {work: existing.work, workBean, recordingState, version} as const;
     }
 
     const newWork = await createNewWork(workBean);
     linkNewWork(index, newWork, recordingState);
 
-    return {work: newWork, workBean, recordingState} as const;
+    return {work: newWork, workBean, recordingState, version} as const;
   };
 
   const addReleaseWorkEditor = async ({
@@ -99,6 +102,7 @@ async function importSelectedWorks(
   }: {
     work: WorkT;
     track: WorkBean;
+    version: Version;
     recordingState: MediumRecordingStateT;
     trackRow: Element;
   }) => {
@@ -139,19 +143,34 @@ async function importSelectedWorks(
         }),
         mergeMap(getOrCreateWork),
         map(
-          ({work, workBean, recordingState}) =>
+          ({work, workBean, recordingState, version}) =>
             ({
               work,
               track: workBean,
+              version,
               recordingState,
               trackRow: document.querySelector(`.track:has(a[href="${recordingLink(recordingState.recording)}"])`)!,
             }) as const
         ),
         asyncTap(addReleaseWorkEditor),
+        tap(({work, track, recordingState, version}) => {
+          linksAdded = addAcumLink(work, workEntity(track)) || linksAdded;
+          if (entity.entityType !== 'Work') {
+            linksAdded = addAcumLink(recordingState.recording, version) || linksAdded;
+          }
+        }),
         mergeMap(({trackRow}) => hasChanges(trackRow)),
         connect(shared =>
           merge(
-            shared.pipe(maybeSetEditNote(entity, addWarning)),
+            shared.pipe(
+              maybeSetEditNote(entity, addWarning, () => {
+                if (entity.entityType === 'Album') {
+                  assertReleaseRelationshipEditor(MB?.relationshipEditor);
+                  linksAdded = addAcumLink(MB.relationshipEditor.state.entity.releaseGroup, entity) || linksAdded;
+                }
+                return linksAdded;
+              })
+            ),
             shared.pipe(updateProgress(selectedRecordings, setProgress), ignoreElements())
           )
         )
@@ -170,10 +189,10 @@ function updateProgress(selectedRecordings: SelectedRecordings, setProgress: Set
   );
 }
 
-function maybeSetEditNote(entity: Entity, addWarning: AddWarning) {
+function maybeSetEditNote(entity: Entity, addWarning: AddWarning, addLinks: () => boolean) {
   return pipe(
     count((pendingEdits: boolean) => pendingEdits),
-    map(editedCount => editedCount > 0),
+    map(editedCount => addLinks() || editedCount > 0),
     tap(hasEdits => {
       if (hasEdits) {
         addEditNote(`Imported from ${entityUrl(entity)}`);
@@ -215,16 +234,24 @@ async function selectedRecordings(
         iif(
           () => workBean.isMedley === '1',
           from(workBean.list ?? []).pipe(
-            mergeMap(async medleyVersion => await fetchWorks(new Version(medleyVersion.id, medleyVersion.workId))),
-            map(medleyWorks => medleyWorks[0]),
-            map((medleyWork, index) => ({position, index, workBean: medleyWork, recordingState}))
+            mergeMap(async (medleyVersion, index) => ({
+              index,
+              workBean: (await fetchWorks(new Version(medleyVersion.id, medleyVersion.workId)))[0],
+            })),
+            map(({workBean: medleyWork, index}) => ({
+              position,
+              index,
+              workBean: medleyWork,
+              recordingState,
+              version: versionEntity(workBean),
+            }))
           ),
-          of({position, workBean, recordingState})
+          of({position, workBean, recordingState, version: versionEntity(workBean)})
         )
       ),
       filter((state): state is SelectedRecording => {
         const {recordingState} = state;
-        return recordingState != null && (noSelection || recordingState.isSelected);
+        return state.workBean != null && recordingState != null && (noSelection || recordingState.isSelected);
       }),
       toArray()
     )
@@ -275,15 +302,23 @@ function selectedMediums(entity: Entity, noSelection: boolean): SelectedMediums 
   return selected;
 }
 
-function relatedWork(relatedWorks: MediumWorkStateTreeT): MediumWorkStateT | undefined {
+function relatedWork(
+  relatedWorks: MediumWorkStateTreeT,
+  recording: RecordingT,
+  medleyIndex: number | undefined
+): MediumWorkStateT | undefined {
   assertMBTree(MB?.tree);
 
-  const relatedWork = head(MB.tree.iterate(relatedWorks));
-  if (relatedWork) {
+  for (const relatedWork of MB.tree.iterate(relatedWorks)) {
     const targetTypeGroup = MB.tree.find(relatedWork.targetTypeGroups, 'recording', compareTargetTypeWithGroup, null);
     if (targetTypeGroup) {
       for (const relationship of iterateRelationshipsInTargetTypeGroup(targetTypeGroup)) {
-        if (relationship._status !== REL_STATUS_REMOVE) {
+        if (
+          relationship._status !== REL_STATUS_REMOVE &&
+          relationship.entity0.entityType === 'recording' &&
+          relationship.entity0.id === recording.id &&
+          (medleyIndex === undefined || relationship.linkOrder === medleyIndex + 1)
+        ) {
           return relatedWork;
         }
       }

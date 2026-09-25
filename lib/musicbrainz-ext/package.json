@@ -21,13 +21,14 @@
     "./get-select-value": "./src/get-select-value.ts",
     "./parse-integer-or-null": "./src/parse-integer-or-null.ts",
     "./parse-integer": "./src/parse-integer.ts",
+    "./release-editor": "./src/release-editor.ts",
     "./search-results": "./src/search-results.ts",
+    "./set-input-value": "./src/set-input-value.ts",
     "./subfield-errors": "./src/subfield-errors.ts",
     "./track-recording-state": "./src/track-recording-state.ts",
     "./type-group": "./src/type-group.ts",
     "./type-info": "./src/type-info.ts",
-    "./wait-for": "./src/wait-for.ts",
-    "./release-editor": "./src/release-editor.ts"
+    "./wait-for": "./src/wait-for.ts"
   },
   "imports": {
     "#*": "./src/*"
