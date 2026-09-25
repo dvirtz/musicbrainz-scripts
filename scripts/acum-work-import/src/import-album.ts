@@ -1,4 +1,5 @@
-import {Entity, entityUrl, fetchWorks, trackName, Version, WorkBean} from '#acum.ts';
+import {addAcumLink} from '#acum-links.ts';
+import {Entity, entityUrl, fetchWorks, trackName, Version, WorkBean, workEntity} from '#acum.ts';
 import {ArtistLookupCache} from '#link-artists.ts';
 import {createRelationshipState} from '#relationships.ts';
 import {AddWarning} from '#ui/warnings.tsx';
@@ -76,11 +77,10 @@ async function importSelectedWorks(
   setProgress: SetProgress
 ) {
   artistCache.clear();
-
   const getOrCreateWork = async ({index, workBean, recordingState}: SelectedRecording) => {
     assertMBTree(MB?.tree);
 
-    const existing = relatedWork(recordingState.relatedWorks);
+    const existing = relatedWork(recordingState.relatedWorks, recordingState.recording, index);
     if (existing) {
       return {work: existing.work, workBean, recordingState} as const;
     }
@@ -148,10 +148,19 @@ async function importSelectedWorks(
             }) as const
         ),
         asyncTap(addReleaseWorkEditor),
+        tap(({work, track}) => addAcumLink(work, workEntity(track))),
         mergeMap(({trackRow}) => hasChanges(trackRow)),
         connect(shared =>
           merge(
-            shared.pipe(maybeSetEditNote(entity, addWarning)),
+            shared.pipe(
+              maybeSetEditNote(entity, addWarning, () => {
+                if (entity.entityType === 'Album') {
+                  assertReleaseRelationshipEditor(MB?.relationshipEditor);
+                  return addAcumLink(MB.relationshipEditor.state.entity.releaseGroup, entity);
+                }
+                return false;
+              })
+            ),
             shared.pipe(updateProgress(selectedRecordings, setProgress), ignoreElements())
           )
         )
@@ -170,10 +179,10 @@ function updateProgress(selectedRecordings: SelectedRecordings, setProgress: Set
   );
 }
 
-function maybeSetEditNote(entity: Entity, addWarning: AddWarning) {
+function maybeSetEditNote(entity: Entity, addWarning: AddWarning, addLinks: () => boolean) {
   return pipe(
     count((pendingEdits: boolean) => pendingEdits),
-    map(editedCount => editedCount > 0),
+    map(editedCount => addLinks() || editedCount > 0),
     tap(hasEdits => {
       if (hasEdits) {
         addEditNote(`Imported from ${entityUrl(entity)}`);
@@ -275,15 +284,23 @@ function selectedMediums(entity: Entity, noSelection: boolean): SelectedMediums 
   return selected;
 }
 
-function relatedWork(relatedWorks: MediumWorkStateTreeT): MediumWorkStateT | undefined {
+function relatedWork(
+  relatedWorks: MediumWorkStateTreeT,
+  recording: RecordingT,
+  medleyIndex: number | undefined
+): MediumWorkStateT | undefined {
   assertMBTree(MB?.tree);
 
-  const relatedWork = head(MB.tree.iterate(relatedWorks));
-  if (relatedWork) {
+  for (const relatedWork of MB.tree.iterate(relatedWorks)) {
     const targetTypeGroup = MB.tree.find(relatedWork.targetTypeGroups, 'recording', compareTargetTypeWithGroup, null);
     if (targetTypeGroup) {
       for (const relationship of iterateRelationshipsInTargetTypeGroup(targetTypeGroup)) {
-        if (relationship._status !== REL_STATUS_REMOVE) {
+        if (
+          relationship._status !== REL_STATUS_REMOVE &&
+          relationship.entity0.entityType === 'recording' &&
+          relationship.entity0.id === recording.id &&
+          (medleyIndex === undefined || relationship.linkOrder === medleyIndex + 1)
+        ) {
           return relatedWork;
         }
       }
