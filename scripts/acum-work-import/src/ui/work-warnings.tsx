@@ -35,10 +35,11 @@ function artistUpdateAction(
     params.set('edit-artist.name', options.name);
   }
 
+  // use high index to avoid overriding existing values
   if (Number(options.ipi)) {
-    params.set('edit-artist.ipi_codes.0', options.ipi);
+    params.set('edit-artist.ipi_codes.9999', options.ipi);
   } else {
-    params.set('edit-artist.url.0.text', creatorUrl(options.ipBaseNumber));
+    params.set('edit-artist.url.9999.text', creatorUrl(options.ipBaseNumber));
   }
 
   params.set('edit-artist.edit_note', warningEditNote(track));
