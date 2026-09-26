@@ -1,5 +1,5 @@
-import {Entity, entityUrl, fetchWorks, trackName, Version, versionEntity, WorkBean, workEntity} from '#acum.ts';
 import {addAcumLink} from '#acum-links.ts';
+import {Entity, entityUrl, fetchWorks, trackName, Version, WorkBean, workEntity} from '#acum.ts';
 import {ArtistLookupCache} from '#link-artists.ts';
 import {createRelationshipState} from '#relationships.ts';
 import {AddWarning} from '#ui/warnings.tsx';
@@ -52,7 +52,6 @@ type SelectedRecording = {
   readonly position: number;
   readonly index: number | undefined;
   readonly workBean: WorkBean;
-  readonly version: Version;
   readonly recordingState: MediumRecordingStateT;
 };
 type SelectedRecordings = ReadonlyArray<SelectedRecording>;
@@ -78,20 +77,18 @@ async function importSelectedWorks(
   setProgress: SetProgress
 ) {
   artistCache.clear();
-  let linksAdded = false;
-
-  const getOrCreateWork = async ({index, workBean, recordingState, version}: SelectedRecording) => {
+  const getOrCreateWork = async ({index, workBean, recordingState}: SelectedRecording) => {
     assertMBTree(MB?.tree);
 
     const existing = relatedWork(recordingState.relatedWorks, recordingState.recording, index);
     if (existing) {
-      return {work: existing.work, workBean, recordingState, version} as const;
+      return {work: existing.work, workBean, recordingState} as const;
     }
 
     const newWork = await createNewWork(workBean);
     linkNewWork(index, newWork, recordingState);
 
-    return {work: newWork, workBean, recordingState, version} as const;
+    return {work: newWork, workBean, recordingState} as const;
   };
 
   const addReleaseWorkEditor = async ({
@@ -102,7 +99,6 @@ async function importSelectedWorks(
   }: {
     work: WorkT;
     track: WorkBean;
-    version: Version;
     recordingState: MediumRecordingStateT;
     trackRow: Element;
   }) => {
@@ -143,22 +139,16 @@ async function importSelectedWorks(
         }),
         mergeMap(getOrCreateWork),
         map(
-          ({work, workBean, recordingState, version}) =>
+          ({work, workBean, recordingState}) =>
             ({
               work,
               track: workBean,
-              version,
               recordingState,
               trackRow: document.querySelector(`.track:has(a[href="${recordingLink(recordingState.recording)}"])`)!,
             }) as const
         ),
         asyncTap(addReleaseWorkEditor),
-        tap(({work, track, recordingState, version}) => {
-          linksAdded = addAcumLink(work, workEntity(track)) || linksAdded;
-          if (entity.entityType !== 'Work') {
-            linksAdded = addAcumLink(recordingState.recording, version) || linksAdded;
-          }
-        }),
+        tap(({work, track}) => addAcumLink(work, workEntity(track))),
         mergeMap(({trackRow}) => hasChanges(trackRow)),
         connect(shared =>
           merge(
@@ -166,9 +156,9 @@ async function importSelectedWorks(
               maybeSetEditNote(entity, addWarning, () => {
                 if (entity.entityType === 'Album') {
                   assertReleaseRelationshipEditor(MB?.relationshipEditor);
-                  linksAdded = addAcumLink(MB.relationshipEditor.state.entity.releaseGroup, entity) || linksAdded;
+                  return addAcumLink(MB.relationshipEditor.state.entity.releaseGroup, entity);
                 }
-                return linksAdded;
+                return false;
               })
             ),
             shared.pipe(updateProgress(selectedRecordings, setProgress), ignoreElements())
@@ -234,24 +224,16 @@ async function selectedRecordings(
         iif(
           () => workBean.isMedley === '1',
           from(workBean.list ?? []).pipe(
-            mergeMap(async (medleyVersion, index) => ({
-              index,
-              workBean: (await fetchWorks(new Version(medleyVersion.id, medleyVersion.workId)))[0],
-            })),
-            map(({workBean: medleyWork, index}) => ({
-              position,
-              index,
-              workBean: medleyWork,
-              recordingState,
-              version: versionEntity(workBean),
-            }))
+            mergeMap(async medleyVersion => await fetchWorks(new Version(medleyVersion.id, medleyVersion.workId))),
+            map(medleyWorks => medleyWorks[0]),
+            map((medleyWork, index) => ({position, index, workBean: medleyWork, recordingState}))
           ),
-          of({position, workBean, recordingState, version: versionEntity(workBean)})
+          of({position, workBean, recordingState})
         )
       ),
       filter((state): state is SelectedRecording => {
         const {recordingState} = state;
-        return state.workBean != null && recordingState != null && (noSelection || recordingState.isSelected);
+        return recordingState != null && (noSelection || recordingState.isSelected);
       }),
       toArray()
     )
