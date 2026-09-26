@@ -7,7 +7,6 @@ import {
   COMPOSER_LINK_TYPE_ID,
   EDIT_RELATIONSHIP_CREATE,
   LYRICIST_LINK_TYPE_ID,
-  RECORDING_OTHER_DATABASE_LINK_TYPE_ID,
   RELEASE_GROUP_OTHER_DATABASE_LINK_TYPE_ID,
   WORK_OTHER_DATABASE_LINK_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
@@ -103,30 +102,21 @@ const test = base.extend({
     await enterEdit.click();
     await expect(page).toHaveURL(`/release/${testRelease.gid}`);
 
-    expect(urlEdits).toHaveLength(testRelease.works().length * 2 + 1);
+    expect(urlEdits).toHaveLength(workTitles.length + 1);
     expect(urlEdits).toEqual(
       expect.arrayContaining([
-        ...testRelease.works().flatMap((work, index) => {
+        ...testRelease.works().map(work => {
           const versionUrl = new URL(work.acumUrl);
-          return [
-            expect.objectContaining({
-              linkTypeID: RECORDING_OTHER_DATABASE_LINK_TYPE_ID,
-              entities: [
-                expect.objectContaining({entityType: 'recording', name: trackTitles[index]}),
-                expect.objectContaining({entityType: 'url', name: work.acumUrl}),
-              ],
-            }),
-            expect.objectContaining({
-              linkTypeID: WORK_OTHER_DATABASE_LINK_TYPE_ID,
-              entities: [
-                expect.objectContaining({
-                  entityType: 'url',
-                  name: `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${versionUrl.searchParams.get('workid')}`,
-                }),
-                expect.objectContaining({entityType: 'work', gid: work.id}),
-              ],
-            }),
-          ];
+          return expect.objectContaining({
+            linkTypeID: WORK_OTHER_DATABASE_LINK_TYPE_ID,
+            entities: [
+              expect.objectContaining({
+                entityType: 'url',
+                name: `https://nocs.acum.org.il/acumsitesearchdb/work?workid=${versionUrl.searchParams.get('workid')}`,
+              }),
+              expect.objectContaining({entityType: 'work', gid: work.id}),
+            ],
+          });
         }),
         expect.objectContaining({
           linkTypeID: RELEASE_GROUP_OTHER_DATABASE_LINK_TYPE_ID,

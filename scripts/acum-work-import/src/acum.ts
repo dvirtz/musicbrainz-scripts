@@ -436,17 +436,18 @@ export function entityUrl(entity: Entity) {
       return `${baseUrl}/work?workid=${entity.id}`;
     case 'Album':
       return `${baseUrl}/album?albumid=${entity.id}`;
-    case 'Version':
-      return `${baseUrl}/version?workid=${(entity as Version).workId || versionWorkId(entity.id)}&versionid=${entity.id}`;
+    case 'Version': {
+      // when id does not start with workId (usually for translated versions), use /work else /version
+      const workId = (entity as Version).workId;
+      return `${baseUrl}/${entity.id.startsWith(workId) ? 'version' : 'work'}?workid=${workId}&versionid=${entity.id}`;
+    }
   }
 }
 
-export function versionEntity(work: WorkBean): Version {
-  return new Version(work.versionId, work.workId || work.fullWorkId);
-}
-
 export function workEntity(work: WorkBean): Entity<'Work'> | Version {
-  return work.isTranslated === '1' ? versionEntity(work) : new Entity(workId(work), 'Work');
+  return work.isTranslated === '1'
+    ? new Version(work.versionId, work.workId || work.fullWorkId)
+    : new Entity(workId(work), 'Work');
 }
 
 export function creatorUrl(ipBaseNumber: string) {

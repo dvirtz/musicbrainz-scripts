@@ -12,6 +12,7 @@ import {
   workTypes,
 } from '@repo/musicbrainz-ext/type-info';
 import {waitForElement, waitForMutation} from '@repo/rxjs-ext/wait-for-element';
+import {firstValueFrom, fromEvent, map} from 'rxjs';
 import {createEffect, createSignal, onCleanup, Show} from 'solid-js';
 import {render} from 'solid-js/web';
 
@@ -19,11 +20,9 @@ const workReadyEventName = 'acum:work-ready';
 const refetchWorkEventName = 'acum:refetch-work';
 
 export async function hasChanges(trackRaw: Element) {
-  return await new Promise<boolean>(resolve => {
-    trackRaw.addEventListener(workReadyEventName, () => {
-      resolve(trackRaw?.querySelector('.rel-add, .rel-edit') !== null);
-    });
-  });
+  return await firstValueFrom(
+    fromEvent(trackRaw, workReadyEventName).pipe(map(() => trackRaw?.querySelector('.rel-add, .rel-edit') !== null))
+  );
 }
 
 type AddWorkEditorOptions = Omit<WorkEditDataProviderProps, 'typeInfo'> & {

@@ -2,20 +2,18 @@ import {Entity, entityUrl} from '#acum.ts';
 import {createRelationshipState} from '#relationships.ts';
 import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {
-  RECORDING_OTHER_DATABASE_LINK_TYPE_ID,
   RELEASE_GROUP_OTHER_DATABASE_LINK_TYPE_ID,
   REL_STATUS_ADD,
   WORK_OTHER_DATABASE_LINK_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
-import {RecordingT, ReleaseGroupT, UrlT, WorkT} from 'typedbrainz/types';
+import {ReleaseGroupT, UrlT, WorkT} from 'typedbrainz/types';
 
 const otherDatabaseLinkTypes = {
-  recording: RECORDING_OTHER_DATABASE_LINK_TYPE_ID,
   release_group: RELEASE_GROUP_OTHER_DATABASE_LINK_TYPE_ID,
   work: WORK_OTHER_DATABASE_LINK_TYPE_ID,
 } as const;
 
-export function addAcumLink(source: RecordingT | WorkT | ReleaseGroupT, entity: Entity) {
+export function addAcumLink(source: WorkT | ReleaseGroupT, entity: Entity) {
   assertMBTree(MB?.tree);
   assertReleaseRelationshipEditor(MB.relationshipEditor);
 

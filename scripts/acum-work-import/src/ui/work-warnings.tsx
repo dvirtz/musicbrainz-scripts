@@ -1,6 +1,6 @@
 // cspell: ignore ipis
 
-import {creatorUrl, Entity, entityUrl, WorkBean} from '#acum.ts';
+import {creatorUrl, Entity, entityUrl, Version, WorkBean, workId} from '#acum.ts';
 import {ArtistLinkTypeID} from '#artists.ts';
 import {WriterLinkWarning} from '#link-artists.ts';
 import {addArtistRelationship} from '#relationships.ts';
@@ -80,7 +80,7 @@ function capitalizeFirst(text: string) {
 
 function warningEditNote(track: WorkBean) {
   return editNoteFormat(
-    `matched from ${entityUrl(track.versionId ? new Entity(track.versionId, 'Version') : new Entity(track.workId!, 'Work'))}`
+    `matched from ${entityUrl(track.versionId ? new Version(track.versionId, workId(track)) : new Entity(workId(track), 'Work'))}`
   );
 }
 
