@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.23.0-beta.3 (2026-09-27)
+
+* fix(acum-work-import): warning edit note ([4c9c093](https://github.com/dvirtz/musicbrainz-scripts/commit/4c9c093))
+
 ## @dvirtz/acum-work-import-v1.23.0-beta.2 (2026-09-27)
 
 * fix(acum-work-import): acum links ([9860d10](https://github.com/dvirtz/musicbrainz-scripts/commit/9860d10))
