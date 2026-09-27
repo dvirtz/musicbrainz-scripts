@@ -1,3 +1,8 @@
+## @dvirtz/acum-work-import-v1.23.0-beta.2 (2026-09-27)
+
+* fix(acum-work-import): acum links ([9860d10](https://github.com/dvirtz/musicbrainz-scripts/commit/9860d10))
+* fix(acum-work-import): avoid overriding existing values when updating artist ([8d93207](https://github.com/dvirtz/musicbrainz-scripts/commit/8d93207))
+
 ## @dvirtz/acum-work-import-v1.23.0-beta.1 (2026-09-25)
 
 * feat(acum-work-import): add ACUM links ([1fdaa66](https://github.com/dvirtz/musicbrainz-scripts/commit/1fdaa66)), closes [#91](https://github.com/dvirtz/musicbrainz-scripts/issues/91)
