@@ -1,3 +1,8 @@
+## @dvirtz/acum-work-import-v1.23.0 (2026-09-28)
+
+* feat(acum-work-import): add ACUM links ([64bcd11](https://github.com/dvirtz/musicbrainz-scripts/commit/64bcd11)), closes [#91](https://github.com/dvirtz/musicbrainz-scripts/issues/91)
+* fix(acum-work-import): avoid overriding existing values when updating artist ([f97f742](https://github.com/dvirtz/musicbrainz-scripts/commit/f97f742))
+
 ## @dvirtz/acum-work-import-v1.22.0 (2026-09-21)
 
 * feat(acum-work-import): localize and enrich warnings ([4823831](https://github.com/dvirtz/musicbrainz-scripts/commit/4823831))
