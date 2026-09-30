@@ -13,6 +13,8 @@ const otherDatabaseLinkTypes = {
   work: WORK_OTHER_DATABASE_LINK_TYPE_ID,
 } as const;
 
+const urlIdMap = new Map<string, number>();
+
 export function addAcumLink(source: WorkT | ReleaseGroupT, entity: Entity) {
   assertMBTree(MB?.tree);
   assertReleaseRelationshipEditor(MB.relationshipEditor);
@@ -24,7 +26,7 @@ export function addAcumLink(source: WorkT | ReleaseGroupT, entity: Entity) {
     entityType: 'url',
     // MB's relationship UI requires a positive target ID. This is only a placeholder:
     // new URLs are submitted by name (without this ID), and the server assigns the real ID.
-    id: 1,
+    id: urlIdMap.get(url) || urlIdMap.set(url, 1 - MB.relationshipEditor.getRelationshipStateId(null)).get(url)!,
     gid: '',
     name: url,
     decoded: url,
