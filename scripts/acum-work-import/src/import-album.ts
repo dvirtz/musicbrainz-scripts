@@ -150,17 +150,15 @@ async function importSelectedWorks(
         asyncTap(addReleaseWorkEditor),
         tap(({work, track}) => addAcumLink(work, workEntity(track))),
         mergeMap(({trackRow}) => hasChanges(trackRow)),
+        tap(() => {
+          if (entity.entityType === 'Album') {
+            assertReleaseRelationshipEditor(MB?.relationshipEditor);
+            return addAcumLink(MB.relationshipEditor.state.entity.releaseGroup, entity);
+          }
+        }),
         connect(shared =>
           merge(
-            shared.pipe(
-              maybeSetEditNote(entity, addWarning, () => {
-                if (entity.entityType === 'Album') {
-                  assertReleaseRelationshipEditor(MB?.relationshipEditor);
-                  return addAcumLink(MB.relationshipEditor.state.entity.releaseGroup, entity);
-                }
-                return false;
-              })
-            ),
+            shared.pipe(maybeSetEditNote(entity, addWarning)),
             shared.pipe(updateProgress(selectedRecordings, setProgress), ignoreElements())
           )
         )
@@ -179,10 +177,10 @@ function updateProgress(selectedRecordings: SelectedRecordings, setProgress: Set
   );
 }
 
-function maybeSetEditNote(entity: Entity, addWarning: AddWarning, addLinks: () => boolean) {
+function maybeSetEditNote(entity: Entity, addWarning: AddWarning) {
   return pipe(
     count((pendingEdits: boolean) => pendingEdits),
-    map(editedCount => addLinks() || editedCount > 0),
+    map(editedCount => editedCount > 0),
     tap(hasEdits => {
       if (hasEdits) {
         addEditNote(`Imported from ${entityUrl(entity)}`);
