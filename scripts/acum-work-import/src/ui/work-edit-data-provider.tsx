@@ -168,7 +168,7 @@ function refreshRecordingState(recording: RecordingT) {
   const mediumRecordingStates = MB.tree.find(
     MB.relationshipEditor.state.mediums,
     MB.relationshipEditor.state.mediumsByRecordingId.get(recording.id)![0],
-    (mediumKey, [mediumVal]) => compareNumbers(mediumKey?.id ?? 0, mediumVal.id),
+    (mediumKey, [mediumVal]) => compareNumbers(mediumKey?.position ?? 0, mediumVal.position),
     null
   )![1];
   return MB.tree.find(
