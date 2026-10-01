@@ -7,7 +7,6 @@ import {
   assertRelationshipEditor,
   assertReleaseRelationshipEditor,
 } from '@repo/musicbrainz-ext/asserts';
-import {compareNumbers} from '@repo/musicbrainz-ext/compare';
 import {ARRANGER_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
 import {setInputValue} from '@repo/musicbrainz-ext/set-input-value';
 import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
@@ -81,13 +80,8 @@ function getTrackForRecording(recording: RecordingT) {
   assertMBTree(MB.tree);
   assertReleaseRelationshipEditor(MB.relationshipEditor);
 
-  const medium = MB.tree.find(
-    MB.relationshipEditor.state.mediums,
-    MB.relationshipEditor.state.mediumsByRecordingId.get(recording.id)![0],
-    (mediumKey, [mediumVal]) => compareNumbers(mediumKey?.id ?? 0, mediumVal.id),
-    null
-  )![0];
-  return medium.tracks?.find(track => track.recording == recording);
+  const medium = MB.relationshipEditor.state.mediumsByRecordingId.get(recording.id)?.[0];
+  return medium?.tracks?.find(track => track.recording == recording);
 }
 
 function getRelationship(sourceEntity: RelatableEntityT, artistId: string, linkTypeID: number) {
