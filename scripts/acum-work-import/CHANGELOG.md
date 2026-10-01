@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.23.1 (2026-10-01)
+
+* fix(acum-work-import): multiple RG links ([021944d](https://github.com/dvirtz/musicbrainz-scripts/commit/021944d))
+
 ## @dvirtz/acum-work-import-v1.23.0 (2026-09-28)
 
 * feat(acum-work-import): add ACUM links ([64bcd11](https://github.com/dvirtz/musicbrainz-scripts/commit/64bcd11)), closes [#91](https://github.com/dvirtz/musicbrainz-scripts/issues/91)
