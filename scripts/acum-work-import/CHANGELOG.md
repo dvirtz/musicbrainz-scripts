@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.23.2 (2026-10-02)
+
+* fix(acum-work-import): importing 2nd medium crash ([8064377](https://github.com/dvirtz/musicbrainz-scripts/commit/8064377))
+
 ## @dvirtz/acum-work-import-v1.23.1 (2026-10-01)
 
 * fix(acum-work-import): multiple RG links ([021944d](https://github.com/dvirtz/musicbrainz-scripts/commit/021944d))
