@@ -1,0 +1,248 @@
+.details {
+  min-width: 0;
+}
+
+.editor {
+  min-width: 0;
+}
+
+.editor input[type='number'] {
+  width: 4em;
+}
+
+.editor .toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 3px;
+}
+
+.editor .toolbar button {
+  float: none;
+  margin: 0;
+}
+
+.add-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editor .toolbar .mode-toggle {
+  order: 1;
+  margin-left: auto;
+}
+
+.table-scroll {
+  overflow: visible;
+}
+
+.table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.editor .table > thead > tr > th,
+.editor .table > tbody > tr > td {
+  border: 1px dotted #eee;
+  vertical-align: middle;
+}
+
+.editor .table > tbody > tr > td {
+  padding: 0;
+}
+
+.editor .table > thead > tr > th {
+  padding: 3px 5px;
+}
+
+.table > tbody > tr {
+  height: 28px;
+}
+
+.table th {
+  overflow-wrap: anywhere;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.number {
+  width: 24px;
+}
+
+.title {
+  width: calc(50% - 56px);
+}
+
+.artist {
+  width: calc(50% - 56px);
+}
+
+.summary {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.info-editor {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editor .info-dialog {
+  width: min(420px, calc(100vw - 48px));
+}
+
+.editor .info-dialog textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 6px;
+}
+
+.controls {
+  width: 44px;
+}
+
+.reorder {
+  width: 44px;
+}
+
+.editor .table .entity input[type='text'],
+.editor .table .section-input {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  height: 27px;
+}
+
+.section-input {
+  display: block;
+}
+
+.editor .table input[type='text'],
+.editor .table textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.table .entity > button {
+  padding: 0 4px;
+}
+
+.table .lookup ul {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.entity {
+  display: flex;
+  gap: 2px;
+}
+
+.entity input,
+.entity > .lookup {
+  min-width: 0;
+  flex: 1;
+}
+
+.lookup {
+  width: 100%;
+}
+
+.lookup li {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.lookup .result-detail {
+  display: block;
+  float: none;
+  font-size: 0.9em;
+}
+
+.result-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lookup .result-language {
+  float: none;
+  margin-left: 0;
+  max-width: 50%;
+  font-size: 0.9em;
+  text-align: right;
+}
+
+.editor .lookup-field {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.editor .lookup-field input {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.editor .lookup-field .search {
+  position: static;
+  min-width: 20px;
+  flex: 0 0 20px;
+}
+
+.dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  height: max-content;
+  width: min(800px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+}
+
+.credit-table {
+  width: 100%;
+}
+
+.parts-dialog {
+  overflow: visible;
+}
+
+.editor .dialog .credit-table thead {
+  background: none;
+}
+
+.editor .dialog .dialog-help {
+  background: transparent;
+}
+
+.editor .dialog .dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  width: 100%;
+}
+
+.editor .dialog .dialog-buttons button {
+  float: none;
+  margin: 0;
+}
+
+.dialog input {
+  box-sizing: border-box;
+  width: 100%;
+}

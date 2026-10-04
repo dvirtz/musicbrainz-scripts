@@ -1,0 +1,3 @@
+extends:
+  - semantic-release-monorepo
+  - ../../plugin-release-config.mjs
