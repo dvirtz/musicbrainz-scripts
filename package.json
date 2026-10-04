@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "watch": "turbo run build-watch",
+    "watch": "yarn workspaces foreach --all --parallel --interlaced --jobs unlimited run build-watch",
     "release": "yarn workspaces foreach --all --topological-dev --exclude '@dvirtz/musicbrainz-scripts' --exclude 'lib/*' exec semantic-release && semantic-release",
     "test": "turbo run test",
     "record:har": "turbo run record:har --continue=always --concurrency=1",
