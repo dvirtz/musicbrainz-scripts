@@ -61,7 +61,7 @@
 			"type": "shell",
 			"problemMatcher": [],
 			"windows": {
-				"command": "start chrome -ArgumentList --user-data-dir=${workspaceFolder}/.vscode/chrome-user-data,${input:debug-url}",
+				"command": "start chrome -ArgumentList --user-data-dir=${workspaceFolder}/.vscode/chrome-user-data,--remote-debugging-port=9222,${input:debug-url}",
 			},
 			"dependsOn": [
 				"npm: dev"
