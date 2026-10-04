@@ -45,7 +45,7 @@ Toolkit for release editor artist credits: sets the default value of "Change all
 
 See the script [README](scripts/release-artist-toolkit/README.md) for more information.
 
-## Single Language Tracklist
+### Single Language Tracklist
 
 [![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/single-language-tracklist.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/single-language-tracklist.user.js)
 [![source][badge-source]](scripts/single-language-tracklist/src/index.ts)
@@ -99,6 +99,17 @@ Adds buttons to the release editor tracklist for merging a medium with an adjace
 ![merge buttons](scripts/medium-merge-split/assets/merge-buttons.png?raw=1)
 
 See the script [README](scripts/medium-merge-split/README.md) for more information.
+
+### Event Setlist Editor
+
+[![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/event-setlist-editor.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/event-setlist-editor.user.js)
+[![source][badge-source]](scripts/event-setlist-editor/src/index.ts)
+
+Edit event setlists in a tracklist-style table with linked song titles, artist credits, notes, and sections. Work search shows languages, authors, and recording artists; medley and credit dialogs keep lookup names separate from credited text. Table edits immediately update MusicBrainz's setlist markup.
+
+![Event setlist editor](scripts/event-setlist-editor/assets/editor.png)
+
+See the script [README](scripts/event-setlist-editor/README.md) for more information.
 
 ## Deprecated Userscripts
 

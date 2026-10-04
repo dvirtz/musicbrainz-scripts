@@ -21,8 +21,12 @@ type HarEntry = {
   request: {
     method: string;
     url: string;
+    headers?: {name: string; value: string}[];
+    cookies?: unknown[];
   };
   response: {
+    headers?: {name: string; value: string}[];
+    cookies?: unknown[];
     content: {
       _file?: string;
     };
@@ -61,10 +65,21 @@ const sanitizeSpecFiles = async (specDir: string) => {
   }
 };
 
-const deduplicateHarEntries = async (harFilePath: string) => {
+const sanitizeHarEntries = async (harFilePath: string) => {
   const content = await readFile(harFilePath, 'utf8');
   const har = JSON.parse(content) as HarFile;
-  const entries = har.log.entries;
+  // MusicbrainzPage skips login during replay, so login submissions are unnecessary
+  // fixtures and must not retain the recording account's credentials.
+  const entries = har.log.entries.filter(
+    entry => !(entry.request.method === 'POST' && new URL(entry.request.url).pathname === '/login')
+  );
+  const authenticationHeaders = new Set(['authorization', 'proxy-authorization', 'cookie', 'set-cookie']);
+  for (const entry of entries) {
+    for (const message of [entry.request, entry.response]) {
+      message.headers = message.headers?.filter(header => !authenticationHeaders.has(header.name.toLowerCase()));
+      message.cookies = [];
+    }
+  }
 
   const keysWithContent = new Set();
   for (const entry of entries) {
@@ -105,6 +120,6 @@ const deleteUnreferencedPayloads = async (specDir: string) => {
 export const sanitizeHarArtifacts = async (harFilePath: string) => {
   const specDir = path.dirname(harFilePath);
   await sanitizeSpecFiles(specDir);
-  await deduplicateHarEntries(harFilePath);
+  await sanitizeHarEntries(harFilePath);
   await deleteUnreferencedPayloads(specDir);
 };
