@@ -1,4 +1,8 @@
-export function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, value: string) {
+export function setInputValue(
+  input: HTMLInputElement | HTMLTextAreaElement,
+  value: string,
+  options: {focus?: boolean} = {}
+) {
   const view = input.ownerDocument.defaultView;
   if (!view) {
     throw new Error('Input has no owning window.');
@@ -12,7 +16,7 @@ export function setInputValue(input: HTMLInputElement | HTMLTextAreaElement, val
     throw new Error('Input value setter is unavailable.');
   }
 
-  input.focus();
+  if (options.focus !== false) input.focus();
   valueDescriptor.set.call(input, value);
   input.dispatchEvent(new view.Event('input', {bubbles: true}));
   input.dispatchEvent(new view.Event('change', {bubbles: true}));
