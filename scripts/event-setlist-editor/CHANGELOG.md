@@ -1,3 +1,7 @@
+## @dvirtz/event-setlist-editor-v1.0.0-beta.1 (2026-10-05)
+
+* feat(event-setlist-editor): add tracklist-style event setlist editor ([e902ffe](https://github.com/dvirtz/musicbrainz-scripts/commit/e902ffe))
+
 # Changelog
 
 All notable changes to `@dvirtz/event-setlist-editor` will be documented in this file.
