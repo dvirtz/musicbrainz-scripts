@@ -33,7 +33,7 @@ export function addArtistRelationship(
   assertMBTree(MB?.tree);
   assertRelationshipEditor(MB?.relationshipEditor);
 
-  if (oldArtistID) {
+  if (oldArtistID && oldArtistID !== newArtist.gid) {
     const targetTypeGroups = findTargetTypeGroups(MB.relationshipEditor.state.relationshipsBySource, sourceEntity);
     const relationships = targetTypeGroups
       ? MB.tree
