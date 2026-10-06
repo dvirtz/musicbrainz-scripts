@@ -240,13 +240,19 @@ async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: Re
       source: sourceEntity,
       track: params.recording ? getTrackForRecording(params.recording) : undefined,
       relationshipId: existingRelationship ? existingRelationship.id : undefined,
-      linkTypeId: existingRelationship ? existingRelationship.linkTypeID : undefined,
-      backward: existingRelationship ? existingRelationship.entity0.gid === params.artistId : undefined,
-      targetType: existingRelationship ? 'artist' : undefined,
-      textPhrase: existingRelationship ? writerLinkType.name : undefined,
+      linkTypeId: params.linkType,
+      backward: writerLinkType.type0 === 'artist',
+      targetType: existingRelationship ? existingRelationship.entity1.entityType : null,
+      textPhrase: writerLinkType.name,
     },
   });
   await waitForRelationshipDialogDispatch();
+
+  MB.relationshipEditor.relationshipDialogDispatch({
+    type: 'update-target-type',
+    source: sourceEntity,
+    targetType: 'artist',
+  });
 
   MB.relationshipEditor.relationshipDialogDispatch({
     type: 'update-link-type',
@@ -265,6 +271,7 @@ async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: Re
       },
     },
   });
+
   MB.relationshipEditor.relationshipDialogDispatch({
     type: 'update-target-entity',
     source: sourceEntity,
