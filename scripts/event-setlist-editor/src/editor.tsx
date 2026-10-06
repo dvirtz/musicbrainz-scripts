@@ -1,14 +1,15 @@
-import {JoinedEntityEditor} from '#joined-entity-editor.tsx';
-import {InfoEditor} from '#info-editor.tsx';
 import classes from '#editor.module.css';
+import {InfoEditor} from '#info-editor.tsx';
+import {JoinedEntityEditor} from '#joined-entity-editor.tsx';
+import {addEditNote} from '@repo/musicbrainz-ext/edit-note';
 import {setInputValue} from '@repo/musicbrainz-ext/set-input-value';
 import {
   createSetlistItem,
   joinedEntityText,
   parseSetlist,
   serializeSetlist,
-  SetlistCredit,
   Setlist,
+  SetlistCredit,
   SetlistEntry,
 } from '@repo/musicbrainz-ext/setlist';
 import {createSignal, For, onCleanup, Show} from 'solid-js';
@@ -40,6 +41,7 @@ export function Editor(props: {textarea: HTMLTextAreaElement}) {
     if (synchronizing || lastValue === props.textarea.value) return;
     lastValue = props.textarea.value;
     setSetlist(reconcile(parseForEditor(lastValue)));
+    addEditNote('Edited event setlist', props.textarea.ownerDocument);
   }
   props.textarea.addEventListener('input', receiveMarkup);
   props.textarea.addEventListener('change', receiveMarkup);
@@ -63,6 +65,7 @@ export function Editor(props: {textarea: HTMLTextAreaElement}) {
     try {
       lastValue = value;
       setInputValue(props.textarea, value, {focus: false});
+      addEditNote('Edited event setlist', props.textarea.ownerDocument);
     } finally {
       synchronizing = false;
     }

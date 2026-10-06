@@ -15,14 +15,22 @@ test.beforeEach(async ({userscriptPage, seed, eventPath}) => {
 
 test('writes songs, independent credits, notes and sections into the textarea', async ({page}) => {
   const details = page.getByRole('group', {name: 'Event details', exact: true});
+  const editNote = page.getByRole('textbox', {name: 'Edit note:', exact: true});
   await expect(details.getByRole('table', {name: 'Event setlist', exact: true})).toBeVisible();
+  await expect(editNote).toHaveValue('');
+  await editNote.fill('Setlist source: my concert notes');
   await expect(details).toHaveCSS('min-width', '0px');
   await details.getByRole('button', {name: 'Markup', exact: true}).click();
   await expect(details.getByRole('textbox', {name: 'Setlist:', exact: true})).toBeVisible();
   await details.getByRole('button', {name: 'Table', exact: true}).click();
   await expect(details.getByRole('textbox', {name: 'Setlist:', exact: true})).toBeHidden();
   await page.getByRole('button', {name: 'song(s)', exact: true}).click();
+  await expect(editNote).toHaveValue('Setlist source: my concert notes');
   await page.getByLabel('Title 1', {exact: true}).fill('First [live] & loud');
+  await expect(editNote).toHaveValue(
+    /^Setlist source: my concert notes\n----\nEdited event setlist using .+ version .+ from .+\.$/
+  );
+  const noteAfterFirstChange = await editNote.inputValue();
   await page.getByLabel('Artist name 1', {exact: true}).fill('Main artist');
   await page.getByRole('button', {name: 'Add additional info', exact: true}).click();
   const infoDialog = page.getByRole('dialog', {name: 'Additional info', exact: true});
@@ -83,6 +91,7 @@ test('writes songs, independent credits, notes and sections into the textarea', 
   await expect(page.locator('textarea[name="edit-event.setlist"]')).toHaveValue(
     '@ Main artist\n* First &lsqb;live&rsqb; &amp; loud\n# from tape\n# with guests\n@ Guest\n* Second\n\n# Encore'
   );
+  await expect(editNote).toHaveValue(noteAfterFirstChange);
 });
 
 test('supports keyboard controls and blank credits inheriting the preceding artist', async ({page}) => {
@@ -262,8 +271,14 @@ test.describe('seeded markup', () => {
   });
 
   test('incorporates markup edits and external input events without duplicate mounting', async ({page}) => {
+    const editNote = page.getByRole('textbox', {name: 'Edit note:', exact: true});
+    await expect(editNote).toHaveValue('');
     await page.getByRole('button', {name: 'Markup', exact: true}).click();
+    await expect(editNote).toHaveValue('');
     await page.getByLabel('Setlist:', {exact: true}).fill('@ Another artist\n* Another song');
+    await expect(editNote).toHaveValue(/^\n----\nEdited event setlist using .+ version .+ from .+\.$/);
+    const noteAfterMarkupChange = await editNote.inputValue();
+    await editNote.fill('');
     await page.getByRole('button', {name: 'Table', exact: true}).click();
     await expect(page.getByLabel('Title 1', {exact: true})).toHaveValue('Another song');
     await page.locator('textarea[name="edit-event.setlist"]').evaluate((element: HTMLTextAreaElement) => {
@@ -271,6 +286,7 @@ test.describe('seeded markup', () => {
       element.dispatchEvent(new Event('input', {bubbles: true}));
     });
     await expect(page.getByLabel('Title 1', {exact: true})).toHaveValue('External song');
+    await expect(editNote).toHaveValue(noteAfterMarkupChange);
     await expect(page.getByRole('table', {name: 'Event setlist'})).toHaveCount(1);
     await page.locator('textarea[name="edit-event.setlist"]').evaluate((element: HTMLTextAreaElement) => {
       element.value = '* Assigned without an event';
@@ -282,7 +298,7 @@ test.describe('seeded markup', () => {
 });
 
 test('links artist and work MBIDs and edits credited names and join phrases', async ({page, userscriptPage}) => {
-  const unroute = await userscriptPage.route('**/ws/**', async route => {
+  const unroute = await userscriptPage.route('**/ws/{2/artist,js/entity}/**', async route => {
     const isArtist = route.request().url().includes('/artist/');
     await route.fulfill({
       json: isArtist
@@ -332,7 +348,9 @@ test('links artist and work MBIDs and edits credited names and join phrases', as
 });
 
 test('keeps unlinked text and keyboard focus when search fails', async ({page, userscriptPage}) => {
-  const unroute = await userscriptPage.route('**/ws/**', route => route.fulfill({status: 500, body: 'Unavailable'}));
+  const unroute = await userscriptPage.route('**/ws/js/work/**', route =>
+    route.fulfill({status: 500, body: 'Unavailable'})
+  );
   try {
     await page.getByRole('button', {name: 'song(s)', exact: true}).click();
     const title = page.getByLabel('Title 1', {exact: true});
