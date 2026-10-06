@@ -249,11 +249,11 @@ base.describe('release editor', () => {
 
     await testRelease.importAlbum(page);
 
-    const failedToFindWarning = page.getByText('Failed to find');
-    await expect(failedToFindWarning).toContainText(`Failed to find lyricist ${artist.hebName}`);
+    const failedToFindWarning = trackRow.getByText(`Failed to find lyricist ${artist.hebName}`);
+    await expect(failedToFindWarning).toBeVisible();
 
     // test searching for missing artist
-    await page.getByRole('button', {name: 'search'}).nth(1).click();
+    await failedToFindWarning.getByRole('button', {name: 'search', exact: true}).click();
     const searchBox = page.getByRole('textbox', {name: 'Search for an artist:'});
     await expect(searchBox).toHaveValue(artist.hebName);
     await searchBox.press('Escape');
@@ -263,7 +263,7 @@ base.describe('release editor', () => {
     await unrouteRejectMissingArtistRequests();
 
     // test creating missing artist
-    await page.getByRole('button', {name: 'create'}).first().click();
+    await failedToFindWarning.getByRole('button', {name: 'create', exact: true}).click();
     const dialogFrame = page.frameLocator('[src^="/dialog"]');
     await expect(dialogFrame.getByRole('textbox', {name: 'Name:', exact: true})).toHaveValue(artist.hebName);
     await expect(dialogFrame.getByRole('textbox', {name: 'Sort name:'})).toHaveValue(
