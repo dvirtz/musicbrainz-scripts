@@ -4,7 +4,7 @@ import {creatorUrl, Entity, entityUrl, Version, WorkBean} from '#acum.ts';
 import {ArtistLinkTypeID} from '#artists.ts';
 import {WriterLinkWarning} from '#link-artists.ts';
 import {addArtistRelationship} from '#relationships.ts';
-import {openArtistDialogFromWarning, OpenArtistDialogParams, updateArtist} from '#ui/relationship-dialog-actions.ts';
+import {openArtistDialogFromWarning, OpenArtistDialogParams, updateArtist} from '#ui/warning-actions.ts';
 import {useWorkEditData, WarningResolutionContext} from '#ui/work-edit-data-provider.tsx';
 import classes from '#ui/work-edit-dialog.module.css';
 import {WorkEditDataWarning} from '#work-edit-data.ts';
@@ -64,7 +64,7 @@ function artistAction(params: OpenArtistDialogParams) {
       type="button"
       class={`btn-link ${classes['btn-link']}`}
       onClick={() => {
-        void openArtistDialogFromWarning(params).catch((error: unknown) => {
+        openArtistDialogFromWarning(params).catch((error: unknown) => {
           console.error(`Failed to ${params.action} artist from warning`, error);
         });
       }}
