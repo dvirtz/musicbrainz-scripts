@@ -15,6 +15,7 @@ Apply this skill when implementing or modifying userscripts in this repository.
 - Use CSS modules for script-specific styling (`*.module.css`) instead of inline styles.
 - Write modular code following the single responsibility principle.
 - Reuse common components from repo libraries or third party packages when possible.
+- When a userscript modifies MusicBrainz data, add an edit note describing the change using `addEditNote` from `@repo/musicbrainz-ext/edit-note` ([module](../../../lib/musicbrainz-ext/src/edit-note.ts)). Call it only after an actual data change, not when mounting UI, switching views, or performing a no-op. The module preserves existing notes, adds script attribution, and avoids duplicate messages; use `editNoteFormat` from the same module when constructing an edit payload directly.
 - When implementing new functionality, check if another project already includes similar logic. If so, extract the functionality to an appropriate common library.
 - Mount UI using the toolbox module to keep a common appearance.
 - Mimic the website UI when adding new UI elements.
