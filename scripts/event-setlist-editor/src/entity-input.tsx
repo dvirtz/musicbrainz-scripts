@@ -1,10 +1,10 @@
 import classes from '#editor.module.css';
 import {WorkSearchDetails, WorkSearchLanguage} from '#work-search-details.tsx';
-import {searchWorks, WorkSearchResult} from '#work-search.ts';
+import {prioritizePerformedWorks, searchWorks, WorkSearchResult} from '#work-search.ts';
 import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
 import {fetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {SetlistEntity} from '@repo/musicbrainz-ext/setlist';
-import {createEffect, createSignal, createUniqueId, For, onCleanup, Show} from 'solid-js';
+import {createEffect, createSignal, createUniqueId, For, on, onCleanup, Show} from 'solid-js';
 
 type SearchEntity = {id: string; name?: string; title?: string; disambiguation?: string; work?: WorkSearchResult};
 
@@ -13,6 +13,7 @@ export function EntityInput(props: {
   type: 'artist' | 'work';
   label: string;
   number: string;
+  linkedArtistNames?: string[];
   preserveLinkOnInput?: boolean;
   onChange: (entity: SetlistEntity) => void;
 }) {
@@ -37,11 +38,8 @@ export function EntityInput(props: {
     props.onChange({name, entityName: name, mbid: result.id});
   }
 
-  createEffect(() => {
-    // External form updates invalidate in-flight searches too.
-    void props.entity.name;
-    invalidateSearch();
-  });
+  // External form updates invalidate in-flight searches too.
+  createEffect(on([() => props.entity.name, () => props.linkedArtistNames?.slice()], invalidateSearch));
   onCleanup(() => {
     requestNumber++;
   });
@@ -58,7 +56,7 @@ export function EntityInput(props: {
       const id = query.match(new RegExp(`^(?:https?://[^/]+/${props.type}/)?(${MBID_REGEXP.source})/?$`, 'i'))?.[1];
       let found: SearchEntity[];
       if (props.type === 'work') {
-        found = (await searchWorks(query, id)).map(work => ({
+        found = prioritizePerformedWorks(await searchWorks(query, id), props.linkedArtistNames ?? []).map(work => ({
           id: work.gid,
           name: work.name,
           disambiguation: [work.primaryAlias !== work.name ? work.primaryAlias : '', work.comment]
@@ -152,7 +150,10 @@ export function EntityInput(props: {
                 role="option"
                 id={`${resultsId}-${index()}`}
                 aria-selected={activeResult() === index()}
-                classList={{selected: activeResult() === index()}}
+                classList={{
+                  selected: activeResult() === index(),
+                  [classes['performed-work']!]: Boolean(result.work?.performedByLinkedArtist),
+                }}
                 aria-label={`Select ${result.name ?? result.title ?? result.id}`}
                 onClick={() => select(result)}
               >
@@ -162,6 +163,9 @@ export function EntityInput(props: {
                   </span>
                   <Show when={result.work}>{work => <WorkSearchLanguage work={work()} />}</Show>
                 </div>
+                <Show when={result.work?.performedByLinkedArtist}>
+                  <span class={classes['result-detail']}>Performed by linked artist</span>
+                </Show>
                 <Show when={result.work}>{work => <WorkSearchDetails work={work()} />}</Show>
               </li>
             )}

@@ -53,6 +53,11 @@ export function JoinedEntityEditor(props: {
             entity={props.parts[0] ?? {name: ''}}
             label={label()}
             number={props.number}
+            linkedArtistNames={
+              props.type === 'work'
+                ? props.otherParts?.flatMap(part => (part.mbid ? [part.entityName ?? part.name] : []))
+                : []
+            }
             preserveLinkOnInput={false}
             onChange={entity => props.onChange([{...entity, joinPhrase: props.parts[0]?.joinPhrase ?? ''}])}
           />

@@ -246,3 +246,11 @@
   box-sizing: border-box;
   width: 100%;
 }
+
+.lookup li.performed-work:not(:global(.selected)) {
+  background-color: #e8f5e9;
+}
+
+.lookup li.performed-work .result-heading {
+  font-weight: bold;
+}
