@@ -106,6 +106,11 @@ export function EntityPartsDialog(props: {
                       entity={{name: part().entityName ?? part().name, mbid: part().mbid}}
                       label={`${entityLabel} in MusicBrainz ${number()}`}
                       number={number()}
+                      linkedArtistNames={
+                        props.type === 'work'
+                          ? props.otherParts.flatMap(part => (part.mbid ? [part.entityName ?? part.name] : []))
+                          : []
+                      }
                       preserveLinkOnInput={false}
                       onChange={entity => lookup(index, entity)}
                     />
