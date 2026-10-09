@@ -1,3 +1,8 @@
+## @dvirtz/event-setlist-editor-v1.0.0-beta.3 (2026-10-09)
+
+* test(event-setlist-editor): extract editor fixture and clarify test flows ([e5804bc](https://github.com/dvirtz/musicbrainz-scripts/commit/e5804bc))
+* feat(event-setlist-editor): prioritize works performed by linked artists ([26de9b6](https://github.com/dvirtz/musicbrainz-scripts/commit/26de9b6))
+
 ## @dvirtz/event-setlist-editor-v1.0.0-beta.2 (2026-10-06)
 
 * fix(event-setlist-editor): add edit notes when setlists change ([12ff4a6](https://github.com/dvirtz/musicbrainz-scripts/commit/12ff4a6))
