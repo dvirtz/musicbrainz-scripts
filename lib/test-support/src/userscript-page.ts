@@ -41,11 +41,16 @@ export class UserscriptPage {
     this: new (page: Page, userscriptPath: string, isHarReplay: boolean) => UserscriptPage,
     page: Page,
     userscriptPath: string,
-    isHarReplay = false
+    isHarReplay = false,
+    fetchImplementation?: string
   ) {
     const userscriptPage = new this(page, userscriptPath, isHarReplay);
     await userscriptPage.mockWindowOpen();
     await userscriptPage.mockUserscriptManager();
+    if (fetchImplementation) {
+      await page.addInitScript(fetchImplementation);
+      await page.addScriptTag({content: fetchImplementation});
+    }
     return userscriptPage;
   }
 
@@ -282,7 +287,9 @@ export class UserscriptPage {
           }
         }
 
-        const response = await fetch(requestUrl.toString(), {
+        const fetchImplementation =
+          (window as Window & {__testSupportFetch?: typeof fetch}).__testSupportFetch ?? fetch;
+        const response = await fetchImplementation(requestUrl.toString(), {
           body,
           credentials: 'same-origin',
           headers,
