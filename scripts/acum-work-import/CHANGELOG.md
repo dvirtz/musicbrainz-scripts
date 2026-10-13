@@ -1,3 +1,9 @@
+## @dvirtz/acum-work-import-v1.23.3 (2026-10-13)
+
+* fix(acum-work-import): avoid adding duplicate URL ([85b0910](https://github.com/dvirtz/musicbrainz-scripts/commit/85b0910))
+* fix(acum-work-import): avoid removing existing artist when resolving warnings ([0ab8cfe](https://github.com/dvirtz/musicbrainz-scripts/commit/0ab8cfe))
+* fix(acum-work-import): use correct type when searching missing artist ([c0aae1c](https://github.com/dvirtz/musicbrainz-scripts/commit/c0aae1c))
+
 ## @dvirtz/acum-work-import-v1.23.2 (2026-10-02)
 
 * fix(acum-work-import): importing 2nd medium crash ([8064377](https://github.com/dvirtz/musicbrainz-scripts/commit/8064377))
