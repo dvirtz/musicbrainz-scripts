@@ -1,11 +1,13 @@
 import {sanitizeHarArtifacts} from '#har-sanitizer.ts';
 import {UserscriptPage} from '#userscript-page.ts';
 import {test as base} from '@playwright/test';
+import {build} from 'esbuild';
 import {mkdir} from 'fs/promises';
 import path from 'path';
 
 const ONE_MINUTE = 60_000;
 const MAXIMUM_DELAY = 5 * ONE_MINUTE;
+const fetchImplementationCache = new Map<string, Promise<string>>();
 
 const slugify = (value: string) =>
   value
@@ -17,13 +19,15 @@ const slugify = (value: string) =>
 export type UserscriptTestOptions = {
   userscriptPath: string;
   updateHar?: boolean;
+  fetchImplementation?: {module: string; exportName: string};
 };
 
 export const test = base.extend<UserscriptTestOptions & {userscriptPage: UserscriptPage}>({
   userscriptPath: ['', {option: true}],
   updateHar: [false, {option: true}],
+  fetchImplementation: [undefined, {option: true}],
 
-  userscriptPage: async ({baseURL, page, userscriptPath, updateHar}, use, testInfo) => {
+  userscriptPage: async ({baseURL, page, userscriptPath, updateHar, fetchImplementation}, use, testInfo) => {
     const specBaseName = path.basename(testInfo.file, path.extname(testInfo.file));
     const slug = slugify(testInfo.title);
     const testArtifactsDir = path.join(path.dirname(testInfo.file), 'fixtures', 'har', specBaseName, slug);
@@ -57,7 +61,27 @@ export const test = base.extend<UserscriptTestOptions & {userscriptPage: Userscr
       }
     });
 
-    const userscriptPage = await UserscriptPage.create(page, userscriptPath, !updateHar);
+    let fetchScript: string | undefined;
+    if (fetchImplementation && updateHar) {
+      const {module, exportName} = fetchImplementation;
+      const cacheKey = JSON.stringify(fetchImplementation);
+      let bundled = fetchImplementationCache.get(cacheKey);
+      if (!bundled) {
+        bundled = build({
+          stdin: {
+            contents: `import * as implementation from ${JSON.stringify(module)}; globalThis.__testSupportFetch = implementation[${JSON.stringify(exportName)}];`,
+            resolveDir: import.meta.dirname,
+          },
+          bundle: true,
+          format: 'iife',
+          platform: 'browser',
+          write: false,
+        }).then(result => result.outputFiles[0]!.text);
+        fetchImplementationCache.set(cacheKey, bundled);
+      }
+      fetchScript = await bundled;
+    }
+    const userscriptPage = await UserscriptPage.create(page, userscriptPath, !updateHar, fetchScript);
     await use(userscriptPage);
 
     if (updateHar) {

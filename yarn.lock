@@ -2751,7 +2751,9 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:*"
     "@repo/common-types": "workspace:*"
+    "@repo/musicbrainz-ext": "workspace:*"
     "@repo/typescript-config": "workspace:*"
+    esbuild: "npm:0.25.2"
     eslint: "npm:*"
     typescript: "npm:*"
   languageName: unknown
@@ -5021,7 +5023,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.25.0":
+"esbuild@npm:0.25.2, esbuild@npm:^0.25.0":
   version: 0.25.2
   resolution: "esbuild@npm:0.25.2"
   dependencies:

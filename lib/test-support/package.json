@@ -20,11 +20,13 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@playwright/test": "*"
+    "@playwright/test": "*",
+    "@repo/musicbrainz-ext": "workspace:*"
   },
   "devDependencies": {
     "@repo/common-types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "esbuild": "0.25.2",
     "eslint": "*",
     "typescript": "*"
   }
