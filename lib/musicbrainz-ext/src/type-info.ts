@@ -1,6 +1,6 @@
 import {tryFetchJSON} from '#fetch.ts';
 import PLazy from 'p-lazy';
-import {LinkedEntitiesT, OptionTreeT} from 'typedbrainz/types';
+import {LinkedEntitiesT, LinkAttrTypeT, OptionTreeT} from 'typedbrainz/types';
 
 type TypeInfoMapKey = {
   [K in keyof LinkedEntitiesT]: LinkedEntitiesT[K] extends Record<string | number, {id: number}> ? K : never;
@@ -55,6 +55,25 @@ export const workTypes = fetchOrGetFromCache('/ws/js/type-info/work_type', 'work
 export const workLanguages = fetchOrGetFromCache('/ws/js/type-info/language', 'language_list', 'language');
 
 export const linkTypes = fetchOrGetFromCache('/ws/js/type-info/link_type', 'link_type_list', 'link_type');
+
+const linkAttributeTypes = fetchTypeInfo<LinkAttrTypeT>(
+  '/ws/js/type-info/link_attribute_type',
+  'link_attribute_type_list'
+);
+
+export type RelationshipAttributeCatalog = Map<number, Set<string>>;
+
+export async function relationshipAttributeCatalog(): Promise<RelationshipAttributeCatalog> {
+  const types = Object.values(await linkTypes);
+  const attributes = Object.values(await linkAttributeTypes);
+  if (!types.length || !attributes.length) throw new Error('Could not load relationship attribute metadata.');
+  return new Map(
+    types.map(type => [
+      type.id,
+      new Set(attributes.filter(attr => String(attr.root_id) in type.attributes).map(attr => attr.gid)),
+    ])
+  );
+}
 
 export async function linkTypeGid(id: number) {
   return Object.values(await linkTypes).find(linkType => linkType.id === id)?.gid;
