@@ -9,11 +9,17 @@
       "request": "launch",
       "name": "Userscript",
       "url": "${input:debug-url}",
+      "urlFilter": "https://*.musicbrainz.org/*",
       "userDataDir": "${workspaceFolder}/.vscode/chrome-user-data",
       "pathMapping": {
         "/src": "${workspaceFolder}/scripts/${input:workspace}/src",
       },
-      "preLaunchTask": "npm: dev"
+      "preLaunchTask": "npm: dev",
+      "resolveSourceMapLocations": [
+        "**",
+        "!**/node_modules/**",
+        "!chrome-extension://**"
+      ],
     },
     {
       "type": "chrome",
