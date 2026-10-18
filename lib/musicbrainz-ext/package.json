@@ -9,6 +9,7 @@
     "./build-options-list": "./src/build-options-list.ts",
     "./compare": "./src/compare.ts",
     "./constants": "./src/constants.ts",
+    "./date": "./src/date.ts",
     "./create-field": "./src/create-field.ts",
     "./edit-note": "./src/edit-note.ts",
     "./edits": "./src/edits.ts",
@@ -24,12 +25,14 @@
     "./release-editor": "./src/release-editor.ts",
     "./search-results": "./src/search-results.ts",
     "./setlist": "./src/setlist.ts",
+    "./sidebar-link": "./src/sidebar-link.ts",
     "./set-input-value": "./src/set-input-value.ts",
     "./subfield-errors": "./src/subfield-errors.ts",
     "./track-recording-state": "./src/track-recording-state.ts",
     "./type-group": "./src/type-group.ts",
     "./type-info": "./src/type-info.ts",
-    "./wait-for": "./src/wait-for.ts"
+    "./wait-for": "./src/wait-for.ts",
+    "./web-service-types": "./src/web-service-types.ts"
   },
   "imports": {
     "#*": "./src/*"

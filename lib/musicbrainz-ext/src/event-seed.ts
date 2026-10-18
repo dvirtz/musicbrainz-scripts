@@ -5,11 +5,11 @@ import {
   EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
 } from '#constants.ts';
 import {editNoteFormat} from '#edit-note.ts';
-import type {EventDateParts} from '#event-form.ts';
+import {parseDateParts} from '#date.ts';
 import {EventForm} from '#event-form.ts';
 import type {MBEntity, MBEvent, MBSeries} from '#event-types.ts';
 import {linkTypeId} from '#type-info.ts';
-import {tryFetchJSON} from '@repo/fetch/fetch';
+import {tryFetchJSON} from '#fetch.ts';
 
 type MBEventRelation = NonNullable<MBEvent['relations']>[number];
 const EVENT_TYPE_IDS_BY_NAME: Record<string, string> = {
@@ -22,23 +22,6 @@ const EVENT_TYPE_IDS_BY_NAME: Record<string, string> = {
   'masterclass/clinic': '5',
   'stage performance': '6',
 };
-
-function parseDateParts(value: string | undefined): EventDateParts | undefined {
-  if (!value) {
-    return undefined;
-  }
-
-  const match = value.match(/^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/);
-  if (!match) {
-    return undefined;
-  }
-
-  return {
-    year: match[1],
-    month: match[2],
-    day: match[3],
-  };
-}
 
 function resolveEventTypeId(typeName: string | undefined): string | undefined {
   if (!typeName) {
@@ -161,8 +144,10 @@ function extractRelationshipAttributes(relation: MBEventRelation): CloneEventRel
 }
 
 export async function fetchEntityWithRelations(entityType: string, gid: string): Promise<MBEntity | null> {
+  const releaseIncludes =
+    entityType === 'release' ? '+release-groups+recordings+artist-credits+recording-level-rels' : '';
   return tryFetchJSON<MBEntity>(
-    `/ws/2/${entityType}/${gid}?fmt=json&inc=area-rels+artist-rels+event-rels+genre-rels+instrument-rels+label-rels+place-rels+recording-rels+release-rels+release-group-rels+series-rels+url-rels+work-rels`
+    `/ws/2/${entityType}/${gid}?fmt=json&inc=area-rels+artist-rels+event-rels+genre-rels+instrument-rels+label-rels+place-rels+recording-rels+release-rels+release-group-rels+series-rels+url-rels+work-rels${releaseIncludes}`
   );
 }
 
