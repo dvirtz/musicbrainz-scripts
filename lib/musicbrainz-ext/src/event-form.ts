@@ -1,8 +1,4 @@
-export type EventDateParts = {
-  year?: string;
-  month?: string;
-  day?: string;
-};
+import type {DateParts} from '#date.ts';
 
 export class EventForm {
   private relationshipCount: number = 0;
@@ -13,8 +9,8 @@ export class EventForm {
     this.searchParams = searchParams || new URLSearchParams();
   }
 
-  name(value: string): this {
-    this.searchParams.append('edit-event.name', value);
+  name(value: string | undefined): this {
+    if (value !== undefined) this.searchParams.append('edit-event.name', value);
     return this;
   }
 
@@ -23,8 +19,8 @@ export class EventForm {
     return this;
   }
 
-  typeId(value: string | number): this {
-    this.searchParams.append('edit-event.type_id', String(value));
+  typeId(value: string | number | undefined): this {
+    if (value !== undefined) this.searchParams.append('edit-event.type_id', String(value));
     return this;
   }
 
@@ -60,13 +56,13 @@ export class EventForm {
     return this;
   }
 
-  dates(dates: {begin?: EventDateParts; end?: EventDateParts}): this {
+  dates(dates: {begin?: DateParts; end?: DateParts}): this {
     this.addEventPeriodDate('begin', dates.begin);
     this.addEventPeriodDate('end', dates.end);
     return this;
   }
 
-  private addEventPeriodDate(period: 'begin' | 'end', date: EventDateParts | undefined): void {
+  private addEventPeriodDate(period: 'begin' | 'end', date: DateParts | undefined): void {
     if (!date) {
       return;
     }
@@ -94,6 +90,15 @@ export class EventForm {
       appendIfValue(this.searchParams, `${attrBase}.text_value`, attribute.textValue);
     });
     return this;
+  }
+
+  relationships(relationships: ReadonlyArray<Parameters<EventForm['relationship']>>): this {
+    for (const relationship of relationships) this.relationship(...relationship);
+    return this;
+  }
+
+  buildUrl(pathname: string): string {
+    return `${pathname}?${this.build().toString()}`;
   }
 
   build(): URLSearchParams {
