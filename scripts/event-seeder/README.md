@@ -2,13 +2,14 @@
 
 [![install][badge-install]](https://github.com/dvirtz/musicbrainz-scripts/releases/latest/download/event-seeder.user.js) [![beta][badge-beta]](https://github.com/dvirtz/musicbrainz-scripts/releases/download/beta-latest/event-seeder.user.js) [![source][badge-source]](src/index.ts)
 
-Seeds a child event from its parent or clones the current event into a new event editor.
+Seeds child events, clones events, and creates or updates events from series and live releases.
 
 ![Event Seeder links in sidebar](assets/event-sidebar.png)
 
 ## What it does
 
-- Runs on MusicBrainz event pages (`/event/*`).
+- Runs on MusicBrainz event, series and release pages.
+- On event series, adds an `Add event` link. On live releases, adds a `Create or update event` link.
 - Adds `Add sub-event` and `Clone event` links in the Editing sidebar.
 - `Add sub-event` opens `event/create` with fields prefilled from the current event as a parent:
   - Begin/end dates
@@ -35,6 +36,37 @@ Seeds a child event from its parent or clones the current event into a new event
 3. Click `Clone event` to open a fully seeded copy of the current event in `event/create`.
 
     ![Cloned event form](assets/clone-event.png)
+
+## Live releases
+
+### Usage
+
+1. Open a live release overview page on MusicBrainz while logged in.
+2. Click **Create or update event** under **Editing** in the sidebar.
+3. Review the populated event editor and submit the edit yourself. Open the link in a new tab using your browser if preferred.
+
+![Release sidebar action](assets/release-action.png)
+
+The script prefers one event linked directly to the release with a **recorded at** relationship. Otherwise, it updates a single event shared by every distinct recording. If none is shared, it seeds a new concert. Repeated recordings receive one relationship but retain each appearance in the setlist.
+
+The release group must have the **Live** secondary type. The action is hidden for studio releases and releases without that classification, even if their titles mention live performances. Live compilations are eligible; conflicting source dates or venues still stop the import.
+
+### Imported data
+
+| Source | Event data |
+| --- | --- |
+| Recording places and areas | Held at / held in relationships |
+| Recording and performance relationship dates | Begin and end dates, preserving partial dates |
+| Track artist credits and performance relationships | Main performers, guests, orchestras and conductors |
+| Release and recording artist relationships whose type name contains "engineer" | Event engineers |
+| Distinct recordings | Recording location relationships |
+| Tracklist and linked performance works | Setlist in medium/track order, with artist credits and ordered medley works |
+
+The setlist uses track titles when works are unavailable. Applicable credited names and attributes supported by the destination relationship are retained. Artist relationships mentioning "engineer" in their type name are mapped to event engineers. Publication dates and post-production dates are not used as event dates. Production and artwork credits are excluded, as are special-purpose artists such as Various Artists.
+
+New concerts use **Artist at Venue** as their name, falling back to the release title when no venue is known. Existing event names and types are not seeded. Dates, setlist and relationships are seeded for native editor review; check any existing content before submitting. The edit note identifies the source release and userscript.
+
+![Populated native event editor](assets/seeded-release-event.png)
 
 ## Release Notes
 

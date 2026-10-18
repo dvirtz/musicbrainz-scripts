@@ -76,6 +76,10 @@ Adds `Add sub-event` and `Clone event` links on event pages and seeds the event 
 
 ![Cloned event links](scripts/event-seeder/assets/event-sidebar.png)
 
+Also creates or updates events from live releases, including dates, recording links and an ordered setlist.
+
+![Seeded event from a live release](scripts/event-seeder/assets/seeded-release-event.png)
+
 See the script [README](scripts/event-seeder/README.md) for more information.
 
 ### Expand events
