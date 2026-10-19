@@ -13,7 +13,9 @@ function keepArtistCreditSide(artistCredit: ArtistCreditT, side: Side, sep: stri
     return undefined;
   }
 
-  const separatorIndex = artistCredit.names.findIndex(name => name.joinPhrase?.trim() === sep);
+  const isSeparator = (name: ArtistCreditT['names'][number]) => name.joinPhrase?.trim() === sep;
+  const separatorIndex =
+    side === 'left' ? artistCredit.names.findLastIndex(isSeparator) : artistCredit.names.findIndex(isSeparator);
   if (separatorIndex === -1) {
     return undefined;
   }
@@ -35,26 +37,26 @@ function keepArtistCreditSide(artistCredit: ArtistCreditT, side: Side, sep: stri
   };
 }
 
-function keepNameSide(name: Observable<string>, sep: string, index: 0 | 1) {
-  const parts = name().split(sep);
-  if (parts.length > 1 && index < parts.length) {
-    name(parts[index]!.trim());
+function keepNameSide(name: Observable<string>, sep: string, side: Side) {
+  const value = name();
+  const separatorIndex = side === 'left' ? value.lastIndexOf(sep) : value.indexOf(sep);
+  if (separatorIndex !== -1) {
+    name((side === 'left' ? value.slice(0, separatorIndex) : value.slice(separatorIndex + sep.length)).trim());
   }
 }
 
 function keepTitleSide(side: Side, sep: string) {
   const release = getRelease();
-  const index = side === 'left' ? 0 : 1;
 
-  keepNameSide(release.name, sep, index);
+  keepNameSide(release.name, sep, side);
 
   for (const medium of release.mediums()) {
     if (medium.name()) {
-      keepNameSide(medium.name as Observable<string>, sep, index);
+      keepNameSide(medium.name as Observable<string>, sep, side);
     }
 
     for (const track of medium.tracks()) {
-      keepNameSide(track.name, sep, index);
+      keepNameSide(track.name, sep, side);
     }
   }
 }
