@@ -25,9 +25,9 @@ import {test} from '@repo/test-support/musicbrainz-test';
       'urls.0.link_type': '76',
       'mediums.0.format': 'CD',
       'mediums.0.name': 'דיסק 1 = Disc 1',
-      'mediums.0.track.0.name': 'סודות גדולים = Big Secrets',
+      'mediums.0.track.0.name': 'סודות גדולים = Big Secrets = First alternate title',
       'mediums.0.track.0.length': '233000',
-      'mediums.0.track.1.name': 'שיר געגועים = Longing',
+      'mediums.0.track.1.name': 'שיר געגועים = Longing = Second alternate title = Another title',
       'mediums.0.track.1.length': '298000',
       'mediums.0.track.2.name': "את אישה = You're A Woman",
       'mediums.0.track.2.length': '214000',
@@ -64,7 +64,7 @@ import {test} from '@repo/test-support/musicbrainz-test';
       ? Object.fromEntries(
           Object.entries(formData).map(entry => {
             const [key, value] = entry;
-            return [key.replace('=', separator), value.replace('=', separator)] as const;
+            return [key.replace('=', separator), value.replaceAll('=', separator)] as const;
           })
         )
       : formData;
@@ -74,9 +74,10 @@ import {test} from '@repo/test-support/musicbrainz-test';
     await page.getByRole('link', {name: 'Tracklist'}).click();
 
     const separatorInput = page.getByRole('textbox', {name: 'separator:'});
-    if (separator) {
-      await separatorInput.fill(separator);
-    }
+    await separatorInput.fill('');
+    await expect(page.getByRole('button', {name: 'Remove LHS'})).toBeDisabled();
+    await expect(page.getByRole('button', {name: 'Remove RHS'})).toBeDisabled();
+    await separatorInput.fill(separator || '=');
 
     const removeButton = page.getByRole('button', {name: buttonName});
     await removeButton.click();
@@ -96,7 +97,8 @@ import {test} from '@repo/test-support/musicbrainz-test';
     for (let i = 0; i < 10; i++) {
       const trackInput = page.locator(`input.track-name`).nth(i);
       const originalTrackName = withSeparator[`mediums.0.track.${i}.name`]!;
-      const expectedTrackName = originalTrackName.split(actualSeparator)[keptIndex]!.trim();
+      const parts = originalTrackName.split(actualSeparator);
+      const expectedTrackName = (keptIndex === 0 ? parts.slice(0, -1) : parts.slice(1)).join(actualSeparator).trim();
       await expect(trackInput).toHaveValue(expectedTrackName);
 
       const artistInput = page.locator(`.artist input`).nth(i);
