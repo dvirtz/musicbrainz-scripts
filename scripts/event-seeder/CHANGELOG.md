@@ -1,3 +1,7 @@
+## @dvirtz/event-seeder-v1.2.0-beta.1 (2026-10-19)
+
+* feat(event-seeder): seed events from live releases ([0285eb3](https://github.com/dvirtz/musicbrainz-scripts/commit/0285eb3))
+
 ## @dvirtz/event-seeder-v1.1.0 (2026-07-30)
 
 * feat(event-seeder): seed event from event series ([af13bc9](https://github.com/dvirtz/musicbrainz-scripts/commit/af13bc9))
