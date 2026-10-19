@@ -1,3 +1,7 @@
+## @dvirtz/single-language-tracklist-v1.3.3-beta.1 (2026-10-19)
+
+* fix(single-language-tracklist): remove only the outermost part ([8f56112](https://github.com/dvirtz/musicbrainz-scripts/commit/8f56112))
+
 ## @dvirtz/single-language-tracklist-v1.3.2 (2026-07-10)
 
 * fix(single-language-tracklist): check if medium name exists ([d8cb559](https://github.com/dvirtz/musicbrainz-scripts/commit/d8cb559))
