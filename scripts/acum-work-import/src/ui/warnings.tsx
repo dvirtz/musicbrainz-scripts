@@ -5,7 +5,7 @@ const makeWarningContext = () => {
   const [state, setState] = createStore<JSX.Element[]>([]);
   return {
     state,
-    addWarning: (warning: JSX.Element) => setState(state.length, warning),
+    addWarning: (warning: JSX.Element) => setState(state.length, () => warning),
     clearWarnings: () => setState([]),
   };
 };

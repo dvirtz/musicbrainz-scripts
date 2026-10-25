@@ -1,10 +1,10 @@
 import {addAcumLink} from '#acum-links.ts';
 import {Entity, entityUrl, fetchWorks, trackName, Version, WorkBean, workEntity} from '#acum.ts';
-import {ArtistLookupCache} from '#link-artists.ts';
+import {ArtistLookupCache} from '#artists.ts';
 import {createRelationshipState} from '#relationships.ts';
 import {AddWarning} from '#ui/warnings.tsx';
 import {addWorkEditor, hasChanges} from '#ui/work-editor.tsx';
-import {createNewWork} from '#works.ts';
+import {createNewWork, WorkWarning} from '#works.ts';
 import {head} from '@repo/common/head';
 import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareInsensitive, compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
@@ -82,22 +82,24 @@ async function importSelectedWorks(
 
     const existing = relatedWork(recordingState.relatedWorks, recordingState.recording, index);
     if (existing) {
-      return {work: existing.work, workBean, recordingState} as const;
+      return {work: existing.work, warnings: [], workBean, recordingState} as const;
     }
 
-    const newWork = await createNewWork(workBean);
+    const {work: newWork, warnings} = await createNewWork(workBean, artistCache);
     linkNewWork(index, newWork, recordingState);
 
-    return {work: newWork, workBean, recordingState} as const;
+    return {work: newWork, warnings, workBean, recordingState} as const;
   };
 
   const addReleaseWorkEditor = async ({
     work,
+    warnings,
     track,
     recordingState,
     trackRow,
   }: {
     work: WorkT;
+    warnings: readonly WorkWarning[];
     track: WorkBean;
     recordingState: MediumRecordingStateT;
     trackRow: Element;
@@ -116,6 +118,7 @@ async function importSelectedWorks(
         return anchor!.closest('h3') ?? anchor!.parentElement!;
       },
       work,
+      workWarnings: warnings,
       track,
       recording: recordingState.recording,
       artistCache,
@@ -139,9 +142,10 @@ async function importSelectedWorks(
         }),
         mergeMap(getOrCreateWork),
         map(
-          ({work, workBean, recordingState}) =>
+          ({work, warnings, workBean, recordingState}) =>
             ({
               work,
+              warnings,
               track: workBean,
               recordingState,
               trackRow: document.querySelector(`.track:has(a[href="${recordingLink(recordingState.recording)}"])`)!,

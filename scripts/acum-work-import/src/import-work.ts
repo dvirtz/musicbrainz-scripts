@@ -1,7 +1,8 @@
-import {addExternalLink} from '#ui/add-external-link.ts';
 import {Entity, entityUrl, fetchWorks, Version, WorkBean, workEntity} from '#acum.ts';
-import {ArtistLookupCache, linkWriters} from '#link-artists.ts';
+import {ArtistLookupCache} from '#artists.ts';
+import {linkWriters} from '#link-artists.ts';
 import {updateMedleyWorkRelationship} from '#relationships.ts';
+import {addExternalLink} from '#ui/add-external-link.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
 import {AddWarning} from '#ui/warnings.tsx';
 import {addWorkEditor} from '#ui/work-editor.tsx';
@@ -43,13 +44,14 @@ export async function importWork(
   }
 
   if (await shouldSearchWorks()) {
-    const existingWork = await findWork(versions[0]!);
+    const {work: existingWork} = await findWork(versions[0]!, artistCache);
     if (
       existingWork &&
       existingWork.id != MB?.relationshipEditor.state?.entity.id &&
       window.confirm('This work already exists in Musicbrainz, click "ok" to redirect to its page')
     ) {
       window.location.href = `/work/${existingWork.gid}`;
+      return;
     }
   }
 
@@ -195,14 +197,14 @@ export function medleyWorkRelationships(): RelationshipStateT[] | undefined {
 }
 
 async function addMedleyWork(work: WorkT, medleyWork: WorkBean, linkOrder: number, artistCache: ArtistLookupCache) {
-  const newWork = await (async () => {
+  const {work: newWork, warnings} = await (async () => {
     const linkedWork = medleyWorkRelationships()?.find(rel => rel.linkOrder == linkOrder);
     if (linkedWork) {
-      return linkedWork.entity1 as WorkT;
+      return {work: linkedWork.entity1 as WorkT, warnings: []};
     }
-    const newWork = await createNewWork(medleyWork);
-    linkMedleyWork(work, newWork, linkOrder);
-    return newWork;
+    const result = await createNewWork(medleyWork, artistCache);
+    linkMedleyWork(work, result.work, linkOrder);
+    return result;
   })();
   await addWorkEditor({
     getParent: async (href: string) => {
@@ -215,6 +217,7 @@ async function addMedleyWork(work: WorkT, medleyWork: WorkBean, linkOrder: numbe
     },
     getElementsToReplace: () => [],
     work: newWork,
+    workWarnings: warnings,
     track: medleyWork,
     artistCache,
     shouldLinkArrangers: false,
