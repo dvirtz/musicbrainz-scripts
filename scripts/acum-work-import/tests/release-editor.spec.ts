@@ -1,3 +1,4 @@
+import {test as workNameMatchTest} from '#tests/fixtures/work-name-match.ts';
 import {seedAcumStorageFromUrl} from '#tests/fixtures/acum-storage.ts';
 import {test as testRelease} from '#tests/fixtures/test-release.ts';
 import {expect, mergeTests} from '@playwright/test';
@@ -328,4 +329,62 @@ base.describe('release editor', () => {
     await unrouteWorkCreate();
     await unrouteEditCreate();
   });
+
+  workNameMatchTest(
+    'searching a matched work replaces the recording relationship',
+    async ({page, matchedWork, baseURL}) => {
+      const {trackRow, warning, matchedId, selectedId, title} = matchedWork;
+      await expect(warning.getByRole('button', {name: 'create', exact: true})).toBeVisible();
+      await expect(warning.getByRole('button', {name: 'update', exact: true})).toHaveCount(0);
+      await warning.getByRole('button', {name: 'search', exact: true}).click();
+      const search = page.getByRole('textbox', {name: 'Search for a work:'});
+      await expect(search).toHaveValue(title);
+      await search.press('Escape');
+      await expect(search).not.toBeAttached();
+      await expect(warning).toBeVisible();
+      await warning.getByRole('button', {name: 'search', exact: true}).click();
+      await search.fill(`${baseURL}/work/${selectedId}`);
+      await page.getByRole('button', {name: 'Done', exact: true}).click();
+      await expect(search).not.toBeAttached();
+      await expect(
+        trackRow.getByRole('heading').getByRole('link', {name: 'Open Up Your Eyes', exact: true})
+      ).toBeVisible();
+      // The recording and work share a title, so identify the old work by its MBID.
+      await expect(trackRow.locator(`a[href="/work/${matchedId}"]`)).toHaveCount(0);
+      await expect(
+        trackRow.getByRole('row', {name: /^recording of:/}).getByRole('link', {name: 'Open Up Your Eyes', exact: true})
+      ).toHaveCount(1);
+      await expect(warning).not.toBeAttached();
+      await trackRow.getByRole('button', {name: 'Edit work', exact: true}).click();
+      await expect(page.getByRole('textbox', {name: 'Name:', exact: true})).toHaveValue('Open Up Your Eyes');
+      await page.getByRole('button', {name: 'Cancel', exact: true}).click();
+    }
+  );
+
+  workNameMatchTest(
+    'creating from a name match replaces the work in place',
+    async ({page, matchedWork, userscriptPage}) => {
+      const {trackRow, warning, matchedId, title} = matchedWork;
+      const currentUrl = page.url();
+      await warning.getByRole('button', {name: 'create', exact: true}).click();
+      // Unsaved works have fragment links; the recording has the same accessible name.
+      await expect(
+        trackRow
+          .getByRole('heading')
+          .getByRole('link', {name: title, exact: true})
+          .and(trackRow.locator('a[href^="#new-work-"]'))
+      ).toBeVisible();
+      // The recording and work share a title, so identify the old work by its MBID.
+      await expect(trackRow.locator(`a[href="/work/${matchedId}"]`)).toHaveCount(0);
+      await expect(
+        trackRow.getByRole('row', {name: /^recording of:/}).getByRole('link', {name: title, exact: true})
+      ).toHaveCount(1);
+      await expect(warning).not.toBeAttached();
+      await trackRow.getByRole('button', {name: 'Edit work', exact: true}).click();
+      await expect(page.getByRole('textbox', {name: 'Name:', exact: true})).toHaveValue(title);
+      await page.getByRole('button', {name: 'Cancel', exact: true}).click();
+      await expect(page).toHaveURL(currentUrl);
+      expect(userscriptPage.windowOpenLog).toHaveLength(0);
+    }
+  );
 });

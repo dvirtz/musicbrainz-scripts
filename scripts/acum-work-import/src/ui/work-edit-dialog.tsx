@@ -30,7 +30,7 @@ export function WorkEditDialog() {
 
   return (
     <Popover open={open()} onOpenChange={setOpen}>
-      <Popover.Trigger class="icon edit-item" />
+      <Popover.Trigger class="icon edit-item" aria-label="Edit work" />
       <Popover.Content class={`dialog popover work-dialog ${classes['work-dialog']}`}>
         <Popover.Arrow />
         <form

@@ -1,6 +1,5 @@
 import {creatorUrl} from '#acum.ts';
 import {addExternalLink} from '#ui/add-external-link.ts';
-import {openArtistUpdateDialog} from '#ui/artist-update-dialog.tsx';
 import {
   assertMB,
   assertMBTree,
@@ -19,26 +18,29 @@ import {ArtistT, RecordingT, RelatableEntityT, WorkT} from 'typedbrainz/types';
 
 type ArtistWarningAction = 'search' | 'create';
 
-export type OpenArtistDialogParams = {
+type OpenDialogParamsBase = {
   action: ArtistWarningAction;
-  linkType: number;
   name: string;
+  linkType: number;
   work: WorkT;
-  creatorHebName: string;
-  creatorEngName: string;
-  editNote: string;
-  ipi?: string;
-  ipBaseNumber?: string;
   recording?: RecordingT;
-  artistId?: string;
-  onConfirmed: (artist: ArtistT) => void;
 };
 
-export function updateArtist(href: string, onSubmitted: (artist: ArtistT) => void) {
-  openArtistUpdateDialog(href, onSubmitted);
-}
+export type OpenArtistDialogParams = OpenDialogParamsBase & {
+  creatorHebName: string;
+  creatorEngName: string;
+  ipi?: string;
+  ipBaseNumber?: string;
+  artistId?: string;
+  editNote: string;
+  onConfirmed: (work: ArtistT) => void;
+};
 
-function observeRelationshipConfirmation(params: OpenArtistDialogParams) {
+export type OpenWorkDialogParams = OpenDialogParamsBase & {
+  onConfirmed: (work: WorkT) => void;
+};
+
+function observeRelationshipConfirmation<T extends RelatableEntityT>(linkType: number, onConfirmed: (t: T) => void) {
   type RelationshipDialogCloseEvent = Event & {
     closeEventType?: 'accept' | 'cancel';
     dialogState?: {
@@ -49,13 +51,13 @@ function observeRelationshipConfirmation(params: OpenArtistDialogParams) {
 
   const onClose = (event: Event) => {
     const relationshipDialogEvent = event as RelationshipDialogCloseEvent;
-    const artist = relationshipDialogEvent.dialogState?.targetEntity.target;
+    const target = relationshipDialogEvent.dialogState?.targetEntity.target;
     if (
+      target &&
       relationshipDialogEvent.closeEventType === 'accept' &&
-      relationshipDialogEvent.dialogState?.linkType.autocomplete.selectedItem?.entity.id === params.linkType &&
-      artist?.entityType === 'artist'
+      relationshipDialogEvent.dialogState?.linkType.autocomplete.selectedItem?.entity.id === linkType
     ) {
-      params.onConfirmed(artist);
+      onConfirmed(target as T);
     }
   };
 
@@ -81,7 +83,7 @@ function getTrackForRecording(recording: RecordingT) {
   assertReleaseRelationshipEditor(MB.relationshipEditor);
 
   const medium = MB.relationshipEditor.state.mediumsByRecordingId.get(recording.id)?.[0];
-  return medium?.tracks?.find(track => track.recording == recording);
+  return medium?.tracks?.find(track => track.recording === recording);
 }
 
 function getRelationship(sourceEntity: RelatableEntityT, artistId: string, linkTypeID: number) {
@@ -122,28 +124,28 @@ function deleteCookie(doc: Document, name: string) {
   doc.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
 }
 
-async function waitForArtistCreateForm() {
-  const addArtistDialog = await waitForElement(
-    (node): node is HTMLDivElement => node instanceof HTMLDivElement && node.id == 'add-artist-dialog'
+async function waitForEntityCreateForm(entityType: 'artist' | 'work') {
+  const addEntityDialog = await waitForElement(
+    (node): node is HTMLDivElement => node instanceof HTMLDivElement && node.id == `add-${entityType}-dialog`
   );
-  if (addArtistDialog) {
-    await waitForMutation(addArtistDialog, mutation => {
+  if (addEntityDialog) {
+    await waitForMutation(addEntityDialog, mutation => {
       return (
         Array.from(mutation.removedNodes.values()).find(
           node => node instanceof HTMLDivElement && node.classList.contains('content-loading')
         ) !== undefined
       );
     });
-    const contentDocument = addArtistDialog.querySelector('iframe')?.contentDocument;
+    const contentDocument = addEntityDialog.querySelector('iframe')?.contentDocument;
     if (contentDocument) {
       return contentDocument;
     }
   }
 
-  throw new Error('Failed to open Add a new artist form.');
+  throw new Error(`Failed to open Add a new ${entityType} form.`);
 }
 
-async function runCreateFlow(params: OpenArtistDialogParams, sourceEntity: RelatableEntityT) {
+async function createArtist(params: OpenArtistDialogParams, sourceEntity: RelatableEntityT) {
   assertRelationshipEditor(MB?.relationshipEditor);
 
   MB.relationshipEditor.relationshipDialogDispatch({
@@ -160,7 +162,7 @@ async function runCreateFlow(params: OpenArtistDialogParams, sourceEntity: Relat
     },
   });
 
-  const artistForm = await waitForArtistCreateForm();
+  const artistForm = await waitForEntityCreateForm('artist');
 
   const nameInput = artistForm.querySelector<HTMLInputElement>('input[id$="edit-artist.name"]');
   if (!nameInput) {
@@ -221,7 +223,10 @@ async function runCreateFlow(params: OpenArtistDialogParams, sourceEntity: Relat
 }
 
 // based on https://github.com/loujine/musicbrainz-scripts/blob/master/mb-reledit-set_rec_artist_as_writer.user.js
-async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: RelatableEntityT) {
+async function fillRelationshipDialog(
+  params: {linkType: number; name: string; targetType: 'artist' | 'work'; targetId?: string; recording?: RecordingT},
+  sourceEntity: RelatableEntityT
+) {
   assertRelationshipEditor(MB?.relationshipEditor);
 
   const writerLinkType = (await linkTypes)[params.linkType];
@@ -229,8 +234,8 @@ async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: Re
     throw new Error(`Failed to find link type ${params.linkType}`);
   }
 
-  const existingRelationship = params.artistId
-    ? getRelationship(sourceEntity, params.artistId, params.linkType)
+  const existingRelationship = params.targetId
+    ? getRelationship(sourceEntity, params.targetId, params.linkType)
     : undefined;
 
   MB.relationshipEditor.dispatch({
@@ -241,9 +246,9 @@ async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: Re
       track: params.recording ? getTrackForRecording(params.recording) : undefined,
       relationshipId: existingRelationship ? existingRelationship.id : undefined,
       linkTypeId: params.linkType,
-      backward: writerLinkType.type0 === 'artist',
-      targetType: existingRelationship ? existingRelationship.entity1.entityType : null,
-      textPhrase: writerLinkType.name,
+      backward: writerLinkType.type0 !== sourceEntity.entityType,
+      targetType: params.targetType === 'work' || existingRelationship ? params.targetType : null,
+      textPhrase: params.targetType === 'work' ? undefined : writerLinkType.name,
     },
   });
   await waitForRelationshipDialogDispatch();
@@ -251,7 +256,7 @@ async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: Re
   MB.relationshipEditor.relationshipDialogDispatch({
     type: 'update-target-type',
     source: sourceEntity,
-    targetType: 'artist',
+    targetType: params.targetType,
   });
 
   MB.relationshipEditor.relationshipDialogDispatch({
@@ -291,8 +296,8 @@ async function fillWriterDialog(params: OpenArtistDialogParams, sourceEntity: Re
 export async function openArtistDialogFromWarning(params: OpenArtistDialogParams) {
   assertRelationshipEditor(MB?.relationshipEditor);
   const sourceEntity = warningSourceEntity(params);
-  observeRelationshipConfirmation(params);
-  await fillWriterDialog(params, sourceEntity);
+  observeRelationshipConfirmation(params.linkType, params.onConfirmed);
+  await fillRelationshipDialog({...params, targetType: 'artist', targetId: params.artistId}, sourceEntity);
 
   if (params.action === 'search') {
     MB.relationshipEditor.relationshipDialogDispatch({
@@ -310,5 +315,28 @@ export async function openArtistDialogFromWarning(params: OpenArtistDialogParams
     return;
   }
 
-  await runCreateFlow(params, sourceEntity);
+  await createArtist(params, sourceEntity);
+}
+
+export async function openWorkDialogFromWarning(params: OpenWorkDialogParams) {
+  assertRelationshipEditor(MB?.relationshipEditor);
+  const sourceEntity = params.recording ?? params.work;
+  observeRelationshipConfirmation(params.linkType, params.onConfirmed);
+  await fillRelationshipDialog({...params, targetType: 'work'}, sourceEntity);
+
+  if (params.action === 'search') {
+    MB.relationshipEditor.relationshipDialogDispatch({
+      type: 'update-target-entity',
+      source: sourceEntity,
+      action: {
+        type: 'update-autocomplete',
+        source: sourceEntity,
+        linkType: null,
+        action: {
+          type: 'search-after-timeout',
+        },
+      },
+    });
+    return;
+  }
 }

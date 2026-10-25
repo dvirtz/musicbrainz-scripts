@@ -13,7 +13,7 @@ import {
 } from '@repo/musicbrainz-ext/type-info';
 import {waitForElement, waitForMutation} from '@repo/rxjs-ext/wait-for-element';
 import {firstValueFrom, fromEvent, map} from 'rxjs';
-import {createEffect, createSignal, onCleanup, Show} from 'solid-js';
+import {createEffect, createSignal, on, onCleanup, Show} from 'solid-js';
 import {render} from 'solid-js/web';
 
 const workReadyEventName = 'acum:work-ready';
@@ -41,15 +41,27 @@ function WorkEditor(props: AddWorkEditorOptions & {parent: Element}) {
   parent.addEventListener(refetchWorkEventName, refetch);
   onCleanup(() => parent.removeEventListener(refetchWorkEventName, refetch));
 
-  onCleanup(() => {
-    const newWork = replacedWork();
-    if (!newWork) return;
-    void addWorkEditor({
-      ...editorProps,
-      work: newWork,
-      initialState: captureState(),
-    });
-  });
+  createEffect(
+    on(replacedWork, newWork => {
+      if (!newWork) return;
+      const container = parent.querySelector(`div.${classes['edit-work-button-container']}`);
+      const ready = container?.isConnected
+        ? waitForMutation(document.body, () => !container.isConnected)
+        : Promise.resolve();
+      ready
+        .then(() =>
+          addWorkEditor({
+            ...editorProps,
+            work: newWork,
+            initialState: newWork.gid === props.work.gid ? captureState() : undefined,
+            workWarnings: editorProps.workWarnings.filter(
+              warning => warning.type !== 'work-found-by-name' || warning.workId !== props.work.gid
+            ),
+          })
+        )
+        .catch(console.error);
+    })
+  );
 
   createEffect(() => {
     if (!isModified()) return;

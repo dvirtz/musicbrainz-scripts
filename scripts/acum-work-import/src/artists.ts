@@ -48,6 +48,21 @@ export type ArtistWarning =
     });
 
 export type ArtistLookupResult = {artist: ArtistT | null; warnings: ArtistWarning[]};
+export type ArtistLookupCache = Map<IPBaseNumber, Promise<ArtistLookupResult>>;
+
+export function findArtistCached(
+  cache: ArtistLookupCache,
+  linkTypeID: ArtistLinkTypeID,
+  ipBaseNumber: IPBaseNumber,
+  creators: Creators | undefined
+): Promise<ArtistLookupResult> {
+  let result = cache.get(ipBaseNumber);
+  if (!result) {
+    result = findArtist(linkTypeID, ipBaseNumber, creators);
+    cache.set(ipBaseNumber, result);
+  }
+  return result;
+}
 
 function nameMatch(creator: CreatorFull, artistName: string): boolean {
   return (
@@ -56,7 +71,7 @@ function nameMatch(creator: CreatorFull, artistName: string): boolean {
   );
 }
 
-export async function findArtist(
+async function findArtist(
   linkTypeID: ArtistLinkTypeID,
   ipBaseNumber: IPBaseNumber,
   creators: Creators | undefined
