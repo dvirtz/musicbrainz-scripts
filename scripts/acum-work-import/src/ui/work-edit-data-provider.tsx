@@ -1,8 +1,8 @@
 import {WorkBean} from '#acum.ts';
-import {ArtistLookupCache, linkArrangers, linkWriters} from '#link-artists.ts';
-import {PerWorkWarning} from '#ui/work-warnings.tsx';
-import {WorkEditData, workEditData, workEditDataEqual} from '#work-edit-data.ts';
-import {createWork} from '#works.ts';
+import {ArtistLookupCache} from '#artists.ts';
+import {linkArrangers, linkWriters, WriterLinkWarning} from '#link-artists.ts';
+import {WorkEditData, workEditData, workEditDataEqual, WorkEditDataWarning} from '#work-edit-data.ts';
+import {createWork, WorkWarning} from '#works.ts';
 import {partition} from '@repo/common/parition';
 import {assertMBTree, assertRelationshipEditor, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {buildOptionList, buildOptionListFromKeys} from '@repo/musicbrainz-ext/build-options-list';
@@ -45,12 +45,16 @@ export type WorkEditDataProviderProps = ParentProps & {
   typeInfo: WorkTypeInfo;
   shouldLinkArrangers: boolean;
   initialState?: WorkEditDataInitialState;
+  workWarnings: readonly WorkWarning[];
 };
 
 export type WarningResolutionContext = {
   work: WorkT;
   recording?: RecordingT;
+  track: WorkBean;
 };
+
+export type PerWorkWarning = WorkEditDataWarning | WriterLinkWarning | WorkWarning;
 
 type WarningPredicate<T extends PerWorkWarning> = (warning: PerWorkWarning) => warning is T;
 type WarningResolution<T extends PerWorkWarning> = (
@@ -93,7 +97,7 @@ function sanitizeEditData(editData: WorkEditData): WorkEditData {
 
 function applyEditDataToWork(work: WorkT, editData: WorkEditData): WorkT {
   // Create a new work object with the edited data
-  const newWork = createWork({
+  return createWork({
     ...work,
     name: editData.name,
     comment: editData.comment,
@@ -123,7 +127,9 @@ function applyEditDataToWork(work: WorkT, editData: WorkEditData): WorkT {
         }) as unknown as WorkAttributeT
     ),
   });
+}
 
+function replaceWorkLink(work: WorkT, newWork: WorkT) {
   // Dispatch update actions for all relationships pointing to this work
   assertMBTree(MB?.tree);
   assertRelationshipEditor(MB.relationshipEditor);
@@ -212,7 +218,9 @@ function makeWorkEditDataContext(
     saveEditData: (editData: WorkEditData) => {
       const next = sanitizeEditData(editData);
       setSavedEditData(next);
-      setReplacedWork(applyEditDataToWork(work, next));
+      const newWork = applyEditDataToWork(work, next);
+      replaceWorkLink(work, newWork);
+      setReplacedWork(newWork);
     },
     workId: () => work.id,
     workTypes: () => workTypeInfo.workTypes,
@@ -229,6 +237,10 @@ function makeWorkEditDataContext(
     isLoading,
     refetch,
     replacedWork,
+    replaceWork: (newWork: WorkT) => {
+      replaceWorkLink(work, newWork);
+      setReplacedWork(newWork);
+    },
     captureState: (): WorkEditDataInitialState => ({
       savedEditData: savedEditData(),
       originalEditData: originalEditData(),
@@ -247,6 +259,10 @@ export function useWorkEditData() {
   return context;
 }
 
+export function tryUseWorkEditData() {
+  return useContext(WorkEditDataContext);
+}
+
 export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
   const [savedEditData, setSavedEditData] = createSignal(props.initialState?.savedEditData ?? emptyEditData());
   const [originalEditData, setOriginalEditData] = createSignal(props.initialState?.originalEditData ?? emptyEditData());
@@ -262,7 +278,7 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
       return;
     }
 
-    const replacements = await resolve(matching, {work: props.work, recording: props.recording});
+    const replacements = await resolve(matching, {work: props.work, recording: props.recording, track: props.track});
     setWarnings([...remaining, ...(replacements ?? [])]);
   };
 
@@ -283,11 +299,11 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
       setIsLoading(true);
       setWarnings([]);
       const {editData, originalEditData, warnings: editWarnings} = await workEditData(work, track);
+      const workWarnings = [...props.workWarnings];
       if (recording) {
-        const workNameWarnings: PerWorkWarning[] =
-          compareInsensitive(props.work.name, recording.name) !== 0
-            ? [{type: 'work-name-different', recordingName: recording.name}]
-            : [];
+        if (compareInsensitive(props.work.name, recording.name) !== 0) {
+          workWarnings.push({type: 'work-name-different', recordingName: recording.name});
+        }
         const workState = refreshWorkState(recording, work);
         const writerWarnings = await linkWriters(artistCache, track, workState.work, workState.targetTypeGroups);
         const arrangerWarnings = shouldLinkArrangers
@@ -296,14 +312,14 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
         return {
           editData,
           originalEditData,
-          warnings: [...workNameWarnings, ...editWarnings, ...writerWarnings, ...arrangerWarnings] as PerWorkWarning[],
+          warnings: [...workWarnings, ...editWarnings, ...writerWarnings, ...arrangerWarnings] as PerWorkWarning[],
         };
       } else {
         const writerWarnings = await linkWriters(artistCache, track, work);
         return {
           editData,
           originalEditData,
-          warnings: [...editWarnings, ...writerWarnings] as PerWorkWarning[],
+          warnings: [...workWarnings, ...editWarnings, ...writerWarnings] as PerWorkWarning[],
         };
       }
     }
