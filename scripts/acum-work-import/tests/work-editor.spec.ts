@@ -1,3 +1,4 @@
+import {test as existingWorkTest} from '#tests/fixtures/existing-work.ts';
 import {seedAcumStorageFromUrl} from '#tests/fixtures/acum-storage.ts';
 import {expect, Locator} from '@playwright/test';
 import {MEDLEY_OF_LINK_TYPE_ID, WORK_OTHER_DATABASE_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
@@ -384,5 +385,32 @@ test.describe('work editor', () => {
       const links = roleRow.getByRole('link');
       await expect(links).toHaveText(work[role]);
     }
+  });
+
+  existingWorkTest('asks to navigate to a work found by name from the work form', async ({page, existingWork}) => {
+    page.once('dialog', async dialog => {
+      expect(dialog.type()).toBe('confirm');
+      expect(dialog.message()).toBe('This work already exists in Musicbrainz, click "ok" to redirect to its page');
+      await dialog.accept();
+    });
+    await existingWork.importButton.click();
+    await expect(page).toHaveURL(`/work/${existingWork.workId}`);
+    await expect(page.getByRole('heading', {name: 'MEET THE STARS'})).toBeVisible();
+  });
+
+  existingWorkTest('continues importing after declining navigation to a found work', async ({page, existingWork}) => {
+    const confirmations: string[] = [];
+    page.once('dialog', async dialog => {
+      expect(dialog.type()).toBe('confirm');
+      confirmations.push(dialog.message());
+      await dialog.dismiss();
+    });
+    await existingWork.importButton.click();
+    await expect(page.getByRole('textbox', {name: 'Name'})).toHaveValue('MEET THE STARS');
+    expect(confirmations).toEqual(['This work already exists in Musicbrainz, click "ok" to redirect to its page']);
+    await expect(page).toHaveURL('/work/create');
+    await expect(page.getByText('was found by name linked to an author, please verify.', {exact: false})).toHaveCount(
+      0
+    );
   });
 });
