@@ -32,7 +32,7 @@ To import a single work:
 6. Review the changes.
 7. Submit the work.
 
-The script will search for existing works with the same ISWC or ACUM ID work attribute and use them if found. This can slow down the import process and can be disabled in the settings.
+The script will search for existing works with the same ISWC or ACUM ID work attribute and use them if found. If neither matches, it also looks for works with the same name linked to any identified author, composer, or translator. These matches show a warning with search and update links for review. This can slow down the import process and can be disabled in the settings.
 
 ## Settings
 

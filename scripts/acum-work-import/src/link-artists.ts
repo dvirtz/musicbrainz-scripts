@@ -1,6 +1,6 @@
 import {AcumWorkType} from '#acum-work-type.ts';
-import {Creator, Creators, IPBaseNumber, WorkBean, workType} from '#acum.ts';
-import {ArtistLinkTypeID, ArtistLookupResult, ArtistWarning, findArtist} from '#artists.ts';
+import {Creator, Creators, WorkBean, workType} from '#acum.ts';
+import {ArtistLinkTypeID, ArtistLookupCache, ArtistWarning, findArtistCached} from '#artists.ts';
 import {addArtistRelationship} from '#relationships.ts';
 import {assertRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
@@ -47,8 +47,6 @@ function linkedArtists(targetTypeGroups: RelationshipTargetTypeGroupsT | null): 
   }
 }
 
-export type ArtistLookupCache = Map<IPBaseNumber, Promise<ArtistLookupResult>>;
-
 async function linkArtists(
   pendingArtistCache: ArtistLookupCache,
   writers: readonly Creator[] | undefined,
@@ -58,13 +56,7 @@ async function linkArtists(
 ): Promise<ArtistWarning[]> {
   return await firstValueFrom(
     from(writers || []).pipe(
-      mergeMap(
-        async author =>
-          await (pendingArtistCache.get(author.creatorIpBaseNumber) ||
-            pendingArtistCache
-              .set(author.creatorIpBaseNumber, findArtist(linkTypeID, author.creatorIpBaseNumber, creators))
-              .get(author.creatorIpBaseNumber)!)
-      ),
+      mergeMap(author => findArtistCached(pendingArtistCache, linkTypeID, author.creatorIpBaseNumber, creators)),
       connect(shared =>
         merge(
           shared.pipe(

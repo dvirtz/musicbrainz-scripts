@@ -29,6 +29,8 @@ export type IswcLookupResultsT = Readonly<{
 
 export type WorkLookupResultT = Readonly<{
   id: string;
+  title: string;
+  relations?: ReadonlyArray<{artist?: {id: string}}>;
   attributes: ReadonlyArray<{
     type: string;
     value: string;
