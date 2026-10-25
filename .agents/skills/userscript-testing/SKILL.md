@@ -14,6 +14,8 @@ skill, instruction file, or existing spec disagrees with the rules below, these 
 ## Core rules
 
 - Use test driven development: write the failing spec first, then implement.
+- Add only browser tests that exercise userscript behavior through the UI. Do not add unit tests
+  that call implementation functions directly.
 - Prefer high-level, user-facing locators over selector-based ones. See [Locators](#locators).
 - Use web-first assertions and never hand-roll waiting. See [Assertions and waiting](#assertions-and-waiting).
 - Build on the `@repo/test-support` fixtures instead of raw `@playwright/test`. See [Fixtures](#fixtures).
@@ -106,6 +108,8 @@ test('imports a work from ACUM', async ({userscriptPage}) => {
 
 ## Test structure
 
+- Append new tests after the existing tests in their file or relevant `test.describe` group. Preserve
+  the order of existing tests.
 - One behavior per test; keep tests independent so they can run in any order.
 - Do not chain tests or share mutable state between them — each gets a fresh context and its own
   HAR fixture keyed on the test title.
