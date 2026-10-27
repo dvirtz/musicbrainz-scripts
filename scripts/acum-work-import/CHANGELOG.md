@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.24.0-beta.1 (2026-10-27)
+
+* feat(acum-work-import): match works by name and authors ([0f8dfdf](https://github.com/dvirtz/musicbrainz-scripts/commit/0f8dfdf))
+
 ## @dvirtz/acum-work-import-v1.23.3 (2026-10-13)
 
 * fix(acum-work-import): avoid adding duplicate URL ([85b0910](https://github.com/dvirtz/musicbrainz-scripts/commit/85b0910))
