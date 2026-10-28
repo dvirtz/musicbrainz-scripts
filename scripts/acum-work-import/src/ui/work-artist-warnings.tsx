@@ -131,6 +131,7 @@ export function FoundArtistWarning(props: {
   work: WorkT;
   recording: RecordingT | undefined;
 }) {
+  const resolveWarnings = resolveWarningsCallback();
   return (
     <>
       {capitalizeFirst(artistLinkTypeName(props.warning.linkTypeID))}{' '}
@@ -144,7 +145,7 @@ export function FoundArtistWarning(props: {
           ipi: props.warning.ipi,
           ipBaseNumber: props.warning.ipBaseNumber,
         },
-        artist => resolveArtistWarnings(props.warning.ipBaseNumber, artist)
+        artist => resolveWarnings(props.warning.ipBaseNumber, artist)
       )}
       |
       {artistAction({
@@ -157,7 +158,7 @@ export function FoundArtistWarning(props: {
         work: props.work,
         recording: props.recording,
         artistId: props.warning.artistId,
-        onConfirmed: artist => resolveArtistWarnings(props.warning.ipBaseNumber, artist),
+        onConfirmed: artist => resolveWarnings(props.warning.ipBaseNumber, artist),
       })}
       |
       {artistAction({
@@ -172,7 +173,7 @@ export function FoundArtistWarning(props: {
         work: props.work,
         recording: props.recording,
         artistId: props.warning.artistId,
-        onConfirmed: artist => resolveArtistWarnings(props.warning.ipBaseNumber, artist),
+        onConfirmed: artist => resolveWarnings(props.warning.ipBaseNumber, artist),
       })}
     </>
   );
@@ -184,6 +185,7 @@ export function MissingArtistWarning(props: {
   work: WorkT;
   recording: RecordingT | undefined;
 }) {
+  const resolveWarnings = resolveWarningsCallback();
   return (
     <>
       Failed to find {artistLinkTypeName(props.warning.linkTypeID)}{' '}
@@ -197,7 +199,7 @@ export function MissingArtistWarning(props: {
         editNote: warningEditNote(props.track),
         work: props.work,
         recording: props.recording,
-        onConfirmed: artist => resolveArtistWarnings(props.warning.ipBaseNumber, artist),
+        onConfirmed: artist => resolveWarnings(props.warning.ipBaseNumber, artist),
       })}
       |
       {artistAction({
@@ -211,43 +213,45 @@ export function MissingArtistWarning(props: {
         ipBaseNumber: props.warning.ipBaseNumber,
         work: props.work,
         recording: props.recording,
-        onConfirmed: artist => resolveArtistWarnings(props.warning.ipBaseNumber, artist),
+        onConfirmed: artist => resolveWarnings(props.warning.ipBaseNumber, artist),
       })}
     </>
   );
 }
 
-function resolveArtistWarnings(ipBaseNumber: string, artist: ArtistT) {
+function resolveWarningsCallback() {
   const context = tryUseWorkEditData();
 
-  context
-    ?.resolveWarnings?.(
-      (warning: PerWorkWarning): warning is MissingArtistWarning =>
-        isMissingArtistWarning(warning) && warning.ipBaseNumber === ipBaseNumber,
-      async (artistWarnings, context: WarningResolutionContext) => {
-        for (const warning of artistWarnings) {
-          const sourceEntity =
-            warning.linkTypeID === ARRANGER_LINK_TYPE_ID && context.recording ? context.recording : context.work;
-          addArtistRelationship(
-            sourceEntity,
-            warning.linkTypeID,
-            artist,
-            'artistId' in warning ? warning.artistId : undefined
-          );
-        }
+  return (ipBaseNumber: string, artist: ArtistT) => {
+    context
+      ?.resolveWarnings?.(
+        (warning: PerWorkWarning): warning is MissingArtistWarning =>
+          isMissingArtistWarning(warning) && warning.ipBaseNumber === ipBaseNumber,
+        async (artistWarnings, context: WarningResolutionContext) => {
+          for (const warning of artistWarnings) {
+            const sourceEntity =
+              warning.linkTypeID === ARRANGER_LINK_TYPE_ID && context.recording ? context.recording : context.work;
+            addArtistRelationship(
+              sourceEntity,
+              warning.linkTypeID,
+              artist,
+              'artistId' in warning ? warning.artistId : undefined
+            );
+          }
 
-        if (await artistHasIpiOrAcumLink(artist, artistWarnings[0]!.ipi, ipBaseNumber)) {
-          return [];
-        }
+          if (await artistHasIpiOrAcumLink(artist, artistWarnings[0]!.ipi, ipBaseNumber)) {
+            return [];
+          }
 
-        return artistWarnings.map(warning => ({
-          ...warning,
-          artistId: artist.gid,
-          artistName: artist.name,
-          type: 'artist-missing-data' as const,
-        }));
-      },
-      {scope: 'all'}
-    )
-    .catch(console.error);
+          return artistWarnings.map(warning => ({
+            ...warning,
+            artistId: artist.gid,
+            artistName: artist.name,
+            type: 'artist-missing-data' as const,
+          }));
+        },
+        {scope: 'all'}
+      )
+      .catch(console.error);
+  };
 }
