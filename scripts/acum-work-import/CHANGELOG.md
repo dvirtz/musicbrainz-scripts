@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.24.0-beta.2 (2026-10-29)
+
+* fix(acum-work-import): resolve artist warnings ([42eeeeb](https://github.com/dvirtz/musicbrainz-scripts/commit/42eeeeb))
+
 ## @dvirtz/acum-work-import-v1.24.0-beta.1 (2026-10-27)
 
 * feat(acum-work-import): match works by name and authors ([0f8dfdf](https://github.com/dvirtz/musicbrainz-scripts/commit/0f8dfdf))
