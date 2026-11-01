@@ -144,9 +144,15 @@ function replaceWorkLink(work: WorkT, newWork: WorkT) {
           const clonedRel = structuredClone(rel);
           if (clonedRel.entity0.id === work.id) {
             clonedRel.entity0 = newWork;
+            if (work.gid && clonedRel.entity1.entityType !== 'recording') {
+              continue;
+            }
           }
           if (clonedRel.entity1.id === work.id) {
             clonedRel.entity1 = newWork;
+            if (work.gid && clonedRel.entity0.entityType !== 'recording') {
+              continue;
+            }
           }
 
           MB.relationshipEditor.dispatch?.({
