@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.24.0-beta.3 (2026-11-01)
+
+* fix(acum-work-import): only replace existing work-recording links ([12d855c](https://github.com/dvirtz/musicbrainz-scripts/commit/12d855c))
+
 ## @dvirtz/acum-work-import-v1.24.0-beta.2 (2026-10-29)
 
 * fix(acum-work-import): resolve artist warnings ([42eeeeb](https://github.com/dvirtz/musicbrainz-scripts/commit/42eeeeb))
