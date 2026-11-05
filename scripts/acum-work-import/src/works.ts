@@ -3,7 +3,12 @@ import {ArtistLookupCache, findArtistCached} from '#artists.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
 import {assertMB} from '@repo/musicbrainz-ext/asserts';
 import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
-import {COMPOSER_LINK_TYPE_ID, LYRICIST_LINK_TYPE_ID, TRANSLATOR_LINK_TYPE_ID} from '@repo/musicbrainz-ext/constants';
+import {
+  COMPOSER_LINK_TYPE_ID,
+  LYRICIST_LINK_TYPE_ID,
+  SPECIAL_PURPOSE_ARTIST_IDS,
+  TRANSLATOR_LINK_TYPE_ID,
+} from '@repo/musicbrainz-ext/constants';
 import {fetchJSON, tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {formatISWC} from '@repo/musicbrainz-ext/format-iswc';
 import {IswcLookupResultsT, WorkLookupResultT, WorkSearchResultsT} from '@repo/musicbrainz-ext/search-results';
@@ -46,7 +51,7 @@ export async function findWork(track: WorkBean, artistCache: ArtistLookupCache =
     for (const [role, authors] of roles) {
       for (const author of authors ?? []) {
         const {artist} = await findArtistCached(artistCache, role, author.creatorIpBaseNumber, track.creators);
-        if (artist) authorIds.add(artist.gid);
+        if (artist && !SPECIAL_PURPOSE_ARTIST_IDS.has(artist.gid)) authorIds.add(artist.gid);
       }
     }
     if (authorIds.size === 0) return;
