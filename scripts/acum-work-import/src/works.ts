@@ -1,3 +1,5 @@
+import {WorkNameMatchWarning} from '#ui/work-data-warnings.tsx';
+import type {WarningStore} from '#warning-store.ts';
 import {trackName, WorkBean, workId, workISWCs} from '#acum.ts';
 import {ArtistLookupCache, findArtistCached} from '#artists.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
@@ -12,22 +14,21 @@ import {
 import {fetchJSON, tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
 import {formatISWC} from '@repo/musicbrainz-ext/format-iswc';
 import {IswcLookupResultsT, WorkLookupResultT, WorkSearchResultsT} from '@repo/musicbrainz-ext/search-results';
-import {WorkT} from 'typedbrainz/types';
+import {RecordingT, WorkT} from 'typedbrainz/types';
 
 const workCache = new Map<string, WorkT>();
 
-export type WorkWarning =
-  | {type: 'work-found-by-name'; workId: string; workName: string}
-  | {type: 'work-name-different'; recordingName: string};
-export type WorkLookupResult = {work: WorkT | null; warnings: WorkWarning[]};
-
-export async function findWork(track: WorkBean, artistCache: ArtistLookupCache = new Map()): Promise<WorkLookupResult> {
-  const warnings: WorkWarning[] = [];
-  const workGid = await (async () => {
+export async function findWork(
+  track: WorkBean,
+  artistCache: ArtistLookupCache = new Map(),
+  store?: WarningStore,
+  recording?: RecordingT
+): Promise<WorkT | null> {
+  const match = await (async () => {
     for (const iswc of await workISWCs(track)) {
       const byIswc = await tryFetchJSON<IswcLookupResultsT>(`/ws/2/iswc/${formatISWC(iswc)}?fmt=json`);
       if (byIswc && byIswc['work-count'] > 0) {
-        return byIswc.works[0]!.id;
+        return {workGid: byIswc.works[0]!.id, matchedByAuthor: false};
       }
     }
 
@@ -40,7 +41,7 @@ export async function findWork(track: WorkBean, artistCache: ArtistLookupCache =
     const byAcumId = candidates.find(work =>
       work.attributes.some(attr => attr.type === 'ACUM ID' && attr.value === workId(track))
     );
-    if (byAcumId) return byAcumId.id;
+    if (byAcumId) return {workGid: byAcumId.id, matchedByAuthor: false};
 
     const authorIds = new Set<string>();
     const roles = [
@@ -48,9 +49,9 @@ export async function findWork(track: WorkBean, artistCache: ArtistLookupCache =
       [COMPOSER_LINK_TYPE_ID, [...(track.composers ?? []), ...(track.composersAndAuthors ?? [])]],
       [TRANSLATOR_LINK_TYPE_ID, track.translators],
     ] as const;
-    for (const [role, authors] of roles) {
+    for (const [, authors] of roles) {
       for (const author of authors ?? []) {
-        const {artist} = await findArtistCached(artistCache, role, author.creatorIpBaseNumber, track.creators);
+        const {artist} = await findArtistCached(artistCache, author.creatorIpBaseNumber, track.creators);
         if (artist && !SPECIAL_PURPOSE_ARTIST_IDS.has(artist.gid)) authorIds.add(artist.gid);
       }
     }
@@ -68,34 +69,39 @@ export async function findWork(track: WorkBean, artistCache: ArtistLookupCache =
     };
     const byAuthor = candidates.find(matchesWorkNameAndAuthor);
     if (byAuthor) {
-      warnings.push({type: 'work-found-by-name', workId: byAuthor.id, workName: byAuthor.title});
-      return byAuthor.id;
+      return {workGid: byAuthor.id, matchedByAuthor: true};
     }
   })();
 
-  if (workGid) {
+  if (match) {
+    const {workGid, matchedByAuthor} = match;
     const work = await fetchJSON<WorkT>(`/ws/js/entity/${workGid}`);
-    return {work, warnings};
+    if (matchedByAuthor && store) {
+      store.add(new WorkNameMatchWarning({work, track, recording}, store));
+    }
+    return work;
   }
 
-  return {work: null, warnings};
+  return null;
 }
 
 export async function createNewWork(
   track: WorkBean,
-  artistCache?: ArtistLookupCache
-): Promise<WorkLookupResult & {work: WorkT}> {
+  store: WarningStore,
+  artistCache?: ArtistLookupCache,
+  recording?: RecordingT
+): Promise<WorkT> {
   assertMB(MB);
 
   const result = await (async () => {
     const id = workId(track);
     if (workCache.has(id)) {
-      return {work: workCache.get(id)!, warnings: []};
+      return workCache.get(id)!;
     }
     if (await shouldSearchWorks()) {
-      const {work: existingWork, warnings} = await findWork(track, artistCache);
+      const existingWork = await findWork(track, artistCache, store, recording);
       if (existingWork) {
-        return {work: existingWork, warnings};
+        return existingWork;
       }
     }
     const newWork = createWork({
@@ -103,9 +109,9 @@ export async function createNewWork(
       name: trackName(track),
     });
     workCache.set(id, newWork);
-    return {work: newWork, warnings: []};
+    return newWork;
   })();
-  MB.linkedEntities.work[result.work.id] = result.work;
+  MB.linkedEntities.work[result.id] = result;
   return result;
 }
 

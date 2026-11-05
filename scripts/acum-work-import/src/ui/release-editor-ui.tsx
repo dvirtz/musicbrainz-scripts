@@ -3,7 +3,9 @@ import {importAlbum as tryImportWorks} from '#import-album.ts';
 import {replaceSubmitButton} from '#submit.ts';
 import {ImportForm} from '#ui/import-form.tsx';
 import {ProgressBar} from '#ui/progressbar.tsx';
-import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
+import {WarningList} from '#ui/warning-list.tsx';
+import {createWarningStore, WarningStore} from '#warning-store.ts';
+import {MessageWarning} from '#warning.ts';
 import {getWorkSubmitter, WorkSubmitter} from '#work-submitters.ts';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
@@ -42,26 +44,26 @@ import {
   WorkT,
 } from 'typedbrainz/types';
 
-function AcumImporter() {
-  const {addWarning, clearWarnings} = useWarnings();
+function AcumImporter(props: {globalWarnings: WarningStore; workWarnings: WarningStore}) {
+  const clearWarnings = props.globalWarnings.clear;
   const [progress, setProgress] = createSignal<readonly [number, string]>([0, '']);
 
   async function importWorks(entity: Entity) {
     clearWarnings();
     try {
-      if (await tryImportWorks(entity, addWarning, setProgress)) {
+      if (await tryImportWorks(entity, props.globalWarnings, props.workWarnings, setProgress)) {
         replaceSubmitButton(submitWorks);
       }
     } catch (err) {
       console.error(err);
-      addWarning(`Import failed: ${String(err)}`);
+      props.globalWarnings.add(new MessageWarning(`Import failed: ${String(err)}`));
     }
   }
 
   async function importFromPreferredSource(entity: Entity) {
     const importEntity = entity.id ? entity : await loadLatestEntityData<EntityT>(['Album', 'Work', 'Version']);
     if (!importEntity) {
-      addWarning(`Import failed: no saved works found`);
+      props.globalWarnings.add(new MessageWarning(`Import failed: no saved works found`));
       return;
     }
     await importWorks(importEntity);
@@ -80,7 +82,7 @@ function AcumImporter() {
       try {
         return await doSubmitWorks(setProgress);
       } catch (err) {
-        addWarning(`Submission failed: ${String(err)}`);
+        props.globalWarnings.add(new MessageWarning(`Submission failed: ${String(err)}`));
         if (submitButton) submitButton.disabled = false;
         return undefined;
       } finally {
@@ -102,9 +104,11 @@ function AcumImporter() {
     }
   }
 
-  addWarning(
-    "Only use this option after you've tried searching for the work(s) " +
-      'you want to add, and are certain they do not already exist on MusicBrainz.'
+  props.globalWarnings.add(
+    new MessageWarning(
+      "Only use this option after you've tried searching for the work(s) " +
+        'you want to add, and are certain they do not already exist on MusicBrainz.'
+    )
   );
 
   return (
@@ -112,6 +116,7 @@ function AcumImporter() {
       <ImportForm entityTypes={['Album', 'Version', 'Work']} onImport={importFromPreferredSource} idPattern="[0-9A-Z]+">
         <ProgressBar value={progress()[0]} label={progress()[1]} minValue={0} maxValue={1} />
       </ImportForm>
+      <WarningList warnings={props.globalWarnings.warnings()} />
 
       <div>
         <p>This will add a new work for each checked recording that has no work already</p>
@@ -135,14 +140,9 @@ export async function createReleaseEditorUI() {
     );
     theToolbox.append(container);
 
-    render(
-      () => (
-        <WarningsProvider>
-          <AcumImporter />
-        </WarningsProvider>
-      ),
-      container
-    );
+    const globalWarnings = createWarningStore();
+    const workWarnings = createWarningStore();
+    render(() => <AcumImporter globalWarnings={globalWarnings} workWarnings={workWarnings} />, container);
   };
 
   const submitButton =

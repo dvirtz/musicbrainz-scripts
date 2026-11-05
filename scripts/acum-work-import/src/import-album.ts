@@ -1,10 +1,12 @@
+import {MessageWarning} from '#warning.ts';
+import type {WarningStore} from '#warning-store.ts';
 import {addAcumLink} from '#acum-links.ts';
 import {Entity, entityUrl, fetchWorks, trackName, Version, WorkBean, workEntity} from '#acum.ts';
 import {ArtistLookupCache} from '#artists.ts';
 import {createRelationshipState} from '#relationships.ts';
-import {AddWarning} from '#ui/warnings.tsx';
 import {addWorkEditor, hasChanges} from '#ui/work-editor.tsx';
-import {createNewWork, WorkWarning} from '#works.ts';
+
+import {createNewWork} from '#works.ts';
 import {head} from '@repo/common/head';
 import {assertMBTree, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareInsensitive, compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
@@ -57,7 +59,12 @@ type SelectedRecording = {
 type SelectedRecordings = ReadonlyArray<SelectedRecording>;
 type SetProgress = Setter<readonly [number, string]>;
 
-export async function importAlbum(entity: Entity, addWarning: AddWarning, setProgress: SetProgress): Promise<boolean> {
+export async function importAlbum(
+  entity: Entity,
+  globalWarnings: WarningStore,
+  workWarnings: WarningStore,
+  setProgress: SetProgress
+): Promise<boolean> {
   setProgress([0, 'Loading album info']);
 
   const noSelection =
@@ -65,7 +72,7 @@ export async function importAlbum(entity: Entity, addWarning: AddWarning, setPro
   const mediums = selectedMediums(entity, noSelection) ?? [];
   const recordings = await selectedRecordings(entity, noSelection, mediums);
 
-  return await importSelectedWorks(entity, recordings, addWarning, setProgress);
+  return await importSelectedWorks(entity, recordings, setProgress, globalWarnings, workWarnings);
 }
 
 const artistCache: ArtistLookupCache = new Map();
@@ -73,8 +80,9 @@ const artistCache: ArtistLookupCache = new Map();
 async function importSelectedWorks(
   entity: Entity,
   selectedRecordings: SelectedRecordings,
-  addWarning: AddWarning,
-  setProgress: SetProgress
+  setProgress: SetProgress,
+  globalWarnings: WarningStore,
+  workWarnings: WarningStore
 ) {
   artistCache.clear();
   const getOrCreateWork = async ({index, workBean, recordingState}: SelectedRecording) => {
@@ -82,24 +90,22 @@ async function importSelectedWorks(
 
     const existing = relatedWork(recordingState.relatedWorks, recordingState.recording, index);
     if (existing) {
-      return {work: existing.work, warnings: [], workBean, recordingState} as const;
+      return {work: existing.work, workBean, recordingState} as const;
     }
 
-    const {work: newWork, warnings} = await createNewWork(workBean, artistCache);
+    const newWork = await createNewWork(workBean, workWarnings, artistCache, recordingState.recording);
     linkNewWork(index, newWork, recordingState);
 
-    return {work: newWork, warnings, workBean, recordingState} as const;
+    return {work: newWork, workBean, recordingState} as const;
   };
 
   const addReleaseWorkEditor = async ({
     work,
-    warnings,
     track,
     recordingState,
     trackRow,
   }: {
     work: WorkT;
-    warnings: readonly WorkWarning[];
     track: WorkBean;
     recordingState: MediumRecordingStateT;
     trackRow: Element;
@@ -117,10 +123,8 @@ async function importSelectedWorks(
           ));
         return anchor!.closest('h3') ?? anchor!.parentElement!;
       },
-      work,
-      workWarnings: warnings,
-      track,
-      recording: recordingState.recording,
+      context: {work, track, recording: recordingState.recording},
+      warningStore: workWarnings,
       artistCache,
       shouldLinkArrangers: entity.entityType !== 'Work',
       getElementsToReplace: parent =>
@@ -142,10 +146,9 @@ async function importSelectedWorks(
         }),
         mergeMap(getOrCreateWork),
         map(
-          ({work, warnings, workBean, recordingState}) =>
+          ({work, workBean, recordingState}) =>
             ({
               work,
-              warnings,
               track: workBean,
               recordingState,
               trackRow: document.querySelector(`.track:has(a[href="${recordingLink(recordingState.recording)}"])`)!,
@@ -162,7 +165,7 @@ async function importSelectedWorks(
         }),
         connect(shared =>
           merge(
-            shared.pipe(maybeSetEditNote(entity, addWarning)),
+            shared.pipe(maybeSetEditNote(entity, globalWarnings)),
             shared.pipe(updateProgress(selectedRecordings, setProgress), ignoreElements())
           )
         )
@@ -181,7 +184,7 @@ function updateProgress(selectedRecordings: SelectedRecordings, setProgress: Set
   );
 }
 
-function maybeSetEditNote(entity: Entity, addWarning: AddWarning) {
+function maybeSetEditNote(entity: Entity, globalWarnings: WarningStore) {
   return pipe(
     count((pendingEdits: boolean) => pendingEdits),
     map(editedCount => editedCount > 0),
@@ -189,7 +192,7 @@ function maybeSetEditNote(entity: Entity, addWarning: AddWarning) {
       if (hasEdits) {
         addEditNote(`Imported from ${entityUrl(entity)}`);
       } else {
-        addWarning('All works are up to date');
+        globalWarnings.add(new MessageWarning('All works are up to date'));
       }
     })
   );

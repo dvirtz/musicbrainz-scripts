@@ -1,3 +1,6 @@
+import {UnknownLanguageWarning, UnknownWorkTypeWarning} from '#ui/work-data-warnings.tsx';
+import type {WarningStore} from '#warning-store.ts';
+import type {WorkWarningContext} from '#work-warning.ts';
 // adapted from https://github.dev/loujine/musicbrainz-scripts/blob/master/mbz-loujine-common.js
 
 import {AcumWorkType} from '#acum-work-type.ts';
@@ -29,10 +32,6 @@ export type WorkEditData = {
   iswcs: Array<string>;
   attributes: Array<WorkEditAttribute>;
 };
-
-export type WorkEditDataWarning =
-  | {type: 'unknown-language'; workLanguage: string}
-  | {type: 'unknown-work-type'; workType: string; versionEssenceType: string};
 
 function getWorkEditParams(work: WorkT): WorkEditData {
   return {
@@ -130,14 +129,15 @@ export function workEditDataEqual(lhs: WorkEditData, rhs: WorkEditData) {
 
 export async function workEditData(
   work: WorkT,
-  track: WorkBean
-): Promise<{originalEditData: WorkEditData; editData: WorkEditData; warnings: WorkEditDataWarning[]}> {
+  track: WorkBean,
+  store: WarningStore,
+  context: WorkWarningContext = {work, track}
+): Promise<{originalEditData: WorkEditData; editData: WorkEditData}> {
   const originalEditData = work.gid ? await fetchWorkEditParams(work.gid) : getWorkEditParams(work);
   const acumTypeId = await ACUM_TYPE_ID;
   const acumWorkType = await workType(track);
   const workTypesValues = Object.values(await workTypes);
   const acumWorkId = workId(track);
-  const warnings: WorkEditDataWarning[] = [];
   return {
     originalEditData,
     editData: {
@@ -235,16 +235,14 @@ export async function workEditData(
                       case WorkLanguage.Foreign:
                         return [];
                       default:
-                        warnings.push({type: 'unknown-language', workLanguage: String(track.workLanguage)});
+                        store.add(new UnknownLanguageWarning(context, String(track.workLanguage)));
                         return [];
                     }
                   })();
                 default:
-                  warnings.push({
-                    type: 'unknown-work-type',
-                    workType: String(track.workType),
-                    versionEssenceType: String(track.versionEssenceType),
-                  });
+                  store.add(
+                    new UnknownWorkTypeWarning(context, String(track.workType), String(track.versionEssenceType))
+                  );
                   return originalEditData.languages;
               }
             })()
@@ -265,6 +263,5 @@ export async function workEditData(
         },
       ],
     },
-    warnings,
   };
 }

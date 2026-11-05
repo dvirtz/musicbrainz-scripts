@@ -18,47 +18,20 @@ export type ArtistLinkTypeID =
   | typeof TRANSLATOR_LINK_TYPE_ID
   | typeof WRITER_LINK_TYPE_ID;
 
-type MissingArtistWarningBase = {
-  linkTypeID: ArtistLinkTypeID;
-  ipi: string;
-  ipBaseNumber: string;
-  creatorHebName: string;
-  creatorEngName: string;
+export type ArtistLookupResult = {
+  artist: ArtistT | null;
+  match: 'identifier' | 'missing' | {type: 'name' | 'alias'; id: string; name: string};
 };
-
-export type ArtistWarning =
-  | {type: 'creator-not-found'; ipi: string}
-  | (MissingArtistWarningBase & {
-      type: 'found-by-name';
-      artistId: string;
-      artistName: string;
-    })
-  | (MissingArtistWarningBase & {
-      type: 'found-by-alias';
-      artistId: string;
-      artistName: string;
-    })
-  | (MissingArtistWarningBase & {
-      type: 'failed-to-find';
-    })
-  | (MissingArtistWarningBase & {
-      type: 'artist-missing-data';
-      artistId: string;
-      artistName: string;
-    });
-
-export type ArtistLookupResult = {artist: ArtistT | null; warnings: ArtistWarning[]};
 export type ArtistLookupCache = Map<IPBaseNumber, Promise<ArtistLookupResult>>;
 
 export function findArtistCached(
   cache: ArtistLookupCache,
-  linkTypeID: ArtistLinkTypeID,
   ipBaseNumber: IPBaseNumber,
   creators: Creators | undefined
 ): Promise<ArtistLookupResult> {
   let result = cache.get(ipBaseNumber);
   if (!result) {
-    result = findArtist(linkTypeID, ipBaseNumber, creators);
+    result = findArtist(ipBaseNumber, creators);
     cache.set(ipBaseNumber, result);
   }
   return result;
@@ -71,16 +44,12 @@ function nameMatch(creator: CreatorFull, artistName: string): boolean {
   );
 }
 
-async function findArtist(
-  linkTypeID: ArtistLinkTypeID,
-  ipBaseNumber: IPBaseNumber,
-  creators: Creators | undefined
-): Promise<ArtistLookupResult> {
-  const warnings: ArtistWarning[] = [];
+async function findArtist(ipBaseNumber: IPBaseNumber, creators: Creators | undefined): Promise<ArtistLookupResult> {
+  const creator = creators?.find(creator => creator.creatorIpBaseNumber === ipBaseNumber);
+  let match: ArtistLookupResult['match'] = 'identifier';
   const artistMBID = await (async () => {
-    const creator = creators?.find(creator => creator.creatorIpBaseNumber === ipBaseNumber);
     if (!creator) {
-      warnings.push({type: 'creator-not-found', ipi: ipBaseNumber});
+      match = 'missing';
       return null;
     }
     const byIpi = await tryFetchJSON<ArtistSearchResultsT>(`/ws/2/artist?query=ipi:${creator.number}&limit=1&fmt=json`);
@@ -99,16 +68,7 @@ async function findArtist(
       `/ws/2/artist?query=name:(${creator.creatorHebName} OR ${creator.creatorEngName})&limit=1&fmt=json`
     );
     if (byName && byName.artists.length > 0 && nameMatch(creator, byName.artists[0]!.name)) {
-      warnings.push({
-        type: 'found-by-name',
-        linkTypeID,
-        artistId: byName.artists[0]!.id,
-        artistName: byName.artists[0]!.name,
-        ipi: creator.number,
-        ipBaseNumber: creator.creatorIpBaseNumber,
-        creatorHebName: creator.creatorHebName,
-        creatorEngName: creator.creatorEngName,
-      });
+      match = {type: 'name', id: byName.artists[0]!.id, name: byName.artists[0]!.name};
       return byName.artists[0]!.id;
     }
 
@@ -120,34 +80,18 @@ async function findArtist(
       byAlias.artists.length > 0 &&
       byAlias.artists[0]!.aliases?.some(alias => nameMatch(creator, alias.name))
     ) {
-      warnings.push({
-        type: 'found-by-alias',
-        linkTypeID,
-        artistId: byAlias.artists[0]!.id,
-        artistName: byAlias.artists[0]!.name,
-        ipi: creator.number,
-        ipBaseNumber: creator.creatorIpBaseNumber,
-        creatorHebName: creator.creatorHebName,
-        creatorEngName: creator.creatorEngName,
-      });
+      match = {type: 'alias', id: byAlias.artists[0]!.id, name: byAlias.artists[0]!.name};
       return byAlias.artists[0]!.id;
     }
 
-    warnings.push({
-      type: 'failed-to-find',
-      linkTypeID,
-      ipi: creator.number,
-      ipBaseNumber: creator.creatorIpBaseNumber,
-      creatorHebName: creator.creatorHebName,
-      creatorEngName: creator.creatorEngName,
-    });
+    match = 'missing';
     return null;
   })();
 
   if (artistMBID) {
     const artist = await tryFetchJSON<ArtistT>(`/ws/js/entity/${artistMBID}`);
-    return {artist, warnings};
+    return {artist, match};
   }
 
-  return {artist: null, warnings};
+  return {artist: null, match};
 }

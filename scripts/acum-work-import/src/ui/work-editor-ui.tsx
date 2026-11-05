@@ -4,7 +4,9 @@ import {updateMedleyWorkRelationship} from '#relationships.ts';
 import {replaceSubmitButton} from '#submit.ts';
 import {ImportForm} from '#ui/import-form.tsx';
 import {ProgressBar} from '#ui/progressbar.tsx';
-import {useWarnings, WarningsProvider} from '#ui/warnings.tsx';
+import {WarningList} from '#ui/warning-list.tsx';
+import {createWarningStore, WarningStore} from '#warning-store.ts';
+import {MessageWarning} from '#warning.ts';
 import {getWorkSubmitter, WorkSubmitter} from '#work-submitters.ts';
 import {toolbox} from '@repo/common-ui/toolbox';
 import {assertMBTree, assertRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
@@ -16,24 +18,26 @@ import {createSignal, Setter} from 'solid-js';
 import {render} from 'solid-js/web';
 import {RelationshipStateT, WorkT} from 'typedbrainz/types';
 
-function AcumImporter(props: {form: HTMLFormElement}) {
-  const {addWarning, clearWarnings} = useWarnings();
+function AcumImporter(props: {form: HTMLFormElement; warningStore: WarningStore}) {
+  const clearWarnings = () => {
+    props.warningStore.clear();
+  };
   const [progress, setProgress] = createSignal<readonly [number, string]>([0, '']);
 
   async function importWork(entity: Entity<'Work' | 'Version'>) {
     clearWarnings();
     try {
-      await tryImportWork(entity, props.form, addWarning, setProgress);
+      await tryImportWork(entity, props.form, props.warningStore, setProgress);
     } catch (err) {
       console.error(err);
-      addWarning(`Import failed: ${String(err)}`);
+      props.warningStore.add(new MessageWarning(`Import failed: ${String(err)}`));
     }
   }
 
   async function importFromPreferredSource(entity: Entity<'Work' | 'Version'>) {
     const importEntity = entity.id ? entity : await loadLatestEntityData<'Work' | 'Version'>(['Work', 'Version']);
     if (!importEntity) {
-      addWarning(`Import failed: no saved work found`);
+      props.warningStore.add(new MessageWarning(`Import failed: no saved work found`));
       return;
     }
 
@@ -49,7 +53,7 @@ function AcumImporter(props: {form: HTMLFormElement}) {
       clearWarnings();
       originalSubmitButton.click();
     } catch (err) {
-      addWarning(`Submission failed: ${String(err)}`);
+      props.warningStore.add(new MessageWarning(`Submission failed: ${String(err)}`));
       if (submitButton) submitButton.disabled = false;
     }
   });
@@ -59,6 +63,7 @@ function AcumImporter(props: {form: HTMLFormElement}) {
       <ImportForm entityTypes={['Work', 'Version']} onImport={importFromPreferredSource} idPattern="[12][0-9A-Z]+">
         <ProgressBar value={progress()[0]} label={progress()[1]} minValue={0} maxValue={1} />
       </ImportForm>
+      <WarningList warnings={props.warningStore.warnings()} />
     </>
   );
 }
@@ -80,14 +85,8 @@ export async function createWorkEditorUI() {
     );
     theToolbox.append(container);
 
-    render(
-      () => (
-        <WarningsProvider>
-          <AcumImporter form={workForm} />
-        </WarningsProvider>
-      ),
-      container
-    );
+    const warningStore = createWarningStore();
+    render(() => <AcumImporter form={workForm} warningStore={warningStore} />, container);
   };
 
   const workForm =
