@@ -1,6 +1,14 @@
+import type {WarningStore} from '#warning-store.ts';
+import {
+  CreatorNotFoundWarning,
+  FoundArtistWarning,
+  MissingArtistWarning,
+  SkippingSpecialPurposeArtistWarning,
+} from '#ui/work-artist-warnings.tsx';
+import type {WorkWarningContext} from '#work-warning.ts';
 import {AcumWorkType} from '#acum-work-type.ts';
-import {Creator, Creators, WorkBean, workType} from '#acum.ts';
-import {ArtistLinkTypeID, ArtistLookupCache, ArtistWarning, findArtistCached} from '#artists.ts';
+import {workType} from '#acum.ts';
+import {ArtistLinkTypeID, ArtistLookupCache, findArtistCached} from '#artists.ts';
 import {addArtistRelationship} from '#relationships.ts';
 import {assertRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
@@ -12,22 +20,8 @@ import {
   WRITER_LINK_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
 import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
-import {
-  connect,
-  filter,
-  firstValueFrom,
-  from,
-  ignoreElements,
-  map,
-  merge,
-  mergeAll,
-  mergeMap,
-  tap,
-  toArray,
-} from 'rxjs';
-import {ArtistT, RecordingT, RelationshipTargetTypeGroupsT, WorkT} from 'typedbrainz/types';
 
-export type WriterLinkWarning = ArtistWarning | {type: 'skipping-special-purpose'; artistName: string};
+import {ArtistT, RelationshipTargetTypeGroupsT} from 'typedbrainz/types';
 
 const SPECIAL_PURPOSE_ARTISTS = [
   '9be7f096-97ec-4615-8957-8d40b5dcbc41', // [traditional]
@@ -49,69 +43,79 @@ function linkedArtists(targetTypeGroups: RelationshipTargetTypeGroupsT | null): 
 
 async function linkArtists(
   pendingArtistCache: ArtistLookupCache,
-  writers: readonly Creator[] | undefined,
-  creators: Creators | undefined,
   linkTypeID: ArtistLinkTypeID,
+  context: WorkWarningContext,
+  store: WarningStore,
   doLink: (linkTypeID: number, artist: ArtistT) => void
-): Promise<ArtistWarning[]> {
-  return await firstValueFrom(
-    from(writers || []).pipe(
-      mergeMap(author => findArtistCached(pendingArtistCache, linkTypeID, author.creatorIpBaseNumber, creators)),
-      connect(shared =>
-        merge(
-          shared.pipe(
-            map(result => result.artist),
-            filter((artist): artist is ArtistT => !!artist),
-            tap(artist => doLink(linkTypeID, artist)),
-            ignoreElements()
-          ),
-          shared.pipe(
-            map(result =>
-              result.warnings.map(warning =>
-                'linkTypeID' in warning
-                  ? {
-                      ...warning,
-                      linkTypeID,
-                    }
-                  : warning
-              )
-            ),
-            mergeAll(),
-            toArray()
+): Promise<void> {
+  const {track} = context;
+  const writers = (() => {
+    switch (linkTypeID) {
+      case ARRANGER_LINK_TYPE_ID:
+        return track.arrangers;
+      case COMPOSER_LINK_TYPE_ID:
+        return [...(track.composers ?? []), ...(track.composersAndAuthors ?? [])];
+      case TRANSLATOR_LINK_TYPE_ID:
+        return track.translators;
+      case LYRICIST_LINK_TYPE_ID:
+      case WRITER_LINK_TYPE_ID:
+        return [...(track.authors ?? []), ...(track.composersAndAuthors ?? [])];
+    }
+  })();
+  await Promise.all(
+    (writers ?? []).map(async author => {
+      const {artist, match} = await findArtistCached(pendingArtistCache, author.creatorIpBaseNumber, track.creators);
+      if (artist) doLink(linkTypeID, artist);
+      const creator = track.creators?.find(creator => creator.creatorIpBaseNumber === author.creatorIpBaseNumber);
+      if (!creator) {
+        store.add(new CreatorNotFoundWarning(context, author.creatorIpBaseNumber));
+      } else if (match === 'missing') {
+        store.add(new MissingArtistWarning(context, linkTypeID, creator, store));
+      } else if (match !== 'identifier') {
+        store.add(
+          new FoundArtistWarning(
+            context,
+            linkTypeID,
+            creator,
+            store,
+            match.id,
+            match.name,
+            match.type === 'name' ? 'was found by name' : 'was found by an alias'
           )
-        )
-      )
-    )
+        );
+      }
+    })
   );
 }
 
 export async function linkArrangers(
   artistCache: ArtistLookupCache,
-  recording: RecordingT,
-  arrangers: ReadonlyArray<Creator> | undefined,
-  creators: Creators | undefined
-): Promise<ArtistWarning[]> {
-  return await linkArtists(artistCache, arrangers, creators, ARRANGER_LINK_TYPE_ID, (linkTypeID, artist) =>
+  context: WorkWarningContext,
+  store: WarningStore
+): Promise<void> {
+  const {recording} = context;
+  if (!recording) return;
+  await linkArtists(artistCache, ARRANGER_LINK_TYPE_ID, context, store, (linkTypeID, artist) =>
     addArtistRelationship(recording, linkTypeID, artist)
   );
 }
 
 export async function linkWriters(
   artistCache: ArtistLookupCache,
-  track: WorkBean,
-  work: WorkT,
+  context: WorkWarningContext,
+  store: WarningStore,
   workTargetTypeGroups?: RelationshipTargetTypeGroupsT
-): Promise<WriterLinkWarning[]> {
+): Promise<void> {
+  const {track, work} = context;
   assertRelationshipEditor(MB?.relationshipEditor);
 
   const authors =
     linkedArtists(
       workTargetTypeGroups ?? findTargetTypeGroups(MB.relationshipEditor.state.relationshipsBySource, work)
     ) ?? [];
-  const doLinkWarnings: WriterLinkWarning[] = [];
   const doLink = (linkTypeID: number, artist: ArtistT) => {
     if (SPECIAL_PURPOSE_ARTISTS.includes(artist.gid) && authors.length > 0) {
-      doLinkWarnings.push({type: 'skipping-special-purpose', artistName: artist.name});
+      store.add(new SkippingSpecialPurposeArtistWarning(context, artist.name));
       return;
     }
     if (authors.some(existing => existing.gid === artist.gid)) {
@@ -130,26 +134,7 @@ export async function linkWriters(
         return WRITER_LINK_TYPE_ID;
     }
   })();
-  const authorWarnings = await linkArtists(
-    artistCache,
-    [...(track.authors ?? []), ...(track.composersAndAuthors ?? [])],
-    track.creators,
-    authorLinkTypeId,
-    doLink
-  );
-  const composerWarnings = await linkArtists(
-    artistCache,
-    [...(track.composers ?? []), ...(track.composersAndAuthors ?? [])],
-    track.creators,
-    COMPOSER_LINK_TYPE_ID,
-    doLink
-  );
-  const translatorWarnings = await linkArtists(
-    artistCache,
-    track.translators,
-    track.creators,
-    TRANSLATOR_LINK_TYPE_ID,
-    doLink
-  );
-  return [...doLinkWarnings, ...authorWarnings, ...composerWarnings, ...translatorWarnings];
+  await linkArtists(artistCache, authorLinkTypeId, context, store, doLink);
+  await linkArtists(artistCache, COMPOSER_LINK_TYPE_ID, context, store, doLink);
+  await linkArtists(artistCache, TRANSLATOR_LINK_TYPE_ID, context, store, doLink);
 }

@@ -1,12 +1,13 @@
+import {MessageWarning} from '#warning.ts';
+import type {WarningStore} from '#warning-store.ts';
 import {Entity, entityUrl, fetchWorks, Version, WorkBean, workEntity} from '#acum.ts';
 import {ArtistLookupCache} from '#artists.ts';
 import {linkWriters} from '#link-artists.ts';
 import {updateMedleyWorkRelationship} from '#relationships.ts';
 import {addExternalLink} from '#ui/add-external-link.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
-import {AddWarning} from '#ui/warnings.tsx';
+
 import {addWorkEditor} from '#ui/work-editor.tsx';
-import {renderWarning} from '#ui/work-warnings.tsx';
 import {workEditData, workFormAttributes} from '#work-edit-data.ts';
 import {createNewWork, createWork, findWork} from '#works.ts';
 import {compareInsensitive, compareTargetTypeWithGroup} from '@repo/musicbrainz-ext/compare';
@@ -23,7 +24,7 @@ import {RelationshipStateT, WorkAttributeT, WorkT} from 'typedbrainz/types';
 export async function importWork(
   entity: Entity<'Work' | 'Version'>,
   form: HTMLFormElement,
-  addWarning: AddWarning,
+  warningStore: WarningStore,
   setProgress: Setter<readonly [number, string]>
 ) {
   setProgress([0, 'Importing work']);
@@ -44,7 +45,7 @@ export async function importWork(
   }
 
   if (await shouldSearchWorks()) {
-    const {work: existingWork} = await findWork(versions[0]!, artistCache);
+    const existingWork = await findWork(versions[0]!, artistCache);
     if (
       existingWork &&
       existingWork.id != MB?.relationshipEditor.state?.entity.id &&
@@ -59,7 +60,7 @@ export async function importWork(
 
   // needs to be before medley works are added
   // otherwise the attribute selectors will match the medley attributes
-  const {editData, warnings: editDataWarnings} = await workEditData(
+  const {editData} = await workEditData(
     {
       ...work,
       // the attributes are rendered in a different order
@@ -67,9 +68,9 @@ export async function importWork(
         attr => ({typeID: attr.type_id, value: attr.value, value_id: attr.value_id}) as WorkAttributeT
       ),
     },
-    version
+    version,
+    warningStore
   );
-  editDataWarnings.forEach(warning => addWarning(renderWarning(warning, version, work)));
 
   if (version.isMedley === '1') {
     const workCount = version.list!.length + 1;
@@ -84,7 +85,8 @@ export async function importWork(
               work,
               medleyWork,
               version.list!.findIndex(version => version.workId == medleyWork.workId) + 1,
-              artistCache
+              artistCache,
+              warningStore
             )
         ),
         scan(accumulator => accumulator + 1, 0),
@@ -93,9 +95,9 @@ export async function importWork(
     );
   }
 
-  setInput(form, 'name', editData.name, addWarning);
-  setInput(form, 'comment', editData.comment, addWarning);
-  setInput(form, 'type_id', String(editData.type_id), addWarning);
+  setInput(form, 'name', editData.name, warningStore);
+  setInput(form, 'comment', editData.comment, warningStore);
+  setInput(form, 'type_id', String(editData.type_id), warningStore);
 
   await ensureRowCount(
     form.querySelector('#work-languages-editor')!,
@@ -103,14 +105,14 @@ export async function importWork(
     editData.languages.length
   );
 
-  editData.languages.forEach((lang, index) => setInput(form, `languages.${index}`, String(lang), addWarning));
+  editData.languages.forEach((lang, index) => setInput(form, `languages.${index}`, String(lang), warningStore));
   await ensureRowCount(
     form.querySelector('div.form-row-text-list')!,
     '[name^="edit-work.iswcs."]',
     editData.iswcs.length
   );
 
-  editData.iswcs.forEach((iswc, index) => setInput(form, `iswcs.${index}`, iswc, addWarning));
+  editData.iswcs.forEach((iswc, index) => setInput(form, `iswcs.${index}`, iswc, warningStore));
 
   await ensureRowCount(
     form.querySelector('#work-attributes')!,
@@ -118,21 +120,24 @@ export async function importWork(
     editData.attributes.length
   );
   editData.attributes.forEach((attr, index) => {
-    setInput(form, `attributes.${index}.type_id`, String(attr.type_id), addWarning);
+    setInput(form, `attributes.${index}.type_id`, String(attr.type_id), warningStore);
     setInput(
       form,
       `attributes.${index}.value`,
       attr.value_id === null ? attr.value : String(attr.value_id),
-      addWarning
+      warningStore
     );
   });
 
-  const writerWarnings = await linkWriters(artistCache, version, work);
-  writerWarnings.forEach(warning => addWarning(renderWarning(warning, version, work)));
+  await linkWriters(artistCache, {work, track: version}, warningStore);
 
   const acumWork = workEntity(version);
   if (acumWork.entityType === 'Version') {
-    addWarning('The MusicBrainz work editor does not support ACUM version URLs; the translation URL was not added');
+    warningStore.add(
+      new MessageWarning(
+        'The MusicBrainz work editor does not support ACUM version URLs; the translation URL was not added'
+      )
+    );
   } else {
     await addExternalLink(form.ownerDocument, entityUrl(acumWork));
   }
@@ -140,12 +145,12 @@ export async function importWork(
   addEditNote(`Imported from ${entityUrl(entity)}`, form.ownerDocument);
 }
 
-function setInput(form: HTMLFormElement, name: string, value: string, addWarning: AddWarning) {
+function setInput(form: HTMLFormElement, name: string, value: string, warningStore: WarningStore) {
   const input = form.querySelector<HTMLInputElement | HTMLSelectElement>(`[name="edit-work.${name}"]`);
   if (input) {
     if (input.value.trim()) {
       if (value.trim() && compareInsensitive(input.value.trim(), value.trim()) !== 0) {
-        addWarning(`Suggesting different ${name.replace(/\W/g, ' ')}: ${value}`);
+        warningStore.add(new MessageWarning(`Suggesting different ${name.replace(/\W/g, ' ')}: ${value}`));
       }
     } else {
       input.value = value;
@@ -196,14 +201,20 @@ export function medleyWorkRelationships(): RelationshipStateT[] | undefined {
   }
 }
 
-async function addMedleyWork(work: WorkT, medleyWork: WorkBean, linkOrder: number, artistCache: ArtistLookupCache) {
-  const {work: newWork, warnings} = await (async () => {
+async function addMedleyWork(
+  work: WorkT,
+  medleyWork: WorkBean,
+  linkOrder: number,
+  artistCache: ArtistLookupCache,
+  warningStore: WarningStore
+) {
+  const newWork = await (async () => {
     const linkedWork = medleyWorkRelationships()?.find(rel => rel.linkOrder == linkOrder);
     if (linkedWork) {
-      return {work: linkedWork.entity1 as WorkT, warnings: []};
+      return linkedWork.entity1 as WorkT;
     }
-    const result = await createNewWork(medleyWork, artistCache);
-    linkMedleyWork(work, result.work, linkOrder);
+    const result = await createNewWork(medleyWork, warningStore, artistCache);
+    linkMedleyWork(work, result, linkOrder);
     return result;
   })();
   await addWorkEditor({
@@ -216,9 +227,8 @@ async function addMedleyWork(work: WorkT, medleyWork: WorkBean, linkOrder: numbe
       return anchor!.closest('.relationship-item')!;
     },
     getElementsToReplace: () => [],
-    work: newWork,
-    workWarnings: warnings,
-    track: medleyWork,
+    context: {work: newWork, track: medleyWork},
+    warningStore,
     artistCache,
     shouldLinkArrangers: false,
   });

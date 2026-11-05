@@ -1,3 +1,5 @@
+// cspell: ignore STEN ipis Robb
+
 import {test as existingWorkTest} from '#tests/fixtures/existing-work.ts';
 import {seedAcumStorageFromUrl} from '#tests/fixtures/acum-storage.ts';
 import {expect, Locator} from '@playwright/test';
@@ -412,6 +414,75 @@ test.describe('work editor', () => {
     await expect(page.getByText('was found by name linked to an author, please verify.', {exact: false})).toHaveCount(
       0
     );
+  });
+
+  test('resolves all warnings for an artist after confirmation in the work importer', async ({
+    page,
+    userscriptPage,
+    baseURL,
+  }) => {
+    const artistId = 'd895340a-02c3-43d1-bdcc-24ab9f2a371d';
+    const unrouteLookup = await userscriptPage.route(
+      url =>
+        url.pathname === '/ws/2/url' ||
+        (url.pathname === '/ws/2/artist' &&
+          (url.searchParams.get('query')?.startsWith('name:') === true ||
+            url.searchParams.get('query')?.startsWith('ipi:') === true)),
+      async (route, request) => {
+        const query = new URL(request.url()).searchParams.get('query');
+        await route.fulfill({
+          json:
+            new URL(request.url()).pathname === '/ws/2/url'
+              ? {relations: []}
+              : {
+                  artists:
+                    query === 'ipi:00036301712'
+                      ? [{id: '99d15b21-2443-4aaa-9b41-0cba5371dd38', name: 'Robb Huxley'}]
+                      : query?.startsWith('ipi:')
+                        ? []
+                        : [{id: artistId, name: 'STEN SOLOMON'}],
+                },
+        });
+      }
+    );
+    await userscriptPage.goto('/work/create');
+    await userscriptPage.setLocalStorage('searchWorks', 'false');
+    const workUrl = 'https://nocs.acum.org.il/acumsitesearchdb/work?workid=1119554';
+    await seedAcumStorageFromUrl(userscriptPage, 'work-1119554.json', workUrl);
+    await page.getByRole('button', {name: 'Import work from ACUM'}).click();
+
+    const warnings = page.getByText('was found by name, please verify', {exact: false});
+    await expect(warnings).toHaveCount(2);
+
+    let verified = false;
+    const unrouteVerification = await userscriptPage.route(
+      url => url.pathname === `/ws/2/artist/${artistId}`,
+      async route => {
+        await route.fulfill({json: {ipis: verified ? ['PI091876100'] : []}});
+      }
+    );
+    await expect(page.getByRole('textbox', {name: 'Add another link'})).not.toBeFocused();
+    await warnings.first().getByRole('button', {name: 'search', exact: true}).click();
+    const search = page.getByRole('textbox', {name: 'Search for an artist:'});
+    await expect(search).toBeVisible();
+    await search.fill(`${baseURL}/artist/${artistId}`);
+    await page.getByRole('button', {name: 'Done', exact: true}).click();
+    await expect(search).not.toBeAttached();
+    await expect(warnings).toHaveCount(0);
+    const missingDataWarnings = page.getByText('is missing IPI or ACUM link, please verify', {exact: false});
+    await expect(missingDataWarnings).toHaveCount(2);
+
+    verified = true;
+    await missingDataWarnings.first().getByRole('button', {name: 'search', exact: true}).click();
+    await search.fill(`${baseURL}/artist/${artistId}`);
+    await page.getByRole('button', {name: 'Done', exact: true}).click();
+    await expect(search).not.toBeAttached();
+    await expect(missingDataWarnings).toHaveCount(0);
+    for (const role of ['composer', 'lyricist']) {
+      await expect(page.getByRole('row', {name: role}).getByRole('link')).toHaveCount(2);
+    }
+    await unrouteVerification();
+    await unrouteLookup();
   });
 
   existingWorkTest.describe('special purpose authors', () => {
