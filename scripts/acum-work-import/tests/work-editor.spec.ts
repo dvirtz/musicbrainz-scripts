@@ -413,4 +413,24 @@ test.describe('work editor', () => {
       0
     );
   });
+
+  existingWorkTest.describe('special purpose authors', () => {
+    existingWorkTest.use({
+      existingWorkArtist: {id: '9be7f096-97ec-4615-8957-8d40b5dcbc41', name: '[traditional]'},
+    });
+
+    existingWorkTest('ignores special purpose artists when matching works by author', async ({page, existingWork}) => {
+      const confirmations: string[] = [];
+      page.on('dialog', async dialog => {
+        confirmations.push(dialog.message());
+        await dialog.dismiss();
+      });
+
+      await existingWork.importButton.click();
+      await expect(page.getByRole('textbox', {name: 'Name'})).toHaveValue('MEET THE STARS');
+      await expect(page.getByRole('row', {name: 'composer'}).getByRole('link', {name: '[traditional]'})).toBeVisible();
+      expect(confirmations).toEqual([]);
+      await expect(page).toHaveURL('/work/create');
+    });
+  });
 });
