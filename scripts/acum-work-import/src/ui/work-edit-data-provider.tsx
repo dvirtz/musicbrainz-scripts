@@ -1,28 +1,12 @@
-import {WorkBean} from '#acum.ts';
-import {ArtistLookupCache} from '#artists.ts';
-import {linkArrangers, linkWriters, WriterLinkWarning} from '#link-artists.ts';
-import {WorkEditData, workEditData, workEditDataEqual, WorkEditDataWarning} from '#work-edit-data.ts';
-import {createWork, WorkWarning} from '#works.ts';
-import {partition} from '@repo/common/parition';
-import {assertMBTree, assertRelationshipEditor, assertReleaseRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
+import {WorkEditData, workEditDataEqual} from '#work-edit-data.ts';
+import {createWork} from '#works.ts';
+import {assertMBTree, assertRelationshipEditor} from '@repo/musicbrainz-ext/asserts';
 import {buildOptionList, buildOptionListFromKeys} from '@repo/musicbrainz-ext/build-options-list';
-import {compareInsensitive, compareNumbers, compareWorks} from '@repo/musicbrainz-ext/compare';
 import {urlFromMbid} from '@repo/musicbrainz-ext/edits';
 import {findTargetTypeGroups, iterateRelationshipsInTargetTypeGroup} from '@repo/musicbrainz-ext/type-group';
 import {WorkAttributeTypeAllowedValueT} from '@repo/musicbrainz-ext/type-info';
-import {executePipeline} from '@repo/rxjs-ext/execute-pipeline';
-import {from, map} from 'rxjs';
-import {createContext, createEffect, createResource, createSignal, onCleanup, ParentProps, useContext} from 'solid-js';
-import {
-  IswcT,
-  LanguageT,
-  RecordingT,
-  WorkAttributeT,
-  WorkAttributeTypeT,
-  WorkLanguageT,
-  WorkT,
-  WorkTypeT,
-} from 'typedbrainz/types';
+import {createContext, createSignal, ParentProps, useContext} from 'solid-js';
+import {IswcT, LanguageT, WorkAttributeT, WorkAttributeTypeT, WorkLanguageT, WorkT, WorkTypeT} from 'typedbrainz/types';
 
 type WorkTypeInfo = {
   workTypes: WorkTypeT[];
@@ -34,40 +18,13 @@ type WorkTypeInfo = {
 export type WorkEditDataInitialState = {
   savedEditData: WorkEditData;
   originalEditData: WorkEditData;
-  warnings: readonly PerWorkWarning[];
 };
 
 export type WorkEditDataProviderProps = ParentProps & {
   work: WorkT;
-  track: WorkBean;
-  artistCache: ArtistLookupCache;
-  recording?: RecordingT;
   typeInfo: WorkTypeInfo;
-  shouldLinkArrangers: boolean;
   initialState?: WorkEditDataInitialState;
-  workWarnings: readonly WorkWarning[];
 };
-
-export type WarningResolutionContext = {
-  work: WorkT;
-  recording?: RecordingT;
-  track: WorkBean;
-};
-
-export type PerWorkWarning = WorkEditDataWarning | WriterLinkWarning | WorkWarning;
-
-type WarningPredicate<T extends PerWorkWarning> = (warning: PerWorkWarning) => warning is T;
-type WarningResolution<T extends PerWorkWarning> = (
-  matching: T[],
-  context: WarningResolutionContext
-) => readonly PerWorkWarning[] | void | Promise<readonly PerWorkWarning[] | void>;
-type ResolveWarnings = <T extends PerWorkWarning>(
-  predicate: WarningPredicate<T>,
-  resolve: WarningResolution<T>,
-  options?: {scope?: 'local' | 'all'}
-) => Promise<void>;
-
-const warningResolvers = new Set<ResolveWarnings>();
 
 function emptyEditData(): WorkEditData {
   return {
@@ -173,47 +130,13 @@ function replaceWorkLink(work: WorkT, newWork: WorkT) {
   return newWork;
 }
 
-function refreshRecordingState(recording: RecordingT) {
-  assertMBTree(MB?.tree);
-  assertReleaseRelationshipEditor(MB.relationshipEditor);
-
-  const mediumRecordingStates = MB.tree.find(
-    MB.relationshipEditor.state.mediums,
-    MB.relationshipEditor.state.mediumsByRecordingId.get(recording.id)![0],
-    (mediumKey, [mediumVal]) => compareNumbers(mediumKey?.position ?? 0, mediumVal.position),
-    null
-  )![1];
-  return MB.tree.find(
-    mediumRecordingStates,
-    recording,
-    (treeRecording, recordingState) => compareNumbers(treeRecording.id, recordingState.recording.id),
-    null
-  )!;
-}
-
-function refreshWorkState(recording: RecordingT, work: WorkT) {
-  assertMBTree(MB?.tree);
-  assertReleaseRelationshipEditor(MB.relationshipEditor);
-
-  const recordingState = refreshRecordingState(recording);
-  return MB.tree.find(
-    recordingState.relatedWorks,
-    work,
-    (treeWork, relatedWork) => compareWorks(treeWork, relatedWork.work),
-    null
-  )!;
-}
-
 function makeWorkEditDataContext(
   work: WorkT,
   savedEditData: () => WorkEditData,
   setSavedEditData: (value: WorkEditData) => void,
   originalEditData: () => WorkEditData,
-  warnings: () => readonly PerWorkWarning[],
-  resolveWarnings: ResolveWarnings,
-  isLoading: () => boolean,
-  workTypeInfo: WorkTypeInfo,
-  refetch: () => void
+  setOriginalEditData: (value: WorkEditData) => void,
+  workTypeInfo: WorkTypeInfo
 ) {
   const [replacedWork, setReplacedWork] = createSignal<WorkT | undefined>(undefined);
 
@@ -238,10 +161,10 @@ function makeWorkEditDataContext(
           .entries()
           .map(([typeId, children]) => [typeId, buildOptionListFromKeys(children, 'value', 'id')])
       ),
-    warnings,
-    resolveWarnings,
-    isLoading,
-    refetch,
+    initializeEditData: (editData: WorkEditData, original: WorkEditData) => {
+      setSavedEditData(cloneEditData(editData));
+      setOriginalEditData(cloneEditData(original));
+    },
     replacedWork,
     replaceWork: (newWork: WorkT) => {
       replaceWorkLink(work, newWork);
@@ -250,7 +173,6 @@ function makeWorkEditDataContext(
     captureState: (): WorkEditDataInitialState => ({
       savedEditData: savedEditData(),
       originalEditData: originalEditData(),
-      warnings: warnings(),
     }),
   } as const;
 }
@@ -265,84 +187,9 @@ export function useWorkEditData() {
   return context;
 }
 
-export function tryUseWorkEditData() {
-  return useContext(WorkEditDataContext);
-}
-
 export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
   const [savedEditData, setSavedEditData] = createSignal(props.initialState?.savedEditData ?? emptyEditData());
   const [originalEditData, setOriginalEditData] = createSignal(props.initialState?.originalEditData ?? emptyEditData());
-  const [warnings, setWarnings] = createSignal<readonly PerWorkWarning[]>(props.initialState?.warnings ?? []);
-  const [isLoading, setIsLoading] = createSignal(!props.initialState);
-
-  const resolveLocalWarnings = async <T extends PerWorkWarning>(
-    predicate: WarningPredicate<T>,
-    resolve: WarningResolution<T>
-  ) => {
-    const [matching, remaining] = partition(warnings(), predicate);
-    if (matching.length === 0) {
-      return;
-    }
-
-    const replacements = await resolve(matching, {work: props.work, recording: props.recording, track: props.track});
-    setWarnings([...remaining, ...(replacements ?? [])]);
-  };
-
-  warningResolvers.add(resolveLocalWarnings);
-  onCleanup(() => warningResolvers.delete(resolveLocalWarnings));
-
-  const resolveWarnings: ResolveWarnings = async (predicate, resolve, options) => {
-    const resolvers = options?.scope === 'all' ? warningResolvers : [resolveLocalWarnings];
-    await executePipeline(from(resolvers).pipe(map(resolver => resolver(predicate, resolve))));
-  };
-
-  const [resource, {refetch}] = createResource(
-    () =>
-      props.initialState
-        ? null
-        : ([props.work, props.track, props.recording, props.artistCache, props.shouldLinkArrangers] as const),
-    async ([work, track, recording, artistCache, shouldLinkArrangers]) => {
-      setIsLoading(true);
-      setWarnings([]);
-      const {editData, originalEditData, warnings: editWarnings} = await workEditData(work, track);
-      const workWarnings = [...props.workWarnings];
-      if (recording) {
-        if (compareInsensitive(props.work.name, recording.name) !== 0) {
-          workWarnings.push({type: 'work-name-different', recordingName: recording.name});
-        }
-        const workState = refreshWorkState(recording, work);
-        const writerWarnings = await linkWriters(artistCache, track, workState.work, workState.targetTypeGroups);
-        const arrangerWarnings = shouldLinkArrangers
-          ? await linkArrangers(artistCache, recording, track.arrangers, track.creators)
-          : [];
-        return {
-          editData,
-          originalEditData,
-          warnings: [...workWarnings, ...editWarnings, ...writerWarnings, ...arrangerWarnings] as PerWorkWarning[],
-        };
-      } else {
-        const writerWarnings = await linkWriters(artistCache, track, work);
-        return {
-          editData,
-          originalEditData,
-          warnings: [...workWarnings, ...editWarnings, ...writerWarnings] as PerWorkWarning[],
-        };
-      }
-    }
-  );
-
-  createEffect(() => {
-    const result = resource();
-    if (!result) {
-      return;
-    }
-
-    setSavedEditData(cloneEditData(result.editData));
-    setOriginalEditData(cloneEditData(result.originalEditData));
-    setWarnings(result.warnings);
-    setIsLoading(false);
-  });
-
   return (
     <WorkEditDataContext.Provider
       value={makeWorkEditDataContext(
@@ -350,11 +197,8 @@ export function WorkEditDataProvider(props: WorkEditDataProviderProps) {
         savedEditData,
         setSavedEditData,
         originalEditData,
-        warnings,
-        resolveWarnings,
-        isLoading,
-        props.typeInfo,
-        () => void refetch()
+        setOriginalEditData,
+        props.typeInfo
       )}
     >
       {props.children}

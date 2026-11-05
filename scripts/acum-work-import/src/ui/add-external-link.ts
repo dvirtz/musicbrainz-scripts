@@ -29,7 +29,7 @@ export async function addExternalLink(doc: Document, url: string): Promise<void>
       externalLinksContainer ?? undefined
     ));
   if (urlInput) {
-    setInputValue(urlInput, url);
+    setInputValue(urlInput, url, {focus: false});
   } else {
     throw new Error('no URL input found');
   }
