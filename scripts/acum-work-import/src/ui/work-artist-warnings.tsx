@@ -1,11 +1,8 @@
 // cspell: ignore ipis
-
-import {creatorUrl, Entity, entityUrl, Version, WorkBean} from '#acum.ts';
-import {ArtistLinkTypeID, ArtistWarning} from '#artists.ts';
-import {addArtistRelationship} from '#relationships.ts';
+import {CreatorFull, creatorUrl, Entity, entityUrl, Version, WorkBean} from '#acum.ts';
+import {ArtistLinkTypeID} from '#artists.ts';
 import {openArtistUpdateDialog} from '#ui/artist-update-dialog.tsx';
 import {openArtistDialogFromWarning, OpenArtistDialogParams} from '#ui/warning-actions.ts';
-import {PerWorkWarning, tryUseWorkEditData, WarningResolutionContext} from '#ui/work-edit-data-provider.tsx';
 import classes from '#ui/work-edit-dialog.module.css';
 import {
   ARRANGER_LINK_TYPE_ID,
@@ -15,8 +12,12 @@ import {
   WRITER_LINK_TYPE_ID,
 } from '@repo/musicbrainz-ext/constants';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
+import {ArtistT} from 'typedbrainz/types';
+
+import {WorkWarning, WorkWarningContext} from '#work-warning.ts';
+import type {WarningStore} from '#warning-store.ts';
+import {addArtistRelationship} from '#relationships.ts';
 import {fetchJSON} from '@repo/musicbrainz-ext/fetch';
-import {ArtistT, RecordingT, WorkT} from 'typedbrainz/types';
 
 function artistUpdateAction(
   track: WorkBean,
@@ -78,18 +79,19 @@ function warningEditNote(track: WorkBean) {
   );
 }
 
-type MissingArtistWarning = Extract<
-  ArtistWarning,
-  {type: 'found-by-alias' | 'found-by-name' | 'failed-to-find' | 'artist-missing-data'}
->;
-
-function isMissingArtistWarning(warning: PerWorkWarning): warning is MissingArtistWarning {
-  return (
-    warning.type === 'found-by-alias' ||
-    warning.type === 'found-by-name' ||
-    warning.type === 'failed-to-find' ||
-    warning.type === 'artist-missing-data'
-  );
+function artistLinkTypeName(linkTypeID: ArtistLinkTypeID): string {
+  switch (linkTypeID) {
+    case COMPOSER_LINK_TYPE_ID:
+      return 'composer';
+    case LYRICIST_LINK_TYPE_ID:
+      return 'lyricist';
+    case ARRANGER_LINK_TYPE_ID:
+      return 'arranger';
+    case TRANSLATOR_LINK_TYPE_ID:
+      return 'translator';
+    case WRITER_LINK_TYPE_ID:
+      return 'writer';
+  }
 }
 
 async function artistHasIpiOrAcumLink(artist: ArtistT, ipi: string, ipBaseNumber: string) {
@@ -109,149 +111,183 @@ async function artistHasIpiOrAcumLink(artist: ArtistT, ipi: string, ipBaseNumber
   );
 }
 
-function artistLinkTypeName(linkTypeID: ArtistLinkTypeID): string {
-  switch (linkTypeID) {
-    case COMPOSER_LINK_TYPE_ID:
-      return 'composer';
-    case LYRICIST_LINK_TYPE_ID:
-      return 'lyricist';
-    case ARRANGER_LINK_TYPE_ID:
-      return 'arranger';
-    case TRANSLATOR_LINK_TYPE_ID:
-      return 'translator';
-    case WRITER_LINK_TYPE_ID:
-      return 'writer';
+abstract class ArtistWarning extends WorkWarning {
+  constructor(
+    context: WorkWarningContext,
+    public readonly linkTypeID: ArtistLinkTypeID,
+    public readonly creator: CreatorFull,
+    protected readonly store: WarningStore
+  ) {
+    super(context);
+  }
+  get ipi() {
+    return this.creator.number;
+  }
+  get ipBaseNumber() {
+    return this.creator.creatorIpBaseNumber;
+  }
+  get creatorHebName() {
+    return this.creator.creatorHebName;
+  }
+  get creatorEngName() {
+    return this.creator.creatorEngName;
+  }
+  resolve(artist: ArtistT) {
+    return this.store.resolve(
+      (warning): warning is ArtistWarning =>
+        warning instanceof ArtistWarning && warning.ipBaseNumber === this.ipBaseNumber,
+      async warnings => {
+        for (const warning of warnings) {
+          const {context} = warning;
+          const source =
+            warning.linkTypeID === ARRANGER_LINK_TYPE_ID && context.recording ? context.recording : context.work;
+          addArtistRelationship(
+            source,
+            warning.linkTypeID,
+            artist,
+            warning instanceof FoundArtistWarning ? warning.artistId : undefined
+          );
+        }
+        if (await artistHasIpiOrAcumLink(artist, this.ipi, this.ipBaseNumber)) return [];
+        return warnings.map(
+          warning =>
+            new FoundArtistWarning(
+              warning.context,
+              warning.linkTypeID,
+              warning.creator,
+              this.store,
+              artist.gid,
+              artist.name,
+              'is missing IPI or ACUM link'
+            )
+        );
+      }
+    );
   }
 }
-
-export function FoundArtistWarning(props: {
-  warning: Extract<PerWorkWarning, {type: 'found-by-name' | 'found-by-alias' | 'artist-missing-data'}>;
-  description: string;
-  track: WorkBean;
-  work: WorkT;
-  recording: RecordingT | undefined;
-}) {
-  const resolveWarnings = resolveWarningsCallback();
-  return (
-    <>
-      {capitalizeFirst(artistLinkTypeName(props.warning.linkTypeID))}{' '}
-      <a href={`/artist/${props.warning.artistId}`}>{props.warning.artistName}</a> {props.description}, please verify
-      (IPI = {props.warning.ipi}
-      ).{' '}
-      {artistUpdateAction(
-        props.track,
-        {
-          artistMBID: props.warning.artistId,
-          ipi: props.warning.ipi,
-          ipBaseNumber: props.warning.ipBaseNumber,
-        },
-        artist => resolveWarnings(props.warning.ipBaseNumber, artist)
-      )}
-      |
-      {artistAction({
-        action: 'search',
-        linkType: props.warning.linkTypeID,
-        name: props.warning.artistName,
-        creatorHebName: props.warning.creatorHebName,
-        creatorEngName: props.warning.creatorEngName,
-        editNote: warningEditNote(props.track),
-        work: props.work,
-        recording: props.recording,
-        artistId: props.warning.artistId,
-        onConfirmed: artist => resolveWarnings(props.warning.ipBaseNumber, artist),
-      })}
-      |
-      {artistAction({
-        action: 'create',
-        linkType: props.warning.linkTypeID,
-        name: props.warning.artistName,
-        creatorHebName: props.warning.creatorHebName,
-        creatorEngName: props.warning.creatorEngName,
-        editNote: warningEditNote(props.track),
-        ipi: props.warning.ipi,
-        ipBaseNumber: props.warning.ipBaseNumber,
-        work: props.work,
-        recording: props.recording,
-        artistId: props.warning.artistId,
-        onConfirmed: artist => resolveWarnings(props.warning.ipBaseNumber, artist),
-      })}
-    </>
-  );
-}
-
-export function MissingArtistWarning(props: {
-  warning: Extract<PerWorkWarning, {type: 'failed-to-find'}>;
-  track: WorkBean;
-  work: WorkT;
-  recording: RecordingT | undefined;
-}) {
-  const resolveWarnings = resolveWarningsCallback();
-  return (
-    <>
-      Failed to find {artistLinkTypeName(props.warning.linkTypeID)}{' '}
-      {props.warning.creatorHebName || props.warning.creatorEngName || props.warning.ipi} (IPI = {props.warning.ipi}).{' '}
-      {artistAction({
-        action: 'search',
-        linkType: props.warning.linkTypeID,
-        name: props.warning.creatorHebName || props.warning.creatorEngName,
-        creatorHebName: props.warning.creatorHebName,
-        creatorEngName: props.warning.creatorEngName,
-        editNote: warningEditNote(props.track),
-        work: props.work,
-        recording: props.recording,
-        onConfirmed: artist => resolveWarnings(props.warning.ipBaseNumber, artist),
-      })}
-      |
-      {artistAction({
-        action: 'create',
-        linkType: props.warning.linkTypeID,
-        name: props.warning.creatorHebName || props.warning.creatorEngName,
-        creatorHebName: props.warning.creatorHebName,
-        creatorEngName: props.warning.creatorEngName,
-        editNote: warningEditNote(props.track),
-        ipi: props.warning.ipi,
-        ipBaseNumber: props.warning.ipBaseNumber,
-        work: props.work,
-        recording: props.recording,
-        onConfirmed: artist => resolveWarnings(props.warning.ipBaseNumber, artist),
-      })}
-    </>
-  );
-}
-
-function resolveWarningsCallback() {
-  const context = tryUseWorkEditData();
-
-  return (ipBaseNumber: string, artist: ArtistT) => {
-    context
-      ?.resolveWarnings?.(
-        (warning: PerWorkWarning): warning is MissingArtistWarning =>
-          isMissingArtistWarning(warning) && warning.ipBaseNumber === ipBaseNumber,
-        async (artistWarnings, context: WarningResolutionContext) => {
-          for (const warning of artistWarnings) {
-            const sourceEntity =
-              warning.linkTypeID === ARRANGER_LINK_TYPE_ID && context.recording ? context.recording : context.work;
-            addArtistRelationship(
-              sourceEntity,
-              warning.linkTypeID,
-              artist,
-              'artistId' in warning ? warning.artistId : undefined
-            );
+export class FoundArtistWarning extends ArtistWarning {
+  constructor(
+    context: WorkWarningContext,
+    linkTypeID: ArtistLinkTypeID,
+    creator: CreatorFull,
+    store: WarningStore,
+    public readonly artistId: string,
+    public readonly artistName: string,
+    public readonly description: string
+  ) {
+    super(context, linkTypeID, creator, store);
+  }
+  render() {
+    return (
+      <>
+        {capitalizeFirst(artistLinkTypeName(this.linkTypeID))}{' '}
+        <a href={`/artist/${this.artistId}`}>{this.artistName}</a> {this.description}, please verify (IPI = {this.ipi}
+        ).{' '}
+        {artistUpdateAction(
+          this.context.track,
+          {
+            artistMBID: this.artistId,
+            ipi: this.ipi,
+            ipBaseNumber: this.ipBaseNumber,
+          },
+          artist => {
+            this.resolve(artist).catch(console.error);
           }
-
-          if (await artistHasIpiOrAcumLink(artist, artistWarnings[0]!.ipi, ipBaseNumber)) {
-            return [];
-          }
-
-          return artistWarnings.map(warning => ({
-            ...warning,
-            artistId: artist.gid,
-            artistName: artist.name,
-            type: 'artist-missing-data' as const,
-          }));
-        },
-        {scope: 'all'}
-      )
-      .catch(console.error);
-  };
+        )}
+        |
+        {artistAction({
+          action: 'search',
+          linkType: this.linkTypeID,
+          name: this.artistName,
+          creatorHebName: this.creatorHebName,
+          creatorEngName: this.creatorEngName,
+          editNote: warningEditNote(this.context.track),
+          work: this.context.work,
+          recording: this.context.recording,
+          artistId: this.artistId,
+          onConfirmed: artist => {
+            this.resolve(artist).catch(console.error);
+          },
+        })}
+        |
+        {artistAction({
+          action: 'create',
+          linkType: this.linkTypeID,
+          name: this.artistName,
+          creatorHebName: this.creatorHebName,
+          creatorEngName: this.creatorEngName,
+          editNote: warningEditNote(this.context.track),
+          ipi: this.ipi,
+          ipBaseNumber: this.ipBaseNumber,
+          work: this.context.work,
+          recording: this.context.recording,
+          artistId: this.artistId,
+          onConfirmed: artist => {
+            this.resolve(artist).catch(console.error);
+          },
+        })}
+      </>
+    );
+  }
+}
+export class MissingArtistWarning extends ArtistWarning {
+  render() {
+    return (
+      <>
+        Failed to find {artistLinkTypeName(this.linkTypeID)} {this.creatorHebName || this.creatorEngName || this.ipi}{' '}
+        (IPI = {this.ipi}).{' '}
+        {artistAction({
+          action: 'search',
+          linkType: this.linkTypeID,
+          name: this.creatorHebName || this.creatorEngName,
+          creatorHebName: this.creatorHebName,
+          creatorEngName: this.creatorEngName,
+          editNote: warningEditNote(this.context.track),
+          work: this.context.work,
+          recording: this.context.recording,
+          onConfirmed: artist => {
+            this.resolve(artist).catch(console.error);
+          },
+        })}
+        |
+        {artistAction({
+          action: 'create',
+          linkType: this.linkTypeID,
+          name: this.creatorHebName || this.creatorEngName,
+          creatorHebName: this.creatorHebName,
+          creatorEngName: this.creatorEngName,
+          editNote: warningEditNote(this.context.track),
+          ipi: this.ipi,
+          ipBaseNumber: this.ipBaseNumber,
+          work: this.context.work,
+          recording: this.context.recording,
+          onConfirmed: artist => {
+            this.resolve(artist).catch(console.error);
+          },
+        })}
+      </>
+    );
+  }
+}
+export class CreatorNotFoundWarning extends WorkWarning {
+  constructor(
+    context: WorkWarningContext,
+    public readonly ipi: string
+  ) {
+    super(context);
+  }
+  render() {
+    return 'Failed to find creator with IPI ' + this.ipi + '.';
+  }
+}
+export class SkippingSpecialPurposeArtistWarning extends WorkWarning {
+  constructor(
+    context: WorkWarningContext,
+    public readonly artistName: string
+  ) {
+    super(context);
+  }
+  render() {
+    return 'Skipping special purpose artist ' + this.artistName + ' when there are existing authors.';
+  }
 }
