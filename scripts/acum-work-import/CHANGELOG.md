@@ -1,3 +1,8 @@
+## @dvirtz/acum-work-import-v1.24.0-beta.4 (2026-11-05)
+
+* fix(acum-work-import): decouple warning handling from work editing ([c333926](https://github.com/dvirtz/musicbrainz-scripts/commit/c333926))
+* fix(acum-work-import): ignore special purpose artists in work search ([d2f80d2](https://github.com/dvirtz/musicbrainz-scripts/commit/d2f80d2))
+
 ## @dvirtz/acum-work-import-v1.24.0-beta.3 (2026-11-01)
 
 * fix(acum-work-import): only replace existing work-recording links ([12d855c](https://github.com/dvirtz/musicbrainz-scripts/commit/12d855c))
