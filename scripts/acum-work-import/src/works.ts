@@ -1,8 +1,8 @@
-import {WorkNameMatchWarning} from '#ui/work-data-warnings.tsx';
-import type {WarningStore} from '#warning-store.ts';
 import {trackName, WorkBean, workId, workISWCs} from '#acum.ts';
 import {ArtistLookupCache, findArtistCached} from '#artists.ts';
 import {shouldSearchWorks} from '#ui/settings.tsx';
+import {WorkNameMatchWarning} from '#ui/work-data-warnings.tsx';
+import type {WarningStore} from '#warning-store.ts';
 import {assertMB} from '@repo/musicbrainz-ext/asserts';
 import {compareInsensitive} from '@repo/musicbrainz-ext/compare';
 import {
@@ -136,7 +136,7 @@ export function createWork(attributes: Partial<WorkT>): WorkT {
 }
 
 export function isNewWork(work: WorkT) {
-  return !work.gid;
+  return !work.gid || work._fromBatchCreateWorksDialog;
 }
 
 export function workLink(work: WorkT) {
