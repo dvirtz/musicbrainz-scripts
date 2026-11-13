@@ -56,6 +56,7 @@ function applyEditDataToWork(work: WorkT, editData: WorkEditData): WorkT {
   // Create a new work object with the edited data
   return createWork({
     ...work,
+    _fromBatchCreateWorksDialog: true,
     name: editData.name,
     comment: editData.comment,
     typeID: editData.type_id,
@@ -101,13 +102,13 @@ function replaceWorkLink(work: WorkT, newWork: WorkT) {
           const clonedRel = structuredClone(rel);
           if (clonedRel.entity0.id === work.id) {
             clonedRel.entity0 = newWork;
-            if (work.gid && clonedRel.entity1.entityType !== 'recording') {
+            if (work.gid && !newWork.gid && clonedRel.entity1.entityType !== 'recording') {
               continue;
             }
           }
           if (clonedRel.entity1.id === work.id) {
             clonedRel.entity1 = newWork;
-            if (work.gid && clonedRel.entity0.entityType !== 'recording') {
+            if (work.gid && !newWork.gid && clonedRel.entity0.entityType !== 'recording') {
               continue;
             }
           }
@@ -139,6 +140,10 @@ function makeWorkEditDataContext(
   workTypeInfo: WorkTypeInfo
 ) {
   const [replacedWork, setReplacedWork] = createSignal<WorkT | undefined>(undefined);
+  const replaceWork = (newWork: WorkT) => {
+    replaceWorkLink(work, newWork);
+    setReplacedWork(newWork);
+  };
 
   return {
     savedEditData,
@@ -147,9 +152,7 @@ function makeWorkEditDataContext(
     saveEditData: (editData: WorkEditData) => {
       const next = sanitizeEditData(editData);
       setSavedEditData(next);
-      const newWork = applyEditDataToWork(work, next);
-      replaceWorkLink(work, newWork);
-      setReplacedWork(newWork);
+      replaceWork(applyEditDataToWork(work, next));
     },
     workId: () => work.id,
     workTypes: () => workTypeInfo.workTypes,
@@ -166,10 +169,7 @@ function makeWorkEditDataContext(
       setOriginalEditData(cloneEditData(original));
     },
     replacedWork,
-    replaceWork: (newWork: WorkT) => {
-      replaceWorkLink(work, newWork);
-      setReplacedWork(newWork);
-    },
+    replaceWork,
     captureState: (): WorkEditDataInitialState => ({
       savedEditData: savedEditData(),
       originalEditData: originalEditData(),
