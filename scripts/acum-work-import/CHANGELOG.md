@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.24.0-beta.5 (2026-11-15)
+
+* fix(acum-work-import): editing work looses recording relationship ([752c5c3](https://github.com/dvirtz/musicbrainz-scripts/commit/752c5c3))
+
 ## @dvirtz/acum-work-import-v1.24.0-beta.4 (2026-11-05)
 
 * fix(acum-work-import): decouple warning handling from work editing ([c333926](https://github.com/dvirtz/musicbrainz-scripts/commit/c333926))
