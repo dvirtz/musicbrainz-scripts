@@ -24,15 +24,13 @@ class TestSeries {
   readonly heldAt = TestSeries.heldAt;
 
   private static async createSeries(musicbrainzPage: MusicbrainzPage, baseURL: string | undefined): Promise<string> {
-    expect(baseURL, 'baseURL is required for series lookup').toBeTruthy();
-
-    const searchUrl = new URL('/ws/2/series', baseURL);
-    searchUrl.searchParams.set('query', `series:"${this.name}"`);
-    searchUrl.searchParams.set('fmt', 'json');
-
-    const searchResponse = await musicbrainzPage.page.request.get(searchUrl.toString());
-    expect(searchResponse.ok(), `Series lookup failed: ${searchResponse.status()}`).toBeTruthy();
-    const existingSeriesJson = (await searchResponse.json()) as SeriesSearchResultsT;
+    const existingSeriesJson = await musicbrainzPage.userscriptPage.requestJSON<SeriesSearchResultsT>('/ws/2/series', {
+      params: {
+        query: `series:"${this.name}"`,
+        fmt: 'json',
+      },
+      baseURL,
+    });
     if (existingSeriesJson?.series && existingSeriesJson.series.length > 0) {
       return existingSeriesJson.series[0]!.id;
     }
