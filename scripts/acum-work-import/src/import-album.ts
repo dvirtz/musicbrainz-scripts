@@ -1,10 +1,10 @@
-import {MessageWarning} from '#warning.ts';
-import type {WarningStore} from '#warning-store.ts';
 import {addAcumLink} from '#acum-links.ts';
 import {Entity, entityUrl, fetchWorks, trackName, Version, WorkBean, workEntity} from '#acum.ts';
 import {ArtistLookupCache} from '#artists.ts';
 import {createRelationshipState} from '#relationships.ts';
 import {addWorkEditor, hasChanges} from '#ui/work-editor.tsx';
+import {createWarningStore, type WarningStore} from '#warning-store.ts';
+import {MessageWarning} from '#warning.ts';
 
 import {createNewWork} from '#works.ts';
 import {head} from '@repo/common/head';
@@ -62,7 +62,6 @@ type SetProgress = Setter<readonly [number, string]>;
 export async function importAlbum(
   entity: Entity,
   globalWarnings: WarningStore,
-  workWarnings: WarningStore,
   setProgress: SetProgress
 ): Promise<boolean> {
   setProgress([0, 'Loading album info']);
@@ -72,7 +71,7 @@ export async function importAlbum(
   const mediums = selectedMediums(entity, noSelection) ?? [];
   const recordings = await selectedRecordings(entity, noSelection, mediums);
 
-  return await importSelectedWorks(entity, recordings, setProgress, globalWarnings, workWarnings);
+  return await importSelectedWorks(entity, recordings, setProgress, globalWarnings);
 }
 
 const artistCache: ArtistLookupCache = new Map();
@@ -81,22 +80,23 @@ async function importSelectedWorks(
   entity: Entity,
   selectedRecordings: SelectedRecordings,
   setProgress: SetProgress,
-  globalWarnings: WarningStore,
-  workWarnings: WarningStore
+  globalWarnings: WarningStore
 ) {
   artistCache.clear();
   const getOrCreateWork = async ({index, workBean, recordingState}: SelectedRecording) => {
     assertMBTree(MB?.tree);
 
+    const workWarnings = createWarningStore();
+
     const existing = relatedWork(recordingState.relatedWorks, recordingState.recording, index);
     if (existing) {
-      return {work: existing.work, workBean, recordingState} as const;
+      return {work: existing.work, workBean, recordingState, workWarnings} as const;
     }
 
     const newWork = await createNewWork(workBean, workWarnings, artistCache, recordingState.recording);
     linkNewWork(index, newWork, recordingState);
 
-    return {work: newWork, workBean, recordingState} as const;
+    return {work: newWork, workBean, recordingState, workWarnings} as const;
   };
 
   const addReleaseWorkEditor = async ({
@@ -104,11 +104,13 @@ async function importSelectedWorks(
     track,
     recordingState,
     trackRow,
+    workWarnings,
   }: {
     work: WorkT;
     track: WorkBean;
     recordingState: MediumRecordingStateT;
     trackRow: Element;
+    workWarnings: WarningStore;
   }) => {
     await addWorkEditor({
       getParent: async (href: string) => {
@@ -146,12 +148,13 @@ async function importSelectedWorks(
         }),
         mergeMap(getOrCreateWork),
         map(
-          ({work, workBean, recordingState}) =>
+          ({work, workBean, recordingState, workWarnings}) =>
             ({
               work,
               track: workBean,
               recordingState,
               trackRow: document.querySelector(`.track:has(a[href="${recordingLink(recordingState.recording)}"])`)!,
+              workWarnings,
             }) as const
         ),
         asyncTap(addReleaseWorkEditor),

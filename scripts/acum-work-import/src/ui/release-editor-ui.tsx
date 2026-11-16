@@ -44,14 +44,14 @@ import {
   WorkT,
 } from 'typedbrainz/types';
 
-function AcumImporter(props: {globalWarnings: WarningStore; workWarnings: WarningStore}) {
+function AcumImporter(props: {globalWarnings: WarningStore}) {
   const clearWarnings = props.globalWarnings.clear;
   const [progress, setProgress] = createSignal<readonly [number, string]>([0, '']);
 
   async function importWorks(entity: Entity) {
     clearWarnings();
     try {
-      if (await tryImportWorks(entity, props.globalWarnings, props.workWarnings, setProgress)) {
+      if (await tryImportWorks(entity, props.globalWarnings, setProgress)) {
         replaceSubmitButton(submitWorks);
       }
     } catch (err) {
@@ -141,8 +141,7 @@ export async function createReleaseEditorUI() {
     theToolbox.append(container);
 
     const globalWarnings = createWarningStore();
-    const workWarnings = createWarningStore();
-    render(() => <AcumImporter globalWarnings={globalWarnings} workWarnings={workWarnings} />, container);
+    render(() => <AcumImporter globalWarnings={globalWarnings} />, container);
   };
 
   const submitButton =
