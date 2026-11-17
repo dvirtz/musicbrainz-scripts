@@ -1,3 +1,7 @@
+## @dvirtz/acum-work-import-v1.24.0-beta.6 (2026-11-17)
+
+* fix(acum-work-import): generate a warning store per work ([c748f21](https://github.com/dvirtz/musicbrainz-scripts/commit/c748f21))
+
 ## @dvirtz/acum-work-import-v1.24.0-beta.5 (2026-11-15)
 
 * fix(acum-work-import): editing work looses recording relationship ([752c5c3](https://github.com/dvirtz/musicbrainz-scripts/commit/752c5c3))
