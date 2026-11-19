@@ -660,7 +660,7 @@ class TestRelease {
       entity: {id: number; position: number};
       response: WS_EDIT_RESPONSE_OK_T;
     };
-    expect(responseEdit.response).toBe(MB?.constants.WS_EDIT_RESPONSE_OK);
+    expect(responseEdit.response).toBe(1);
     expect(responseEdit.edit_type).toBe(EDIT_MEDIUM_CREATE);
   }
 

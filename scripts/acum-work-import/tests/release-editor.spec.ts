@@ -1,3 +1,4 @@
+// cspell: ignore ipis
 import {test as workNameMatchTest} from '#tests/fixtures/work-name-match.ts';
 import {seedAcumStorageFromUrl} from '#tests/fixtures/acum-storage.ts';
 import {test as testRelease} from '#tests/fixtures/test-release.ts';
@@ -385,6 +386,70 @@ base.describe('release editor', () => {
       await page.getByRole('button', {name: 'Cancel', exact: true}).click();
       await expect(page).toHaveURL(currentUrl);
       expect(userscriptPage.windowOpenLog).toHaveLength(0);
+    }
+  );
+
+  base(
+    'resolves artist warnings across all works after confirmation',
+    async ({page, testRelease, userscriptPage, musicbrainzPage, baseURL}) => {
+      await testRelease.editRelationships(musicbrainzPage);
+      await userscriptPage.setLocalStorage('searchWorks', 'false');
+
+      const artist = testRelease.artist(testRelease.works()[0]!.lyricists[0]!)!;
+      const artistId = 'd3c90d1b-f529-404b-939d-41873386d4b4';
+      const unrouteLookup = await userscriptPage.route(
+        url => url.pathname === '/ws/2/artist' || url.pathname === '/ws/2/url',
+        async route => {
+          await route.fulfill({json: {artists: [], relations: []}});
+        }
+      );
+      let verified = false;
+      const unrouteVerification = await userscriptPage.route(
+        url => url.pathname === `/ws/2/artist/${artistId}`,
+        async route => {
+          await route.fulfill({json: {ipis: verified ? [artist.ipi] : []}});
+        }
+      );
+
+      // fill in the album ID
+      const input = page.getByPlaceholder('Album ID or URL');
+      await input.fill(testRelease.acumUrl());
+      await expect(input).toHaveValue('006625');
+
+      await seedAcumStorageFromUrl(userscriptPage, 'release-album-006625.json', testRelease.acumUrl());
+
+      // import the album
+      await testRelease.importAlbum(page);
+
+      const affectedWorks = testRelease.works().filter(work => work.lyricists.includes(artist.hebName));
+      expect(affectedWorks.length).toBeGreaterThan(1);
+      const warnings = page.getByText(`Failed to find lyricist ${artist.hebName}`);
+      await expect(warnings).toHaveCount(affectedWorks.length);
+      await warnings.first().getByRole('button', {name: 'search', exact: true}).click();
+      const search = page.getByRole('textbox', {name: 'Search for an artist:'});
+      await search.fill(`${baseURL}/artist/${artistId}`);
+      await page.getByRole('button', {name: 'Done', exact: true}).click();
+      await expect(search).not.toBeAttached();
+      await expect(warnings).toHaveCount(0);
+
+      const missingDataWarnings = page.getByText('is missing IPI or ACUM link, please verify', {exact: false});
+      await expect(missingDataWarnings).toHaveCount(affectedWorks.length);
+      verified = true;
+      await missingDataWarnings.last().getByRole('button', {name: 'search', exact: true}).click();
+      await search.fill(`${baseURL}/artist/${artistId}`);
+      await page.getByRole('button', {name: 'Done', exact: true}).click();
+      await expect(search).not.toBeAttached();
+      await expect(missingDataWarnings).toHaveCount(0);
+      for (const work of affectedWorks) {
+        await expect(
+          page
+            .getByRole('row', {name: work.title})
+            .getByRole('row', {name: 'lyricist:'})
+            .getByRole('link', {name: artist.hebName, exact: true})
+        ).toHaveCount(1);
+      }
+      await unrouteVerification();
+      await unrouteLookup();
     }
   );
 });
