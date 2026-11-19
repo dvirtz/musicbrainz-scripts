@@ -1,8 +1,19 @@
+import {tryLookup} from '@repo/musicbrainz-ext/api-client';
 import {seedSubEvent} from '@repo/musicbrainz-ext/event-seed';
-import type {MBEvent} from '@repo/musicbrainz-ext/event-types';
-import {tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
+import {
+  EVENT_RELATION_INCLUDES,
+  SERIES_RELATION_INCLUDES,
+  SUB_EVENT_INCLUDES,
+  type EventWithSubEvents,
+} from '@repo/musicbrainz-ext/event-api-types';
 
-type MBEventRelation = NonNullable<MBEvent['relations']>[number];
+type EventRelation = EventWithSubEvents['relations'][number];
+
+export async function fetchEntityWithRelations(entityType: 'event' | 'series', gid: string) {
+  return entityType === 'event'
+    ? await tryLookup('event', gid, {inc: EVENT_RELATION_INCLUDES})
+    : await tryLookup('series', gid, {inc: SERIES_RELATION_INCLUDES});
+}
 
 export type ChildEventSummary = {
   gid: string;
@@ -26,8 +37,8 @@ export type EventDetails = {
   childEvents: ChildEventSummary[];
 };
 
-function isChildEventRelation(relation: MBEventRelation): boolean {
-  if (relation['target-type'] && relation['target-type'] !== 'event') {
+function isChildEventRelation(relation: EventRelation): relation is Extract<EventRelation, {'target-type': 'event'}> {
+  if (relation['target-type'] !== 'event') {
     return false;
   }
 
@@ -36,13 +47,13 @@ function isChildEventRelation(relation: MBEventRelation): boolean {
   }
 
   if (relation.type === 'part of') {
-    return !relation.direction || relation.direction !== 'backward';
+    return relation.direction !== 'backward';
   }
 
   return false;
 }
 
-function formatStatus(event: MBEvent): string | undefined {
+function formatStatus(event: EventWithSubEvents): string | undefined {
   if (event.cancelled) {
     return 'Cancelled';
   }
@@ -68,21 +79,21 @@ function compareOptionalStrings(a?: string, b?: string): number {
   return a.localeCompare(b, undefined, {sensitivity: 'base'});
 }
 
-function normalizePlaceLabel(relation: MBEventRelation): string | null {
+function normalizePlaceLabel(relation: EventRelation): string | null {
   if (relation['target-type'] !== 'place') {
     return null;
   }
 
-  const creditedName = relation['target-credit']?.trim();
+  const creditedName = relation['target-credit'].trim();
   if (creditedName) {
     return creditedName;
   }
 
-  const placeName = relation.place?.name?.trim();
+  const placeName = relation.place.name.trim();
   return placeName || null;
 }
 
-function parseChildEvents(relations: ReadonlyArray<MBEventRelation>): ChildEventSummary[] {
+function parseChildEvents(relations: ReadonlyArray<EventRelation>): ChildEventSummary[] {
   const seen = new Set<string>();
   const children: ChildEventSummary[] = [];
 
@@ -92,7 +103,7 @@ function parseChildEvents(relations: ReadonlyArray<MBEventRelation>): ChildEvent
     }
 
     const relatedEvent = relation.event;
-    const gid = relatedEvent?.id ?? null;
+    const gid = relatedEvent.id;
     if (!gid || seen.has(gid)) {
       continue;
     }
@@ -100,11 +111,11 @@ function parseChildEvents(relations: ReadonlyArray<MBEventRelation>): ChildEvent
     seen.add(gid);
     children.push({
       gid,
-      name: relatedEvent?.name?.trim() || gid,
-      type: relation.event?.type,
-      beginDate: relation.event?.['life-span']?.begin,
-      endDate: relation.event?.['life-span']?.end,
-      time: normalizeTime(relation.event?.time),
+      name: relatedEvent.name.trim() || gid,
+      type: relatedEvent.type ?? undefined,
+      beginDate: relatedEvent['life-span'].begin ?? undefined,
+      endDate: relatedEvent['life-span'].end ?? undefined,
+      time: normalizeTime(relatedEvent.time),
     });
   }
 
@@ -124,13 +135,13 @@ function parseChildEvents(relations: ReadonlyArray<MBEventRelation>): ChildEvent
 }
 
 export async function fetchEventDetails(eventGid: string): Promise<EventDetails | null> {
-  const event = await tryFetchJSON<MBEvent>(`/ws/2/event/${eventGid}?fmt=json&inc=event-rels%20place-rels`);
+  const event = await tryLookup('event', eventGid, {inc: SUB_EVENT_INCLUDES});
   if (!event) {
     return null;
   }
 
   const places = new Set<string>();
-  for (const relation of event.relations ?? []) {
+  for (const relation of event.relations) {
     const label = normalizePlaceLabel(relation);
     if (label) {
       places.add(label);
@@ -140,13 +151,13 @@ export async function fetchEventDetails(eventGid: string): Promise<EventDetails 
   return {
     gid: event.id,
     name: event.name,
-    type: event.type,
+    type: event.type ?? undefined,
     status: formatStatus(event),
-    beginDate: event['life-span']?.begin,
-    endDate: event['life-span']?.end,
+    beginDate: event['life-span'].begin ?? undefined,
+    endDate: event['life-span'].end ?? undefined,
     time: normalizeTime(event.time),
     places: Array.from(places),
     subEventSeed: seedSubEvent(event),
-    childEvents: parseChildEvents(event.relations ?? []),
+    childEvents: parseChildEvents(event.relations),
   };
 }

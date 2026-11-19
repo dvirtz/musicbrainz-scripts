@@ -28,6 +28,7 @@
     "solid-js": "*"
   },
   "devDependencies": {
+    "@dvirtz/musicbrainz": "npm:@jsr/dvirtz__musicbrainz@0.4.3",
     "@playwright/test": "*",
     "@repo/test-support": "workspace:*",
     "@repo/typescript-config": "workspace:*",

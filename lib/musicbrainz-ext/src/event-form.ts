@@ -1,8 +1,7 @@
-export type EventDateParts = {
-  year?: string;
-  month?: string;
-  day?: string;
-};
+import type {PartialDate} from '@dvirtz/musicbrainz/common-types';
+
+// Form fields keep the library's date parts as strings rather than numbers.
+export type EventDateParts = {[Part in keyof PartialDate]: string};
 
 export class EventForm {
   private relationshipCount: number = 0;

@@ -1,5 +1,5 @@
 import {test} from '#tests/fixtures/test-festival-event.ts';
-import {MBEvent} from '#types.ts';
+import type {EventWithSubEvents} from '#types.ts';
 import {expect, type Page} from '@playwright/test';
 import {EVENT_HELD_AT_RELATIONSHIP_TYPE_ID, EVENT_PART_OF_RELATIONSHIP_TYPE_ID} from '@repo/musicbrainz-ext/constants';
 import {UserscriptPage} from '@repo/test-support/userscript-page';
@@ -28,6 +28,35 @@ function makeFakeGid(counter: number) {
 const HELD_AT_GID = 'e2c6f697-07dc-38b1-be0b-83d740165532';
 const EVENT_PART_OF_GID = '65742183-b25c-469e-b094-ff6739e6699c';
 const PLACE_PART_OF_GID = 'ff683f48-eff1-40ab-a58f-b128098ffe92';
+
+function heldAtRelation(
+  place: {id: string; name: string},
+  creditName = ''
+): Extract<EventWithSubEvents['relations'][number], {'target-type': 'place'}> {
+  return {
+    'target-type': 'place',
+    'type-id': HELD_AT_GID,
+    type: 'held at',
+    direction: 'forward',
+    begin: null,
+    end: null,
+    ended: false,
+    attributes: [],
+    'attribute-ids': {},
+    'attribute-values': {},
+    'source-credit': '',
+    'target-credit': creditName,
+    place: {
+      ...place,
+      disambiguation: '',
+      type: null,
+      'type-id': null,
+      address: '',
+      area: null,
+      coordinates: null,
+    },
+  };
+}
 
 async function confirmScaffoldAction(
   page: Page,
@@ -60,7 +89,7 @@ async function setupScaffoldRoutes(params: {
   eventType?: string;
   beginDate?: TestEventDate;
   endDate?: TestEventDate;
-  relations?: MBEvent['relations'];
+  relations?: EventWithSubEvents['relations'];
   placeChildRelationsById?: Record<string, Array<{id: string; name: string}>>;
 }): Promise<ScaffoldRouteState> {
   const {
@@ -149,14 +178,7 @@ async function setupScaffoldRoutes(params: {
       name: TEST_PLACE_NAMES[index] ?? `Test Place ${index + 1}`,
     }));
 
-  const defaultRelations = places.map(place => ({
-    'target-type': 'place',
-    'type-id': HELD_AT_GID,
-    place: {
-      id: place.id,
-      name: place.name,
-    },
-  }));
+  const defaultRelations = places.map(place => heldAtRelation(place));
 
   const unrouteEvent = await userscriptPage.route(`**/ws/2/event/${testFestivalEvent.gid}?*`, async route => {
     await route.fulfill({
@@ -180,7 +202,7 @@ async function setupScaffoldRoutes(params: {
     await route.fulfill({json: {mbid: gid}});
   });
 
-  const unroutePlaceLookup = await userscriptPage.route('**/ws/2/place/*?*', async route => {
+  const unroutePlaceLookup = await userscriptPage.route('**/ws/2/place/*', async route => {
     const requestUrl = new URL(route.request().url());
     const pathMatch = requestUrl.pathname.match(/\/ws\/2\/place\/([0-9a-f-]{36})/i);
     const placeId = pathMatch?.[1];
@@ -295,9 +317,24 @@ test.describe('scaffold festival days', () => {
           type: 'parts',
           'type-id': EVENT_PART_OF_GID,
           direction: 'forward',
-          place: {
+          begin: null,
+          end: null,
+          ended: false,
+          attributes: [],
+          'attribute-ids': {},
+          'attribute-values': {},
+          'source-credit': '',
+          'target-credit': '',
+          event: {
             id: makeFakeGid(999),
             name: '',
+            disambiguation: '',
+            type: null,
+            'type-id': null,
+            time: '',
+            setlist: '',
+            cancelled: false,
+            'life-span': {begin: null, end: null, ended: false},
           },
         },
       ],
@@ -870,15 +907,9 @@ test.describe('scaffold festival days', () => {
       userscriptPage,
       testFestivalEvent,
       testPlaces,
-      relations: placeIds.map((id, index) => ({
-        'target-type': 'place',
-        'type-id': HELD_AT_GID,
-        'target-credit': placeCreditNames[index] ?? TEST_PLACE_NAMES[index],
-        place: {
-          id,
-          name: TEST_PLACE_NAMES[index]!,
-        },
-      })),
+      relations: placeIds.map((id, index) =>
+        heldAtRelation({id, name: TEST_PLACE_NAMES[index]!}, placeCreditNames[index] ?? TEST_PLACE_NAMES[index])
+      ),
     });
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 
@@ -933,15 +964,9 @@ test.describe('scaffold festival days', () => {
       testFestivalEvent,
       testPlaces,
       endDate: testFestivalEvent.getBeginDate(),
-      relations: placeIds.map((id, index) => ({
-        'target-type': 'place',
-        'type-id': HELD_AT_GID,
-        'target-credit': placeCreditNames[index] ?? TEST_PLACE_NAMES[index],
-        place: {
-          id,
-          name: TEST_PLACE_NAMES[index]!,
-        },
-      })),
+      relations: placeIds.map((id, index) =>
+        heldAtRelation({id, name: TEST_PLACE_NAMES[index]!}, placeCreditNames[index] ?? TEST_PLACE_NAMES[index])
+      ),
     });
     await musicbrainzPage.userscriptPage.goto(`/event/${testFestivalEvent.gid}`);
 

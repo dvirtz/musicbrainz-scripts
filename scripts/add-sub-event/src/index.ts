@@ -1,9 +1,9 @@
 import {injectAddSubEventLink} from '#sidebar-link.ts';
 import {mountDeprecationBanner} from '@repo/common-ui/deprecation-banner';
+import {tryLookup} from '@repo/musicbrainz-ext/api-client';
 import {getEventGid} from '@repo/musicbrainz-ext/event-path';
 import {seedSubEvent} from '@repo/musicbrainz-ext/event-seed';
-import type {MBEvent} from '@repo/musicbrainz-ext/event-types';
-import {tryFetchJSON} from '@repo/musicbrainz-ext/fetch';
+import {SUB_EVENT_INCLUDES} from '@repo/musicbrainz-ext/event-api-types';
 
 async function main() {
   await mountDeprecationBanner({
@@ -17,7 +17,7 @@ async function main() {
     return;
   }
 
-  const event = await tryFetchJSON<MBEvent>(`/ws/2/event/${eventGid}?fmt=json&inc=event-rels%20place-rels`);
+  const event = await tryLookup('event', eventGid, {inc: SUB_EVENT_INCLUDES});
   if (!event) {
     return null;
   }

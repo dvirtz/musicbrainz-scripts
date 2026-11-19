@@ -1,5 +1,5 @@
 import {createSubEvent} from '#api.ts';
-import type {DateParts, MBEvent, MBPlace} from '#types.ts';
+import type {DateParts, EventWithSubEvents, MBPlace} from '#types.ts';
 import {editNoteFormat} from '@repo/musicbrainz-ext/edit-note';
 
 export interface StatusMessage {
@@ -7,7 +7,7 @@ export interface StatusMessage {
   kind: 'info' | 'error';
 }
 
-function parseDateParts(value: string | undefined): {year: string; month: string; day: string} | null {
+function parseDateParts(value: string | null | undefined): {year: string; month: string; day: string} | null {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return null;
   }
@@ -20,23 +20,23 @@ function parseDateParts(value: string | undefined): {year: string; month: string
   return {year, month, day};
 }
 
-function hasChildSubEvents(event: MBEvent): boolean {
-  return (event.relations ?? []).some(
+function hasChildSubEvents(event: EventWithSubEvents): boolean {
+  return event.relations.some(
     relation => relation.type === 'parts' && relation.direction === 'forward' && relation['target-type'] === 'event'
   );
 }
 
-export function shouldShowScaffoldUI(event: MBEvent | null): event is MBEvent {
+export function shouldShowScaffoldUI(event: EventWithSubEvents | null): event is EventWithSubEvents {
   return event != null && (event.type === 'Festival' || deriveDates(event).length > 1) && !hasChildSubEvents(event);
 }
 
-export function isSingleDayFestival(event: MBEvent): boolean {
+export function isSingleDayFestival(event: EventWithSubEvents): boolean {
   return deriveDates(event).length === 1;
 }
 
-export function deriveDates(event: MBEvent): DateParts[] {
-  const beginParts = parseDateParts(event['life-span']?.begin);
-  const endParts = parseDateParts(event['life-span']?.end ?? event['life-span']?.begin);
+export function deriveDates(event: EventWithSubEvents): DateParts[] {
+  const beginParts = parseDateParts(event['life-span'].begin);
+  const endParts = parseDateParts(event['life-span'].end ?? event['life-span'].begin);
   if (!beginParts || !endParts) {
     return [];
   }
@@ -61,7 +61,7 @@ export function deriveDates(event: MBEvent): DateParts[] {
 }
 
 export async function scaffoldFestivalDays(params: {
-  event: MBEvent;
+  event: EventWithSubEvents;
   places: MBPlace[];
   selectedPlaceIds: string[];
   selectedDayPlaceKeys?: string[];

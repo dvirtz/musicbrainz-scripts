@@ -10,7 +10,7 @@ import {
   shouldShowScaffoldUI,
   type StatusMessage,
 } from '#scaffold.ts';
-import type {DateParts, MBEvent, MBPlace} from '#types.ts';
+import type {DateParts, EventWithSubEvents, MBPlace} from '#types.ts';
 import classes from '#ui.module.css';
 import {Button} from '@kobalte/core/button';
 import {ToolLine} from '@repo/common-ui/tool-line';
@@ -32,7 +32,7 @@ function loginUrlWithReturnTo(locationRef: Location = window.location): string {
 
 const CUSTOM_SENTINEL = '__custom__';
 
-function ScaffoldFestivalUI(props: {event: MBEvent; places: MBPlace[]; dayWord: string}) {
+function ScaffoldFestivalUI(props: {event: EventWithSubEvents; places: MBPlace[]; dayWord: string}) {
   const [availablePlaces, setAvailablePlaces] = createSignal<MBPlace[]>(props.places);
   const [searchResults, setSearchResults] = createSignal<MBPlace[]>([]);
   const [draftCreditNames, setDraftCreditNames] = createSignal<Record<string, string>>({});

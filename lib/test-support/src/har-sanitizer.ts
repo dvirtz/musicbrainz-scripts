@@ -8,11 +8,11 @@ const TOKEN_PATTERNS = [
     replacement: '$1[redacted]$3',
   },
   {
-    regex: /\bpk\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g,
+    regex: /\bpk\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)?\b/g,
     replacement: 'pk.redacted.redacted.redacted',
   },
   {
-    regex: /\bsk\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g,
+    regex: /\bsk\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)?\b/g,
     replacement: 'sk.redacted.redacted.redacted',
   },
 ];
