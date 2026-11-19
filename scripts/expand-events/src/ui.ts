@@ -1,9 +1,8 @@
 // cspell: words eventlink
-import {ChildEventSummary, EventDetails, fetchEventDetails} from '#api.ts';
+import {ChildEventSummary, EventDetails, fetchEntityWithRelations, fetchEventDetails} from '#api.ts';
 import classes from '#ui.module.css';
 import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
 import {getEventGid} from '@repo/musicbrainz-ext/event-path';
-import {fetchEntityWithRelations} from '@repo/musicbrainz-ext/event-seed';
 
 const GLOBAL_CONTROLS_ID = 'expand-events-global-controls';
 const TOGGLE_CLASS_NAME = 'expand-events-toggle';
@@ -408,14 +407,14 @@ export async function initializeExpandEvents() {
     return;
   }
 
-  const entityType = match[1]!;
+  const entityType = match[1] as 'event' | 'series';
   const entity = await fetchEntityWithRelations(entityType, match[2]!);
   if (!entity) {
     return;
   }
 
   const childEventIds = new Set(
-    entity.relations?.filter(rel => typeof rel.event !== 'undefined').map(rel => rel.event!.id)
+    entity.relations.flatMap(rel => (rel['target-type'] === 'event' ? [rel.event.id] : []))
   );
   if (childEventIds.size === 0) {
     return;

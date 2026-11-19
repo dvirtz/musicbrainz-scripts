@@ -5,13 +5,12 @@ import {
   EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
 } from '#constants.ts';
 import {editNoteFormat} from '#edit-note.ts';
+import type {EventWithRelations, SeriesWithRelations} from '#event-api-types.ts';
 import type {EventDateParts} from '#event-form.ts';
 import {EventForm} from '#event-form.ts';
-import type {MBEntity, MBEvent, MBSeries} from '#event-types.ts';
 import {linkTypeId} from '#type-info.ts';
-import {tryFetchJSON} from '@repo/fetch/fetch';
 
-type MBEventRelation = NonNullable<MBEvent['relations']>[number];
+type EventRelation = EventWithRelations['relations'][number];
 const EVENT_TYPE_IDS_BY_NAME: Record<string, string> = {
   'award ceremony': '7',
   competition: '40',
@@ -23,7 +22,7 @@ const EVENT_TYPE_IDS_BY_NAME: Record<string, string> = {
   'stage performance': '6',
 };
 
-function parseDateParts(value: string | undefined): EventDateParts | undefined {
+function parseDateParts(value: string | null | undefined): EventDateParts | undefined {
   if (!value) {
     return undefined;
   }
@@ -40,7 +39,7 @@ function parseDateParts(value: string | undefined): EventDateParts | undefined {
   };
 }
 
-function resolveEventTypeId(typeName: string | undefined): string | undefined {
+function resolveEventTypeId(typeName: string | null | undefined): string | undefined {
   if (!typeName) {
     return undefined;
   }
@@ -48,9 +47,9 @@ function resolveEventTypeId(typeName: string | undefined): string | undefined {
   return EVENT_TYPE_IDS_BY_NAME[typeName.toLowerCase()];
 }
 
-function copyLocations(from: MBEntity, to: EventForm) {
-  for (const relationship of from.relations?.filter(relationship => !relationship.url) ?? []) {
-    switch (relationship.type?.toLocaleLowerCase()) {
+function copyLocations(from: EventWithRelations | SeriesWithRelations, to: EventForm) {
+  for (const relationship of from.relations) {
+    switch (relationship.type.toLocaleLowerCase()) {
       case 'held at':
         to.relationship({
           type: EVENT_HELD_AT_RELATIONSHIP_TYPE_ID,
@@ -68,12 +67,12 @@ function copyLocations(from: MBEntity, to: EventForm) {
   }
 }
 
-export function seedSubEvent(event: MBEvent): string {
+export function seedSubEvent(event: EventWithRelations): string {
   const eventForm = new EventForm()
     .editNote(editNoteFormat(`Created from ${document.location.href}`))
     .dates({
-      begin: parseDateParts(event['life-span']?.begin),
-      end: parseDateParts(event['life-span']?.end),
+      begin: parseDateParts(event['life-span'].begin),
+      end: parseDateParts(event['life-span'].end),
     })
     .relationship({
       type: EVENT_PART_OF_RELATIONSHIP_TYPE_ID,
@@ -86,7 +85,7 @@ export function seedSubEvent(event: MBEvent): string {
   return `/event/create?${eventForm.build().toString()}`;
 }
 
-export function seedSeriesEvent(series: MBSeries): string {
+export function seedSeriesEvent(series: SeriesWithRelations): string {
   const eventForm = new EventForm()
     .editNote(editNoteFormat(`Created from ${document.location.href}`))
     .name(series.name)
@@ -107,46 +106,44 @@ type CloneEventRelationshipAttribute = {
   textValue?: string;
 };
 
-function extractEntityTarget(relation: MBEventRelation): string | undefined {
+function extractEntityTarget(relation: EventRelation): string | undefined {
   switch (relation['target-type']) {
     case 'area':
-      return relation.area?.id;
+      return relation.area.id;
     case 'artist':
-      return relation.artist?.id;
+      return relation.artist.id;
     case 'event':
-      return relation.event?.id;
+      return relation.event.id;
     case 'label':
-      return relation.label?.id;
+      return relation.label.id;
     case 'place':
-      return relation.place?.id;
+      return relation.place.id;
     case 'recording':
-      return relation.recording?.id;
+      return relation.recording.id;
     case 'release':
-      return relation.release?.id;
+      return relation.release.id;
     case 'release_group':
-      return relation.release_group?.id;
+      return relation.release_group.id;
     case 'series':
-      return relation.series?.id;
+      return relation.series.id;
     case 'work':
-      return relation.work?.id;
+      return relation.work.id;
     default:
       return undefined;
   }
 }
 
-function extractRelationshipAttributes(relation: MBEventRelation): CloneEventRelationshipAttribute[] | undefined {
+function extractRelationshipAttributes(relation: EventRelation): CloneEventRelationshipAttribute[] | undefined {
   const attributesByType = new Map<string, CloneEventRelationshipAttribute>();
-  const attributeIds = relation['attribute-ids'] ?? {};
+  const attributeIds = relation['attribute-ids'];
   const attributeValues = relation['attribute-values'];
 
-  if (attributeValues) {
-    for (const [attrTypeOrName, textValue] of Object.entries(attributeValues)) {
-      if (!textValue) {
-        continue;
-      }
-      const type = attributeIds[attrTypeOrName] ?? attrTypeOrName;
-      attributesByType.set(type, {type, textValue: String(textValue)});
+  for (const [attrTypeOrName, textValue] of Object.entries(attributeValues)) {
+    if (!textValue) {
+      continue;
     }
+    const type = attributeIds[attrTypeOrName] ?? attrTypeOrName;
+    attributesByType.set(type, {type, textValue: String(textValue)});
   }
 
   for (const type of Object.values(attributeIds)) {
@@ -160,13 +157,7 @@ function extractRelationshipAttributes(relation: MBEventRelation): CloneEventRel
   return attributes.length > 0 ? attributes : undefined;
 }
 
-export async function fetchEntityWithRelations(entityType: string, gid: string): Promise<MBEntity | null> {
-  return tryFetchJSON<MBEntity>(
-    `/ws/2/${entityType}/${gid}?fmt=json&inc=area-rels+artist-rels+event-rels+genre-rels+instrument-rels+label-rels+place-rels+recording-rels+release-rels+release-group-rels+series-rels+url-rels+work-rels`
-  );
-}
-
-export async function seedCloneEvent(event: MBEvent): Promise<string> {
+export async function seedCloneEvent(event: EventWithRelations): Promise<string> {
   const eventForm = new EventForm();
 
   eventForm.name(event.name);
@@ -183,31 +174,29 @@ export async function seedCloneEvent(event: MBEvent): Promise<string> {
   if (event.disambiguation) {
     eventForm.comment(event.disambiguation);
   }
-  if (event.cancelled !== undefined) {
-    eventForm.cancelled(event.cancelled);
-    eventForm.ended(event.cancelled);
-  }
+  eventForm.cancelled(event.cancelled);
+  eventForm.ended(event.cancelled);
 
   eventForm.dates({
-    begin: parseDateParts(event['life-span']?.begin),
-    end: parseDateParts(event['life-span']?.end),
+    begin: parseDateParts(event['life-span'].begin),
+    end: parseDateParts(event['life-span'].end),
   });
 
   eventForm.editNote(editNoteFormat(`Cloned from ${document.location.href}`));
 
-  for (const rel of event.relations ?? []) {
-    if (rel.url) {
-      const urlTypeId = await linkTypeId(rel['type-id'] ?? '');
+  for (const rel of event.relations) {
+    if (rel['target-type'] === 'url') {
+      const urlTypeId = await linkTypeId(rel['type-id']);
       if (urlTypeId) {
         eventForm.urlRelationship({
-          url: rel.url.resource ?? '',
+          url: rel.url.resource,
           linkTypeId: urlTypeId,
         });
       }
     } else {
       eventForm.relationship(
         {
-          type: rel['type-id'] ?? '',
+          type: rel['type-id'],
           target: extractEntityTarget(rel) ?? '',
           direction: rel.direction,
           targetCredit: rel['target-credit'],

@@ -1,12 +1,8 @@
 import {injectEventSidebarLinks, SidebarLink} from '#sidebar-link.ts';
+import {tryLookup} from '@repo/musicbrainz-ext/api-client';
 import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
-import {
-  fetchEntityWithRelations,
-  seedCloneEvent,
-  seedSeriesEvent,
-  seedSubEvent,
-} from '@repo/musicbrainz-ext/event-seed';
-import {MBEvent, MBSeries} from '@repo/musicbrainz-ext/event-types';
+import {EVENT_RELATION_INCLUDES, SERIES_RELATION_INCLUDES} from '@repo/musicbrainz-ext/event-api-types';
+import {seedCloneEvent, seedSeriesEvent, seedSubEvent} from '@repo/musicbrainz-ext/event-seed';
 
 const ADD_SUB_EVENT_LINK_ID = 'add-sub-event-link';
 const CLONE_EVENT_LINK_ID = 'clone-event-link';
@@ -18,22 +14,20 @@ async function main() {
     return;
   }
 
-  const entityType = match[1]!;
-  const entity = await fetchEntityWithRelations(entityType, match[2]!);
-  if (!entity) {
-    return;
-  }
-
   const sidebarLinks: SidebarLink[] = [];
-  if (entityType == 'event') {
-    sidebarLinks.push({id: ADD_SUB_EVENT_LINK_ID, url: seedSubEvent(entity as MBEvent), text: 'Add sub-event'});
-    sidebarLinks.push({id: CLONE_EVENT_LINK_ID, url: await seedCloneEvent(entity as MBEvent), text: 'Clone event'});
+  if (match[1] === 'event') {
+    const event = await tryLookup('event', match[2]!, {inc: EVENT_RELATION_INCLUDES});
+    if (!event) {
+      return;
+    }
+    sidebarLinks.push({id: ADD_SUB_EVENT_LINK_ID, url: seedSubEvent(event), text: 'Add sub-event'});
+    sidebarLinks.push({id: CLONE_EVENT_LINK_ID, url: await seedCloneEvent(event), text: 'Clone event'});
   } else {
-    const series = entity as MBSeries;
-    if (series.type && EVENT_SERIES_TYPES.includes(series.type.toLowerCase())) {
+    const series = await tryLookup('series', match[2]!, {inc: SERIES_RELATION_INCLUDES});
+    if (series?.type && EVENT_SERIES_TYPES.includes(series.type.toLowerCase())) {
       sidebarLinks.push({
         id: ADD_SUB_EVENT_LINK_ID,
-        url: seedSeriesEvent(entity as MBSeries),
+        url: seedSeriesEvent(series),
         text: 'Add event',
       });
     }

@@ -1,6 +1,7 @@
 import {expect, type Page} from '@playwright/test';
 import {MBID_REGEXP} from '@repo/musicbrainz-ext/constants';
 import {EventForm} from '@repo/musicbrainz-ext/event-form';
+import type {EventWithRelations} from '@repo/musicbrainz-ext/event-api-types';
 import {MusicbrainzPage} from '@repo/test-support/musicbrainz-page';
 import {test as base} from '@repo/test-support/musicbrainz-test';
 
@@ -156,8 +157,45 @@ export class TestEvent {
     });
     const existingEvents = existingEventJson?.events ?? [];
     if (existingEvents.length > 0) {
-      expect(existingEvents).toHaveLength(1);
-      return existingEvents[0]!.id;
+      for (const candidate of existingEvents.toSorted((a, b) => a.id.localeCompare(b.id))) {
+        const event = await musicbrainzPage.userscriptPage.requestJSON<EventWithRelations>(
+          `/ws/2/event/${candidate.id}`,
+          {
+            params: {
+              fmt: 'json',
+              inc: 'area-rels+artist-rels+event-rels+place-rels+recording-rels+release-rels+release-group-rels+series-rels+url-rels+work-rels',
+            },
+            baseURL,
+          }
+        );
+        const relations = event.relations ?? [];
+        const hasEntityRelationships = this.entityRelationships.every(expected =>
+          relations.some(
+            relation =>
+              relation['type-id'] === expected.type &&
+              Object.values(relation).some(
+                (target: unknown) =>
+                  typeof target === 'object' && target !== null && 'id' in target && target.id === expected.target
+              )
+          )
+        );
+        const hasUrlRelationships = this.urlRelationships.every(expected =>
+          relations.some(relation => relation['target-type'] === 'url' && relation.url.resource === expected.url)
+        );
+        if (
+          event.name === this.eventName &&
+          event.disambiguation === this.disambiguation &&
+          event.setlist === this.setlist &&
+          event.time === this.time &&
+          event['life-span']?.begin === `${this.beginDate.year}-${this.beginDate.month}-${this.beginDate.day}` &&
+          event['life-span']?.end === `${this.endDate.year}-${this.endDate.month}-${this.endDate.day}` &&
+          hasEntityRelationships &&
+          hasUrlRelationships
+        ) {
+          return event.id;
+        }
+      }
+      throw new Error('Existing event-seeder test events do not match the fixture fields and relationships');
     }
 
     const eventForm = new EventForm()

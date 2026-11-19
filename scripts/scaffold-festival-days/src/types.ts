@@ -1,9 +1,8 @@
-export type {MBEvent} from '@repo/musicbrainz-ext/event-types';
+import type {MinimalPlace} from '@dvirtz/musicbrainz/api-types';
 
-export interface MBPlace {
-  id: string;
-  name: string;
-  disambiguation?: string;
+export type {EventWithSubEvents} from '@repo/musicbrainz-ext/event-api-types';
+
+export interface MBPlace extends MinimalPlace {
   creditName?: string;
 }
 

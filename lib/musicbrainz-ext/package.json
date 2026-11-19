@@ -5,6 +5,7 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
+    "./api-client": "./src/api-client.ts",
     "./asserts": "./src/asserts.ts",
     "./build-options-list": "./src/build-options-list.ts",
     "./compare": "./src/compare.ts",
@@ -15,7 +16,7 @@
     "./event-form": "./src/event-form.ts",
     "./event-path": "./src/event-path.ts",
     "./event-seed": "./src/event-seed.ts",
-    "./event-types": "./src/event-types.ts",
+    "./event-api-types": "./src/event-api-types.ts",
     "./fetch": "./src/fetch.ts",
     "./format-iswc": "./src/format-iswc.ts",
     "./get-select-value": "./src/get-select-value.ts",
@@ -39,6 +40,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@dvirtz/musicbrainz": "npm:@jsr/dvirtz__musicbrainz@0.4.3",
     "@repo/fetch": "workspace:*",
     "dedent": "*",
     "p-lazy": "*",

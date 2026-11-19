@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkmusicbrainz_server=self.webpackChunkmusicbrainz_server||[]).push([[3173],{"kl4oyk/"(e,i,s){var d=s("smZuR9W"),r=s("1OgwVw9"),l=s("cGbttel");(0,s("lUam5hA").A)("div.date-range-fieldset",(function({children:e,disabled:i=!1,endedLabel:s,initialField:a}){const[n,c]=d.useReducer(r.Ff,a);return(0,l.jsx)(r.Ay,{disabled:i,dispatch:c,endedLabel:s,field:n,children:e})}))}},e=>{e.O(0,[8096,9251],(()=>{return i="kl4oyk/",e(e.s=i);var i}));e.O()}]);
+//# sourceMappingURL=HydratedDateRangeFieldset-48298c2.js.map

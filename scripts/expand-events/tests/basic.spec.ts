@@ -144,4 +144,36 @@ test.describe('expand-events', () => {
     await page.getByRole('button', {name: 'Collapse all'}).click();
     await expect(page.locator('[data-expand-events-row-for]:not([hidden])')).toHaveCount(0);
   });
+
+  test('retries a temporarily unavailable event lookup', async ({userscriptPage, page}) => {
+    let attempts = 0;
+    const unroute = await userscriptPage.route(`**/ws/2/event/${DAY_EVENT_GID}?*`, async route => {
+      attempts += 1;
+      if (attempts === 1) {
+        await route.fulfill({status: 503, json: {error: 'The MusicBrainz web server is currently busy.'}});
+        return;
+      }
+      await route.fulfill({
+        json: {
+          id: DAY_EVENT_GID,
+          name: 'Retry event',
+          type: 'Concert',
+          'type-id': null,
+          disambiguation: '',
+          time: '',
+          setlist: '',
+          cancelled: false,
+          'life-span': {begin: '2009-11-12', end: '2009-11-12', ended: true},
+          relations: [],
+        },
+      });
+    });
+
+    await userscriptPage.goto(`/event/${FESTIVAL_GID}`);
+    await page.getByRole('button', {name: `Expand event ${DAY_EVENT_GID}`, exact: true}).click();
+    await expect(page.getByRole('link', {name: 'editing history', exact: true})).toBeVisible();
+    expect(attempts).toBe(2);
+
+    await unroute();
+  });
 });
