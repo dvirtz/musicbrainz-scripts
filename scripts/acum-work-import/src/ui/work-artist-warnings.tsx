@@ -133,7 +133,7 @@ abstract class ArtistWarning extends WorkWarning {
     return this.creator.creatorEngName;
   }
   resolve(artist: ArtistT) {
-    return this.store.resolve(
+    return this.store.resolveAll(
       (warning): warning is ArtistWarning =>
         warning instanceof ArtistWarning && warning.ipBaseNumber === this.ipBaseNumber,
       async warnings => {
@@ -155,7 +155,7 @@ abstract class ArtistWarning extends WorkWarning {
               warning.context,
               warning.linkTypeID,
               warning.creator,
-              this.store,
+              warning.store,
               artist.gid,
               artist.name,
               'is missing IPI or ACUM link'

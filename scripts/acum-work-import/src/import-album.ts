@@ -3,7 +3,7 @@ import {Entity, entityUrl, fetchWorks, trackName, Version, WorkBean, workEntity}
 import {ArtistLookupCache} from '#artists.ts';
 import {createRelationshipState} from '#relationships.ts';
 import {addWorkEditor, hasChanges} from '#ui/work-editor.tsx';
-import {createWarningStore, type WarningStore} from '#warning-store.ts';
+import {createWarningGroup, type WarningStore} from '#warning-store.ts';
 import {MessageWarning} from '#warning.ts';
 
 import {createNewWork} from '#works.ts';
@@ -83,10 +83,11 @@ async function importSelectedWorks(
   globalWarnings: WarningStore
 ) {
   artistCache.clear();
+  const warningGroup = createWarningGroup();
   const getOrCreateWork = async ({index, workBean, recordingState}: SelectedRecording) => {
     assertMBTree(MB?.tree);
 
-    const workWarnings = createWarningStore();
+    const workWarnings = warningGroup.createStore();
 
     const existing = relatedWork(recordingState.relatedWorks, recordingState.recording, index);
     if (existing) {
