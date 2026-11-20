@@ -1,3 +1,9 @@
+## @dvirtz/acum-work-import-v1.24.0-beta.1 (2026-11-20)
+
+* fix(acum-work-import): resolve artist warnings across imported works ([6bf5263](https://github.com/dvirtz/musicbrainz-scripts/commit/6bf5263))
+* feat(acum-work-import): decouple warning handling from work editing ([e4cd7a6](https://github.com/dvirtz/musicbrainz-scripts/commit/e4cd7a6))
+* feat(acum-work-import): match works by name and authors ([9b325a2](https://github.com/dvirtz/musicbrainz-scripts/commit/9b325a2))
+
 ## @dvirtz/acum-work-import-v1.23.3 (2026-10-13)
 
 * fix(acum-work-import): avoid adding duplicate URL ([85b0910](https://github.com/dvirtz/musicbrainz-scripts/commit/85b0910))
