@@ -1,19 +1,18 @@
 import {RATE_LIMIT_INTERVAL} from '#constants.ts';
 import * as fetch from '@repo/fetch/fetch';
-import {rateLimited} from '@repo/fetch/rate-limited';
 
 export async function tryFetchJSON<T>(url: string, options?: RequestInit) {
-  return await rateLimited(RATE_LIMIT_INTERVAL, () => fetch.tryFetchJSON<T>(url, options));
+  return await fetch.tryFetchJSON<T>(url, {...options, rateLimitInterval: RATE_LIMIT_INTERVAL});
 }
 
 export async function tryFetchText(url: string, options?: RequestInit) {
-  return await rateLimited(RATE_LIMIT_INTERVAL, () => fetch.tryFetchText(url, options));
+  return await fetch.tryFetchText(url, {...options, rateLimitInterval: RATE_LIMIT_INTERVAL});
 }
 
 export async function fetchJSON<T>(url: string, options?: RequestInit) {
-  return await rateLimited(RATE_LIMIT_INTERVAL, () => fetch.fetchJSON<T>(url, options));
+  return await fetch.fetchJSON<T>(url, {...options, rateLimitInterval: RATE_LIMIT_INTERVAL});
 }
 
 export async function fetchResponse(url: string, options?: RequestInit) {
-  return await rateLimited(RATE_LIMIT_INTERVAL, () => fetch.fetchResponse(url, options));
+  return await fetch.fetchResponse(url, {...options, rateLimitInterval: RATE_LIMIT_INTERVAL});
 }

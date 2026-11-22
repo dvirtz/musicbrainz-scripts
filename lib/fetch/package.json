@@ -9,6 +9,7 @@
     "./rate-limited": "./src/rate-limited.ts"
   },
   "scripts": {
+    "test": "playwright test",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
@@ -17,6 +18,7 @@
     "p-queue": "*"
   },
   "devDependencies": {
+    "@playwright/test": "*",
     "@repo/typescript-config": "workspace:*",
     "eslint": "*",
     "typescript": "*"
