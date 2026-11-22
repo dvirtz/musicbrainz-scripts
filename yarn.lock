@@ -2727,6 +2727,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@repo/fetch@workspace:lib/fetch"
   dependencies:
+    "@playwright/test": "npm:*"
     "@repo/typescript-config": "workspace:*"
     eslint: "npm:*"
     fetch-retry: "npm:*"

@@ -1,8 +1,16 @@
-import fetchBuilder from 'fetch-retry';
+import fetchBuilder, {type RequestInitWithRetry} from 'fetch-retry';
+import {rateLimited} from '@repo/fetch/rate-limited';
 
-const fetchRetryBuilder = fetchBuilder(fetch);
+export type FetchRetryOptions = RequestInitWithRetry<typeof fetch> & {
+  rateLimitInterval?: number;
+};
 
-export type FetchRetryOptions = Parameters<typeof fetchRetryBuilder>[1];
+const fetchRetryBuilder = fetchBuilder(
+  (input: Parameters<typeof fetch>[0], {rateLimitInterval, ...options}: FetchRetryOptions = {}) =>
+    rateLimitInterval === undefined
+      ? fetch(input, options)
+      : rateLimited(rateLimitInterval, () => fetch(input, options))
+);
 
 class FetchError extends Error {
   constructor(
