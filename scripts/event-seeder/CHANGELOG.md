@@ -1,3 +1,8 @@
+## @dvirtz/event-seeder-v1.2.0-beta.1 (2026-11-22)
+
+* feat(event-seeder): seed events from live releases ([e492e7f](https://github.com/dvirtz/musicbrainz-scripts/commit/e492e7f))
+* test(event-seeder): replay series fixture lookup from HAR ([27e50db](https://github.com/dvirtz/musicbrainz-scripts/commit/27e50db))
+
 ## @dvirtz/event-seeder-v1.1.0 (2026-07-30)
 
 * feat(event-seeder): seed event from event series ([af13bc9](https://github.com/dvirtz/musicbrainz-scripts/commit/af13bc9))
