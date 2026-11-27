@@ -1,7 +1,7 @@
 // cspell:words Mando Diao
 import {test} from '#tests/fixtures/release-event-page.ts';
 import {expect} from '@playwright/test';
-import {MBEvent} from '@repo/musicbrainz-ext/web-service-types';
+import {MBEvent, MBRelease} from '@repo/musicbrainz-ext/web-service-types';
 
 const MANDO_DIAO_RELEASE = '4d2865b4-b1a9-4bb7-920e-0ad3a06d9426';
 const MANDO_DIAO_EVENT = '836117c8-4737-42f6-ae9a-ff531e497f9e';
@@ -67,4 +67,49 @@ test('updates existing event', async ({releaseEventPage, userscriptPage, baseURL
   await releaseEventPage.expectSetlist(24, 'Long Before Rock ’n’ Roll', 'God Knows');
   await releaseEventPage.expectRecordingLinks(source, url.searchParams, 24);
   await releaseEventPage.expectEditNote(MANDO_DIAO_RELEASE);
+});
+
+test('disables event seeding when multiple events match a release', async ({releaseEventPage, userscriptPage}) => {
+  const release: MBRelease = {
+    id: MANDO_DIAO_RELEASE,
+    title: 'Conflicting live release',
+    relations: [
+      {type: 'recorded at', event: {id: MANDO_DIAO_EVENT, name: 'First event'}},
+      {type: 'recorded at', event: {id: '00000000-0000-4000-8000-000000000000', name: 'Second event'}},
+    ],
+    'artist-credit': [],
+    'release-group': {'secondary-types': ['Live']},
+    media: [
+      {
+        position: 1,
+        tracks: [{position: 1, title: 'Track', recording: {id: '00000000-0000-4000-8000-000000000001'}}],
+      },
+    ],
+  };
+  const unrouteRelease = await userscriptPage.route(
+    url => url.pathname === `/ws/2/release/${MANDO_DIAO_RELEASE}`,
+    route => route.fulfill({json: release})
+  );
+  const unrouteLinkTypes = await userscriptPage.route(
+    url => url.pathname === '/ws/js/type-info/link_type',
+    route => route.fulfill({json: {link_type_list: [{id: 1, gid: 'link-type-gid', attributes: {}}]}})
+  );
+  const unrouteLinkAttributes = await userscriptPage.route(
+    url => url.pathname === '/ws/js/type-info/link_attribute_type',
+    route => route.fulfill({json: {link_attribute_type_list: [{id: 1, gid: 'link-attribute-gid', root_id: 1}]}})
+  );
+  try {
+    await releaseEventPage.openRelease(MANDO_DIAO_RELEASE);
+    const action = releaseEventPage.page.getByText('Create or update event', {exact: true});
+    await expect(action).toHaveAttribute('aria-disabled', 'true');
+    await expect(action).toHaveAttribute(
+      'title',
+      /Multiple events match this release:.*Resolve the event links first\./
+    );
+    await expect(action).not.toHaveAttribute('href', /.+/);
+  } finally {
+    await unrouteRelease();
+    await unrouteLinkTypes();
+    await unrouteLinkAttributes();
+  }
 });

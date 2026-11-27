@@ -29,10 +29,30 @@ import {createSetlistItem, serializeSetlist, SetlistCredit} from '@repo/musicbra
 
 const PERFORMANCE_ROLES = new Set(['instrument', 'vocal', 'performer', 'orchestra', 'conductor']);
 
+class ConflictingEventLinksError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ConflictingEventLinksError';
+  }
+}
+
 export async function releaseSidebarLinks(release: Release): Promise<SidebarLink[]> {
   if (!isLiveRelease(release)) return [];
   const catalog = await relationshipAttributeCatalog();
-  const seed = buildEventSeed(release, editNoteFormat(`Seeded event from ${location.href}`), catalog);
+  let seed: string;
+  try {
+    seed = buildEventSeed(release, editNoteFormat(`Seeded event from ${location.href}`), catalog);
+  } catch (error) {
+    if (!(error instanceof ConflictingEventLinksError)) throw error;
+    return [
+      {
+        id: 'release-to-event-link',
+        text: 'Create or update event',
+        disabled: true,
+        title: error.message,
+      },
+    ];
+  }
   return [
     {
       id: 'release-to-event-link',
@@ -71,7 +91,7 @@ function selectEvent(release: Release, tracks: Track[]) {
     }
   }
   if (candidates.size > 1)
-    throw new Error(
+    throw new ConflictingEventLinksError(
       `Multiple events match this release: ${[...candidates].join(', ')}. Resolve the event links first.`
     );
   return [...candidates][0];

@@ -1,11 +1,20 @@
-export type SidebarLink = {id: string; text: string; url: string};
+export type SidebarLink =
+  | {id: string; text: string; url: string}
+  | {id: string; text: string; disabled: true; title: string};
 
 function createListItem(documentRef: Document, link: SidebarLink): HTMLLIElement {
   const listItem = documentRef.createElement('li');
   const anchor = documentRef.createElement('a');
   anchor.id = link.id;
-  anchor.href = link.url;
   anchor.textContent = link.text;
+  if ('disabled' in link) {
+    anchor.role = 'link';
+    anchor.setAttribute('aria-disabled', 'true');
+    anchor.tabIndex = 0;
+    anchor.title = link.title;
+  } else {
+    anchor.href = link.url;
+  }
   listItem.appendChild(anchor);
   return listItem;
 }

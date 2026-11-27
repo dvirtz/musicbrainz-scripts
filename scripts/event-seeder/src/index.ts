@@ -53,7 +53,4 @@ async function main() {
 
 void main().catch(error => {
   console.error('[event-seeder] Error:', error);
-  if (location.pathname.startsWith('/release/')) {
-    window.alert(`Event Seeder: ${error instanceof Error ? error.message : String(error)}`);
-  }
 });
