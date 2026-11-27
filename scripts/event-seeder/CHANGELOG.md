@@ -1,3 +1,7 @@
+## @dvirtz/event-seeder-v1.2.0-beta.2 (2026-11-27)
+
+* fix(event-seeder): disable conflicting event seeding ([9f0c017](https://github.com/dvirtz/musicbrainz-scripts/commit/9f0c017))
+
 ## @dvirtz/event-seeder-v1.2.0-beta.1 (2026-11-22)
 
 * feat(event-seeder): seed events from live releases ([e492e7f](https://github.com/dvirtz/musicbrainz-scripts/commit/e492e7f))
